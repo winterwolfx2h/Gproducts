@@ -25,6 +25,7 @@ public class Parent {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "productOffering_id")
     private ProductOffering productOffering;

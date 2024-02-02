@@ -46,7 +46,4 @@ public class ProductOffering {
     @Column(name = "productSpec", nullable = false)
     @OneToMany(mappedBy = "productOffering")
     private List<ProductSpecification> productSpec;
-
-
-
 }

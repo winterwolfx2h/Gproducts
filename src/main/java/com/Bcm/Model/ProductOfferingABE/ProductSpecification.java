@@ -67,6 +67,7 @@ public class ProductSpecification {
     @OneToMany(mappedBy = "productSpecification")
     private List<DureeEngagement> dureeEngagement;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "productOffering_id")
     private ProductOffering productOffering;

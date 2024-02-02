@@ -26,6 +26,7 @@ public class Market {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "productSpecification_id")
     private ProductSpecification productSpecification;

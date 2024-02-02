@@ -43,6 +43,7 @@ public class ProductOffering {
     @Column(name = "description", nullable = true)
     private String description;
 
+    @JsonIgnore
     @Column(name = "productSpec", nullable = false)
     @OneToMany(mappedBy = "productOffering")
     private List<ProductSpecification> productSpec;

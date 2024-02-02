@@ -1,6 +1,6 @@
-package com.Bcm.Repository;
+package com.Bcm.Repository.ProductOfferingRepo;
 
-import com.Bcm.Model.POPlan;
+import com.Bcm.Model.ProductOfferingABE.POPlan;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +14,6 @@ import java.util.Optional;
 public interface POPlanRepository extends JpaRepository<POPlan, Integer> {
 
     Optional<POPlan> findById(int PO_ID);
-    @Query("SELECT p FROM POPlan p WHERE p.name LIKE %:name% AND p.description LIKE %:keyword%")
+    @Query("SELECT p FROM POPlan p WHERE p.name LIKE %:name% ")
     List<POPlan> searchByKeyword(String name);
 }

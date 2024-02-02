@@ -1,10 +1,9 @@
 package com.Bcm.Service.Impl;
 
-import com.Bcm.Model.POPlan;
-import com.Bcm.Repository.POPlanRepository;
+import com.Bcm.Model.ProductOfferingABE.POPlan;
+import com.Bcm.Repository.ProductOfferingRepo.POPlanRepository;
 import com.Bcm.Service.Srvc.POPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

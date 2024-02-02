@@ -1,6 +1,6 @@
 package com.Bcm.Controller;
 
-import com.Bcm.Model.POPlan;
+import com.Bcm.Model.ProductOfferingABE.POPlan;
 import com.Bcm.Service.Srvc.POPlanService;
 
 import org.springframework.beans.factory.annotation.Autowired;

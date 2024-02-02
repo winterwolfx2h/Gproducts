@@ -1,6 +1,6 @@
 package com.Bcm.Service.Srvc;
 
-import com.Bcm.Model.POPlan;
+import com.Bcm.Model.ProductOfferingABE.POPlan;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

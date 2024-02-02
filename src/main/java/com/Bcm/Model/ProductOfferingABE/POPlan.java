@@ -1,4 +1,4 @@
-package com.Bcm.Model;
+package com.Bcm.Model.ProductOfferingABE;
 
 
 
@@ -35,16 +35,6 @@ public class POPlan {
     private String parent;
 
 
-
-    @Override
-    public String toString() {
-        return "POPlan{" +
-                "PO_ID=" + PO_ID +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", parent='" + parent + '\'' +
-                '}';
-    }
 }
 
 

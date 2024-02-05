@@ -1,5 +1,7 @@
 package com.Bcm.Model.ProductOfferingABE;
 
+import com.Bcm.Model.ProductOfferingABE.SubClasses.GroupDimension;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Parent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

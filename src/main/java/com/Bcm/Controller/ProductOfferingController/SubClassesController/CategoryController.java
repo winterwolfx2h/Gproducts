@@ -42,7 +42,6 @@ public class CategoryController {
         Category updatedGroup = categoryService.update(po_CategoryCode, updatedCategory);
         return ResponseEntity.ok(updatedGroup);
     }
-
     @DeleteMapping("/{po_CategoryCode}")
     public ResponseEntity<String> deleteCategory(@PathVariable("po_CategoryCode") int po_CategoryCode) {
         String resultMessage = categoryService.delete(po_CategoryCode);
@@ -54,4 +53,5 @@ public class CategoryController {
         List<Category> searchResults = categoryService.searchByKeyword(name);
         return ResponseEntity.ok(searchResults);
     }
+
 }

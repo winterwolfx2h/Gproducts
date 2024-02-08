@@ -12,53 +12,69 @@ import java.util.Optional;
 @Service
 public class FamilyServiceImpl implements FamilyService {
 
-
     @Autowired
     FamilyRepository familyRepository;
 
-    @Autowired
-    FamilyService familyService;
-
     @Override
     public Family create(Family family) {
-        return familyRepository.save(family);
+        try {
+            return familyRepository.save(family);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for creating Family");
+        }
     }
 
     @Override
     public List<Family> read() {
-        return familyRepository.findAll();
+        try {
+            return familyRepository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while retrieving Families");
+        }
     }
 
     @Override
     public Family update(int po_FamilyCode, Family updatedFamily) {
-        Optional<Family> existingFamilyOptional = familyRepository.findById(po_FamilyCode);
-
-        if (existingFamilyOptional.isPresent()) {
-            Family existingFamily = existingFamilyOptional.get();
-            existingFamily.setName(updatedFamily.getName());
-            return familyRepository.save(existingFamily);
-        } else {
-            throw new RuntimeException("Could not find Family with ID: " + po_FamilyCode);
+        try {
+            Optional<Family> existingFamilyOptional = familyRepository.findById(po_FamilyCode);
+            if (existingFamilyOptional.isPresent()) {
+                Family existingFamily = existingFamilyOptional.get();
+                existingFamily.setName(updatedFamily.getName());
+                return familyRepository.save(existingFamily);
+            } else {
+                throw new RuntimeException("Family with ID " + po_FamilyCode + " not found");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for updating Family");
         }
     }
 
     @Override
     public String delete(int po_FamilyCode) {
-        familyRepository.deleteById(po_FamilyCode);
-        return ("Family was successfully deleted");
+        try {
+            familyRepository.deleteById(po_FamilyCode);
+            return ("Family with ID " + po_FamilyCode + " was successfully deleted");
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for deleting Family");
+        }
     }
 
     @Override
     public Family findById(int po_FamilyCode) {
-        Optional<Family> optionalFamily = familyRepository.findById(po_FamilyCode);
-        return optionalFamily.orElseThrow(() -> new RuntimeException("Family with ID " + po_FamilyCode + " not found"));
+        try {
+            Optional<Family> optionalFamily = familyRepository.findById(po_FamilyCode);
+            return optionalFamily.orElseThrow(() -> new RuntimeException("Family with ID " + po_FamilyCode + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding Family");
+        }
     }
-
 
     @Override
     public List<Family> searchByKeyword(String name) {
-        return familyRepository.searchByKeyword(name);
+        try {
+            return familyRepository.searchByKeyword(name);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for searching Family by keyword");
+        }
     }
-
-
 }

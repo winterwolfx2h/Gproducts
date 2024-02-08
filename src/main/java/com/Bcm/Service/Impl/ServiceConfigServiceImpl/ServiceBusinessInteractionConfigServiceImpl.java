@@ -1,9 +1,13 @@
 package com.Bcm.Service.Impl.ServiceConfigServiceImpl;
 
+import com.Bcm.Exception.DatabaseOperationException;
+import com.Bcm.Exception.InvalidInputException;
+import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ServiceABE.ServiceBusinessInteractionConfig;
 import com.Bcm.Repository.ServiceConfigRepo.ServiceBusinessInteractionConfigRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.ServiceBusinessInteractionConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,17 +19,25 @@ public class ServiceBusinessInteractionConfigServiceImpl implements ServiceBusin
     @Autowired
     private ServiceBusinessInteractionConfigRepository ServiceBusinessInteractionConfigRepository;
 
-    @Autowired
-    private ServiceBusinessInteractionConfigService serviceBusinessInteractionConfigService;
-
     @Override
     public ServiceBusinessInteractionConfig create(ServiceBusinessInteractionConfig ServiceBusinessInteractionConfig) {
-        return ServiceBusinessInteractionConfigRepository.save(ServiceBusinessInteractionConfig);
+        validateNotNullFields(ServiceBusinessInteractionConfig);
+        try {
+            return ServiceBusinessInteractionConfigRepository.save(ServiceBusinessInteractionConfig);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseOperationException("Error creating ServiceBusinessInteractionConfig", e);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while creating ServiceBusinessInteractionConfig", e);
+        }
     }
 
     @Override
     public List<ServiceBusinessInteractionConfig> read() {
-        return ServiceBusinessInteractionConfigRepository.findAll();
+        try {
+            return ServiceBusinessInteractionConfigRepository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while reading ServiceBusinessInteractionConfigs", e);
+        }
     }
 
     @Override
@@ -40,10 +52,9 @@ public class ServiceBusinessInteractionConfigServiceImpl implements ServiceBusin
             existingServiceBusinessInteractionConfig.setEndDate(updatedServiceBusinessInteractionConfig.getEndDate());
             existingServiceBusinessInteractionConfig.setSalesChannel(updatedServiceBusinessInteractionConfig.getSalesChannel());
 
-
             return ServiceBusinessInteractionConfigRepository.save(existingServiceBusinessInteractionConfig);
         } else {
-            throw new RuntimeException("Could not find ServiceBusinessInteractionConfig Specification with ID: " + SBIC_code);
+            throw new ResourceNotFoundException("Could not find ServiceBusinessInteractionConfig Specification with ID: " + SBIC_code);
         }
     }
 
@@ -56,6 +67,12 @@ public class ServiceBusinessInteractionConfigServiceImpl implements ServiceBusin
     @Override
     public ServiceBusinessInteractionConfig findById(int SBIC_code) {
         Optional<ServiceBusinessInteractionConfig> optionalPlan = ServiceBusinessInteractionConfigRepository.findById(SBIC_code);
-        return optionalPlan.orElseThrow(() -> new RuntimeException("ServiceBusinessInteractionConfig Specification with ID " + SBIC_code + " not found"));
+        return optionalPlan.orElseThrow(() -> new ResourceNotFoundException("ServiceBusinessInteractionConfig Specification with ID " + SBIC_code + " not found"));
+    }
+
+    private void validateNotNullFields(ServiceBusinessInteractionConfig ServiceBusinessInteractionConfig) {
+        if (ServiceBusinessInteractionConfig.getBusinessInteraction() == null || ServiceBusinessInteractionConfig.getProvisionName() == null || ServiceBusinessInteractionConfig.getSalesChannel() == null) {
+            throw new InvalidInputException("BusinessInteraction, ProvisionName, and SalesChannel cannot be null");
+        }
     }
 }

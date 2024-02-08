@@ -15,9 +15,6 @@ public class ProductOfferingRelationshipServiceImpl implements ProductOfferingRe
     @Autowired
     ProductOfferingRelationshipRepository productOfferingRelationshipRepository;
 
-    @Autowired
-    ProductOfferingRelationshipService productOfferingRelationshipService;
-
     @Override
     public ProductOfferingRelationship create(ProductOfferingRelationship productOfferingRelationship) {
         return productOfferingRelationshipRepository.save(productOfferingRelationship);
@@ -44,8 +41,12 @@ public class ProductOfferingRelationshipServiceImpl implements ProductOfferingRe
     }
     @Override
     public String delete(int por_Code) {
-        productOfferingRelationshipRepository.deleteById(por_Code);
-        return ("plan was successfully deleted");
+        try {
+            productOfferingRelationshipRepository.deleteById(por_Code);
+            return ("Plan was successfully deleted");
+        } catch (RuntimeException e) {
+            throw new RuntimeException("An unexpected error occurred while deleting product offering with ID: " + por_Code, e);
+        }
     }
     @Override
     public ProductOfferingRelationship findById(int por_Code) {

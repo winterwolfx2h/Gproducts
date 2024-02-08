@@ -12,53 +12,69 @@ import java.util.Optional;
 @Service
 public class ProductSubTypeServiceImpl implements ProductSubTypeService {
 
-
     @Autowired
     ProductSubTypeRepository productSubTypeRepository;
 
-    @Autowired
-    ProductSubTypeService productSubTypeService;
-
     @Override
-    public ProductSubType create(ProductSubType ProductSubType) {
-        return productSubTypeRepository.save(ProductSubType);
+    public ProductSubType create(ProductSubType productSubType) {
+        try {
+            return productSubTypeRepository.save(productSubType);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for creating ProductSubType");
+        }
     }
 
     @Override
     public List<ProductSubType> read() {
-        return productSubTypeRepository.findAll();
+        try {
+            return productSubTypeRepository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while retrieving ProductSubTypes");
+        }
     }
 
     @Override
     public ProductSubType update(int po_ProdSubTypeCode, ProductSubType updatedProductSubType) {
-        Optional<ProductSubType> existingProductSubTypeOptional = productSubTypeRepository.findById(po_ProdSubTypeCode);
-
-        if (existingProductSubTypeOptional.isPresent()) {
-            ProductSubType existingProductSubType = existingProductSubTypeOptional.get();
-            existingProductSubType.setName(updatedProductSubType.getName());
-            return productSubTypeRepository.save(existingProductSubType);
-        } else {
-            throw new RuntimeException("Could not find ProductSubType with ID: " + po_ProdSubTypeCode);
+        try {
+            Optional<ProductSubType> existingProductSubTypeOptional = productSubTypeRepository.findById(po_ProdSubTypeCode);
+            if (existingProductSubTypeOptional.isPresent()) {
+                ProductSubType existingProductSubType = existingProductSubTypeOptional.get();
+                existingProductSubType.setName(updatedProductSubType.getName());
+                return productSubTypeRepository.save(existingProductSubType);
+            } else {
+                throw new RuntimeException("ProductSubType with ID " + po_ProdSubTypeCode + " not found");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for updating ProductSubType");
         }
     }
 
     @Override
     public String delete(int po_ProdSubTypeCode) {
-        productSubTypeRepository.deleteById(po_ProdSubTypeCode);
-        return ("ProductSubTypewas successfully deleted");
+        try {
+            productSubTypeRepository.deleteById(po_ProdSubTypeCode);
+            return ("ProductSubType with ID " + po_ProdSubTypeCode + " was successfully deleted");
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for deleting ProductSubType");
+        }
     }
 
     @Override
     public ProductSubType findById(int po_ProdSubTypeCode) {
-        Optional<ProductSubType> optionalPlan = productSubTypeRepository.findById(po_ProdSubTypeCode);
-        return optionalPlan.orElseThrow(() -> new RuntimeException("ProductSubType with ID " + po_ProdSubTypeCode + " not found"));
+        try {
+            Optional<ProductSubType> optionalPlan = productSubTypeRepository.findById(po_ProdSubTypeCode);
+            return optionalPlan.orElseThrow(() -> new RuntimeException("ProductSubType with ID " + po_ProdSubTypeCode + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding ProductSubType");
+        }
     }
-
 
     @Override
     public List<ProductSubType> searchByKeyword(String name) {
-        return productSubTypeRepository.searchByKeyword(name);
+        try {
+            return productSubTypeRepository.searchByKeyword(name);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for searching ProductSubType by keyword");
+        }
     }
-
-
 }

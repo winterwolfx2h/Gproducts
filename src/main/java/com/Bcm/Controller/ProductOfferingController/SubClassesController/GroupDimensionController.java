@@ -18,20 +18,32 @@ public class GroupDimensionController {
 
     @PostMapping
     public ResponseEntity<GroupDimension> createGroupDimension(@RequestBody GroupDimension groupDimension) {
-        GroupDimension createdGroupDimension = groupDimensionService.create(groupDimension);
-        return ResponseEntity.ok(createdGroupDimension);
+        try {
+            GroupDimension createdGroupDimension = groupDimensionService.create(groupDimension);
+            return ResponseEntity.ok(createdGroupDimension);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping
     public ResponseEntity<List<GroupDimension>> getAllGroupDimensions() {
-        List<GroupDimension> groupDimensions = groupDimensionService.read();
-        return ResponseEntity.ok(groupDimensions);
+        try {
+            List<GroupDimension> groupDimensions = groupDimensionService.read();
+            return ResponseEntity.ok(groupDimensions);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/{po_GdCode}")
     public ResponseEntity<GroupDimension> getGroupDimensionById(@PathVariable("po_GdCode") int po_GdCode) {
-        GroupDimension groupDimension = groupDimensionService.findById(po_GdCode);
-        return ResponseEntity.ok(groupDimension);
+        try {
+            GroupDimension groupDimension = groupDimensionService.findById(po_GdCode);
+            return ResponseEntity.ok(groupDimension);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
+        }
     }
 
     @PutMapping("/{po_GdCode}")
@@ -39,19 +51,31 @@ public class GroupDimensionController {
             @PathVariable("po_GdCode") int po_GdCode,
             @RequestBody GroupDimension updatedGroupDimension) {
 
-        GroupDimension updatedGroup = groupDimensionService.update(po_GdCode, updatedGroupDimension);
-        return ResponseEntity.ok(updatedGroup);
+        try {
+            GroupDimension updatedGroup = groupDimensionService.update(po_GdCode, updatedGroupDimension);
+            return ResponseEntity.ok(updatedGroup);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @DeleteMapping("/{po_GdCode}")
     public ResponseEntity<String> deleteGroupDimension(@PathVariable("po_GdCode") int po_GdCode) {
-        String resultMessage = groupDimensionService.delete(po_GdCode);
-        return ResponseEntity.ok(resultMessage);
+        try {
+            String resultMessage = groupDimensionService.delete(po_GdCode);
+            return ResponseEntity.ok(resultMessage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<GroupDimension>> searchGroupDimensionsByKeyword(@RequestParam("name") String name) {
-        List<GroupDimension> searchResults = groupDimensionService.searchByKeyword(name);
-        return ResponseEntity.ok(searchResults);
+        try {
+            List<GroupDimension> searchResults = groupDimensionService.searchByKeyword(name);
+            return ResponseEntity.ok(searchResults);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 }

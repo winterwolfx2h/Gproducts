@@ -12,53 +12,69 @@ import java.util.Optional;
 @Service
 public class ParentServiceImpl implements ParentService {
 
-
     @Autowired
     ParentRepository parentRepository;
 
-    @Autowired
-    ParentService parentService;
-
     @Override
     public Parent create(Parent parent) {
-        return parentRepository.save(parent);
+        try {
+            return parentRepository.save(parent);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for creating Parent");
+        }
     }
 
     @Override
     public List<Parent> read() {
-        return parentRepository.findAll();
+        try {
+            return parentRepository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while retrieving Parents");
+        }
     }
 
     @Override
     public Parent update(int po_ParentCode, Parent updatedParent) {
-        Optional<Parent> existingProductOptional = parentRepository.findById(po_ParentCode);
-
-        if (existingProductOptional.isPresent()) {
-            Parent existingProduct = existingProductOptional.get();
-            existingProduct.setName(updatedParent.getName());
-            return parentRepository.save(existingProduct);
-        } else {
-            throw new RuntimeException("Could not find Parent with ID: " + po_ParentCode);
+        try {
+            Optional<Parent> existingParentOptional = parentRepository.findById(po_ParentCode);
+            if (existingParentOptional.isPresent()) {
+                Parent existingParent = existingParentOptional.get();
+                existingParent.setName(updatedParent.getName());
+                return parentRepository.save(existingParent);
+            } else {
+                throw new RuntimeException("Parent with ID " + po_ParentCode + " not found");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for updating Parent");
         }
     }
 
     @Override
     public String delete(int po_ParentCode) {
-        parentRepository.deleteById(po_ParentCode);
-        return ("Parent was successfully deleted");
+        try {
+            parentRepository.deleteById(po_ParentCode);
+            return ("Parent with ID " + po_ParentCode + " was successfully deleted");
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for deleting Parent");
+        }
     }
 
     @Override
     public Parent findById(int po_ParentCode) {
-        Optional<Parent> optionalPlan = parentRepository.findById(po_ParentCode);
-        return optionalPlan.orElseThrow(() -> new RuntimeException("Parent with ID " + po_ParentCode + " not found"));
+        try {
+            Optional<Parent> optionalPlan = parentRepository.findById(po_ParentCode);
+            return optionalPlan.orElseThrow(() -> new RuntimeException("Parent with ID " + po_ParentCode + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding Parent");
+        }
     }
-
 
     @Override
     public List<Parent> searchByKeyword(String name) {
-        return parentRepository.searchByKeyword(name);
+        try {
+            return parentRepository.searchByKeyword(name);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for searching Parent by keyword");
+        }
     }
-
-
 }

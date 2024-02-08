@@ -12,23 +12,18 @@ import java.util.Optional;
 @Service
 public class SalesChannelServiceServiceImpl implements SalesChannelService {
 
-
     @Autowired
     SalesChannelRepository salesChannelRepository;
 
-    @Autowired
-    SalesChannelService salesChannelService;
-
     @Override
-    public SalesChannel create(SalesChannel SalesChannel) {
-        return salesChannelRepository.save(SalesChannel);
+    public SalesChannel create(SalesChannel salesChannel) {
+        return salesChannelRepository.save(salesChannel);
     }
 
     @Override
     public List<SalesChannel> read() {
         return salesChannelRepository.findAll();
     }
-
 
     @Override
     public SalesChannel update(int SC_code, SalesChannel updatedSalesChannel) {
@@ -39,15 +34,18 @@ public class SalesChannelServiceServiceImpl implements SalesChannelService {
             existingSalesChannel.setName(updatedSalesChannel.getName());
             return salesChannelRepository.save(existingSalesChannel);
         } else {
-            throw new RuntimeException("Could not find Group Dimension with ID: " + SC_code);
+            throw new RuntimeException("Could not find SalesChannel with ID: " + SC_code);
         }
     }
 
-
     @Override
     public String delete(int SC_code) {
-        salesChannelRepository.deleteById(SC_code);
-        return ("Group Dimension was successfully deleted");
+        try {
+            salesChannelRepository.deleteById(SC_code);
+            return "SalesChannel was successfully deleted";
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while deleting SalesChannel with ID: " + SC_code, e);
+        }
     }
 
     @Override
@@ -56,11 +54,8 @@ public class SalesChannelServiceServiceImpl implements SalesChannelService {
         return optionalSalesChannel.orElseThrow(() -> new RuntimeException("SalesChannel with ID " + SC_code + " not found"));
     }
 
-
     @Override
     public List<SalesChannel> searchByKeyword(String name) {
         return salesChannelRepository.searchByKeyword(name);
     }
-
-
 }

@@ -17,26 +17,26 @@ public class DateFinEngagementController {
     private DateFinEngagementService dateFinEngagementService;
 
     @PostMapping
-    public ResponseEntity<DateFinEngagement> createDateFinEngagement(@RequestBody DateFinEngagement DateFinEngagement) {
-        DateFinEngagement createdDateFinEngagement = dateFinEngagementService.create(DateFinEngagement);
+    public ResponseEntity<DateFinEngagement> createDateFinEngagement(@RequestBody DateFinEngagement dateFinEngagement) {
+        DateFinEngagement createdDateFinEngagement = dateFinEngagementService.create(dateFinEngagement);
         return ResponseEntity.ok(createdDateFinEngagement);
     }
 
     @GetMapping
     public ResponseEntity<List<DateFinEngagement>> getAllDateFinEngagements() {
-        List<DateFinEngagement> DateFinEngagements = dateFinEngagementService.read();
-        return ResponseEntity.ok(DateFinEngagements);
+        List<DateFinEngagement> dateFinEngagements = dateFinEngagementService.read();
+        return ResponseEntity.ok(dateFinEngagements);
     }
 
     @GetMapping("/{po_DateFinEngCode}")
     public ResponseEntity<DateFinEngagement> getDateFinEngagementById(@PathVariable("po_DateFinEngCode") int po_DateFinEngCode) {
-        DateFinEngagement DateFinEngagement = dateFinEngagementService.findById(po_DateFinEngCode);
-        return ResponseEntity.ok(DateFinEngagement);
+        DateFinEngagement dateFinEngagement = dateFinEngagementService.findById(po_DateFinEngCode);
+        return ResponseEntity.ok(dateFinEngagement);
     }
 
     @PutMapping("/{po_DateFinEngCode}")
     public ResponseEntity<DateFinEngagement> updateDateFinEngagement(
-            @PathVariable("dateFinEngagementService") int po_DateFinEngCode,
+            @PathVariable("po_DateFinEngCode") int po_DateFinEngCode,
             @RequestBody DateFinEngagement updatedDateFinEngagement) {
 
         DateFinEngagement updatedGroup = dateFinEngagementService.update(po_DateFinEngCode, updatedDateFinEngagement);

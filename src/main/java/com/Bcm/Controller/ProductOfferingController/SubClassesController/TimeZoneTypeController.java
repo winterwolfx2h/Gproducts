@@ -17,21 +17,33 @@ public class TimeZoneTypeController {
     private TimeZoneTypeService timeZoneTypeService;
 
     @PostMapping
-    public ResponseEntity<TimeZoneType> createTimeZoneType(@RequestBody TimeZoneType TimeZoneType) {
-        TimeZoneType createdTimeZoneType = timeZoneTypeService.create(TimeZoneType);
-        return ResponseEntity.ok(createdTimeZoneType);
+    public ResponseEntity<TimeZoneType> createTimeZoneType(@RequestBody TimeZoneType timeZoneType) {
+        try {
+            TimeZoneType createdTimeZoneType = timeZoneTypeService.create(timeZoneType);
+            return ResponseEntity.ok(createdTimeZoneType);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping
     public ResponseEntity<List<TimeZoneType>> getAllTimeZoneTypes() {
-        List<TimeZoneType> TimeZoneTypes = timeZoneTypeService.read();
-        return ResponseEntity.ok(TimeZoneTypes);
+        try {
+            List<TimeZoneType> timeZoneTypes = timeZoneTypeService.read();
+            return ResponseEntity.ok(timeZoneTypes);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/{po_TimeZoneTypeCode}")
     public ResponseEntity<TimeZoneType> getTimeZoneTypeById(@PathVariable("po_TimeZoneTypeCode") int po_TimeZoneTypeCode) {
-        TimeZoneType TimeZoneType = timeZoneTypeService.findById(po_TimeZoneTypeCode);
-        return ResponseEntity.ok(TimeZoneType);
+        try {
+            TimeZoneType timeZoneType = timeZoneTypeService.findById(po_TimeZoneTypeCode);
+            return ResponseEntity.ok(timeZoneType);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
+        }
     }
 
     @PutMapping("/{po_TimeZoneTypeCode}")
@@ -39,19 +51,31 @@ public class TimeZoneTypeController {
             @PathVariable("po_TimeZoneTypeCode") int po_TimeZoneTypeCode,
             @RequestBody TimeZoneType updatedTimeZoneType) {
 
-        TimeZoneType updatedGroup = timeZoneTypeService.update(po_TimeZoneTypeCode, updatedTimeZoneType);
-        return ResponseEntity.ok(updatedGroup);
+        try {
+            TimeZoneType updatedTimeZoneTypeResult = timeZoneTypeService.update(po_TimeZoneTypeCode, updatedTimeZoneType);
+            return ResponseEntity.ok(updatedTimeZoneTypeResult);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @DeleteMapping("/{po_TimeZoneTypeCode}")
     public ResponseEntity<String> deleteTimeZoneType(@PathVariable("po_TimeZoneTypeCode") int po_TimeZoneTypeCode) {
-        String resultMessage = timeZoneTypeService.delete(po_TimeZoneTypeCode);
-        return ResponseEntity.ok(resultMessage);
+        try {
+            String resultMessage = timeZoneTypeService.delete(po_TimeZoneTypeCode);
+            return ResponseEntity.ok(resultMessage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<TimeZoneType>> searchTimeZoneTypesByKeyword(@RequestParam("name") String name) {
-        List<TimeZoneType> searchResults = timeZoneTypeService.searchByKeyword(name);
-        return ResponseEntity.ok(searchResults);
+        try {
+            List<TimeZoneType> searchResults = timeZoneTypeService.searchByKeyword(name);
+            return ResponseEntity.ok(searchResults);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 }

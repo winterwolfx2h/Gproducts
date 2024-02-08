@@ -1,6 +1,5 @@
 package com.Bcm.Service.Impl.ServiceConfigServiceImpl.SubClassesServiceImpl;
 
-
 import com.Bcm.Model.ServiceABE.SubClasses.ServiceDocument;
 import com.Bcm.Repository.ServiceConfigRepo.SubClassesRepo.ServiceDocumentRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.SubClassesSrvc.ServiceDocumentService;
@@ -13,23 +12,18 @@ import java.util.Optional;
 @Service
 public class ServiceDocumentServiceImpl implements ServiceDocumentService {
 
-
     @Autowired
     ServiceDocumentRepository serviceDocumentRepository;
 
-    @Autowired
-    ServiceDocumentService serviceDocumentService;
-
     @Override
-    public ServiceDocument create(ServiceDocument ServiceDocument) {
-        return serviceDocumentRepository.save(ServiceDocument);
+    public ServiceDocument create(ServiceDocument serviceDocument) {
+        return serviceDocumentRepository.save(serviceDocument);
     }
 
     @Override
     public List<ServiceDocument> read() {
         return serviceDocumentRepository.findAll();
     }
-
 
     @Override
     public ServiceDocument update(int SD_code, ServiceDocument updatedServiceDocument) {
@@ -40,15 +34,18 @@ public class ServiceDocumentServiceImpl implements ServiceDocumentService {
             existingServiceDocument.setName(updatedServiceDocument.getName());
             return serviceDocumentRepository.save(existingServiceDocument);
         } else {
-            throw new RuntimeException("Could not find Group Dimension with ID: " + SD_code);
+            throw new RuntimeException("Could not find ServiceDocument with ID: " + SD_code);
         }
     }
 
-
     @Override
     public String delete(int SD_code) {
-        serviceDocumentRepository.deleteById(SD_code);
-        return ("Group Dimension was successfully deleted");
+        try {
+            serviceDocumentRepository.deleteById(SD_code);
+            return "ServiceDocument was successfully deleted";
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while deleting ServiceDocument with ID: " + SD_code, e);
+        }
     }
 
     @Override
@@ -57,11 +54,8 @@ public class ServiceDocumentServiceImpl implements ServiceDocumentService {
         return optionalServiceDocument.orElseThrow(() -> new RuntimeException("ServiceDocument with ID " + SD_code + " not found"));
     }
 
-
     @Override
     public List<ServiceDocument> searchByKeyword(String name) {
         return serviceDocumentRepository.searchByKeyword(name);
     }
-
-
 }

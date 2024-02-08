@@ -3,6 +3,7 @@ package com.Bcm.Controller.ProductOfferingController;
 import com.Bcm.Model.ProductOfferingABE.BundledProductOffer;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.BundledProductOfferService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,35 +18,54 @@ public class BundledProductOfferController {
     private BundledProductOfferService bundledProductOfferService;
 
     @PostMapping
-    public ResponseEntity<BundledProductOffer> createBundledProductOffer(@RequestBody BundledProductOffer bundledProductOffer) {
-        BundledProductOffer createdBundledProductOffer = bundledProductOfferService.create(bundledProductOffer);
-        return ResponseEntity.ok(createdBundledProductOffer);
+    public ResponseEntity<?> createBundledProductOffer(@RequestBody BundledProductOffer bundledProductOffer) {
+        try {
+            BundledProductOffer createdBundledProductOffer = bundledProductOfferService.create(bundledProductOffer);
+            return ResponseEntity.ok(createdBundledProductOffer);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
 
     @GetMapping
-    public ResponseEntity<List<BundledProductOffer>> getAllBundledProductOffers() {
-        List<BundledProductOffer> bundledProductOffers = bundledProductOfferService.read();
-        return ResponseEntity.ok(bundledProductOffers);
+    public ResponseEntity<?> getAllBundledProductOffers() {
+        try {
+            List<BundledProductOffer> bundledProductOffers = bundledProductOfferService.read();
+            return ResponseEntity.ok(bundledProductOffers);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
 
     @GetMapping("/{bdo_Code}")
-    public ResponseEntity<BundledProductOffer> getBundledProductOfferById(@PathVariable("bdo_Code") int bdo_Code) {
-        BundledProductOffer bundledProductOffer = bundledProductOfferService.findById(bdo_Code);
-        return ResponseEntity.ok(bundledProductOffer);
+    public ResponseEntity<?> getBundledProductOfferById(@PathVariable("bdo_Code") int bdo_Code) {
+        try {
+            BundledProductOffer bundledProductOffer = bundledProductOfferService.findById(bdo_Code);
+            return ResponseEntity.ok(bundledProductOffer);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
 
     @PutMapping("/{bdo_Code}")
-    public ResponseEntity<BundledProductOffer> updateBundledProductOffer(
+    public ResponseEntity<?> updateBundledProductOffer(
             @PathVariable("bdo_Code") int bdo_Code,
             @RequestBody BundledProductOffer updatedBundledProductOffer) {
-
-        BundledProductOffer updatedProduct = bundledProductOfferService.update(bdo_Code, updatedBundledProductOffer);
-        return ResponseEntity.ok(updatedProduct);
+        try {
+            BundledProductOffer updatedProduct = bundledProductOfferService.update(bdo_Code, updatedBundledProductOffer);
+            return ResponseEntity.ok(updatedProduct);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
 
     @DeleteMapping("/{bdo_Code}")
-    public ResponseEntity<String> deleteBundledProductOffer(@PathVariable("bdo_Code") int bdo_Code) {
-        String resultMessage = bundledProductOfferService.delete(bdo_Code);
-        return ResponseEntity.ok(resultMessage);
+    public ResponseEntity<?> deleteBundledProductOffer(@PathVariable("bdo_Code") int bdo_Code) {
+        try {
+            String resultMessage = bundledProductOfferService.delete(bdo_Code);
+            return ResponseEntity.ok(resultMessage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
 }

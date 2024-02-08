@@ -15,9 +15,6 @@ public class BundledProductOfferOptionServiceImpl implements BundledProductOffer
     @Autowired
     BundledProductOfferOptionRepository bundledProductOfferOptionRepository;
 
-    @Autowired
-    BundledProductOfferOptionService bundledProductOfferOptionService;
-
     @Override
     public BundledProductOfferOption create(BundledProductOfferOption bundledProductOfferOption) {
         return bundledProductOfferOptionRepository.save(bundledProductOfferOption);
@@ -38,22 +35,25 @@ public class BundledProductOfferOptionServiceImpl implements BundledProductOffer
             existingProduct.setNumberRelationOfferLowerLimit(updatedBundledProductOfferOption.getNumberRelationOfferLowerLimit());
             existingProduct.setNumberRelationOfferUpperLimit(updatedBundledProductOfferOption.getNumberRelationOfferUpperLimit());
 
-
             return bundledProductOfferOptionRepository.save(existingProduct);
         } else {
-            throw new RuntimeException("Could not find product offering with ID: " + bdoo_code);
+            throw new RuntimeException("Could not find bundled product offer option with ID: " + bdoo_code);
         }
     }
+
     @Override
     public String delete(int bdoo_code) {
-        bundledProductOfferOptionRepository.deleteById(bdoo_code);
-        return ("plan was successfully deleted");
+        try {
+            bundledProductOfferOptionRepository.deleteById(bdoo_code);
+            return ("Bundled product offer option was successfully deleted");
+        } catch (RuntimeException e) {
+            throw new RuntimeException("An unexpected error occurred while deleting bundled product offer option with ID: " + bdoo_code, e);
+        }
     }
+
     @Override
     public BundledProductOfferOption findById(int bdoo_code) {
         Optional<BundledProductOfferOption> optionalPlan = bundledProductOfferOptionRepository.findById(bdoo_code);
-        return optionalPlan.orElseThrow(() -> new RuntimeException("Plan with ID " + bdoo_code + " not found"));
+        return optionalPlan.orElseThrow(() -> new RuntimeException("Bundled product offer option with ID " + bdoo_code + " not found"));
     }
-
-
 }

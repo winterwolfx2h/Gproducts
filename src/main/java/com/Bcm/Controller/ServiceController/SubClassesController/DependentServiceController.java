@@ -3,6 +3,7 @@ package com.Bcm.Controller.ServiceController.SubClassesController;
 import com.Bcm.Model.ServiceABE.SubClasses.DependentService;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.SubClassesSrvc.DependentServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,45 +14,72 @@ import java.util.List;
 @RequestMapping("/api/DependentService")
 public class DependentServiceController {
 
+    private final DependentServiceService dependentServiceService;
+
     @Autowired
-    private DependentServiceService dependentServiceService;
+    public DependentServiceController(DependentServiceService dependentServiceService) {
+        this.dependentServiceService = dependentServiceService;
+    }
 
     @PostMapping
-    public ResponseEntity<DependentService> createDependentService(@RequestBody DependentService DependentService) {
-        DependentService createdDependentService = dependentServiceService.create(DependentService);
-        return ResponseEntity.ok(createdDependentService);
+    public ResponseEntity<DependentService> createDependentService(@RequestBody DependentService dependentService) {
+        try {
+            DependentService createdDependentService = dependentServiceService.create(dependentService);
+            return ResponseEntity.ok(createdDependentService);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     @GetMapping
     public ResponseEntity<List<DependentService>> getAllDependentServices() {
-        List<DependentService> DependentServices = dependentServiceService.read();
-        return ResponseEntity.ok(DependentServices);
+        try {
+            List<DependentService> dependentServices = dependentServiceService.read();
+            return ResponseEntity.ok(dependentServices);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @GetMapping("/{DS_code}")
     public ResponseEntity<DependentService> getDependentServiceById(@PathVariable("DS_code") int DS_code) {
-        DependentService DependentService = dependentServiceService.findById(DS_code);
-        return ResponseEntity.ok(DependentService);
+        try {
+            DependentService dependentService = dependentServiceService.findById(DS_code);
+            return ResponseEntity.ok(dependentService);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @PutMapping("/{DS_code}")
     public ResponseEntity<DependentService> updateDependentService(
             @PathVariable("DS_code") int DS_code,
             @RequestBody DependentService updatedDependentService) {
-
-        DependentService updatedGroup = dependentServiceService.update(DS_code, updatedDependentService);
-        return ResponseEntity.ok(updatedGroup);
+        try {
+            DependentService updatedDependentServiceResult = dependentServiceService.update(DS_code, updatedDependentService);
+            return ResponseEntity.ok(updatedDependentServiceResult);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @DeleteMapping("/{DS_code}")
     public ResponseEntity<String> deleteDependentService(@PathVariable("DS_code") int DS_code) {
-        String resultMessage = dependentServiceService.delete(DS_code);
-        return ResponseEntity.ok(resultMessage);
+        try {
+            String resultMessage = dependentServiceService.delete(DS_code);
+            return ResponseEntity.ok(resultMessage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<DependentService>> searchDependentServicesByKeyword(@RequestParam("name") String name) {
-        List<DependentService> searchResults = dependentServiceService.searchByKeyword(name);
-        return ResponseEntity.ok(searchResults);
+        try {
+            List<DependentService> searchResults = dependentServiceService.searchByKeyword(name);
+            return ResponseEntity.ok(searchResults);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }

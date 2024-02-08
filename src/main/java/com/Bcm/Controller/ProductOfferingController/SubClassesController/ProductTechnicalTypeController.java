@@ -17,21 +17,33 @@ public class ProductTechnicalTypeController {
     private ProductTechnicalTypeService productTechnicalTypeService;
 
     @PostMapping
-    public ResponseEntity<ProductTechnicalType> createProductTechnicalType(@RequestBody ProductTechnicalType ProductTechnicalType) {
-        ProductTechnicalType createdProductTechnicalType = productTechnicalTypeService.create(ProductTechnicalType);
-        return ResponseEntity.ok(createdProductTechnicalType);
+    public ResponseEntity<ProductTechnicalType> createProductTechnicalType(@RequestBody ProductTechnicalType productTechnicalType) {
+        try {
+            ProductTechnicalType createdProductTechnicalType = productTechnicalTypeService.create(productTechnicalType);
+            return ResponseEntity.ok(createdProductTechnicalType);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping
     public ResponseEntity<List<ProductTechnicalType>> getAllProductTechnicalTypes() {
-        List<ProductTechnicalType> ProductTechnicalTypes = productTechnicalTypeService.read();
-        return ResponseEntity.ok(ProductTechnicalTypes);
+        try {
+            List<ProductTechnicalType> productTechnicalTypes = productTechnicalTypeService.read();
+            return ResponseEntity.ok(productTechnicalTypes);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/{po_ProdTechTypeCode}")
     public ResponseEntity<ProductTechnicalType> getProductTechnicalTypeById(@PathVariable("po_ProdTechTypeCode") int po_ProdTechTypeCode) {
-        ProductTechnicalType ProductTechnicalType = productTechnicalTypeService.findById(po_ProdTechTypeCode);
-        return ResponseEntity.ok(ProductTechnicalType);
+        try {
+            ProductTechnicalType productTechnicalType = productTechnicalTypeService.findById(po_ProdTechTypeCode);
+            return ResponseEntity.ok(productTechnicalType);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
+        }
     }
 
     @PutMapping("/{po_ProdTechTypeCode}")
@@ -39,19 +51,31 @@ public class ProductTechnicalTypeController {
             @PathVariable("po_ProdTechTypeCode") int po_ProdTechTypeCode,
             @RequestBody ProductTechnicalType updatedProductTechnicalType) {
 
-        ProductTechnicalType updatedGroup = productTechnicalTypeService.update(po_ProdTechTypeCode, updatedProductTechnicalType);
-        return ResponseEntity.ok(updatedGroup);
+        try {
+            ProductTechnicalType updatedProductTechnicalTypeResult = productTechnicalTypeService.update(po_ProdTechTypeCode, updatedProductTechnicalType);
+            return ResponseEntity.ok(updatedProductTechnicalTypeResult);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @DeleteMapping("/{po_ProdTechTypeCode}")
     public ResponseEntity<String> deleteProductTechnicalType(@PathVariable("po_ProdTechTypeCode") int po_ProdTechTypeCode) {
-        String resultMessage = productTechnicalTypeService.delete(po_ProdTechTypeCode);
-        return ResponseEntity.ok(resultMessage);
+        try {
+            String resultMessage = productTechnicalTypeService.delete(po_ProdTechTypeCode);
+            return ResponseEntity.ok(resultMessage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<ProductTechnicalType>> searchProductTechnicalTypesByKeyword(@RequestParam("name") String name) {
-        List<ProductTechnicalType> searchResults = productTechnicalTypeService.searchByKeyword(name);
-        return ResponseEntity.ok(searchResults);
+        try {
+            List<ProductTechnicalType> searchResults = productTechnicalTypeService.searchByKeyword(name);
+            return ResponseEntity.ok(searchResults);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 }

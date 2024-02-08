@@ -12,12 +12,8 @@ import java.util.Optional;
 @Service
 public class ProductSpecificationServiceImpl implements ProductSpecificationService {
 
-
     @Autowired
     ProductSpecificationRepository productOfferingRepository;
-
-    @Autowired
-    ProductSpecificationService productSpecificationService;
 
     @Override
     public ProductSpecification create(ProductSpecification productSpecification) {
@@ -28,8 +24,6 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
     public List<ProductSpecification> read() {
         return productOfferingRepository.findAll();
     }
-
-
 
     @Override
     public ProductSpecification update(int po_SpecCode, ProductSpecification updatedproductSpecification) {
@@ -67,11 +61,8 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
         return optionalPlan.orElseThrow(() -> new RuntimeException("Product Specification with ID " + po_SpecCode + " not found"));
     }
 
-
     @Override
     public List<ProductSpecification> searchByKeyword(String name) {
         return productOfferingRepository.searchByKeyword(name);
     }
-
-
 }

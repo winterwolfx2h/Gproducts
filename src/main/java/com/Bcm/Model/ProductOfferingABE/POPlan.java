@@ -22,7 +22,6 @@ public class POPlan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private int PO_ID;
 
     @ApiModelProperty(required = true)

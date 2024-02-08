@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-
-
+import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "POPlan")
 @AllArgsConstructor
@@ -22,18 +21,19 @@ public class POPlan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "PO_ID", nullable = false)
     private int PO_ID;
 
-    @ApiModelProperty(required = true)
+    @NotNull(message = "Name cannot be null")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @ApiModelProperty(required = true)
+    @NotNull(message = "Description cannot be null")
+    @Column(name = "description", nullable = false)
     private String description;
 
-    @ApiModelProperty(required = true)
+    @NotNull(message = "Parent cannot be null")
+    @Column(name = "parent", nullable = false)
     private String parent;
-
-
 }
-
 

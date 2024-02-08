@@ -26,12 +26,12 @@ public class POPlanController {
         return poPlanService.read();
     }
 
-    @PostMapping("/post")
+    @PostMapping("/addPOPlan")
     public POPlan create(@RequestBody POPlan poPlan){
         return poPlanService.create(poPlan);
     }
 
-    @PutMapping("/post/{PO_ID}")
+    @PutMapping("/updatePOPlan/{PO_ID}")
     public POPlan update (@PathVariable int PO_ID, @RequestBody POPlan poPlan){
         return poPlanService.update(PO_ID, poPlan);
     }
@@ -51,7 +51,7 @@ public class POPlanController {
     }
 
     @GetMapping("/searchByKeyword")
-    public List<POPlan> searchByKeyword(@RequestParam String name) {
+        public List<POPlan> searchByKeyword(@RequestParam String name) {
         return poPlanService.searchByKeyword(name);
     }
 

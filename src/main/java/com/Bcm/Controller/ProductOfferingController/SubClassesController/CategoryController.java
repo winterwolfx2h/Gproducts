@@ -17,21 +17,21 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody Category Category) {
-        Category createdCategory = categoryService.create(Category);
+    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+        Category createdCategory = categoryService.create(category);
         return ResponseEntity.ok(createdCategory);
     }
 
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategorys() {
-        List<Category> Categorys = categoryService.read();
-        return ResponseEntity.ok(Categorys);
+    public ResponseEntity<List<Category>> getAllCategories() {
+        List<Category> categories = categoryService.read();
+        return ResponseEntity.ok(categories);
     }
 
     @GetMapping("/{po_CategoryCode}")
     public ResponseEntity<Category> getCategoryById(@PathVariable("po_CategoryCode") int po_CategoryCode) {
-        Category Category = categoryService.findById(po_CategoryCode);
-        return ResponseEntity.ok(Category);
+        Category category = categoryService.findById(po_CategoryCode);
+        return ResponseEntity.ok(category);
     }
 
     @PutMapping("/{po_CategoryCode}")
@@ -39,9 +39,10 @@ public class CategoryController {
             @PathVariable("po_CategoryCode") int po_CategoryCode,
             @RequestBody Category updatedCategory) {
 
-        Category updatedGroup = categoryService.update(po_CategoryCode, updatedCategory);
-        return ResponseEntity.ok(updatedGroup);
+        Category updated = categoryService.update(po_CategoryCode, updatedCategory);
+        return ResponseEntity.ok(updated);
     }
+
     @DeleteMapping("/{po_CategoryCode}")
     public ResponseEntity<String> deleteCategory(@PathVariable("po_CategoryCode") int po_CategoryCode) {
         String resultMessage = categoryService.delete(po_CategoryCode);
@@ -49,9 +50,8 @@ public class CategoryController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Category>> searchCategorysByKeyword(@RequestParam("name") String name) {
+    public ResponseEntity<List<Category>> searchCategoriesByKeyword(@RequestParam("name") String name) {
         List<Category> searchResults = categoryService.searchByKeyword(name);
         return ResponseEntity.ok(searchResults);
     }
-
 }

@@ -3,6 +3,7 @@ package com.Bcm.Controller.ProductOfferingController;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferingRelationship;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingRelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,36 +18,54 @@ public class ProductOfferingRelationshipController {
     private ProductOfferingRelationshipService productOfferingRelationshipService;
 
     @PostMapping
-    public ResponseEntity<ProductOfferingRelationship> createProductOfferingRelationship(@RequestBody ProductOfferingRelationship productOfferingRelationship) {
-        ProductOfferingRelationship createdProductOfferingRelationship = productOfferingRelationshipService.create(productOfferingRelationship);
-        return ResponseEntity.ok(createdProductOfferingRelationship);
+    public ResponseEntity<?> createProductOfferingRelationship(@RequestBody ProductOfferingRelationship productOfferingRelationship) {
+        try {
+            ProductOfferingRelationship createdProductOfferingRelationship = productOfferingRelationshipService.create(productOfferingRelationship);
+            return ResponseEntity.ok(createdProductOfferingRelationship);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductOfferingRelationship>> getAllProductOfferingRelationships() {
-        List<ProductOfferingRelationship> productOfferingRelationships = productOfferingRelationshipService.read();
-        return ResponseEntity.ok(productOfferingRelationships);
+    public ResponseEntity<?> getAllProductOfferingRelationships() {
+        try {
+            List<ProductOfferingRelationship> productOfferingRelationships = productOfferingRelationshipService.read();
+            return ResponseEntity.ok(productOfferingRelationships);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
 
     @GetMapping("/{por_Code}")
-    public ResponseEntity<ProductOfferingRelationship> getProductOfferingRelationshipById(@PathVariable("por_Code") int por_Code) {
-        ProductOfferingRelationship productOfferingRelationship = productOfferingRelationshipService.findById(por_Code);
-        return ResponseEntity.ok(productOfferingRelationship);
+    public ResponseEntity<?> getProductOfferingRelationshipById(@PathVariable("por_Code") int por_Code) {
+        try {
+            ProductOfferingRelationship productOfferingRelationship = productOfferingRelationshipService.findById(por_Code);
+            return ResponseEntity.ok(productOfferingRelationship);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
 
     @PutMapping("/{por_Code}")
-    public ResponseEntity<ProductOfferingRelationship> updateProductOfferingRelationship(
+    public ResponseEntity<?> updateProductOfferingRelationship(
             @PathVariable("por_Code") int por_Code,
             @RequestBody ProductOfferingRelationship updatedProductOfferingRelationship) {
-
-        ProductOfferingRelationship updatedProduct = productOfferingRelationshipService.update(por_Code, updatedProductOfferingRelationship);
-        return ResponseEntity.ok(updatedProduct);
+        try {
+            ProductOfferingRelationship updatedProduct = productOfferingRelationshipService.update(por_Code, updatedProductOfferingRelationship);
+            return ResponseEntity.ok(updatedProduct);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
 
     @DeleteMapping("/{por_Code}")
-    public ResponseEntity<String> deleteProductOfferingRelationship(@PathVariable("por_Code") int por_Code) {
-        String resultMessage = productOfferingRelationshipService.delete(por_Code);
-        return ResponseEntity.ok(resultMessage);
+    public ResponseEntity<?> deleteProductOfferingRelationship(@PathVariable("por_Code") int por_Code) {
+        try {
+            String resultMessage = productOfferingRelationshipService.delete(por_Code);
+            return ResponseEntity.ok(resultMessage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
-    
 }

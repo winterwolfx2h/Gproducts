@@ -17,21 +17,33 @@ public class RatePlanController {
     private RatePlanService ratePlanService;
 
     @PostMapping
-    public ResponseEntity<RatePlan> createRatePlan(@RequestBody RatePlan RatePlan) {
-        RatePlan createdRatePlan = ratePlanService.create(RatePlan);
-        return ResponseEntity.ok(createdRatePlan);
+    public ResponseEntity<RatePlan> createRatePlan(@RequestBody RatePlan ratePlan) {
+        try {
+            RatePlan createdRatePlan = ratePlanService.create(ratePlan);
+            return ResponseEntity.ok(createdRatePlan);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping
     public ResponseEntity<List<RatePlan>> getAllRatePlans() {
-        List<RatePlan> RatePlans = ratePlanService.read();
-        return ResponseEntity.ok(RatePlans);
+        try {
+            List<RatePlan> ratePlans = ratePlanService.read();
+            return ResponseEntity.ok(ratePlans);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/{po_RatePlanCode}")
     public ResponseEntity<RatePlan> getRatePlanById(@PathVariable("po_RatePlanCode") int po_RatePlanCode) {
-        RatePlan RatePlan = ratePlanService.findById(po_RatePlanCode);
-        return ResponseEntity.ok(RatePlan);
+        try {
+            RatePlan ratePlan = ratePlanService.findById(po_RatePlanCode);
+            return ResponseEntity.ok(ratePlan);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
+        }
     }
 
     @PutMapping("/{po_RatePlanCode}")
@@ -39,19 +51,31 @@ public class RatePlanController {
             @PathVariable("po_RatePlanCode") int po_RatePlanCode,
             @RequestBody RatePlan updatedRatePlan) {
 
-        RatePlan updatedGroup = ratePlanService.update(po_RatePlanCode, updatedRatePlan);
-        return ResponseEntity.ok(updatedGroup);
+        try {
+            RatePlan updatedRatePlanResult = ratePlanService.update(po_RatePlanCode, updatedRatePlan);
+            return ResponseEntity.ok(updatedRatePlanResult);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @DeleteMapping("/{po_RatePlanCode}")
     public ResponseEntity<String> deleteRatePlan(@PathVariable("po_RatePlanCode") int po_RatePlanCode) {
-        String resultMessage = ratePlanService.delete(po_RatePlanCode);
-        return ResponseEntity.ok(resultMessage);
+        try {
+            String resultMessage = ratePlanService.delete(po_RatePlanCode);
+            return ResponseEntity.ok(resultMessage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<RatePlan>> searchRatePlansByKeyword(@RequestParam("name") String name) {
-        List<RatePlan> searchResults = ratePlanService.searchByKeyword(name);
-        return ResponseEntity.ok(searchResults);
+        try {
+            List<RatePlan> searchResults = ratePlanService.searchByKeyword(name);
+            return ResponseEntity.ok(searchResults);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 }

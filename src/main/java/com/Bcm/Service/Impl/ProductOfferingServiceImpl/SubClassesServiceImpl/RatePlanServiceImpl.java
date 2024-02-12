@@ -12,53 +12,69 @@ import java.util.Optional;
 @Service
 public class RatePlanServiceImpl implements RatePlanService {
 
-
     @Autowired
     RatePlanRepository ratePlanRepository;
 
-    @Autowired
-    RatePlanService ratePlanService;
-
     @Override
-    public RatePlan create(RatePlan RatePlan) {
-        return ratePlanRepository.save(RatePlan);
+    public RatePlan create(RatePlan ratePlan) {
+        try {
+            return ratePlanRepository.save(ratePlan);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for creating RatePlan");
+        }
     }
 
     @Override
     public List<RatePlan> read() {
-        return ratePlanRepository.findAll();
+        try {
+            return ratePlanRepository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while retrieving RatePlans");
+        }
     }
 
     @Override
     public RatePlan update(int po_RatePlanCode, RatePlan updatedRatePlan) {
-        Optional<RatePlan> existingRatePlanOptional = ratePlanRepository.findById(po_RatePlanCode);
-
-        if (existingRatePlanOptional.isPresent()) {
-            RatePlan existingRatePlan = existingRatePlanOptional.get();
-            existingRatePlan.setName(updatedRatePlan.getName());
-            return ratePlanRepository.save(existingRatePlan);
-        } else {
-            throw new RuntimeException("Could not find Rate Plan with ID: " + po_RatePlanCode);
+        try {
+            Optional<RatePlan> existingRatePlanOptional = ratePlanRepository.findById(po_RatePlanCode);
+            if (existingRatePlanOptional.isPresent()) {
+                RatePlan existingRatePlan = existingRatePlanOptional.get();
+                existingRatePlan.setName(updatedRatePlan.getName());
+                return ratePlanRepository.save(existingRatePlan);
+            } else {
+                throw new RuntimeException("Rate Plan with ID " + po_RatePlanCode + " not found");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for updating RatePlan");
         }
     }
 
     @Override
     public String delete(int po_RatePlanCode) {
-        ratePlanRepository.deleteById(po_RatePlanCode);
-        return ("Rate Plan was successfully deleted");
+        try {
+            ratePlanRepository.deleteById(po_RatePlanCode);
+            return "Rate Plan with ID " + po_RatePlanCode + " was successfully deleted";
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for deleting RatePlan");
+        }
     }
 
     @Override
     public RatePlan findById(int po_RatePlanCode) {
-        Optional<RatePlan> optionalPlan = ratePlanRepository.findById(po_RatePlanCode);
-        return optionalPlan.orElseThrow(() -> new RuntimeException("Rate Plan with ID " + po_RatePlanCode + " not found"));
+        try {
+            Optional<RatePlan> optionalRatePlan = ratePlanRepository.findById(po_RatePlanCode);
+            return optionalRatePlan.orElseThrow(() -> new RuntimeException("Rate Plan with ID " + po_RatePlanCode + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding RatePlan");
+        }
     }
-
 
     @Override
     public List<RatePlan> searchByKeyword(String name) {
-        return ratePlanRepository.searchByKeyword(name);
+        try {
+            return ratePlanRepository.searchByKeyword(name);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for searching RatePlan by keyword");
+        }
     }
-
-
 }

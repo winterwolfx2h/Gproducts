@@ -17,21 +17,33 @@ public class FamilyController {
     private FamilyService familyService;
 
     @PostMapping
-    public ResponseEntity<Family> createFamily(@RequestBody Family Family) {
-        Family createdFamily = familyService.create(Family);
-        return ResponseEntity.ok(createdFamily);
+    public ResponseEntity<Family> createFamily(@RequestBody Family family) {
+        try {
+            Family createdFamily = familyService.create(family);
+            return ResponseEntity.ok(createdFamily);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping
-    public ResponseEntity<List<Family>> getAllFamilys() {
-        List<Family> Familys = familyService.read();
-        return ResponseEntity.ok(Familys);
+    public ResponseEntity<List<Family>> getAllFamilies() {
+        try {
+            List<Family> families = familyService.read();
+            return ResponseEntity.ok(families);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/{po_FamilyCode}")
     public ResponseEntity<Family> getFamilyById(@PathVariable("po_FamilyCode") int po_FamilyCode) {
-        Family Family = familyService.findById(po_FamilyCode);
-        return ResponseEntity.ok(Family);
+        try {
+            Family family = familyService.findById(po_FamilyCode);
+            return ResponseEntity.ok(family);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
+        }
     }
 
     @PutMapping("/{po_FamilyCode}")
@@ -39,19 +51,31 @@ public class FamilyController {
             @PathVariable("po_FamilyCode") int po_FamilyCode,
             @RequestBody Family updatedFamily) {
 
-        Family updatedGroup = familyService.update(po_FamilyCode, updatedFamily);
-        return ResponseEntity.ok(updatedGroup);
+        try {
+            Family updatedGroup = familyService.update(po_FamilyCode, updatedFamily);
+            return ResponseEntity.ok(updatedGroup);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @DeleteMapping("/{po_FamilyCode}")
     public ResponseEntity<String> deleteFamily(@PathVariable("po_FamilyCode") int po_FamilyCode) {
-        String resultMessage = familyService.delete(po_FamilyCode);
-        return ResponseEntity.ok(resultMessage);
+        try {
+            String resultMessage = familyService.delete(po_FamilyCode);
+            return ResponseEntity.ok(resultMessage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Family>> searchFamilysByKeyword(@RequestParam("name") String name) {
-        List<Family> searchResults = familyService.searchByKeyword(name);
-        return ResponseEntity.ok(searchResults);
+    public ResponseEntity<List<Family>> searchFamiliesByKeyword(@RequestParam("name") String name) {
+        try {
+            List<Family> searchResults = familyService.searchByKeyword(name);
+            return ResponseEntity.ok(searchResults);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 }

@@ -17,21 +17,33 @@ public class ProductSubTypeController {
     private ProductSubTypeService productSubTypeService;
 
     @PostMapping
-    public ResponseEntity<ProductSubType> createProductSubType(@RequestBody ProductSubType ProductSubType) {
-        ProductSubType createdProductSubType = productSubTypeService.create(ProductSubType);
-        return ResponseEntity.ok(createdProductSubType);
+    public ResponseEntity<ProductSubType> createProductSubType(@RequestBody ProductSubType productSubType) {
+        try {
+            ProductSubType createdProductSubType = productSubTypeService.create(productSubType);
+            return ResponseEntity.ok(createdProductSubType);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping
     public ResponseEntity<List<ProductSubType>> getAllProductSubTypes() {
-        List<ProductSubType> ProductSubTypes = productSubTypeService.read();
-        return ResponseEntity.ok(ProductSubTypes);
+        try {
+            List<ProductSubType> productSubTypes = productSubTypeService.read();
+            return ResponseEntity.ok(productSubTypes);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/{po_ProdSubTypeCode}")
     public ResponseEntity<ProductSubType> getProductSubTypeById(@PathVariable("po_ProdSubTypeCode") int po_ProdSubTypeCode) {
-        ProductSubType ProductSubType = productSubTypeService.findById(po_ProdSubTypeCode);
-        return ResponseEntity.ok(ProductSubType);
+        try {
+            ProductSubType productSubType = productSubTypeService.findById(po_ProdSubTypeCode);
+            return ResponseEntity.ok(productSubType);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
+        }
     }
 
     @PutMapping("/{po_ProdSubTypeCode}")
@@ -39,19 +51,31 @@ public class ProductSubTypeController {
             @PathVariable("po_ProdSubTypeCode") int po_ProdSubTypeCode,
             @RequestBody ProductSubType updatedProductSubType) {
 
-        ProductSubType updatedGroup = productSubTypeService.update(po_ProdSubTypeCode, updatedProductSubType);
-        return ResponseEntity.ok(updatedGroup);
+        try {
+            ProductSubType updatedProductSubTypeResult = productSubTypeService.update(po_ProdSubTypeCode, updatedProductSubType);
+            return ResponseEntity.ok(updatedProductSubTypeResult);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @DeleteMapping("/{po_ProdSubTypeCode}")
     public ResponseEntity<String> deleteProductSubType(@PathVariable("po_ProdSubTypeCode") int po_ProdSubTypeCode) {
-        String resultMessage = productSubTypeService.delete(po_ProdSubTypeCode);
-        return ResponseEntity.ok(resultMessage);
+        try {
+            String resultMessage = productSubTypeService.delete(po_ProdSubTypeCode);
+            return ResponseEntity.ok(resultMessage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<ProductSubType>> searchProductSubTypesByKeyword(@RequestParam("name") String name) {
-        List<ProductSubType> searchResults = productSubTypeService.searchByKeyword(name);
-        return ResponseEntity.ok(searchResults);
+        try {
+            List<ProductSubType> searchResults = productSubTypeService.searchByKeyword(name);
+            return ResponseEntity.ok(searchResults);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 }

@@ -12,7 +12,6 @@ import java.util.Optional;
 @Service
 public class TimeZoneTypeServiceImpl implements TimeZoneTypeService {
 
-
     @Autowired
     TimeZoneTypeRepository timeZoneTypeRepository;
 
@@ -20,45 +19,65 @@ public class TimeZoneTypeServiceImpl implements TimeZoneTypeService {
     TimeZoneTypeService timeZoneTypeService;
 
     @Override
-    public TimeZoneType create(TimeZoneType TimeZoneType) {
-        return timeZoneTypeRepository.save(TimeZoneType);
+    public TimeZoneType create(TimeZoneType timeZoneType) {
+        try {
+            return timeZoneTypeRepository.save(timeZoneType);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for creating TimeZoneType");
+        }
     }
 
     @Override
     public List<TimeZoneType> read() {
-        return timeZoneTypeRepository.findAll();
+        try {
+            return timeZoneTypeRepository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while retrieving TimeZoneTypes");
+        }
     }
 
     @Override
     public TimeZoneType update(int po_TimeZoneTypeCode, TimeZoneType updatedTimeZoneType) {
-        Optional<TimeZoneType> existingTimeZoneTypeOptional = timeZoneTypeRepository.findById(po_TimeZoneTypeCode);
-
-        if (existingTimeZoneTypeOptional.isPresent()) {
-            TimeZoneType existingTimeZoneType = existingTimeZoneTypeOptional.get();
-            existingTimeZoneType.setName(updatedTimeZoneType.getName());
-            return timeZoneTypeRepository.save(existingTimeZoneType);
-        } else {
-            throw new RuntimeException("Could not find Time Zone Type with ID: " + po_TimeZoneTypeCode);
+        try {
+            Optional<TimeZoneType> existingTimeZoneTypeOptional = timeZoneTypeRepository.findById(po_TimeZoneTypeCode);
+            if (existingTimeZoneTypeOptional.isPresent()) {
+                TimeZoneType existingTimeZoneType = existingTimeZoneTypeOptional.get();
+                existingTimeZoneType.setName(updatedTimeZoneType.getName());
+                return timeZoneTypeRepository.save(existingTimeZoneType);
+            } else {
+                throw new RuntimeException("Time Zone Type with ID " + po_TimeZoneTypeCode + " not found");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for updating TimeZoneType");
         }
     }
 
     @Override
     public String delete(int po_TimeZoneTypeCode) {
-        timeZoneTypeRepository.deleteById(po_TimeZoneTypeCode);
-        return ("Time Zone Type was successfully deleted");
+        try {
+            timeZoneTypeRepository.deleteById(po_TimeZoneTypeCode);
+            return "Time Zone Type with ID " + po_TimeZoneTypeCode + " was successfully deleted";
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for deleting TimeZoneType");
+        }
     }
 
     @Override
     public TimeZoneType findById(int po_TimeZoneTypeCode) {
-        Optional<TimeZoneType> optionalPlan = timeZoneTypeRepository.findById(po_TimeZoneTypeCode);
-        return optionalPlan.orElseThrow(() -> new RuntimeException("Time Zone Type with ID " + po_TimeZoneTypeCode + " not found"));
+        try {
+            Optional<TimeZoneType> optionalTimeZoneType = timeZoneTypeRepository.findById(po_TimeZoneTypeCode);
+            return optionalTimeZoneType.orElseThrow(() -> new RuntimeException("Time Zone Type with ID " + po_TimeZoneTypeCode + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding TimeZoneType");
+        }
     }
-
 
     @Override
     public List<TimeZoneType> searchByKeyword(String name) {
-        return timeZoneTypeRepository.searchByKeyword(name);
+        try {
+            return timeZoneTypeRepository.searchByKeyword(name);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for searching TimeZoneType by keyword");
+        }
     }
-
-
 }

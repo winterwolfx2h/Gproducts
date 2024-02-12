@@ -12,12 +12,8 @@ import java.util.Optional;
 @Service
 public class DureeEngagementServiceImpl implements DureeEngagementService {
 
-
     @Autowired
     DureeEngagementRepository dureeEngagementRepository;
-
-    @Autowired
-    DureeEngagementService dureeEngagementService;
 
     @Override
     public DureeEngagement create(DureeEngagement dureeEngagement) {
@@ -51,14 +47,11 @@ public class DureeEngagementServiceImpl implements DureeEngagementService {
     @Override
     public DureeEngagement findById(int po_DureeEngCode) {
         Optional<DureeEngagement> optionalDureeEngagement = dureeEngagementRepository.findById(po_DureeEngCode);
-        return optionalDureeEngagement.orElseThrow(() -> new RuntimeException("Group Dimension with ID " + po_DureeEngCode + " not found"));
+        return optionalDureeEngagement.orElseThrow(() -> new RuntimeException("Duree Engagement with ID " + po_DureeEngCode + " not found"));
     }
-
 
     @Override
     public List<DureeEngagement> searchByKeyword(String name) {
         return dureeEngagementRepository.searchByKeyword(name);
     }
-
-
 }

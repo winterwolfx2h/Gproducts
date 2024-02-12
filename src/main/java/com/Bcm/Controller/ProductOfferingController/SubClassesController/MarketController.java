@@ -17,21 +17,33 @@ public class MarketController {
     private MarketService marketService;
 
     @PostMapping
-    public ResponseEntity<Market> createMarket(@RequestBody Market Market) {
-        Market createdMarket = marketService.create(Market);
-        return ResponseEntity.ok(createdMarket);
+    public ResponseEntity<Market> createMarket(@RequestBody Market market) {
+        try {
+            Market createdMarket = marketService.create(market);
+            return ResponseEntity.ok(createdMarket);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping
     public ResponseEntity<List<Market>> getAllMarkets() {
-        List<Market> Markets = marketService.read();
-        return ResponseEntity.ok(Markets);
+        try {
+            List<Market> markets = marketService.read();
+            return ResponseEntity.ok(markets);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/{po_MarketCode}")
     public ResponseEntity<Market> getMarketById(@PathVariable("po_MarketCode") int po_MarketCode) {
-        Market Market = marketService.findById(po_MarketCode);
-        return ResponseEntity.ok(Market);
+        try {
+            Market market = marketService.findById(po_MarketCode);
+            return ResponseEntity.ok(market);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
+        }
     }
 
     @PutMapping("/{po_MarketCode}")
@@ -39,19 +51,31 @@ public class MarketController {
             @PathVariable("po_MarketCode") int po_MarketCode,
             @RequestBody Market updatedMarket) {
 
-        Market updatedGroup = marketService.update(po_MarketCode, updatedMarket);
-        return ResponseEntity.ok(updatedGroup);
+        try {
+            Market updatedMarketResult = marketService.update(po_MarketCode, updatedMarket);
+            return ResponseEntity.ok(updatedMarketResult);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @DeleteMapping("/{po_MarketCode}")
     public ResponseEntity<String> deleteMarket(@PathVariable("po_MarketCode") int po_MarketCode) {
-        String resultMessage = marketService.delete(po_MarketCode);
-        return ResponseEntity.ok(resultMessage);
+        try {
+            String resultMessage = marketService.delete(po_MarketCode);
+            return ResponseEntity.ok(resultMessage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<Market>> searchMarketsByKeyword(@RequestParam("name") String name) {
-        List<Market> searchResults = marketService.searchByKeyword(name);
-        return ResponseEntity.ok(searchResults);
+        try {
+            List<Market> searchResults = marketService.searchByKeyword(name);
+            return ResponseEntity.ok(searchResults);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 }

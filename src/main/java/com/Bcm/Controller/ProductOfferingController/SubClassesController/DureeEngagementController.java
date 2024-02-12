@@ -17,21 +17,21 @@ public class DureeEngagementController {
     private DureeEngagementService dureeEngagementService;
 
     @PostMapping
-    public ResponseEntity<DureeEngagement> createDureeEngagement(@RequestBody DureeEngagement DureeEngagement) {
-        DureeEngagement createdDureeEngagement = dureeEngagementService.create(DureeEngagement);
+    public ResponseEntity<DureeEngagement> createDureeEngagement(@RequestBody DureeEngagement dureeEngagement) {
+        DureeEngagement createdDureeEngagement = dureeEngagementService.create(dureeEngagement);
         return ResponseEntity.ok(createdDureeEngagement);
     }
 
     @GetMapping
     public ResponseEntity<List<DureeEngagement>> getAllDureeEngagements() {
-        List<DureeEngagement> DureeEngagements = dureeEngagementService.read();
-        return ResponseEntity.ok(DureeEngagements);
+        List<DureeEngagement> dureeEngagements = dureeEngagementService.read();
+        return ResponseEntity.ok(dureeEngagements);
     }
 
     @GetMapping("/{po_DureeEngCode}")
     public ResponseEntity<DureeEngagement> getDureeEngagementById(@PathVariable("po_DureeEngCode") int po_DureeEngCode) {
-        DureeEngagement DureeEngagement = dureeEngagementService.findById(po_DureeEngCode);
-        return ResponseEntity.ok(DureeEngagement);
+        DureeEngagement dureeEngagement = dureeEngagementService.findById(po_DureeEngCode);
+        return ResponseEntity.ok(dureeEngagement);
     }
 
     @PutMapping("/{po_DureeEngCode}")

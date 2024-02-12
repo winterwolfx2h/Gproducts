@@ -12,12 +12,8 @@ import java.util.Optional;
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-
     @Autowired
     CategoryRepository categoryRepository;
-
-    @Autowired
-    CategoryService categoryService;
 
     @Override
     public Category create(Category category) {
@@ -29,7 +25,6 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAll();
     }
 
-
     @Override
     public Category update(int po_CategoryCode, Category updatedCategory) {
         Optional<Category> existingCategoryOptional = categoryRepository.findById(po_CategoryCode);
@@ -39,15 +34,14 @@ public class CategoryServiceImpl implements CategoryService {
             existingCategory.setName(updatedCategory.getName());
             return categoryRepository.save(existingCategory);
         } else {
-            throw new RuntimeException("Could not find Group Dimension with ID: " + po_CategoryCode);
+            throw new RuntimeException("Could not find Category with ID: " + po_CategoryCode);
         }
     }
-
 
     @Override
     public String delete(int po_CategoryCode) {
         categoryRepository.deleteById(po_CategoryCode);
-        return ("Group Dimension was successfully deleted");
+        return ("Category was successfully deleted");
     }
 
     @Override
@@ -56,11 +50,8 @@ public class CategoryServiceImpl implements CategoryService {
         return optionalCategory.orElseThrow(() -> new RuntimeException("Category with ID " + po_CategoryCode + " not found"));
     }
 
-
     @Override
     public List<Category> searchByKeyword(String name) {
         return categoryRepository.searchByKeyword(name);
     }
-
-
 }

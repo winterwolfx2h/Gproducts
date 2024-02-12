@@ -17,21 +17,33 @@ public class ParentController {
     private ParentService parentService;
 
     @PostMapping
-    public ResponseEntity<Parent> createParent(@RequestBody Parent Parent) {
-        Parent createdParent = parentService.create(Parent);
-        return ResponseEntity.ok(createdParent);
+    public ResponseEntity<Parent> createParent(@RequestBody Parent parent) {
+        try {
+            Parent createdParent = parentService.create(parent);
+            return ResponseEntity.ok(createdParent);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping
     public ResponseEntity<List<Parent>> getAllParents() {
-        List<Parent> Parents = parentService.read();
-        return ResponseEntity.ok(Parents);
+        try {
+            List<Parent> parents = parentService.read();
+            return ResponseEntity.ok(parents);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/{po_ParentCode}")
     public ResponseEntity<Parent> getParentById(@PathVariable("po_ParentCode") int po_ParentCode) {
-        Parent Parent = parentService.findById(po_ParentCode);
-        return ResponseEntity.ok(Parent);
+        try {
+            Parent parent = parentService.findById(po_ParentCode);
+            return ResponseEntity.ok(parent);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
+        }
     }
 
     @PutMapping("/{po_ParentCode}")
@@ -39,19 +51,31 @@ public class ParentController {
             @PathVariable("po_ParentCode") int po_ParentCode,
             @RequestBody Parent updatedParent) {
 
-        Parent updatedGroup = parentService.update(po_ParentCode, updatedParent);
-        return ResponseEntity.ok(updatedGroup);
+        try {
+            Parent updatedParentResult = parentService.update(po_ParentCode, updatedParent);
+            return ResponseEntity.ok(updatedParentResult);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @DeleteMapping("/{po_ParentCode}")
     public ResponseEntity<String> deleteParent(@PathVariable("po_ParentCode") int po_ParentCode) {
-        String resultMessage = parentService.delete(po_ParentCode);
-        return ResponseEntity.ok(resultMessage);
+        try {
+            String resultMessage = parentService.delete(po_ParentCode);
+            return ResponseEntity.ok(resultMessage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<Parent>> searchParentsByKeyword(@RequestParam("name") String name) {
-        List<Parent> searchResults = parentService.searchByKeyword(name);
-        return ResponseEntity.ok(searchResults);
+        try {
+            List<Parent> searchResults = parentService.searchByKeyword(name);
+            return ResponseEntity.ok(searchResults);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 }

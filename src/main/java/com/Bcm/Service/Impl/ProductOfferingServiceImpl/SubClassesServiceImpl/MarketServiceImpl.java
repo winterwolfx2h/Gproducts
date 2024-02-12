@@ -12,53 +12,69 @@ import java.util.Optional;
 @Service
 public class MarketServiceImpl implements MarketService {
 
-
     @Autowired
     MarketRepository marketRepository;
 
-    @Autowired
-    MarketService marketService;
-
     @Override
     public Market create(Market market) {
-        return marketRepository.save(market);
+        try {
+            return marketRepository.save(market);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for creating Market");
+        }
     }
 
     @Override
     public List<Market> read() {
-        return marketRepository.findAll();
+        try {
+            return marketRepository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while retrieving Markets");
+        }
     }
 
     @Override
     public Market update(int po_MarketCode, Market updatedMarket) {
-        Optional<Market> existingMarketOptional = marketRepository.findById(po_MarketCode);
-
-        if (existingMarketOptional.isPresent()) {
-            Market existingMarket = existingMarketOptional.get();
-            existingMarket.setName(updatedMarket.getName());
-            return marketRepository.save(existingMarket);
-        } else {
-            throw new RuntimeException("Could not find Group Dimension with ID: " + po_MarketCode);
+        try {
+            Optional<Market> existingMarketOptional = marketRepository.findById(po_MarketCode);
+            if (existingMarketOptional.isPresent()) {
+                Market existingMarket = existingMarketOptional.get();
+                existingMarket.setName(updatedMarket.getName());
+                return marketRepository.save(existingMarket);
+            } else {
+                throw new RuntimeException("Market with ID " + po_MarketCode + " not found");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for updating Market");
         }
     }
 
     @Override
     public String delete(int po_MarketCode) {
-        marketRepository.deleteById(po_MarketCode);
-        return ("Market was successfully deleted");
+        try {
+            marketRepository.deleteById(po_MarketCode);
+            return ("Market with ID " + po_MarketCode + " was successfully deleted");
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for deleting Market");
+        }
     }
 
     @Override
     public Market findById(int po_MarketCode) {
-        Optional<Market> optionalMarket = marketRepository.findById(po_MarketCode);
-        return optionalMarket.orElseThrow(() -> new RuntimeException("Market with ID " + po_MarketCode + " not found"));
+        try {
+            Optional<Market> optionalMarket = marketRepository.findById(po_MarketCode);
+            return optionalMarket.orElseThrow(() -> new RuntimeException("Market with ID " + po_MarketCode + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding Market");
+        }
     }
-
 
     @Override
     public List<Market> searchByKeyword(String name) {
-        return marketRepository.searchByKeyword(name);
+        try {
+            return marketRepository.searchByKeyword(name);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for searching Market by keyword");
+        }
     }
-
-
 }

@@ -15,9 +15,6 @@ public class BundledProductOfferServiceImpl implements BundledProductOfferServic
     @Autowired
     BundledProductOfferRepository bundledProductOfferRepository;
 
-    @Autowired
-    BundledProductOfferService bundledProductOfferService;
-
     @Override
     public BundledProductOffer create(BundledProductOffer bundledProductOffer) {
         return bundledProductOfferRepository.save(bundledProductOffer);
@@ -39,19 +36,21 @@ public class BundledProductOfferServiceImpl implements BundledProductOfferServic
 
             return bundledProductOfferRepository.save(existingProduct);
         } else {
-            throw new RuntimeException("Could not find product offering with ID: " + bdo_code);
+            throw new RuntimeException("Could not find bundled product offer with ID: " + bdo_code);
         }
     }
     @Override
     public String delete(int bdo_code) {
-        bundledProductOfferRepository.deleteById(bdo_code);
-        return ("plan was successfully deleted");
+        try {
+            bundledProductOfferRepository.deleteById(bdo_code);
+            return ("Bundled product offer was successfully deleted");
+        } catch (RuntimeException e) {
+            throw new RuntimeException("An unexpected error occurred while deleting bundled product offer with ID: " + bdo_code, e);
+        }
     }
     @Override
     public BundledProductOffer findById(int bdo_code) {
         Optional<BundledProductOffer> optionalPlan = bundledProductOfferRepository.findById(bdo_code);
-        return optionalPlan.orElseThrow(() -> new RuntimeException("Plan with ID " + bdo_code + " not found"));
+        return optionalPlan.orElseThrow(() -> new RuntimeException("Bundled product offer with ID " + bdo_code + " not found"));
     }
-
-
 }

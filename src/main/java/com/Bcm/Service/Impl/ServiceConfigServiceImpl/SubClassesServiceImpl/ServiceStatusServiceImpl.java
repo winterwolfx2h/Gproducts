@@ -12,23 +12,18 @@ import java.util.Optional;
 @Service
 public class ServiceStatusServiceImpl implements ServiceStatusService {
 
-
     @Autowired
     ServiceStatusRepository serviceStatusRepository;
 
-    @Autowired
-    ServiceStatusService serviceStatusService;
-
     @Override
-    public ServiceStatus create(ServiceStatus ServiceStatus) {
-        return serviceStatusRepository.save(ServiceStatus);
+    public ServiceStatus create(ServiceStatus serviceStatus) {
+        return serviceStatusRepository.save(serviceStatus);
     }
 
     @Override
     public List<ServiceStatus> read() {
         return serviceStatusRepository.findAll();
     }
-
 
     @Override
     public ServiceStatus update(int SS_code, ServiceStatus updatedServiceStatus) {
@@ -39,15 +34,18 @@ public class ServiceStatusServiceImpl implements ServiceStatusService {
             existingServiceStatus.setName(updatedServiceStatus.getName());
             return serviceStatusRepository.save(existingServiceStatus);
         } else {
-            throw new RuntimeException("Could not find Group Dimension with ID: " + SS_code);
+            throw new RuntimeException("Could not find ServiceStatus with ID: " + SS_code);
         }
     }
 
-
     @Override
     public String delete(int SS_code) {
-        serviceStatusRepository.deleteById(SS_code);
-        return ("Group Dimension was successfully deleted");
+        try {
+            serviceStatusRepository.deleteById(SS_code);
+            return "ServiceStatus was successfully deleted";
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while deleting ServiceStatus with ID: " + SS_code, e);
+        }
     }
 
     @Override
@@ -56,11 +54,8 @@ public class ServiceStatusServiceImpl implements ServiceStatusService {
         return optionalServiceStatus.orElseThrow(() -> new RuntimeException("ServiceStatus with ID " + SS_code + " not found"));
     }
 
-
     @Override
     public List<ServiceStatus> searchByKeyword(String name) {
         return serviceStatusRepository.searchByKeyword(name);
     }
-
-
 }

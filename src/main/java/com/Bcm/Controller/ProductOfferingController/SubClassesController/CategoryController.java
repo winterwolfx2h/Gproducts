@@ -27,7 +27,6 @@ public class CategoryController {
         List<Category> categories = categoryService.read();
         return ResponseEntity.ok(categories);
     }
-
     @GetMapping("/{po_CategoryCode}")
     public ResponseEntity<Category> getCategoryById(@PathVariable("po_CategoryCode") int po_CategoryCode) {
         Category category = categoryService.findById(po_CategoryCode);

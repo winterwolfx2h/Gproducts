@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Table(name = "ProductOfferingRelationship")
@@ -26,10 +27,12 @@ public class ProductOfferingRelationship {
     private int por_Code;
 
     @Column(name = "type", nullable = false)
+    @NotNull
     @OneToMany(mappedBy = "productOfferingRelationship")
     private List<Type> type;
 
     @Column(name = "validFor", nullable = false)
+    @NotNull
     @OneToMany(mappedBy = "productOfferingRelationship")
     private List<ValidFor> validFor;
 

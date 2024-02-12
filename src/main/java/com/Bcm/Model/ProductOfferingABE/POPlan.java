@@ -12,7 +12,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 @Entity
-@Table(name = "POPlan")
+@Table(name = "poplan")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -21,16 +21,20 @@ public class POPlan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "PO_ID", nullable = false)
-    private int PO_ID;
-
-    @NotNull(message = "Name cannot be null")
-    @Column(name = "name", nullable = false)
-    private String name;
-
+    @Column(name = "TMCODE", nullable = false)
+    private int TMCODE;
+/*
+    @NotNull(message = "TMCODE cannot be null")
+    @Column(name = "TMCODE", nullable = false)
+    private String TMCODE;
+*/
     @NotNull(message = "Description cannot be null")
-    @Column(name = "description", nullable = false)
-    private String description;
+    @Column(name = "DES", nullable = false)
+    private String DES;
+
+    @NotNull(message = "SHDES cannot be null")
+    @Column(name = "SHDES", nullable = false)
+    private String SHDES;
 
     @NotNull(message = "Parent cannot be null")
     @Column(name = "parent", nullable = false)

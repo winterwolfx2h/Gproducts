@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface POPlanRepository extends JpaRepository<POPlan, Integer> {
 
-    Optional<POPlan> findById(int PO_ID);
-    @Query("SELECT p FROM POPlan p WHERE p.name LIKE %:name% ")
-    List<POPlan> searchByKeyword(String name);
+    Optional<POPlan> findById(int TMCODE);
+    @Query("SELECT p FROM POPlan p WHERE p.DES LIKE %:DES% ")
+    List<POPlan> searchByKeyword(String DES);
 }

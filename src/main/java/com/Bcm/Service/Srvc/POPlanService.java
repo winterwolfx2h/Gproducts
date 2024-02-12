@@ -9,11 +9,11 @@ public interface POPlanService {
 
     POPlan create (POPlan poPlan);
     List <POPlan> read();
-    POPlan update(int PO_ID, POPlan poPlan);
-    String delete (int PO_ID);
-    POPlan findById(int PO_ID);
+    POPlan update(int TMCODE, POPlan poPlan);
+    String delete (int TMCODE);
+    POPlan findById(int TMCODE);
 
-    List<POPlan> searchByKeyword(String name);
+    List<POPlan> searchByKeyword(String DES);
 
 
 }

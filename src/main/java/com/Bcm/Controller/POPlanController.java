@@ -35,10 +35,10 @@ public class POPlanController {
         }
     }
 
-    @PutMapping("/updatePOPlan/{PO_ID}")
-    public ResponseEntity<?> update(@PathVariable int PO_ID, @RequestBody POPlan poPlan) {
+    @PutMapping("/updatePOPlan/{TMCODE}")
+    public ResponseEntity<?> update(@PathVariable int TMCODE, @RequestBody POPlan poPlan) {
         try {
-            POPlan updatedPlan = poPlanService.update(PO_ID, poPlan);
+            POPlan updatedPlan = poPlanService.update(TMCODE, poPlan);
             return ResponseEntity.ok(updatedPlan);
         } catch (InvalidInputException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -46,15 +46,15 @@ public class POPlanController {
     }
 
 
-    @DeleteMapping("/{PO_ID}")
-    public String delete(@PathVariable int PO_ID){
-            return poPlanService.delete(PO_ID);
+    @DeleteMapping("/{TMCODE}")
+    public String delete(@PathVariable int TMCODE){
+            return poPlanService.delete(TMCODE);
     }
 
-    @GetMapping("/getById/{PO_ID}")
-    public ResponseEntity<POPlan> getById(@PathVariable int PO_ID) {
+    @GetMapping("/getById/{TMCODE}")
+    public ResponseEntity<POPlan> getById(@PathVariable int TMCODE) {
         try {
-            POPlan foundPlan = poPlanService.findById(PO_ID);
+            POPlan foundPlan = poPlanService.findById(TMCODE);
             return ResponseEntity.ok(foundPlan);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -62,9 +62,9 @@ public class POPlanController {
     }
 
     @GetMapping("/searchByKeyword")
-    public List<POPlan> searchByKeyword(@RequestParam String name) {
+    public List<POPlan> searchByKeyword(@RequestParam String DES) {
         try {
-            return poPlanService.searchByKeyword(name);
+            return poPlanService.searchByKeyword(DES);
         } catch (Exception e) {
             throw handleException(e);
         }

@@ -1,4 +1,5 @@
 
 
 ${application.title} ${application.version}
-Powered by Spring Boot ${spring-boot.version}
+Powered by BILLCOM CONSULTING Sousse, Tunisia.
+Spring Boot Version : ${spring-boot.version}

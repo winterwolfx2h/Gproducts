@@ -16,5 +16,4 @@ public interface ProductOfferingService {
 
     List<ProductOffering> searchByKeyword(String name);
 
-
 }

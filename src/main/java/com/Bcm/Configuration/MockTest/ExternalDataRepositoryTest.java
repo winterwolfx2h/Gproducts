@@ -1,6 +1,7 @@
-package com.Bcm.Cfg.MockTest;
+package com.Bcm.Configuration.MockTest;
 
-import com.Bcm.Cfg.RatePlanBSCSRowMapper;
+
+import com.Bcm.Configuration.RatePlanBSCSRowMapper;
 import com.Bcm.Model.BSCSModels.RatePlanBSCS;
 import com.Bcm.Repository.ExternalBSCSDBRepo.ExternalDataRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,7 +31,7 @@ public class ExternalDataRepositoryTest {
 
     @Test
     public void testFindAll() {
-        List<RatePlanBSCS> expectedRatePlans = Arrays.asList(
+        List<RatePlanBSCS> expectedRatePlans = List.of(
                 new RatePlanBSCS("tmcode1", "des1", "shdes1")
         );
         when(jdbcTemplate.query("SELECT * FROM RATEPLANBSCS", new RatePlanBSCSRowMapper()))

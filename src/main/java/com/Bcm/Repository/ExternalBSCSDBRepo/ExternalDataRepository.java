@@ -1,6 +1,6 @@
 package com.Bcm.Repository.ExternalBSCSDBRepo;
 
-import com.Bcm.Cfg.RatePlanBSCSRowMapper;
+import com.Bcm.Configuration.RatePlanBSCSRowMapper;
 import com.Bcm.Model.BSCSModels.RatePlanBSCS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

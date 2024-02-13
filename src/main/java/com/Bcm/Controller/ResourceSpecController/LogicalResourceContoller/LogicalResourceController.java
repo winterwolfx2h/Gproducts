@@ -13,27 +13,27 @@ import java.util.Date;
 import java.util.List;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping("/api/product-offerings")
+@RequestMapping("/api/LogicalResource")
 public class LogicalResourceController {
 
     @Autowired
-    LogicalResourceService LogicalResourceService;
+    LogicalResourceService logicalResourceService;
 
     @PostMapping("/addProdOff")
     public ResponseEntity<LogicalResource> createLogicalResource(@RequestBody LogicalResource LogicalResource) {
-        LogicalResource createdLogicalResource = LogicalResourceService.create(LogicalResource);
+        LogicalResource createdLogicalResource = logicalResourceService.create(LogicalResource);
         return ResponseEntity.ok(createdLogicalResource);
     }
 
     @GetMapping
     public ResponseEntity<List<LogicalResource>> getAllLogicalResources() {
-        List<LogicalResource> LogicalResources = LogicalResourceService.read();
+        List<LogicalResource> LogicalResources = logicalResourceService.read();
         return ResponseEntity.ok(LogicalResources);
     }
 
     @GetMapping("/{LRID}")
     public ResponseEntity<LogicalResource> getLogicalResourceById(@PathVariable("LRID") int LRID) {
-        LogicalResource LogicalResource = LogicalResourceService.findById(LRID);
+        LogicalResource LogicalResource = logicalResourceService.findById(LRID);
         return ResponseEntity.ok(LogicalResource);
     }
 
@@ -43,13 +43,13 @@ public class LogicalResourceController {
             @PathVariable("LRID") int LRID,
             @RequestBody LogicalResource updatedLogicalResource) {
 
-        LogicalResource updatedProduct = LogicalResourceService.update(LRID, updatedLogicalResource);
+        LogicalResource updatedProduct = logicalResourceService.update(LRID, updatedLogicalResource);
         return ResponseEntity.ok(updatedProduct);
     }
 
     @DeleteMapping("/{LRID}")
     public ResponseEntity<String> deleteLogicalResource(@PathVariable("LRID") int LRID) {
-        String resultMessage = LogicalResourceService.delete(LRID);
+        String resultMessage = logicalResourceService.delete(LRID);
         return ResponseEntity.ok(resultMessage);
     }
     

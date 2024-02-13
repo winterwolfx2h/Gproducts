@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping("/api/ Gender")
+@RequestMapping("/api/Gender")
 public class GenderController {
 
     @Autowired

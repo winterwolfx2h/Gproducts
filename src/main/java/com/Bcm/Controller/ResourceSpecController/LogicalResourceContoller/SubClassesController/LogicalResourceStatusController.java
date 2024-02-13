@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping("/api/ LogicalResourceStatus")
+@RequestMapping("/api/LogicalResourceStatus")
 public class LogicalResourceStatusController {
 
     @Autowired

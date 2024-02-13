@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="RatePlanBSCS")
+@Table(name = "RatePlanBSCS")
 public class RatePlanBSCS {
 
     private String tmcode;

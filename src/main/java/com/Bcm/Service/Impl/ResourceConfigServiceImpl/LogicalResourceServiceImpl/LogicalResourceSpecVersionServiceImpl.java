@@ -21,6 +21,7 @@ public class LogicalResourceSpecVersionServiceImpl implements LogicalResourceSpe
 
     @Autowired
     LogicalResourceSpecVersionRepository logicalResourceSpecVersionRepository;
+
     @Override
     public LogicalResourceSpecVersion create(LogicalResourceSpecVersion LogicalResourceSpecVersion) {
         try {
@@ -31,6 +32,7 @@ public class LogicalResourceSpecVersionServiceImpl implements LogicalResourceSpe
             throw new RuntimeException("An unexpected error occurred while creating product offering", e);
         }
     }
+
     @Override
     public List<LogicalResourceSpecVersion> read() {
         try {
@@ -39,6 +41,7 @@ public class LogicalResourceSpecVersionServiceImpl implements LogicalResourceSpe
             throw new RuntimeException("An unexpected error occurred while reading product offerings", e);
         }
     }
+
     @Override
     public LogicalResourceSpecVersion update(int LRID, LogicalResourceSpecVersion updatedLogicalResourceSpecVersion) {
         Optional<LogicalResourceSpecVersion> existingProductOptional = logicalResourceSpecVersionRepository.findById(LRID);
@@ -51,7 +54,7 @@ public class LogicalResourceSpecVersionServiceImpl implements LogicalResourceSpe
             existingProduct.setTimestamp(updatedLogicalResourceSpecVersion.getTimestamp());
 
             try {
-                if (updatedLogicalResourceSpecVersion.getFormat() == null ||updatedLogicalResourceSpecVersion.getReason() == null) {
+                if (updatedLogicalResourceSpecVersion.getFormat() == null || updatedLogicalResourceSpecVersion.getReason() == null) {
                     throw new InputException("Name and description cannot be null");
                 }
                 return logicalResourceSpecVersionRepository.save(existingProduct);
@@ -70,6 +73,7 @@ public class LogicalResourceSpecVersionServiceImpl implements LogicalResourceSpe
             throw new ResourceNotFoundException("Could not find product offering with ID: " + LRID);
         }
     }
+
     @Override
     public String delete(int LRID) {
         if (!logicalResourceSpecVersionRepository.existsById(LRID)) {
@@ -83,6 +87,7 @@ public class LogicalResourceSpecVersionServiceImpl implements LogicalResourceSpe
             throw new RuntimeException("An unexpected error occurred while deleting product offering with ID: " + LRID, e);
         }
     }
+
     @Override
     public LogicalResourceSpecVersion findById(int LRID) {
         try {

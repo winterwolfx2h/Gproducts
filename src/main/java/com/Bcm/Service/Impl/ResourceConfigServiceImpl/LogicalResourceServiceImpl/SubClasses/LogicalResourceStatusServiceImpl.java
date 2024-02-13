@@ -17,12 +17,12 @@ public class LogicalResourceStatusServiceImpl implements LogicalResourceStatusSe
     LogicalResourceStatusRepository LogicalResourceStatusRepository;
 
     @Override
-    public LogicalResourceStatus create(LogicalResourceStatus  LogicalResourceStatus) {
+    public LogicalResourceStatus create(LogicalResourceStatus LogicalResourceStatus) {
         try {
-            if ( LogicalResourceStatus == null) {
+            if (LogicalResourceStatus == null) {
                 throw new IllegalArgumentException(" LogicalResourceStatus cannot be null");
             }
-            return  LogicalResourceStatusRepository.save( LogicalResourceStatus);
+            return LogicalResourceStatusRepository.save(LogicalResourceStatus);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("There was a Data integrity violation occurred: " + e.getMessage());
         } catch (Exception e) {
@@ -31,18 +31,19 @@ public class LogicalResourceStatusServiceImpl implements LogicalResourceStatusSe
     }
 
     @Override
-    public List< LogicalResourceStatus> read() {
-        return  LogicalResourceStatusRepository.findAll();
+    public List<LogicalResourceStatus> read() {
+        return LogicalResourceStatusRepository.findAll();
     }
+
     @Override
-    public  LogicalResourceStatus update(int FID,  LogicalResourceStatus updatedLogicalResourceStatus) {
+    public LogicalResourceStatus update(int FID, LogicalResourceStatus updatedLogicalResourceStatus) {
         try {
             Optional<LogicalResourceStatus> existingLogicalResourceStatusOptional = LogicalResourceStatusRepository.findById(FID);
 
             if (existingLogicalResourceStatusOptional.isPresent()) {
                 LogicalResourceStatus existingLogicalResourceStatus = existingLogicalResourceStatusOptional.get();
                 existingLogicalResourceStatus.setName(updatedLogicalResourceStatus.getName());
-                return  LogicalResourceStatusRepository.save(existingLogicalResourceStatus);
+                return LogicalResourceStatusRepository.save(existingLogicalResourceStatus);
             } else {
                 throw new RuntimeException("Could not find  LogicalResourceStatus with ID: " + FID);
             }
@@ -55,7 +56,7 @@ public class LogicalResourceStatusServiceImpl implements LogicalResourceStatusSe
 
     @Override
     public String delete(int FID) {
-        Optional<LogicalResourceStatus> optionalLogicalResourceStatus =  LogicalResourceStatusRepository.findById(FID);
+        Optional<LogicalResourceStatus> optionalLogicalResourceStatus = LogicalResourceStatusRepository.findById(FID);
         if (optionalLogicalResourceStatus.isPresent()) {
             LogicalResourceStatusRepository.deleteById(FID);
             return (" LogicalResourceStatus was successfully deleted");
@@ -63,13 +64,15 @@ public class LogicalResourceStatusServiceImpl implements LogicalResourceStatusSe
             throw new RuntimeException("Could not find  LogicalResourceStatus with ID: " + FID);
         }
     }
+
     @Override
-    public  LogicalResourceStatus findById(int FID) {
-        Optional<LogicalResourceStatus> optionalLogicalResourceStatus =  LogicalResourceStatusRepository.findById(FID);
+    public LogicalResourceStatus findById(int FID) {
+        Optional<LogicalResourceStatus> optionalLogicalResourceStatus = LogicalResourceStatusRepository.findById(FID);
         return optionalLogicalResourceStatus.orElseThrow(() -> new RuntimeException(" LogicalResourceStatus with ID " + FID + " not found"));
     }
+
     @Override
-    public List< LogicalResourceStatus> searchByKeyword(String name) {
-        return  LogicalResourceStatusRepository.searchByKeyword(name);
+    public List<LogicalResourceStatus> searchByKeyword(String name) {
+        return LogicalResourceStatusRepository.searchByKeyword(name);
     }
 }

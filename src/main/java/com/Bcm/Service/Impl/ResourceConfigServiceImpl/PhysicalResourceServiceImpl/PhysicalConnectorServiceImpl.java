@@ -15,11 +15,13 @@ import org.springframework.stereotype.Service;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class PhysicalConnectorServiceImpl implements PhysicalConnectorService {
 
     @Autowired
     PhysicalConnectorRepository PhysicalConnectorRepository;
+
     @Override
     public PhysicalConnector create(PhysicalConnector PhysicalConnector) {
         try {
@@ -30,6 +32,7 @@ public class PhysicalConnectorServiceImpl implements PhysicalConnectorService {
             throw new RuntimeException("An unexpected error occurred while creating product offering", e);
         }
     }
+
     @Override
     public List<PhysicalConnector> read() {
         try {
@@ -38,6 +41,7 @@ public class PhysicalConnectorServiceImpl implements PhysicalConnectorService {
             throw new RuntimeException("An unexpected error occurred while reading product offerings", e);
         }
     }
+
     @Override
     public PhysicalConnector update(int LRID, PhysicalConnector updatedPhysicalConnector) {
         Optional<PhysicalConnector> existingProductOptional = PhysicalConnectorRepository.findById(LRID);
@@ -50,7 +54,7 @@ public class PhysicalConnectorServiceImpl implements PhysicalConnectorService {
             existingProduct.setCableType(updatedPhysicalConnector.getCableType());
 
             try {
-                if (updatedPhysicalConnector.getConnectorType() == null ||updatedPhysicalConnector.getDescription() == null) {
+                if (updatedPhysicalConnector.getConnectorType() == null || updatedPhysicalConnector.getDescription() == null) {
                     throw new InputException("Name and description cannot be null");
                 }
                 return PhysicalConnectorRepository.save(existingProduct);
@@ -69,6 +73,7 @@ public class PhysicalConnectorServiceImpl implements PhysicalConnectorService {
             throw new ResourceNotFoundException("Could not find product offering with ID: " + LRID);
         }
     }
+
     @Override
     public String delete(int LRID) {
         if (!PhysicalConnectorRepository.existsById(LRID)) {
@@ -82,6 +87,7 @@ public class PhysicalConnectorServiceImpl implements PhysicalConnectorService {
             throw new RuntimeException("An unexpected error occurred while deleting product offering with ID: " + LRID, e);
         }
     }
+
     @Override
     public PhysicalConnector findById(int LRID) {
         try {

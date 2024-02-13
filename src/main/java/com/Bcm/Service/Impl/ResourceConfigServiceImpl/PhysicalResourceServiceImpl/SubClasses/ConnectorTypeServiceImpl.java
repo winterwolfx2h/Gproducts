@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class ConnectorTypeServiceImpl implements ConnectorTypeService {
 
@@ -16,12 +17,12 @@ public class ConnectorTypeServiceImpl implements ConnectorTypeService {
     ConnectorTypeRepository ConnectorTypeRepository;
 
     @Override
-    public ConnectorType create(ConnectorType  ConnectorType) {
+    public ConnectorType create(ConnectorType ConnectorType) {
         try {
-            if ( ConnectorType == null) {
+            if (ConnectorType == null) {
                 throw new IllegalArgumentException(" ConnectorType cannot be null");
             }
-            return  ConnectorTypeRepository.save( ConnectorType);
+            return ConnectorTypeRepository.save(ConnectorType);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("There was a Data integrity violation occurred: " + e.getMessage());
         } catch (Exception e) {
@@ -30,18 +31,19 @@ public class ConnectorTypeServiceImpl implements ConnectorTypeService {
     }
 
     @Override
-    public List< ConnectorType> read() {
-        return  ConnectorTypeRepository.findAll();
+    public List<ConnectorType> read() {
+        return ConnectorTypeRepository.findAll();
     }
+
     @Override
-    public  ConnectorType update(int FID,  ConnectorType updatedConnectorType) {
+    public ConnectorType update(int FID, ConnectorType updatedConnectorType) {
         try {
             Optional<ConnectorType> existingConnectorTypeOptional = ConnectorTypeRepository.findById(FID);
 
             if (existingConnectorTypeOptional.isPresent()) {
                 ConnectorType existingConnectorType = existingConnectorTypeOptional.get();
                 existingConnectorType.setName(updatedConnectorType.getName());
-                return  ConnectorTypeRepository.save(existingConnectorType);
+                return ConnectorTypeRepository.save(existingConnectorType);
             } else {
                 throw new RuntimeException("Could not find  ConnectorType with ID: " + FID);
             }
@@ -54,7 +56,7 @@ public class ConnectorTypeServiceImpl implements ConnectorTypeService {
 
     @Override
     public String delete(int FID) {
-        Optional<ConnectorType> optionalConnectorType =  ConnectorTypeRepository.findById(FID);
+        Optional<ConnectorType> optionalConnectorType = ConnectorTypeRepository.findById(FID);
         if (optionalConnectorType.isPresent()) {
             ConnectorTypeRepository.deleteById(FID);
             return (" ConnectorType was successfully deleted");
@@ -62,13 +64,15 @@ public class ConnectorTypeServiceImpl implements ConnectorTypeService {
             throw new RuntimeException("Could not find  ConnectorType with ID: " + FID);
         }
     }
+
     @Override
-    public  ConnectorType findById(int FID) {
-        Optional<ConnectorType> optionalConnectorType =  ConnectorTypeRepository.findById(FID);
+    public ConnectorType findById(int FID) {
+        Optional<ConnectorType> optionalConnectorType = ConnectorTypeRepository.findById(FID);
         return optionalConnectorType.orElseThrow(() -> new RuntimeException(" ConnectorType with ID " + FID + " not found"));
     }
+
     @Override
-    public List< ConnectorType> searchByKeyword(String name) {
-        return  ConnectorTypeRepository.searchByKeyword(name);
+    public List<ConnectorType> searchByKeyword(String name) {
+        return ConnectorTypeRepository.searchByKeyword(name);
     }
 }

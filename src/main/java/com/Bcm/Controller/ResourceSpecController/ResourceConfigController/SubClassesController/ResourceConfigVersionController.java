@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/ResourceConfigVersion")
@@ -16,40 +17,41 @@ public class ResourceConfigVersionController {
     ResourceConfigVersionService ResourceConfigVersionService;
 
     @PostMapping
-    public ResponseEntity<ResourceConfigVersion> createResourceConfigVersion(@RequestBody ResourceConfigVersion  ResourceConfigVersion) {
-        ResourceConfigVersion createdResourceConfigVersion =  ResourceConfigVersionService.create( ResourceConfigVersion);
+    public ResponseEntity<ResourceConfigVersion> createResourceConfigVersion(@RequestBody ResourceConfigVersion ResourceConfigVersion) {
+        ResourceConfigVersion createdResourceConfigVersion = ResourceConfigVersionService.create(ResourceConfigVersion);
         return ResponseEntity.ok(createdResourceConfigVersion);
     }
 
     @GetMapping
-    public ResponseEntity<List< ResourceConfigVersion>> getAllCategories() {
-        List< ResourceConfigVersion> categories =  ResourceConfigVersionService.read();
+    public ResponseEntity<List<ResourceConfigVersion>> getAllCategories() {
+        List<ResourceConfigVersion> categories = ResourceConfigVersionService.read();
         return ResponseEntity.ok(categories);
     }
+
     @GetMapping("/{RCVID}")
-    public ResponseEntity< ResourceConfigVersion> getResourceConfigVersionById(@PathVariable("RCVID") int RCVID) {
-        ResourceConfigVersion  ResourceConfigVersion =  ResourceConfigVersionService.findById(RCVID);
-        return ResponseEntity.ok( ResourceConfigVersion);
+    public ResponseEntity<ResourceConfigVersion> getResourceConfigVersionById(@PathVariable("RCVID") int RCVID) {
+        ResourceConfigVersion ResourceConfigVersion = ResourceConfigVersionService.findById(RCVID);
+        return ResponseEntity.ok(ResourceConfigVersion);
     }
 
     @PutMapping("/{RCVID}")
-    public ResponseEntity< ResourceConfigVersion> updateResourceConfigVersion(
+    public ResponseEntity<ResourceConfigVersion> updateResourceConfigVersion(
             @PathVariable("RCVID") int RCVID,
-            @RequestBody  ResourceConfigVersion updatedResourceConfigVersion) {
+            @RequestBody ResourceConfigVersion updatedResourceConfigVersion) {
 
-        ResourceConfigVersion updated =  ResourceConfigVersionService.update(RCVID, updatedResourceConfigVersion);
+        ResourceConfigVersion updated = ResourceConfigVersionService.update(RCVID, updatedResourceConfigVersion);
         return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{RCVID}")
     public ResponseEntity<String> deleteResourceConfigVersion(@PathVariable("RCVID") int RCVID) {
-        String resultMessage =  ResourceConfigVersionService.delete(RCVID);
+        String resultMessage = ResourceConfigVersionService.delete(RCVID);
         return ResponseEntity.ok(resultMessage);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List< ResourceConfigVersion>> searchCategoriesByKeyword(@RequestParam("name") String name) {
-        List< ResourceConfigVersion> searchResults =  ResourceConfigVersionService.searchByKeyword(name);
+    public ResponseEntity<List<ResourceConfigVersion>> searchCategoriesByKeyword(@RequestParam("name") String name) {
+        List<ResourceConfigVersion> searchResults = ResourceConfigVersionService.searchByKeyword(name);
         return ResponseEntity.ok(searchResults);
     }
 }

@@ -8,11 +8,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-    @Repository
-    public interface ResourceConfigVersionRepository extends JpaRepository<ResourceConfigVersion, Integer> {
+@Repository
+public interface ResourceConfigVersionRepository extends JpaRepository<ResourceConfigVersion, Integer> {
 
-        Optional<ResourceConfigVersion> findById(int RCVID);
+    Optional<ResourceConfigVersion> findById(int RCVID);
 
-        @Query("SELECT p FROM ResourceConfigVersion p WHERE p.name LIKE %:name% ")
-        List<ResourceConfigVersion> searchByKeyword(String name);
-    }
+    @Query("SELECT p FROM ResourceConfigVersion p WHERE p.name LIKE %:name% ")
+    List<ResourceConfigVersion> searchByKeyword(String name);
+}

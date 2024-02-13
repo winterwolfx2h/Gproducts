@@ -1,6 +1,5 @@
 package com.Bcm.Repository.ServiceConfigRepo.SubClassesRepo;
 
-import com.Bcm.Model.ServiceABE.SubClasses.BusinessInteraction;
 import com.Bcm.Model.ServiceABE.SubClasses.CustomerType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

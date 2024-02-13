@@ -15,11 +15,13 @@ import org.springframework.stereotype.Service;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class PhysicalComponentServiceImpl implements PhysicalComponentService {
 
     @Autowired
     PhysicalComponentRepository PhysicalComponentRepository;
+
     @Override
     public PhysicalComponent create(PhysicalComponent PhysicalComponent) {
         try {
@@ -30,6 +32,7 @@ public class PhysicalComponentServiceImpl implements PhysicalComponentService {
             throw new RuntimeException("An unexpected error occurred while creating product offering", e);
         }
     }
+
     @Override
     public List<PhysicalComponent> read() {
         try {
@@ -38,6 +41,7 @@ public class PhysicalComponentServiceImpl implements PhysicalComponentService {
             throw new RuntimeException("An unexpected error occurred while reading product offerings", e);
         }
     }
+
     @Override
     public PhysicalComponent update(int LRID, PhysicalComponent updatedPhysicalComponent) {
         Optional<PhysicalComponent> existingProductOptional = PhysicalComponentRepository.findById(LRID);
@@ -50,7 +54,7 @@ public class PhysicalComponentServiceImpl implements PhysicalComponentService {
             existingProduct.setIsConfigurable(updatedPhysicalComponent.getIsConfigurable());
 
             try {
-                if (updatedPhysicalComponent.getReplaceable() == null ||updatedPhysicalComponent.getHotSwappable() == null) {
+                if (updatedPhysicalComponent.getReplaceable() == null || updatedPhysicalComponent.getHotSwappable() == null) {
                     throw new InputException("Name and description cannot be null");
                 }
                 return PhysicalComponentRepository.save(existingProduct);
@@ -69,6 +73,7 @@ public class PhysicalComponentServiceImpl implements PhysicalComponentService {
             throw new ResourceNotFoundException("Could not find product offering with ID: " + LRID);
         }
     }
+
     @Override
     public String delete(int LRID) {
         if (!PhysicalComponentRepository.existsById(LRID)) {
@@ -82,6 +87,7 @@ public class PhysicalComponentServiceImpl implements PhysicalComponentService {
             throw new RuntimeException("An unexpected error occurred while deleting product offering with ID: " + LRID, e);
         }
     }
+
     @Override
     public PhysicalComponent findById(int LRID) {
         try {

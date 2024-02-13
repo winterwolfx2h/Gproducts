@@ -10,7 +10,7 @@ import java.util.Optional;
 
 
 @Repository
-public interface ServiceSpecConfigRepository extends JpaRepository<ServiceSpecConfig,Integer> {
+public interface ServiceSpecConfigRepository extends JpaRepository<ServiceSpecConfig, Integer> {
 
     Optional<ServiceSpecConfig> findById(int SSC_code);
 

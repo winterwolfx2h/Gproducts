@@ -35,6 +35,5 @@ public class BundledProductOffer {
     private List<ValidFor> validFor;
 
 
-
 }
 

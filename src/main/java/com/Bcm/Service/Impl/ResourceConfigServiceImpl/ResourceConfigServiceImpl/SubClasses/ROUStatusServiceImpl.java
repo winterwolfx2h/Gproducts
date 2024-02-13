@@ -17,12 +17,12 @@ public class ROUStatusServiceImpl implements ROUStatusService {
     ROUStatusRepository ROUStatusRepository;
 
     @Override
-    public ROUStatus create(ROUStatus  ROUStatus) {
+    public ROUStatus create(ROUStatus ROUStatus) {
         try {
-            if ( ROUStatus == null) {
+            if (ROUStatus == null) {
                 throw new IllegalArgumentException(" ROUStatus cannot be null");
             }
-            return  ROUStatusRepository.save( ROUStatus);
+            return ROUStatusRepository.save(ROUStatus);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("There was a Data integrity violation occurred: " + e.getMessage());
         } catch (Exception e) {
@@ -31,18 +31,19 @@ public class ROUStatusServiceImpl implements ROUStatusService {
     }
 
     @Override
-    public List< ROUStatus> read() {
-        return  ROUStatusRepository.findAll();
+    public List<ROUStatus> read() {
+        return ROUStatusRepository.findAll();
     }
+
     @Override
-    public  ROUStatus update(int FID,  ROUStatus updatedROUStatus) {
+    public ROUStatus update(int FID, ROUStatus updatedROUStatus) {
         try {
             Optional<ROUStatus> existingROUStatusOptional = ROUStatusRepository.findById(FID);
 
             if (existingROUStatusOptional.isPresent()) {
                 ROUStatus existingROUStatus = existingROUStatusOptional.get();
                 existingROUStatus.setName(updatedROUStatus.getName());
-                return  ROUStatusRepository.save(existingROUStatus);
+                return ROUStatusRepository.save(existingROUStatus);
             } else {
                 throw new RuntimeException("Could not find  ROUStatus with ID: " + FID);
             }
@@ -55,7 +56,7 @@ public class ROUStatusServiceImpl implements ROUStatusService {
 
     @Override
     public String delete(int FID) {
-        Optional<ROUStatus> optionalROUStatus =  ROUStatusRepository.findById(FID);
+        Optional<ROUStatus> optionalROUStatus = ROUStatusRepository.findById(FID);
         if (optionalROUStatus.isPresent()) {
             ROUStatusRepository.deleteById(FID);
             return (" ROUStatus was successfully deleted");
@@ -63,13 +64,15 @@ public class ROUStatusServiceImpl implements ROUStatusService {
             throw new RuntimeException("Could not find  ROUStatus with ID: " + FID);
         }
     }
+
     @Override
-    public  ROUStatus findById(int FID) {
-        Optional<ROUStatus> optionalROUStatus =  ROUStatusRepository.findById(FID);
+    public ROUStatus findById(int FID) {
+        Optional<ROUStatus> optionalROUStatus = ROUStatusRepository.findById(FID);
         return optionalROUStatus.orElseThrow(() -> new RuntimeException(" ROUStatus with ID " + FID + " not found"));
     }
+
     @Override
-    public List< ROUStatus> searchByKeyword(String name) {
-        return  ROUStatusRepository.searchByKeyword(name);
+    public List<ROUStatus> searchByKeyword(String name) {
+        return ROUStatusRepository.searchByKeyword(name);
     }
 }

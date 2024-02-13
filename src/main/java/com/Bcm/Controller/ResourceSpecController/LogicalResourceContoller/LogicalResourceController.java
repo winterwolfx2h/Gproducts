@@ -11,6 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.util.Date;
 import java.util.List;
+
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/LogicalResource")
@@ -52,7 +53,7 @@ public class LogicalResourceController {
         String resultMessage = logicalResourceService.delete(LRID);
         return ResponseEntity.ok(resultMessage);
     }
-    
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorMessage> globalExceptionHandler(Exception ex, WebRequest request) {
         ErrorMessage message = new ErrorMessage(

@@ -21,8 +21,8 @@ public class POPlanController {
     POPlanService poPlanService;
 
     @GetMapping("/listPoPlans")
-    public List<POPlan> read(){
-            return poPlanService.read();
+    public List<POPlan> read() {
+        return poPlanService.read();
     }
 
     @PostMapping("/addPOPlan")
@@ -47,8 +47,8 @@ public class POPlanController {
 
 
     @DeleteMapping("/{TMCODE}")
-    public String delete(@PathVariable int TMCODE){
-            return poPlanService.delete(TMCODE);
+    public String delete(@PathVariable int TMCODE) {
+        return poPlanService.delete(TMCODE);
     }
 
     @GetMapping("/getById/{TMCODE}")

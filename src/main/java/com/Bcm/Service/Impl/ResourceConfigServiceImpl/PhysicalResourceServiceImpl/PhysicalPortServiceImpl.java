@@ -21,6 +21,7 @@ public class PhysicalPortServiceImpl implements PhysicalPortService {
 
     @Autowired
     PhysicalPortRepository PhysicalPortRepository;
+
     @Override
     public PhysicalPort create(PhysicalPort PhysicalPort) {
         try {
@@ -31,6 +32,7 @@ public class PhysicalPortServiceImpl implements PhysicalPortService {
             throw new RuntimeException("An unexpected error occurred while creating product offering", e);
         }
     }
+
     @Override
     public List<PhysicalPort> read() {
         try {
@@ -39,6 +41,7 @@ public class PhysicalPortServiceImpl implements PhysicalPortService {
             throw new RuntimeException("An unexpected error occurred while reading product offerings", e);
         }
     }
+
     @Override
     public PhysicalPort update(int LRID, PhysicalPort updatedPhysicalPort) {
         Optional<PhysicalPort> existingProductOptional = PhysicalPortRepository.findById(LRID);
@@ -51,7 +54,7 @@ public class PhysicalPortServiceImpl implements PhysicalPortService {
             existingProduct.setDuplexMode(updatedPhysicalPort.getDuplexMode());
 
             try {
-                if (updatedPhysicalPort.getPortType() == null ||updatedPhysicalPort.getDuplexMode() == null) {
+                if (updatedPhysicalPort.getPortType() == null || updatedPhysicalPort.getDuplexMode() == null) {
                     throw new InputException("Name and description cannot be null");
                 }
                 return PhysicalPortRepository.save(existingProduct);
@@ -70,6 +73,7 @@ public class PhysicalPortServiceImpl implements PhysicalPortService {
             throw new ResourceNotFoundException("Could not find product offering with ID: " + LRID);
         }
     }
+
     @Override
     public String delete(int LRID) {
         if (!PhysicalPortRepository.existsById(LRID)) {
@@ -83,6 +87,7 @@ public class PhysicalPortServiceImpl implements PhysicalPortService {
             throw new RuntimeException("An unexpected error occurred while deleting product offering with ID: " + LRID, e);
         }
     }
+
     @Override
     public PhysicalPort findById(int LRID) {
         try {

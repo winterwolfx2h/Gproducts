@@ -34,6 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
     public List<Category> read() {
         return categoryRepository.findAll();
     }
+
     @Override
     public Category update(int po_CategoryCode, Category updatedCategory) {
         try {
@@ -63,11 +64,13 @@ public class CategoryServiceImpl implements CategoryService {
             throw new RuntimeException("Could not find Category with ID: " + po_CategoryCode);
         }
     }
+
     @Override
     public Category findById(int po_CategoryCode) {
         Optional<Category> optionalCategory = categoryRepository.findById(po_CategoryCode);
         return optionalCategory.orElseThrow(() -> new RuntimeException("Category with ID " + po_CategoryCode + " not found"));
     }
+
     @Override
     public List<Category> searchByKeyword(String name) {
         return categoryRepository.searchByKeyword(name);

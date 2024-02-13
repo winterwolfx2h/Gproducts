@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class ROUUsageStatusServiceImpl implements ROUUsageStatusService {
 
@@ -16,12 +17,12 @@ public class ROUUsageStatusServiceImpl implements ROUUsageStatusService {
     ROUUsageStatusRepository ROUUsageStatusRepository;
 
     @Override
-    public ROUUsageStatus create(ROUUsageStatus  ROUUsageStatus) {
+    public ROUUsageStatus create(ROUUsageStatus ROUUsageStatus) {
         try {
-            if ( ROUUsageStatus == null) {
+            if (ROUUsageStatus == null) {
                 throw new IllegalArgumentException(" ROUUsageStatus cannot be null");
             }
-            return  ROUUsageStatusRepository.save( ROUUsageStatus);
+            return ROUUsageStatusRepository.save(ROUUsageStatus);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("There was a Data integrity violation occurred: " + e.getMessage());
         } catch (Exception e) {
@@ -30,18 +31,19 @@ public class ROUUsageStatusServiceImpl implements ROUUsageStatusService {
     }
 
     @Override
-    public List< ROUUsageStatus> read() {
-        return  ROUUsageStatusRepository.findAll();
+    public List<ROUUsageStatus> read() {
+        return ROUUsageStatusRepository.findAll();
     }
+
     @Override
-    public  ROUUsageStatus update(int FID,  ROUUsageStatus updatedROUUsageStatus) {
+    public ROUUsageStatus update(int FID, ROUUsageStatus updatedROUUsageStatus) {
         try {
             Optional<ROUUsageStatus> existingROUUsageStatusOptional = ROUUsageStatusRepository.findById(FID);
 
             if (existingROUUsageStatusOptional.isPresent()) {
                 ROUUsageStatus existingROUUsageStatus = existingROUUsageStatusOptional.get();
                 existingROUUsageStatus.setName(updatedROUUsageStatus.getName());
-                return  ROUUsageStatusRepository.save(existingROUUsageStatus);
+                return ROUUsageStatusRepository.save(existingROUUsageStatus);
             } else {
                 throw new RuntimeException("Could not find  ROUUsageStatus with ID: " + FID);
             }
@@ -54,7 +56,7 @@ public class ROUUsageStatusServiceImpl implements ROUUsageStatusService {
 
     @Override
     public String delete(int FID) {
-        Optional<ROUUsageStatus> optionalROUUsageStatus =  ROUUsageStatusRepository.findById(FID);
+        Optional<ROUUsageStatus> optionalROUUsageStatus = ROUUsageStatusRepository.findById(FID);
         if (optionalROUUsageStatus.isPresent()) {
             ROUUsageStatusRepository.deleteById(FID);
             return (" ROUUsageStatus was successfully deleted");
@@ -62,13 +64,15 @@ public class ROUUsageStatusServiceImpl implements ROUUsageStatusService {
             throw new RuntimeException("Could not find  ROUUsageStatus with ID: " + FID);
         }
     }
+
     @Override
-    public  ROUUsageStatus findById(int FID) {
-        Optional<ROUUsageStatus> optionalROUUsageStatus =  ROUUsageStatusRepository.findById(FID);
+    public ROUUsageStatus findById(int FID) {
+        Optional<ROUUsageStatus> optionalROUUsageStatus = ROUUsageStatusRepository.findById(FID);
         return optionalROUUsageStatus.orElseThrow(() -> new RuntimeException(" ROUUsageStatus with ID " + FID + " not found"));
     }
+
     @Override
-    public List< ROUUsageStatus> searchByKeyword(String name) {
-        return  ROUUsageStatusRepository.searchByKeyword(name);
+    public List<ROUUsageStatus> searchByKeyword(String name) {
+        return ROUUsageStatusRepository.searchByKeyword(name);
     }
 }

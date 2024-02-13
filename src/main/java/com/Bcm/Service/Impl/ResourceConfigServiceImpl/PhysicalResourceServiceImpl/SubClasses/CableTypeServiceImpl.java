@@ -17,12 +17,12 @@ public class CableTypeServiceImpl implements CableTypeService {
     CableTypeRepository CableTypeRepository;
 
     @Override
-    public CableType create(CableType  CableType) {
+    public CableType create(CableType CableType) {
         try {
-            if ( CableType == null) {
+            if (CableType == null) {
                 throw new IllegalArgumentException(" CableType cannot be null");
             }
-            return  CableTypeRepository.save( CableType);
+            return CableTypeRepository.save(CableType);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("There was a Data integrity violation occurred: " + e.getMessage());
         } catch (Exception e) {
@@ -31,18 +31,19 @@ public class CableTypeServiceImpl implements CableTypeService {
     }
 
     @Override
-    public List< CableType> read() {
-        return  CableTypeRepository.findAll();
+    public List<CableType> read() {
+        return CableTypeRepository.findAll();
     }
+
     @Override
-    public  CableType update(int FID,  CableType updatedCableType) {
+    public CableType update(int FID, CableType updatedCableType) {
         try {
             Optional<CableType> existingCableTypeOptional = CableTypeRepository.findById(FID);
 
             if (existingCableTypeOptional.isPresent()) {
                 CableType existingCableType = existingCableTypeOptional.get();
                 existingCableType.setName(updatedCableType.getName());
-                return  CableTypeRepository.save(existingCableType);
+                return CableTypeRepository.save(existingCableType);
             } else {
                 throw new RuntimeException("Could not find  CableType with ID: " + FID);
             }
@@ -55,7 +56,7 @@ public class CableTypeServiceImpl implements CableTypeService {
 
     @Override
     public String delete(int FID) {
-        Optional<CableType> optionalCableType =  CableTypeRepository.findById(FID);
+        Optional<CableType> optionalCableType = CableTypeRepository.findById(FID);
         if (optionalCableType.isPresent()) {
             CableTypeRepository.deleteById(FID);
             return (" CableType was successfully deleted");
@@ -63,13 +64,15 @@ public class CableTypeServiceImpl implements CableTypeService {
             throw new RuntimeException("Could not find  CableType with ID: " + FID);
         }
     }
+
     @Override
-    public  CableType findById(int FID) {
-        Optional<CableType> optionalCableType =  CableTypeRepository.findById(FID);
+    public CableType findById(int FID) {
+        Optional<CableType> optionalCableType = CableTypeRepository.findById(FID);
         return optionalCableType.orElseThrow(() -> new RuntimeException(" CableType with ID " + FID + " not found"));
     }
+
     @Override
-    public List< CableType> searchByKeyword(String name) {
-        return  CableTypeRepository.searchByKeyword(name);
+    public List<CableType> searchByKeyword(String name) {
+        return CableTypeRepository.searchByKeyword(name);
     }
 }

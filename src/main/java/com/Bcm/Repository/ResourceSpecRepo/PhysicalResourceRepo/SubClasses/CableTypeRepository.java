@@ -8,11 +8,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-    @Repository
-    public interface CableTypeRepository extends JpaRepository<CableType, Integer> {
+@Repository
+public interface CableTypeRepository extends JpaRepository<CableType, Integer> {
 
-        Optional<CableType> findById(int CbTID);
+    Optional<CableType> findById(int CbTID);
 
-        @Query("SELECT p FROM CableType p WHERE p.name LIKE %:name% ")
-        List<CableType> searchByKeyword(String name);
-    }
+    @Query("SELECT p FROM CableType p WHERE p.name LIKE %:name% ")
+    List<CableType> searchByKeyword(String name);
+}

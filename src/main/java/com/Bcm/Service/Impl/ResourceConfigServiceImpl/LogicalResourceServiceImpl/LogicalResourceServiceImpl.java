@@ -15,11 +15,13 @@ import org.springframework.stereotype.Service;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class LogicalResourceServiceImpl implements LogicalResourceService {
 
     @Autowired
     LogicalResourceRepository logicalResourceRepository;
+
     @Override
     public LogicalResource create(LogicalResource LogicalResource) {
         try {
@@ -30,6 +32,7 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
             throw new RuntimeException("An unexpected error occurred while creating product offering", e);
         }
     }
+
     @Override
     public List<LogicalResource> read() {
         try {
@@ -38,6 +41,7 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
             throw new RuntimeException("An unexpected error occurred while reading product offerings", e);
         }
     }
+
     @Override
     public LogicalResource update(int LRID, LogicalResource updatedLogicalResource) {
         Optional<LogicalResource> existingProductOptional = logicalResourceRepository.findById(LRID);
@@ -48,7 +52,7 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
             existingProduct.setStatus(updatedLogicalResource.getStatus());
 
             try {
-                if (updatedLogicalResource.getValidFor() == null ||updatedLogicalResource.getStatus() == null) {
+                if (updatedLogicalResource.getValidFor() == null || updatedLogicalResource.getStatus() == null) {
                     throw new InputException("Name and description cannot be null");
                 }
                 return logicalResourceRepository.save(existingProduct);
@@ -67,6 +71,7 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
             throw new ResourceNotFoundException("Could not find product offering with ID: " + LRID);
         }
     }
+
     @Override
     public String delete(int LRID) {
         if (!logicalResourceRepository.existsById(LRID)) {
@@ -80,6 +85,7 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
             throw new RuntimeException("An unexpected error occurred while deleting product offering with ID: " + LRID, e);
         }
     }
+
     @Override
     public LogicalResource findById(int LRID) {
         try {

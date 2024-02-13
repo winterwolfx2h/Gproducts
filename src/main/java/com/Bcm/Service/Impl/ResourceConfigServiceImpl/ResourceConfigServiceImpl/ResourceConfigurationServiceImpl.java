@@ -21,6 +21,7 @@ public class ResourceConfigurationServiceImpl implements ResourceConfigurationSe
 
     @Autowired
     ResourceConfigurationRepository ResourceConfigurationRepository;
+
     @Override
     public ResourceConfiguration create(ResourceConfiguration ResourceConfiguration) {
         try {
@@ -31,6 +32,7 @@ public class ResourceConfigurationServiceImpl implements ResourceConfigurationSe
             throw new RuntimeException("An unexpected error occurred while creating product offering", e);
         }
     }
+
     @Override
     public List<ResourceConfiguration> read() {
         try {
@@ -39,6 +41,7 @@ public class ResourceConfigurationServiceImpl implements ResourceConfigurationSe
             throw new RuntimeException("An unexpected error occurred while reading product offerings", e);
         }
     }
+
     @Override
     public ResourceConfiguration update(int LRID, ResourceConfiguration updatedResourceConfiguration) {
         Optional<ResourceConfiguration> existingProductOptional = ResourceConfigurationRepository.findById(LRID);
@@ -52,7 +55,7 @@ public class ResourceConfigurationServiceImpl implements ResourceConfigurationSe
             existingProduct.setDescription(updatedResourceConfiguration.getDescription());
 
             try {
-                if (updatedResourceConfiguration.getName() == null ||updatedResourceConfiguration.getDescription() == null) {
+                if (updatedResourceConfiguration.getName() == null || updatedResourceConfiguration.getDescription() == null) {
                     throw new InputException("Name and description cannot be null");
                 }
                 return ResourceConfigurationRepository.save(existingProduct);
@@ -71,6 +74,7 @@ public class ResourceConfigurationServiceImpl implements ResourceConfigurationSe
             throw new ResourceNotFoundException("Could not find product offering with ID: " + LRID);
         }
     }
+
     @Override
     public String delete(int LRID) {
         if (!ResourceConfigurationRepository.existsById(LRID)) {
@@ -84,6 +88,7 @@ public class ResourceConfigurationServiceImpl implements ResourceConfigurationSe
             throw new RuntimeException("An unexpected error occurred while deleting product offering with ID: " + LRID, e);
         }
     }
+
     @Override
     public ResourceConfiguration findById(int LRID) {
         try {

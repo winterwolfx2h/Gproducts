@@ -21,6 +21,7 @@ public class ResourceOrderAndUsageServiceImpl implements ResourceOrderAndUsageSe
 
     @Autowired
     ResourceOrderAndUsageRepository ResourceOrderAndUsageRepository;
+
     @Override
     public ResourceOrderAndUsage create(ResourceOrderAndUsage ResourceOrderAndUsage) {
         try {
@@ -31,6 +32,7 @@ public class ResourceOrderAndUsageServiceImpl implements ResourceOrderAndUsageSe
             throw new RuntimeException("An unexpected error occurred while creating product offering", e);
         }
     }
+
     @Override
     public List<ResourceOrderAndUsage> read() {
         try {
@@ -39,6 +41,7 @@ public class ResourceOrderAndUsageServiceImpl implements ResourceOrderAndUsageSe
             throw new RuntimeException("An unexpected error occurred while reading product offerings", e);
         }
     }
+
     @Override
     public ResourceOrderAndUsage update(int LRID, ResourceOrderAndUsage updatedResourceOrderAndUsage) {
         Optional<ResourceOrderAndUsage> existingProductOptional = ResourceOrderAndUsageRepository.findById(LRID);
@@ -53,7 +56,7 @@ public class ResourceOrderAndUsageServiceImpl implements ResourceOrderAndUsageSe
             existingProduct.setUsageDate(updatedResourceOrderAndUsage.getUsageDate());
 
             try {
-                if (updatedResourceOrderAndUsage.getStatus() == null ||updatedResourceOrderAndUsage.getStartDate() == null) {
+                if (updatedResourceOrderAndUsage.getStatus() == null || updatedResourceOrderAndUsage.getStartDate() == null) {
                     throw new InputException("Name and description cannot be null");
                 }
                 return ResourceOrderAndUsageRepository.save(existingProduct);
@@ -72,6 +75,7 @@ public class ResourceOrderAndUsageServiceImpl implements ResourceOrderAndUsageSe
             throw new ResourceNotFoundException("Could not find product offering with ID: " + LRID);
         }
     }
+
     @Override
     public String delete(int LRID) {
         if (!ResourceOrderAndUsageRepository.existsById(LRID)) {
@@ -85,6 +89,7 @@ public class ResourceOrderAndUsageServiceImpl implements ResourceOrderAndUsageSe
             throw new RuntimeException("An unexpected error occurred while deleting product offering with ID: " + LRID, e);
         }
     }
+
     @Override
     public ResourceOrderAndUsage findById(int LRID) {
         try {

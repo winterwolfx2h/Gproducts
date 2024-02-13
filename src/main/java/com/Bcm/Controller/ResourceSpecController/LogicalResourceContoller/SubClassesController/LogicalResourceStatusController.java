@@ -17,40 +17,41 @@ public class LogicalResourceStatusController {
     LogicalResourceStatusService LogicalResourceStatusService;
 
     @PostMapping
-    public ResponseEntity<LogicalResourceStatus> createLogicalResourceStatus(@RequestBody  LogicalResourceStatus  LogicalResourceStatus) {
-         LogicalResourceStatus createdLogicalResourceStatus =  LogicalResourceStatusService.create( LogicalResourceStatus);
+    public ResponseEntity<LogicalResourceStatus> createLogicalResourceStatus(@RequestBody LogicalResourceStatus LogicalResourceStatus) {
+        LogicalResourceStatus createdLogicalResourceStatus = LogicalResourceStatusService.create(LogicalResourceStatus);
         return ResponseEntity.ok(createdLogicalResourceStatus);
     }
 
     @GetMapping
-    public ResponseEntity<List< LogicalResourceStatus>> getAllCategories() {
-        List< LogicalResourceStatus> categories =  LogicalResourceStatusService.read();
+    public ResponseEntity<List<LogicalResourceStatus>> getAllCategories() {
+        List<LogicalResourceStatus> categories = LogicalResourceStatusService.read();
         return ResponseEntity.ok(categories);
     }
+
     @GetMapping("/{LRSID}")
-    public ResponseEntity< LogicalResourceStatus> getLogicalResourceStatusById(@PathVariable("LRSID") int LRSID) {
-         LogicalResourceStatus  LogicalResourceStatus =  LogicalResourceStatusService.findById(LRSID);
-        return ResponseEntity.ok( LogicalResourceStatus);
+    public ResponseEntity<LogicalResourceStatus> getLogicalResourceStatusById(@PathVariable("LRSID") int LRSID) {
+        LogicalResourceStatus LogicalResourceStatus = LogicalResourceStatusService.findById(LRSID);
+        return ResponseEntity.ok(LogicalResourceStatus);
     }
 
     @PutMapping("/{LRSID}")
-    public ResponseEntity< LogicalResourceStatus> updateLogicalResourceStatus(
+    public ResponseEntity<LogicalResourceStatus> updateLogicalResourceStatus(
             @PathVariable("LRSID") int LRSID,
-            @RequestBody  LogicalResourceStatus updatedLogicalResourceStatus) {
+            @RequestBody LogicalResourceStatus updatedLogicalResourceStatus) {
 
-         LogicalResourceStatus updated =  LogicalResourceStatusService.update(LRSID, updatedLogicalResourceStatus);
+        LogicalResourceStatus updated = LogicalResourceStatusService.update(LRSID, updatedLogicalResourceStatus);
         return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{LRSID}")
     public ResponseEntity<String> deleteLogicalResourceStatus(@PathVariable("LRSID") int LRSID) {
-        String resultMessage =  LogicalResourceStatusService.delete(LRSID);
+        String resultMessage = LogicalResourceStatusService.delete(LRSID);
         return ResponseEntity.ok(resultMessage);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List< LogicalResourceStatus>> searchCategoriesByKeyword(@RequestParam("name") String name) {
-        List< LogicalResourceStatus> searchResults =  LogicalResourceStatusService.searchByKeyword(name);
+    public ResponseEntity<List<LogicalResourceStatus>> searchCategoriesByKeyword(@RequestParam("name") String name) {
+        List<LogicalResourceStatus> searchResults = LogicalResourceStatusService.searchByKeyword(name);
         return ResponseEntity.ok(searchResults);
     }
 }

@@ -15,11 +15,13 @@ import org.springframework.stereotype.Service;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class PhysicalResourceServiceImpl implements PhysicalResourceService {
 
     @Autowired
     PhysicalResourceRepository PhysicalResourceRepository;
+
     @Override
     public PhysicalResource create(PhysicalResource PhysicalResource) {
         try {
@@ -30,6 +32,7 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
             throw new RuntimeException("An unexpected error occurred while creating product offering", e);
         }
     }
+
     @Override
     public List<PhysicalResource> read() {
         try {
@@ -38,6 +41,7 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
             throw new RuntimeException("An unexpected error occurred while reading product offerings", e);
         }
     }
+
     @Override
     public PhysicalResource update(int LRID, PhysicalResource updatedPhysicalResource) {
         Optional<PhysicalResource> existingProductOptional = PhysicalResourceRepository.findById(LRID);
@@ -50,7 +54,7 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
             existingProduct.setSerialNumber(updatedPhysicalResource.getSerialNumber());
 
             try {
-                if (updatedPhysicalResource.getName() == null ||updatedPhysicalResource.getManufactureDate() == null) {
+                if (updatedPhysicalResource.getName() == null || updatedPhysicalResource.getManufactureDate() == null) {
                     throw new InputException("Name and description cannot be null");
                 }
                 return PhysicalResourceRepository.save(existingProduct);
@@ -69,6 +73,7 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
             throw new ResourceNotFoundException("Could not find product offering with ID: " + LRID);
         }
     }
+
     @Override
     public String delete(int LRID) {
         if (!PhysicalResourceRepository.existsById(LRID)) {
@@ -82,6 +87,7 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
             throw new RuntimeException("An unexpected error occurred while deleting product offering with ID: " + LRID, e);
         }
     }
+
     @Override
     public PhysicalResource findById(int LRID) {
         try {

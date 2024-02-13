@@ -1,6 +1,9 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
-import com.Bcm.Exception.*;
+import com.Bcm.Exception.DatabaseOperationException;
+import com.Bcm.Exception.InputException;
+import com.Bcm.Exception.InvalidInput;
+import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
@@ -67,7 +70,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
                 throw e;
             } catch (InvalidInput e) {
                 throw e;
-            }catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException("An unexpected error occurred while updating product offering with ID: " + po_code, e);
             }
         } else {
@@ -93,7 +96,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
     public ProductOffering findById(int po_code) {
         try {
             return productOfferingRepository.findById(po_code)
-                    .orElseThrow(() -> new ResourceNotFoundException(" An unexpected error occurred while finding product offering with ID:" + po_code ));
+                    .orElseThrow(() -> new ResourceNotFoundException(" An unexpected error occurred while finding product offering with ID:" + po_code));
         } catch (ResourceNotFoundException e) {
             throw new RuntimeException("Product offering with ID \"" + po_code + "\" not found", e);
         }

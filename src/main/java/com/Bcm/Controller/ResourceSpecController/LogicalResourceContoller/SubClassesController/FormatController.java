@@ -28,6 +28,7 @@ public class FormatController {
         List<Format> categories = FormatService.read();
         return ResponseEntity.ok(categories);
     }
+
     @GetMapping("/{FID}")
     public ResponseEntity<Format> getFormatById(@PathVariable("FID") int FID) {
         Format Format = FormatService.findById(FID);

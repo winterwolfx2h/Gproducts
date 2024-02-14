@@ -17,15 +17,24 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class POPlan {
 
+    /*
+    Prod list > sous menu > filter> search > type of search /// lezem tkoun validation :prod ready to sell:  price /  etc .. ken mrigle ywali l status taaou sellable right now.
+
+    PO BS / PO Optional hedhom fihom eli mouch sellable " not ready yet"
+     */
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TMCODE", nullable = false)
     private int TMCODE;
+
     /*
         @NotNull(message = "TMCODE cannot be null")
         @Column(name = "TMCODE", nullable = false)
         private String TMCODE;
+
     */
+
     @NotNull(message = "Description cannot be null")
     @Column(name = "DES", nullable = false)
     private String DES;

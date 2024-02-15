@@ -43,13 +43,13 @@ public class POPlanServiceImpl implements POPlanService {
     }
 
     @Override
-    public POPlan update(int PO_ID, POPlan poPlan) {
-        Optional<POPlan> existingPlanOptional = poPlanRepository.findById(PO_ID);
+    public POPlan update(int TMCODE, POPlan poPlan) {
+        Optional<POPlan> existingPlanOptional = poPlanRepository.findById(TMCODE);
 
         if (existingPlanOptional.isPresent()) {
             POPlan existingPlan = existingPlanOptional.get();
-            existingPlan.setName(poPlan.getName());
-            existingPlan.setDescription(poPlan.getDescription());
+            existingPlan.setDES(poPlan.getDES());
+            existingPlan.setSHDES(poPlan.getSHDES());
             existingPlan.setParent(poPlan.getParent());
 
             validateNotNullFields(existingPlan);
@@ -57,53 +57,53 @@ public class POPlanServiceImpl implements POPlanService {
             try {
                 return poPlanRepository.save(existingPlan);
             } catch (DataIntegrityViolationException e) {
-                throw new DatabaseOperationException("Error updating POPlan with ID: " + PO_ID, e);
+                throw new DatabaseOperationException("Error updating POPlan with ID: " + TMCODE, e);
             } catch (ObjectOptimisticLockingFailureException e) {
-                throw new ConcurrentModificationException("Another user has modified the POPlan with ID: " + PO_ID + ". Please try again.");
+                throw new ConcurrentModificationException("Another user has modified the POPlan with ID: " + TMCODE + ". Please try again.");
             } catch (Exception e) {
-                throw new RuntimeException("An unexpected error occurred while updating POPlan with ID: " + PO_ID, e);
+                throw new RuntimeException("An unexpected error occurred while updating POPlan with ID: " + TMCODE, e);
             }
         } else {
-            throw new ResourceNotFoundException("Could not find POPlan with ID: " + PO_ID);
+            throw new ResourceNotFoundException("Could not find POPlan with ID: " + TMCODE);
         }
     }
 
     private void validateNotNullFields(POPlan poPlan) {
-        if (poPlan.getName() == null || poPlan.getDescription() == null || poPlan.getParent() == null) {
-            throw new InvalidInputException("Name, description, and parent cannot be null");
+        if (poPlan.getDES() == null || poPlan.getSHDES() == null || poPlan.getParent() == null) {
+            throw new InvalidInputException("DES, description, and parent cannot be null");
         }
     }
 
     @Override
-    public String delete(int PO_ID) {
-        if (!poPlanRepository.existsById(PO_ID)) {
-            throw new ResourceNotFoundException("POPlan with ID " + PO_ID + " not found");
+    public String delete(int TMCODE) {
+        if (!poPlanRepository.existsById(TMCODE)) {
+            throw new ResourceNotFoundException("POPlan with ID " + TMCODE + " not found");
         }
 
         try {
-            poPlanRepository.deleteById(PO_ID);
-            return "POPlan with ID " + PO_ID + " was successfully deleted";
+            poPlanRepository.deleteById(TMCODE);
+            return "POPlan with ID " + TMCODE + " was successfully deleted";
         } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while deleting POPlan with ID: " + PO_ID, e);
+            throw new RuntimeException("An unexpected error occurred while deleting POPlan with ID: " + TMCODE, e);
         }
     }
 
     @Override
-    public POPlan findById(int PO_ID) {
+    public POPlan findById(int TMCODE) {
         try {
-            return poPlanRepository.findById(PO_ID)
-                    .orElseThrow(() -> new ResourceNotFoundException("POPlan with ID " + PO_ID + " not found"));
+            return poPlanRepository.findById(TMCODE)
+                    .orElseThrow(() -> new ResourceNotFoundException("POPlan with ID " + TMCODE + " not found"));
         } catch (ResourceNotFoundException e) {
-            throw new RuntimeException("POPlan with ID \"" + PO_ID + "\" not found", e);
+            throw new RuntimeException("POPlan with ID \"" + TMCODE + "\" not found", e);
         }
     }
 
     @Override
-    public List<POPlan> searchByKeyword(String name) {
+    public List<POPlan> searchByKeyword(String DES) {
         try {
-            return poPlanRepository.searchByKeyword(name);
+            return poPlanRepository.searchByKeyword(DES);
         } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while searching for POPlans by keyword: " + name, e);
+            throw new RuntimeException("An unexpected error occurred while searching for POPlans by keyword: " + DES, e);
         }
     }
 }

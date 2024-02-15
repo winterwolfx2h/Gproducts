@@ -1,6 +1,5 @@
 package com.Bcm.Repository.ServiceConfigRepo.SubClassesRepo;
 
-import com.Bcm.Model.ServiceABE.SubClasses.SalesChannel;
 import com.Bcm.Model.ServiceABE.SubClasses.ServiceDocument;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

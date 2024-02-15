@@ -1,4 +1,4 @@
-package com.Bcm.Cfg;
+package com.Bcm.Configuration;
 
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -34,6 +34,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .version(Extern.SWAGGER_VERSION);
         return new OpenAPI().info(info);
     }
+
     @Override
     public void addViewControllers(final ViewControllerRegistry registry) {
         registry.addRedirectViewController("/", "/swagger-ui.html");

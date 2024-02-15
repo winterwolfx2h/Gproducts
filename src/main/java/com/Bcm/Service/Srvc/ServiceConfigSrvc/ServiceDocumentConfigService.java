@@ -1,7 +1,6 @@
 package com.Bcm.Service.Srvc.ServiceConfigSrvc;
 
 import com.Bcm.Model.ServiceABE.ServiceDocumentConfig;
-import com.Bcm.Model.ServiceABE.ServiceSpecConfig;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

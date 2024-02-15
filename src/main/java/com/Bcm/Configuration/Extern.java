@@ -1,5 +1,4 @@
-package com.Bcm.Cfg;
-
+package com.Bcm.Configuration;
 
 
 import lombok.AllArgsConstructor;
@@ -10,9 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @AllArgsConstructor
-public class Extern implements InitializingBean{
-
-
+public class Extern implements InitializingBean {
 
 
     // SWAGGER CONFIG
@@ -27,16 +24,17 @@ public class Extern implements InitializingBean{
     @Value("${swagger.title}")
     String GET_SWAGGER_TITLE;
     @Value("${swagger.description}")
-    String  GET_SWAGGER_DESCRIPTION;
+    String GET_SWAGGER_DESCRIPTION;
     @Value("${swagger.license}")
-    String  GET_SWAGGER_LICENSE;
+    String GET_SWAGGER_LICENSE;
     @Value("${swagger.licenseurl}")
-    String  GET_SWAGGER_LICENSE_URL;
+    String GET_SWAGGER_LICENSE_URL;
     // END SWAGGER
 
-
-
-
+    @Bean
+    public static String getAllConfig() {
+        return "";
+    }
 
     @Override
     public synchronized void afterPropertiesSet() {
@@ -50,12 +48,6 @@ public class Extern implements InitializingBean{
         SWAGGER_LICENSE_URL = GET_SWAGGER_LICENSE_URL;
         //
 
-    }
-
-
-    @Bean
-    public static String getAllConfig(){
-        return "";
     }
 
 }

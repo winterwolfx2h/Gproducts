@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ServiceBusinessInteractionConfigRepository extends JpaRepository<ServiceBusinessInteractionConfig,Integer> {
+public interface ServiceBusinessInteractionConfigRepository extends JpaRepository<ServiceBusinessInteractionConfig, Integer> {
 
     Optional<ServiceBusinessInteractionConfig> findById(int SBIC_code);
 

@@ -31,7 +31,7 @@ public class ProductOffering {
     @Column(name = "effectiveFrom", nullable = false)
     private Date effectiveFrom;
 
-    @Column(name = "effectiveTo", nullable = false  )
+    @Column(name = "effectiveTo", nullable = false)
     private Date effectiveTo;
 
     @Column(name = "groupDimension", nullable = false)

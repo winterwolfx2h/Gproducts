@@ -10,7 +10,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 
-@Table(name = "RatePlan")
+@Table(name = "RatePlanBCM")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor

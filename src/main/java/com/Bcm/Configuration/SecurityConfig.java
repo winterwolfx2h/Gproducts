@@ -1,4 +1,4 @@
-package com.Bcm.Cfg;
+package com.Bcm.Configuration;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception{
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication().withUser(msUsername).password(new BCryptPasswordEncoder().encode(msPassword)).roles("USER");
 
     }

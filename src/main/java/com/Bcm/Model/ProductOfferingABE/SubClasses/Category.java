@@ -19,7 +19,8 @@ import javax.persistence.*;
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_seq_generator")
+    @SequenceGenerator(name = "category_seq_generator", sequenceName = "category_sequence", allocationSize = 1)
     @JsonIgnore
     @Column(name = "id", nullable = false)
     private int po_CategoryCode;
@@ -27,9 +28,6 @@ public class Category {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "productSpecification_id")
-    private ProductSpecification productSpecification;
+
 }
 

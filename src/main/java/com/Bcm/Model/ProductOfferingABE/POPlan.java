@@ -19,7 +19,7 @@ public class POPlan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "TMCODE", nullable = false)
+    @Column(name = "id", nullable = false)
     private int TMCODE;
 
     /*

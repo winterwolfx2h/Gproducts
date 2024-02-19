@@ -32,9 +32,7 @@ public class ProductSpecification {
     @OneToMany(mappedBy = "productSpecification")
     private List<Family> family;
 
-    @Column(name = "category", nullable = false)
-    @OneToMany(mappedBy = "productSpecification")
-    private List<Category> category;
+
 
     @Column(name = "productType", nullable = false)
     @OneToMany(mappedBy = "productSpecification")

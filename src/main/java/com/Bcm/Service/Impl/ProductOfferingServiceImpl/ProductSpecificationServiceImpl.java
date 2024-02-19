@@ -33,7 +33,7 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
             ProductSpecification existingProduct = existingProductOptional.get();
             existingProduct.setName(updatedproductSpecification.getName());
             existingProduct.setFamily(updatedproductSpecification.getFamily());
-            existingProduct.setCategory(updatedproductSpecification.getCategory());
+
             existingProduct.setProductType(updatedproductSpecification.getProductType());
             existingProduct.setMarket(updatedproductSpecification.getMarket());
             existingProduct.setProductSubType(updatedproductSpecification.getProductSubType());

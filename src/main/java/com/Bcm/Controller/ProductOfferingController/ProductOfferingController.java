@@ -2,7 +2,9 @@ package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Category;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +22,24 @@ public class ProductOfferingController {
     @Autowired
     private ProductOfferingService productOfferingService;
 
+    @Autowired
+    private CategoryService categoryService;
+
     @PostMapping("/addProdOff")
-    public ResponseEntity<ProductOffering> createProductOffering(@RequestBody ProductOffering productOffering) {
-        ProductOffering createdProductOffering = productOfferingService.create(productOffering);
-        return ResponseEntity.ok(createdProductOffering);
+    public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
+
+        String categoryName = productOffering.getCategory().getName();
+        Category category = categoryService.findByname(categoryName);
+
+        if (category != null) {
+            productOffering.setCategory(category);
+            ProductOffering createdProduct = productOfferingService.create(productOffering);
+            return ResponseEntity.ok(createdProduct);
+        } else {
+            return ResponseEntity.badRequest().body("cATEGORY not found with name: " + categoryName);
+        }
     }
+
 
     @GetMapping
     public ResponseEntity<List<ProductOffering>> getAllProductOfferings() {
@@ -39,19 +54,33 @@ public class ProductOfferingController {
     }
 
     @PutMapping("/{po_code}")
-
-    public ResponseEntity<ProductOffering> updateProductOffering(
+    public ResponseEntity<?> updateProductOffering(
             @PathVariable("po_code") int po_code,
             @RequestBody ProductOffering updatedProductOffering) {
 
-        ProductOffering updatedProduct = productOfferingService.update(po_code, updatedProductOffering);
-        return ResponseEntity.ok(updatedProduct);
+        String categoryName = updatedProductOffering.getCategory().getName();
+        Category category = categoryService.findByname(categoryName);
+
+        if (category != null) {
+            updatedProductOffering.setCategory(category);
+            ProductOffering updatedProduct = productOfferingService.update(po_code, updatedProductOffering);
+            return ResponseEntity.ok(updatedProduct);
+        } else {
+            return ResponseEntity.badRequest().body("Category not found with name: " + categoryName);
+        }
     }
+
 
     @DeleteMapping("/{po_code}")
     public ResponseEntity<String> deleteProductOffering(@PathVariable("po_code") int po_code) {
         String resultMessage = productOfferingService.delete(po_code);
         return ResponseEntity.ok(resultMessage);
+    }
+
+    @GetMapping("/searchByCategory")
+    public ResponseEntity<List<ProductOffering>> searchPfBycategory(@RequestParam("name") String name) {
+        List<ProductOffering> searchResults = productOfferingService.searchWithCategory(name);
+        return ResponseEntity.ok(searchResults);
     }
 
     @GetMapping("/search")

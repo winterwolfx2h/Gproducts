@@ -1,6 +1,7 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl.SubClassesServiceImpl;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Category;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.CategoryRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,17 @@ public class CategoryServiceImpl implements CategoryService {
         Optional<Category> optionalCategory = categoryRepository.findById(po_CategoryCode);
         return optionalCategory.orElseThrow(() -> new RuntimeException("Category with ID " + po_CategoryCode + " not found"));
     }
+
+    @Override
+    public Category findByname(String name) {
+        try {
+            Optional<Category> optionalCategory = categoryRepository.findByname(name);
+            return optionalCategory.orElseThrow(() -> new RuntimeException("Category with ID " + name + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding Category");
+        }
+    }
+
 
     @Override
     public List<Category> searchByKeyword(String name) {

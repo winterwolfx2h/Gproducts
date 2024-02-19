@@ -1,12 +1,16 @@
 package com.Bcm.Model.ProductOfferingABE;
 
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Category;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.GroupDimension;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Parent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -34,18 +38,13 @@ public class ProductOffering {
     @Column(name = "effectiveTo", nullable = false)
     private Date effectiveTo;
 
-    @Column(name = "groupDimension", nullable = false)
-    @OneToMany(mappedBy = "productOffering")
-    private List<GroupDimension> groupDimension;
-
-    @Column(name = "parent", nullable = false)
-    @OneToMany(mappedBy = "productOffering")
-    private List<Parent> parent;
 
     @Column(name = "description", nullable = true)
     private String description;
 
-    @Column(name = "productSpec", nullable = false)
-    @OneToMany(mappedBy = "productOffering")
-    private List<ProductSpecification> productSpec;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "po_CategoryCode", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Category category;
+
 }

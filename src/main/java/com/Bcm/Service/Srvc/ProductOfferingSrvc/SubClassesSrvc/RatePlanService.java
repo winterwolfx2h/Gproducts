@@ -19,4 +19,7 @@ public interface RatePlanService {
     RatePlan findById(int po_RatePlanCode);
 
     List<RatePlan> searchByKeyword(String name);
+
+    RatePlan findByName(String name);
+
 }

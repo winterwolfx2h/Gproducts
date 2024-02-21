@@ -19,4 +19,7 @@ public interface MarketService {
     Market findById(int po_MarketCode);
 
     List<Market> searchByKeyword(String name);
+
+    Market findByName(String name);
+
 }

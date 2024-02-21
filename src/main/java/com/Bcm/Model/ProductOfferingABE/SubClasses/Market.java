@@ -1,6 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses;
 
-import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +18,8 @@ import javax.persistence.*;
 public class Market {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "market_seq_generator")
+    @SequenceGenerator(name = "market_seq_generator", sequenceName = "market_sequence", allocationSize = 1)
     @JsonIgnore
     @Column(name = "id", nullable = false)
     private int po_MarketCode;
@@ -27,8 +27,4 @@ public class Market {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "productSpecification_id")
-    private ProductSpecification productSpecification;
 }

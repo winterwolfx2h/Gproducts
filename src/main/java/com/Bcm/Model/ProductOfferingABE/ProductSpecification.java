@@ -1,14 +1,17 @@
 package com.Bcm.Model.ProductOfferingABE;
 
-import com.Bcm.Model.ProductOfferingABE.SubClasses.*;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.List;
 
 
 @Table(name = "ProductSpecification")
@@ -21,6 +24,7 @@ public class ProductSpecification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "ProductSpecification_seq_generator", sequenceName = "ProductSpecification_sequence", allocationSize = 1)
     @JsonIgnore
     @Column(name = "id", nullable = false)
     private int po_SpecCode;
@@ -28,46 +32,24 @@ public class ProductSpecification {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "family", nullable = false)
-    @OneToMany(mappedBy = "productSpecification")
-    private List<Family> family;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "po_FamilyCode", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Family family;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "po_MarketCode", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Market market;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "po_SubMarketCode", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private SubMarket subMarket;
 
-    @Column(name = "productType", nullable = false)
-    @OneToMany(mappedBy = "productSpecification")
-    private List<ProductType> productType;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "TMCODE", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private POPlan poPlan;
 
-    @Column(name = "market", nullable = false)
-    @OneToMany(mappedBy = "productSpecification")
-    private List<Market> market;
-
-    @Column(name = "productSubType", nullable = false)
-    @OneToMany(mappedBy = "productSpecification")
-    private List<ProductSubType> productSubType;
-
-    @Column(name = "productTechnicalType", nullable = false)
-    @OneToMany(mappedBy = "productSpecification")
-    private List<ProductTechnicalType> productTechnicalType;
-
-    @Column(name = "timeZoneType", nullable = false)
-    @OneToMany(mappedBy = "productSpecification")
-    private List<TimeZoneType> timeZoneType;
-
-    @Column(name = "ratePlan", nullable = false)
-    @OneToMany(mappedBy = "productSpecification")
-    private List<RatePlan> ratePlan;
-
-    @Column(name = "dateFinEngagement", nullable = false)
-    @OneToMany(mappedBy = "productSpecification")
-    private List<DateFinEngagement> dateFinEngagement;
-
-    @Column(name = "dureeEngagement", nullable = false)
-    @OneToMany(mappedBy = "productSpecification")
-    private List<DureeEngagement> dureeEngagement;
-
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "productOffering_id")
-    private ProductOffering productOffering;
 }

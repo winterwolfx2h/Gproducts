@@ -33,15 +33,8 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
             ProductSpecification existingProduct = existingProductOptional.get();
             existingProduct.setName(updatedproductSpecification.getName());
             existingProduct.setFamily(updatedproductSpecification.getFamily());
-
-            existingProduct.setProductType(updatedproductSpecification.getProductType());
             existingProduct.setMarket(updatedproductSpecification.getMarket());
-            existingProduct.setProductSubType(updatedproductSpecification.getProductSubType());
-            existingProduct.setProductTechnicalType(updatedproductSpecification.getProductTechnicalType());
-            existingProduct.setTimeZoneType(updatedproductSpecification.getTimeZoneType());
-            existingProduct.setRatePlan(updatedproductSpecification.getRatePlan());
-            existingProduct.setDateFinEngagement(updatedproductSpecification.getDateFinEngagement());
-            existingProduct.setDureeEngagement(updatedproductSpecification.getDureeEngagement());
+            existingProduct.setPoPlan(updatedproductSpecification.getPoPlan());
 
             return productOfferingRepository.save(existingProduct);
         } else {
@@ -65,4 +58,17 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
     public List<ProductSpecification> searchByKeyword(String name) {
         return productOfferingRepository.searchByKeyword(name);
     }
+
+    @Override
+    public ProductSpecification findByName(String name) {
+        try {
+            Optional<ProductSpecification> optionalProductSpecification = productOfferingRepository.findByname(name);
+            return optionalProductSpecification.orElseThrow(() -> new RuntimeException("Product Specification with ID " + name + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding Product Specification");
+        }
+    }
+
+
 }
+

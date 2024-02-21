@@ -23,3 +23,4 @@ public interface ProductOfferingService {
     List<ProductOffering> searchWithCategory(String name);
 
 }
+

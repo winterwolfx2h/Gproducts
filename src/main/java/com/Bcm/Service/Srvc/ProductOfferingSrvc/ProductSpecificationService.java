@@ -20,5 +20,7 @@ public interface ProductSpecificationService {
 
     List<ProductSpecification> searchByKeyword(String name);
 
+    ProductSpecification findByName(String name);
+
 
 }

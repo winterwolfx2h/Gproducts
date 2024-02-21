@@ -1,6 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses;
 
-import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-
 
 @Table(name = "Category")
 @Entity
@@ -27,7 +25,6 @@ public class Category {
 
     @Column(name = "name", nullable = false)
     private String name;
-
-
 }
+
 

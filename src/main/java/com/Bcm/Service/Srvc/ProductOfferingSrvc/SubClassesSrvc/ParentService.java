@@ -18,5 +18,9 @@ public interface ParentService {
 
     Parent findById(int po_ParentCode);
 
+    Parent findByName(String name);
+
     List<Parent> searchByKeyword(String name);
+
+
 }

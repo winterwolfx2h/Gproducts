@@ -77,4 +77,14 @@ public class ParentServiceImpl implements ParentService {
             throw new RuntimeException("Invalid argument provided for searching Parent by keyword");
         }
     }
+
+    @Override
+    public Parent findByName(String name) {
+        try {
+            Optional<Parent> optionalParent = parentRepository.findByname(name);
+            return optionalParent.orElseThrow(() -> new RuntimeException("Parent with ID " + name + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding Parent");
+        }
+    }
 }

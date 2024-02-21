@@ -106,7 +106,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
     }
 
 
-
     @Override
     public List<ProductOffering> searchByKeyword(String name) {
         try {

@@ -1,6 +1,7 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl.SubClassesServiceImpl;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Category;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.CategoryRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;

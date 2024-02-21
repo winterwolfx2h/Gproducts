@@ -77,4 +77,14 @@ public class FamilyServiceImpl implements FamilyService {
             throw new RuntimeException("Invalid argument provided for searching Family by keyword");
         }
     }
+
+    @Override
+    public Family findByName(String name) {
+        try {
+            Optional<Family> optionalFamily = familyRepository.findByName(name);
+            return optionalFamily.orElseThrow(() -> new RuntimeException("Family with ID " + name + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding Family");
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses;
 
-import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +19,7 @@ public class GroupDimension {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "GroupDimension_seq_generator", sequenceName = "GroupDimension_sequence", allocationSize = 1)
     @JsonIgnore
     @Column(name = "id", nullable = false)
     private int po_GdCode;
@@ -27,8 +27,4 @@ public class GroupDimension {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "productOffering_id")
-    private ProductOffering productOffering;
 }

@@ -19,4 +19,6 @@ public interface FamilyService {
     Family findById(int po_FamilyCode);
 
     List<Family> searchByKeyword(String name);
+
+    Family findByName(String name);
 }

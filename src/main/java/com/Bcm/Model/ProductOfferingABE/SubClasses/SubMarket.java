@@ -8,20 +8,20 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-
-@Table(name = "RatePlanBCM")
+@Table(name = "SubMarket")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class RatePlan {
+public class SubMarket {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rateplan_seq_generator")
-    @SequenceGenerator(name = "rateplan_seq_generator", sequenceName = "rateplan_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "submarket_seq_generator")
+    @SequenceGenerator(name = "submarket_seq_generator", sequenceName = "submarket_sequence", allocationSize = 1)
     @JsonIgnore
     @Column(name = "id", nullable = false)
-    private int po_RatePlanCode;
+    private int po_SubMarketCode;
 
     @Column(name = "name", nullable = false)
     private String name;

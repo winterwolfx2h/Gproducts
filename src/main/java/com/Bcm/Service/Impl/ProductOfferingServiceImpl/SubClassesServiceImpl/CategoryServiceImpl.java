@@ -72,7 +72,19 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public Category findByname(String name) {
+        try {
+            Optional<Category> optionalCategory = categoryRepository.findByname(name);
+            return optionalCategory.orElseThrow(() -> new RuntimeException("Category with ID " + name + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding Category");
+        }
+    }
+
+
+    @Override
     public List<Category> searchByKeyword(String name) {
         return categoryRepository.searchByKeyword(name);
     }
 }
+

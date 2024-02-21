@@ -53,8 +53,8 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             existingProduct.setDescription(updatedProductOffering.getDescription());
             existingProduct.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
             existingProduct.setEffectiveTo(updatedProductOffering.getEffectiveTo());
-            existingProduct.setGroupDimension(updatedProductOffering.getGroupDimension());
-            existingProduct.setParent(updatedProductOffering.getParent());
+            existingProduct.setCategory(updatedProductOffering.getCategory());
+
 
             try {
                 if (updatedProductOffering.getName() == null || updatedProductOffering.getDescription() == null) {
@@ -102,12 +102,22 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         }
     }
 
+
     @Override
     public List<ProductOffering> searchByKeyword(String name) {
         try {
             return productOfferingRepository.searchByKeyword(name);
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred while searching for product offerings by keyword: " + name, e);
+        }
+    }
+
+    @Override
+    public List<ProductOffering> searchWithCategory(String name) {
+        try {
+            return productOfferingRepository.findAllWithCategory(name);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while reading product offerings with categories", e);
         }
     }
 }

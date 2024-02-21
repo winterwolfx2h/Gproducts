@@ -77,4 +77,14 @@ public class MarketServiceImpl implements MarketService {
             throw new RuntimeException("Invalid argument provided for searching Market by keyword");
         }
     }
+
+    @Override
+    public Market findByName(String name) {
+        try {
+            Optional<Market> optionalMarket = marketRepository.findByName(name);
+            return optionalMarket.orElseThrow(() -> new RuntimeException("Market with ID " + name + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding Market");
+        }
+    }
 }

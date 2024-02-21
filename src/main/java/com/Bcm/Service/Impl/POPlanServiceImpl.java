@@ -18,14 +18,18 @@ import java.util.Optional;
 @Service
 public class POPlanServiceImpl implements POPlanService {
 
-    @Autowired
-    POPlanRepository poPlanRepository;
+    final
+    POPlanRepository popRepository;
+
+    public POPlanServiceImpl(POPlanRepository poPlanRepository) {
+        this.popRepository = poPlanRepository;
+    }
 
     @Override
     public POPlan create(POPlan poPlan) {
         validateNotNullFields(poPlan);
         try {
-            return poPlanRepository.save(poPlan);
+            return popRepository.save(poPlan);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseOperationException("Error creating POPlan", e);
         } catch (Exception e) {
@@ -36,7 +40,7 @@ public class POPlanServiceImpl implements POPlanService {
     @Override
     public List<POPlan> read() {
         try {
-            return poPlanRepository.findAll();
+            return popRepository.findAll();
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred while reading POPlans", e);
         }
@@ -44,7 +48,7 @@ public class POPlanServiceImpl implements POPlanService {
 
     @Override
     public POPlan update(int TMCODE, POPlan poPlan) {
-        Optional<POPlan> existingPlanOptional = poPlanRepository.findById(TMCODE);
+        Optional<POPlan> existingPlanOptional = popRepository.findById(TMCODE);
 
         if (existingPlanOptional.isPresent()) {
             POPlan existingPlan = existingPlanOptional.get();
@@ -55,7 +59,7 @@ public class POPlanServiceImpl implements POPlanService {
             validateNotNullFields(existingPlan);
 
             try {
-                return poPlanRepository.save(existingPlan);
+                return popRepository.save(existingPlan);
             } catch (DataIntegrityViolationException e) {
                 throw new DatabaseOperationException("Error updating POPlan with ID: " + TMCODE, e);
             } catch (ObjectOptimisticLockingFailureException e) {
@@ -76,12 +80,12 @@ public class POPlanServiceImpl implements POPlanService {
 
     @Override
     public String delete(int TMCODE) {
-        if (!poPlanRepository.existsById(TMCODE)) {
+        if (!popRepository.existsById(TMCODE)) {
             throw new ResourceNotFoundException("POPlan with ID " + TMCODE + " not found");
         }
 
         try {
-            poPlanRepository.deleteById(TMCODE);
+            popRepository.deleteById(TMCODE);
             return "POPlan with ID " + TMCODE + " was successfully deleted";
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred while deleting POPlan with ID: " + TMCODE, e);
@@ -91,7 +95,7 @@ public class POPlanServiceImpl implements POPlanService {
     @Override
     public POPlan findById(int TMCODE) {
         try {
-            return poPlanRepository.findById(TMCODE)
+            return popRepository.findById(TMCODE)
                     .orElseThrow(() -> new ResourceNotFoundException("POPlan with ID " + TMCODE + " not found"));
         } catch (ResourceNotFoundException e) {
             throw new RuntimeException("POPlan with ID \"" + TMCODE + "\" not found", e);
@@ -101,9 +105,19 @@ public class POPlanServiceImpl implements POPlanService {
     @Override
     public List<POPlan> searchByKeyword(String DES) {
         try {
-            return poPlanRepository.searchByKeyword(DES);
+            return popRepository.searchByKeyword(DES);
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred while searching for POPlans by keyword: " + DES, e);
+        }
+    }
+
+    @Override
+    public POPlan findBySHDES(String SHDES) {
+        try {
+            Optional<POPlan> optionalPOPlan = popRepository.findBySHDES(SHDES);
+            return optionalPOPlan.orElseThrow(() -> new RuntimeException("POPlan with ID " + SHDES + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding POPlan");
         }
     }
 }

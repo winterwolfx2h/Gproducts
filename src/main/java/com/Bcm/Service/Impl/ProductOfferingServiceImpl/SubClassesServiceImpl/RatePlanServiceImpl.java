@@ -77,4 +77,15 @@ public class RatePlanServiceImpl implements RatePlanService {
             throw new RuntimeException("Invalid argument provided for searching RatePlan by keyword");
         }
     }
+
+    @Override
+    public RatePlan findByName(String name) {
+        try {
+            Optional<RatePlan> optionalRatePlan = ratePlanRepository.findByName(name);
+            return optionalRatePlan.orElseThrow(() -> new RuntimeException("RatePlan with ID " + name + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding RatePlan");
+        }
+    }
+
 }

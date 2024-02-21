@@ -20,5 +20,5 @@ public interface POPlanService {
 
     List<POPlan> searchByKeyword(String DES);
 
-
+    POPlan findBySHDES (String SHDES);
 }

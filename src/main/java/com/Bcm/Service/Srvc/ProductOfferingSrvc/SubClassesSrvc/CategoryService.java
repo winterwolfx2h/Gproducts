@@ -18,5 +18,7 @@ public interface CategoryService {
 
     Category findById(int po_CategoryCode);
 
+    Category findByname(String name);
     List<Category> searchByKeyword(String name);
 }
+

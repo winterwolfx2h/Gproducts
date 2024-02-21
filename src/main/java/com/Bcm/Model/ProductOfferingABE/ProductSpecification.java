@@ -2,7 +2,6 @@ package com.Bcm.Model.ProductOfferingABE;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.RatePlan;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

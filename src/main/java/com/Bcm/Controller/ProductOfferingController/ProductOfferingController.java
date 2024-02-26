@@ -9,6 +9,7 @@ import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductSpecificationService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.CategoryService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ParentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,19 +20,15 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/product-offerings")
 public class ProductOfferingController {
 
-    @Autowired
-    private ProductOfferingService productOfferingService;
-
-    @Autowired
-    private CategoryService categoryService;
-    @Autowired
-    private ProductSpecificationService productSpecificationService;
-    @Autowired
-    private ParentService parentService;
+    final  ProductOfferingService productOfferingService;
+    final  CategoryService categoryService;
+    final  ProductSpecificationService productSpecificationService;
+    final  ParentService parentService;
 
 
     @PostMapping("/addProdOff")
@@ -59,7 +56,6 @@ public class ProductOfferingController {
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }
     }
-
 
     @GetMapping
     public ResponseEntity<List<ProductOffering>> getAllProductOfferings() {

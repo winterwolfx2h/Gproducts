@@ -1,7 +1,6 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses;
 
 
-import com.Bcm.Model.ProductOfferingABE.BundledProductOfferOption;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,9 +25,13 @@ public class NumberRelationOfferLowerLimit {
 
     @Column(name = "name", nullable = false)
     private String name;
+    /*
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "bundledProductOfferOption_id")
     private BundledProductOfferOption bundledProductOfferOption;
+
+
+     */
 }

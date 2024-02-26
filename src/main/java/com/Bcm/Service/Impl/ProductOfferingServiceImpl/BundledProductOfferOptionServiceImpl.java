@@ -1,17 +1,10 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
-import com.Bcm.Model.ProductOfferingABE.BundledProductOfferOption;
-import com.Bcm.Repository.ProductOfferingRepo.BundledProductOfferOptionRepository;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.BundledProductOfferOptionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-
 @Service
-public class BundledProductOfferOptionServiceImpl implements BundledProductOfferOptionService {
-
+public class BundledProductOfferOptionServiceImpl/* implements BundledProductOfferOptionService*/ {
+/*
     @Autowired
     BundledProductOfferOptionRepository bundledProductOfferOptionRepository;
 
@@ -55,5 +48,5 @@ public class BundledProductOfferOptionServiceImpl implements BundledProductOffer
     public BundledProductOfferOption findById(int bdoo_code) {
         Optional<BundledProductOfferOption> optionalPlan = bundledProductOfferOptionRepository.findById(bdoo_code);
         return optionalPlan.orElseThrow(() -> new RuntimeException("Bundled product offer option with ID " + bdoo_code + " not found"));
-    }
+    }*/
 }

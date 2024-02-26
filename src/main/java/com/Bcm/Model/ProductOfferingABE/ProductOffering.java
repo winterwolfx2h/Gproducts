@@ -38,4 +38,13 @@ public class ProductOffering extends Product {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductSpecification productSpecification;
 
+    @Column(name = "externalId", nullable = false)
+    private String externalId;
+
+    @Column(name = "productClass", nullable = false)
+    private String productClass;
+
+    @Column(name = "productSubClass", nullable = false)
+    private String productSubClass;
+
 }

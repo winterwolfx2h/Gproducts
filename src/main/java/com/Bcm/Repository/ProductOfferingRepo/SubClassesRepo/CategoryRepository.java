@@ -1,7 +1,6 @@
 package com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Category;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

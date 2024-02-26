@@ -22,5 +22,8 @@ public interface ProductOfferingService {
 
     List<ProductOffering> searchWithCategory(String name);
 
+    ProductOffering findByName(String name);
+
+
 }
 

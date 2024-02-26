@@ -19,6 +19,7 @@ public class Status {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "Status_seq_generator", sequenceName = "Status_sequence", allocationSize = 1)
     @JsonIgnore
     @Column(name = "id", nullable = false)
     private int pos_code;
@@ -31,3 +32,4 @@ public class Status {
     @JoinColumn(name = "bundledProductOffer_id")
     private BundledProductOffer bundledProductOffer;
 }
+

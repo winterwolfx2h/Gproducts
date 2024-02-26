@@ -1,7 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses;
 
-
-import com.Bcm.Model.ProductOfferingABE.ProductOfferingRelationship;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,15 +18,12 @@ public class Type {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "Type_seq_generator", sequenceName = "Type_sequence", allocationSize = 1)
     @JsonIgnore
     @Column(name = "id", nullable = false)
-    private int pos_code;
+    private int poType_code;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "ProductOfferingRelationship_id")
-    private ProductOfferingRelationship productOfferingRelationship;
 }

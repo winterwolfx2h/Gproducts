@@ -1,7 +1,6 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses;
 
-import com.Bcm.Model.ProductOfferingABE.BundledProductOffer;
-import com.Bcm.Model.ProductOfferingABE.ProductOfferingRelationship;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,30 +9,22 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Table(name = "ValidFor")
+@Table(name = "Provider")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class ValidFor {
+public class Provider {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "Provider_seq_generator", sequenceName = "Provider_sequence", allocationSize = 1)
     @JsonIgnore
     @Column(name = "id", nullable = false)
-    private int povf_code;
+    private int po_ProviderCode;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "bundledProductOffer_id")
-    private BundledProductOffer bundledProductOffer;
-
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "productOfferingRelationship_id")
-    private ProductOfferingRelationship productOfferingRelationship;
 }

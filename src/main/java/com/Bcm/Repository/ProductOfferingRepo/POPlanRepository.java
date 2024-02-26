@@ -1,7 +1,6 @@
 package com.Bcm.Repository.ProductOfferingRepo;
 
 import com.Bcm.Model.ProductOfferingABE.POPlan;
-import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,21 +17,17 @@ public interface POPlanRepository extends JpaRepository<POPlan, Integer> {
     @Query("SELECT p FROM POPlan p WHERE p.DES LIKE %:DES% ")
     List<POPlan> searchByKeyword(String DES);
 
-    @Query("SELECT po FROM ProductOffering po JOIN po.parent c WHERE  c.name = :name ")
-    List<ProductOffering> findAllWithParent(String name);
+    @Query("SELECT po FROM POPlan po JOIN po.parent c WHERE  c.name = :name ")
+    List<POPlan> findAllWithParent(String name);
 
-    @Query("SELECT p FROM ProductOffering p WHERE p.parent.po_ParentCode = :po_ParentCode")
-    List<ProductOffering> findByParent_po_ParentCode(int po_ParentCode);
-
+    @Query("SELECT p FROM POPlan p WHERE p.parent.po_ParentCode = :po_ParentCode")
+    List<POPlan> findByParent_po_ParentCode(int po_ParentCode);
     @Query("SELECT po FROM POPlan po JOIN po.market c WHERE  c.name = :name ")
     List<POPlan> findAllWithMarket(String name);
-
     @Query("SELECT p FROM POPlan p WHERE p.market.po_MarketCode = :po_MarketCode")
     List<POPlan> findByMarket_po_MarketCode(int po_MarketCode);
-
     @Query("SELECT po FROM POPlan po JOIN po.subMarket c WHERE  c.name = :name ")
     List<POPlan> findAllWithSubMarket(String name);
-
     @Query("SELECT p FROM POPlan p WHERE p.subMarket.po_SubMarketCode = :po_SubMarketCode")
     List<POPlan> findBySubMarket_po_SubMarketCode(int po_SubMarketCode);
 }

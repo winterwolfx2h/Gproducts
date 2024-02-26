@@ -13,6 +13,7 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
-
+    @Query("SELECT po FROM Product po JOIN po.family c WHERE  c.name = :name ")
+    List<Product> findAllWithFamily(String name);
 
 }

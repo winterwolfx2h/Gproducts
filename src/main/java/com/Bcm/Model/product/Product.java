@@ -1,6 +1,7 @@
 package com.Bcm.Model.product;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Parent;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Type;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -42,4 +43,9 @@ public class Product {
     @JoinColumn(name = "po_FamilyCode", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Family family;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "po_type", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Type poType;
 }

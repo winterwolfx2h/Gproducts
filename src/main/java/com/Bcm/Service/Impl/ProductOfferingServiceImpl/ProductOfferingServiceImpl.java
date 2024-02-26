@@ -5,10 +5,7 @@ import com.Bcm.Exception.InputException;
 import com.Bcm.Exception.InvalidInput;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Category;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
-import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.CategoryRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -105,7 +102,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         }
     }
 
-
     @Override
     public List<ProductOffering> searchByKeyword(String name) {
         try {
@@ -121,6 +117,16 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             return productOfferingRepository.findAllWithCategory(name);
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred while reading product offerings with categories", e);
+        }
+    }
+
+    @Override
+    public ProductOffering findByName(String name) {
+        try {
+            Optional<ProductOffering> optionalProductOffering = productOfferingRepository.findByname(name);
+            return optionalProductOffering.orElseThrow(() -> new RuntimeException("Product Offering with ID " + name + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding Product Offering");
         }
     }
 }

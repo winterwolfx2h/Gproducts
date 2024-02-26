@@ -37,5 +37,11 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/searchByFamily")
+    public ResponseEntity<List<Product>> searchPfByFamily(@RequestParam("name") String name) {
+        List<Product> searchResults = productService.searchWithFamily(name);
+        return ResponseEntity.ok(searchResults);
+    }
+
 
 }

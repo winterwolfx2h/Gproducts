@@ -12,6 +12,7 @@ public interface ProductService {
 
 
     List<Product> read();
+    List<Product> searchWithFamily(String name);
 
 
 

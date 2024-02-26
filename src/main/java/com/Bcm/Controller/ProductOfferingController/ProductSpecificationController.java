@@ -40,29 +40,21 @@ public class ProductSpecificationController {
     @PostMapping
     public ResponseEntity<?> createProductSpecification(@RequestBody ProductSpecification ProductSpecification) {
 
-        String familyName = ProductSpecification.getFamily().getName();
-        String marketName = ProductSpecification.getMarket().getName();
-        String subMarketName = ProductSpecification.getSubMarket().getName();
+
         String poPlanName = ProductSpecification.getPoPlan().getSHDES();
 
-        Family family = familyService.findByName(familyName);
-        Market market = marketService.findByName(marketName);
-        SubMarket subMarket = subMarketService.findByName(subMarketName);
+
         POPlan poPlan = poPlanService.findBySHDES(poPlanName);
 
-        if (family != null && market != null && subMarket != null && poPlan != null) {
-            ProductSpecification.setFamily(family);
-            ProductSpecification.setMarket(market);
-            ProductSpecification.setSubMarket(subMarket);
+        if (poPlan != null) {
+
             ProductSpecification.setPoPlan(poPlan);
 
             ProductSpecification createdProductSpecification = productSpecificationService.create(ProductSpecification);
             return ResponseEntity.ok(createdProductSpecification);
         } else {
             StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
-            if (family == null) errorMessage.append(" Family with name: ").append(familyName);
-            if (market == null) errorMessage.append(" Market with name: ").append(marketName);
-            if (subMarket == null) errorMessage.append(" SubMarket with name: ").append(subMarketName);
+
             if (poPlan == null) errorMessage.append(" POPPLAN with name: ").append(poPlanName);
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }

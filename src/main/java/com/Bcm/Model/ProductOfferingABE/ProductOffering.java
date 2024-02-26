@@ -2,6 +2,7 @@ package com.Bcm.Model.ProductOfferingABE;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Category;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Parent;
+import com.Bcm.Model.product.Product;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,24 +20,8 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ProductOffering {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
-    @Column(name = "id", nullable = false)
-    private int po_code;
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
-    @Column(name = "effectiveFrom", nullable = false)
-    private Date effectiveFrom;
-
-    @Column(name = "effectiveTo", nullable = false)
-    private Date effectiveTo;
-
-    @Column(name = "description", nullable = true)
-    private String description;
+public class ProductOffering extends Product {
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "po_ParentCode", nullable = false)

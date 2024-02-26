@@ -1,8 +1,6 @@
-package com.Bcm.Model.ProductOfferingABE;
-
+package com.Bcm.Model.product;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Parent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,31 +10,36 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.Date;
 
-
-@Table(name = "ProductSpecification")
+@Table(name = "Product")
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class ProductSpecification {
 
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @SequenceGenerator(name = "ProductSpecification_seq_generator", sequenceName = "ProductSpecification_sequence", allocationSize = 1)
     @JsonIgnore
     @Column(name = "id", nullable = false)
-    private int po_SpecCode;
+    private int Product_id;
 
     @Column(name = "name", nullable = false)
     private String name;
+    @Column(name = "effectiveFrom", nullable = false)
+    private Date effectiveFrom;
 
+    @Column(name = "effectiveTo", nullable = false)
+    private Date effectiveTo;
 
+    @Column(name = "description", nullable = true)
+    private String description;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "TMCODE", nullable = false)
+    @JoinColumn(name = "po_FamilyCode", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private POPlan poPlan;
-
+    private Family family;
 }

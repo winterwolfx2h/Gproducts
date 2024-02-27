@@ -13,58 +13,63 @@ import java.util.Optional;
 public class POAttributesServiceImpl implements POAttributesService {
 
     @Autowired
-    POAttributesRepository POAttributesRepository;
+    POAttributesRepository poAttributesRepository;
 
     @Override
     public POAttributes create(POAttributes POAttributes) {
-        return POAttributesRepository.save(POAttributes);
+        return poAttributesRepository.save(POAttributes);
     }
 
     @Override
     public List<POAttributes> read() {
-        return POAttributesRepository.findAll();
+        return poAttributesRepository.findAll();
     }
 
     @Override
-    public POAttributes update(int po_SpecCode, POAttributes updatedPOAttributes) {
-        Optional<POAttributes> existingProductOptional = POAttributesRepository.findById(po_SpecCode);
+    public POAttributes update(int poAttribute_code, POAttributes updatedPOAttributes) {
+        Optional<POAttributes> existingProductOptional = poAttributesRepository.findById(poAttribute_code);
 
         if (existingProductOptional.isPresent()) {
             POAttributes existingProduct = existingProductOptional.get();
-            existingProduct.setName(updatedPOAttributes.getName());
             existingProduct.setShortCode(updatedPOAttributes.getShortCode());
+            existingProduct.setAttributeCategory(updatedPOAttributes.getAttributeCategory());
+            existingProduct.setExternalId(updatedPOAttributes.getExternalId());
             existingProduct.setStartDate(updatedPOAttributes.getStartDate());
             existingProduct.setEndDate(updatedPOAttributes.getEndDate());
             existingProduct.setDescription(updatedPOAttributes.getDescription());
+            existingProduct.setAttributeValue(updatedPOAttributes.getAttributeValue());
+            existingProduct.setAttributeValDesc(updatedPOAttributes.getAttributeValDesc());
+            existingProduct.setCharType(updatedPOAttributes.getCharType());
+            existingProduct.setCharValue(updatedPOAttributes.getCharValue());
 
-            return POAttributesRepository.save(existingProduct);
+            return poAttributesRepository.save(existingProduct);
         } else {
-            throw new RuntimeException("Could not find POAttributes with ID: " + po_SpecCode);
+            throw new RuntimeException("Could not find POAttributes with ID: " + poAttribute_code);
         }
     }
 
     @Override
-    public String delete(int po_SpecCode) {
-        POAttributesRepository.deleteById(po_SpecCode);
+    public String delete(int poAttribute_code) {
+        poAttributesRepository.deleteById(poAttribute_code);
         return ("POAttributes was successfully deleted");
     }
 
     @Override
-    public POAttributes findById(int po_SpecCode) {
-        Optional<POAttributes> optionalPlan = POAttributesRepository.findById(po_SpecCode);
-        return optionalPlan.orElseThrow(() -> new RuntimeException("POAttributes with ID " + po_SpecCode + " not found"));
+    public POAttributes findById(int poAttribute_code) {
+        Optional<POAttributes> optionalPlan = poAttributesRepository.findById(poAttribute_code);
+        return optionalPlan.orElseThrow(() -> new RuntimeException("POAttributes with ID " + poAttribute_code + " not found"));
     }
 
     @Override
-    public List<POAttributes> searchByKeyword(String name) {
-        return POAttributesRepository.searchByKeyword(name);
+    public List<POAttributes> searchByKeyword(String description) {
+        return poAttributesRepository.searchByKeyword(description);
     }
 
     @Override
-    public POAttributes findByName(String name) {
+    public POAttributes findByDescription(String description) {
         try {
-            Optional<POAttributes> optionalPOAttributes = POAttributesRepository.findByName(name);
-            return optionalPOAttributes.orElseThrow(() -> new RuntimeException("POAttributes with ID " + name + " not found"));
+            Optional<POAttributes> optionalPOAttributes = poAttributesRepository.findByDescription(description);
+            return optionalPOAttributes.orElseThrow(() -> new RuntimeException("POAttributes with ID " + description + " not found"));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding POAttributes");
         }

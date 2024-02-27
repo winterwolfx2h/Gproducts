@@ -19,6 +19,8 @@ public interface ProductOfferingRepository extends JpaRepository<ProductOffering
     @Query("SELECT po FROM ProductOffering po JOIN po.category c WHERE  c.name = :name ")
     List<ProductOffering> findAllWithCategory(String name);
 
+    List<ProductOffering> findByParentName(String parentName);
+
     @Query("SELECT p FROM ProductOffering p WHERE p.category.po_CategoryCode = :po_CategoryCode")
     List<ProductOffering> findByCategory_po_CategoryCode(int po_CategoryCode);
 

@@ -129,4 +129,9 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new RuntimeException("Invalid argument provided for finding Product Offering");
         }
     }
+
+    @Override
+    public List<ProductOffering> findByParentName(String parentName) {
+        return productOfferingRepository.findByParentName(parentName);
+    }
 }

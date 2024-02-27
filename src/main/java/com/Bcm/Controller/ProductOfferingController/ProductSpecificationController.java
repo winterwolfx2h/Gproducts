@@ -2,9 +2,6 @@ package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Model.ProductOfferingABE.POPlan;
 import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Service.Srvc.POPlanService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductSpecificationService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
@@ -25,7 +22,6 @@ public class ProductSpecificationController {
 
     @Autowired
     private ProductSpecificationService productSpecificationService;
-
     @Autowired
     private FamilyService familyService;
     @Autowired

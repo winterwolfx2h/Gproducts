@@ -1,6 +1,6 @@
 package com.Bcm.Model.product;
+
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Parent;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Type;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -48,4 +48,15 @@ public class Product {
     @JoinColumn(name = "po_type", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Type poType;
+
+    public Product convertToProduct() {
+        Product product = new Product();
+        product.setProduct_id(this.getProduct_id());
+        product.setName(this.getName());
+        product.setEffectiveFrom(this.getEffectiveFrom());
+        product.setEffectiveTo(this.getEffectiveTo());
+        product.setDescription(this.getDescription());
+
+        return product;
+    }
 }

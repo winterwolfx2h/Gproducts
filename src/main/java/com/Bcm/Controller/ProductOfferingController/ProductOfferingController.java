@@ -14,7 +14,6 @@ import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ParentService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.TypeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,31 +1,26 @@
 package com.Bcm.Controller.Product;
 
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
-import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Category;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Parent;
 import com.Bcm.Model.product.Product;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/Product")
 public class ProductController {
 
 
-    @Autowired
-    private ProductService productService;
-
-
+    final ProductService productService;
+    final ProductOfferingService productOfferingService;
 
     @GetMapping
     public ResponseEntity<?> getAllProduct() {
@@ -43,5 +38,14 @@ public class ProductController {
         return ResponseEntity.ok(searchResults);
     }
 
-
+    @GetMapping("/productsWithPOBasicParent")
+    public ResponseEntity<List<Product>> getProductsByPOBasicParent() {
+        String parentName = "PoParent";
+        List<ProductOffering> productOfferings = productOfferingService.findByParentName(parentName);
+        List<Product> products = productOfferings.stream()
+                .map(ProductOffering::convertToProduct)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(products);
+    }
 }
+

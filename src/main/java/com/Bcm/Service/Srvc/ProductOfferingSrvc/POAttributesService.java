@@ -9,19 +9,19 @@ import java.util.List;
 public interface POAttributesService {
 
 
-    POAttributes create(POAttributes POAttributes);
+    POAttributes create(POAttributes poAttributes);
 
     List<POAttributes> read();
 
-    POAttributes update(int poAttribute_code, POAttributes POAttributes);
+    POAttributes update(int poAttribute_code, POAttributes poAttributes);
 
     String delete(int poAttribute_code);
 
     POAttributes findById(int poAttribute_code);
 
-    List<POAttributes> searchByKeyword(String name);
+    List<POAttributes> searchByKeyword(String description);
 
-    POAttributes findByName(String name);
+    POAttributes findByDescription(String description);
 
 
 }

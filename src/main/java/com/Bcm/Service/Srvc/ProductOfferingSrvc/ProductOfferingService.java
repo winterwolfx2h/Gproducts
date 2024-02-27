@@ -24,6 +24,10 @@ public interface ProductOfferingService {
 
     ProductOffering findByName(String name);
 
+    List<ProductOffering> findByParentName(String parentName);
 
 }
+
+
+
 

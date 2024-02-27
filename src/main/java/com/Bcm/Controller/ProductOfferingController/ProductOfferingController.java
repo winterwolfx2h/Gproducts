@@ -4,11 +4,15 @@ import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Category;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Parent;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Type;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductSpecificationService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.CategoryService;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ParentService;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.TypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +33,8 @@ public class ProductOfferingController {
     final  CategoryService categoryService;
     final  ProductSpecificationService productSpecificationService;
     final  ParentService parentService;
+    final FamilyService familyService;
+    final TypeService typeService;
 
 
     @PostMapping("/addProdOff")
@@ -36,15 +42,21 @@ public class ProductOfferingController {
         String categoryName = productOffering.getCategory().getName();
         String productSpecName = productOffering.getProductSpecification().getName();
         String parentName = productOffering.getParent().getName();
+        String familyName = productOffering.getFamily().getName();
+        String typeName = productOffering.getPoType().getName();
 
         Category category = categoryService.findByname(categoryName);
         ProductSpecification productSpec = productSpecificationService.findByName(productSpecName);
         Parent parent = parentService.findByName(parentName);
+        Family family = familyService.findByName(familyName);
+        Type type = typeService.findByName(typeName);
 
-        if (category != null && productSpec != null && parent != null) {
+        if (category != null && productSpec != null && parent != null && family != null && type != null) {
             productOffering.setCategory(category);
             productOffering.setProductSpecification(productSpec);
             productOffering.setParent(parent);
+            productOffering.setFamily(family);
+            productOffering.setPoType(type);
 
             ProductOffering createdProduct = productOfferingService.create(productOffering);
             return ResponseEntity.ok(createdProduct);
@@ -53,6 +65,8 @@ public class ProductOfferingController {
             if (category == null) errorMessage.append(" Category with name: ").append(categoryName);
             if (productSpec == null) errorMessage.append(" ProductSpecification with name: ").append(productSpecName);
             if (parent == null) errorMessage.append(" Parent with name: ").append(parentName);
+            if (family == null) errorMessage.append(" Family with name: ").append(familyName);
+            if (type == null) errorMessage.append(" Type with name: ").append(typeName);
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }
     }

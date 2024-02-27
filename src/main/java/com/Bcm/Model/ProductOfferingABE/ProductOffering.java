@@ -3,7 +3,6 @@ package com.Bcm.Model.ProductOfferingABE;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Category;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Parent;
 import com.Bcm.Model.product.Product;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Table(name = "ProductOffering")
 @Entity

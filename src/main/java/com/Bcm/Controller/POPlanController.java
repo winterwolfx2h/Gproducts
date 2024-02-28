@@ -3,13 +3,9 @@ package com.Bcm.Controller;
 import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.ProductOfferingABE.POPlan;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Parent;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.*;
 import com.Bcm.Service.Srvc.POPlanService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.MarketService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ParentService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubMarketService;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +25,10 @@ public class POPlanController {
     private MarketService marketService;
     @Autowired
     private SubMarketService subMarketService;
+    @Autowired
+    private FamilyService familyService;
+    @Autowired
+    private SubFamilyService subFamilyService;
 
 
     final POPlanService popService;
@@ -48,16 +48,22 @@ public class POPlanController {
         String parentName = poPlan.getParent().getName();
         String marketName = poPlan.getMarket().getName();
         String subMarketName = poPlan.getSubMarket().getName();
+        String familyName = poPlan.getFamily().getName();
+        String subFamilyName = poPlan.getSubFamily().getName();
 
         Parent parent = parentService.findByName(parentName);
         Market market = marketService.findByName(marketName);
         SubMarket subMarket = subMarketService.findByName(subMarketName);
+        Family family = familyService.findByName(subMarketName);
+        SubFamily subFamily = subFamilyService.findByName(subMarketName);
 
 
-        if (parent != null && market != null && subMarket != null ) {
+        if (parent != null && market != null && subMarket != null && family != null && subFamily != null ) {
             poPlan.setParent(parent);
             poPlan.setMarket(market);
             poPlan.setSubMarket(subMarket);
+            poPlan.setFamily(family);
+            poPlan.setSubFamily(subFamily);
 
             POPlan createdPlan = popService.create(poPlan);
             return ResponseEntity.ok(createdPlan);
@@ -66,6 +72,8 @@ public class POPlanController {
             if (parent == null) errorMessage.append(" parent with name: ").append(parentName);
             if (market == null) errorMessage.append(" Market with name: ").append(marketName);
             if (subMarket == null) errorMessage.append(" SubMarket with name: ").append(subMarketName);
+            if (family == null) errorMessage.append(" Family with name: ").append(familyName);
+            if (subFamily == null) errorMessage.append(" SubFamily with name: ").append(subFamilyName);
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }
     }

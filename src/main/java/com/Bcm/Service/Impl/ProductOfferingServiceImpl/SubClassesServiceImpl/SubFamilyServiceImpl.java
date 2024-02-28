@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class SubFamilyServiceImpl implements SubFamilyService {
 
@@ -32,6 +34,16 @@ public class SubFamilyServiceImpl implements SubFamilyService {
             return subFamilyRepository.findAll();
         } catch (Exception e) {
             throw new RuntimeException("Error occurred while retrieving Families");
+        }
+    }
+
+    @Override
+    public SubFamily findByName(String name) {
+        try {
+            Optional<SubFamily> optionalFamily = subFamilyRepository.findByName(name);
+            return optionalFamily.orElseThrow(() -> new RuntimeException("SubFamily with ID " + name + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding SubFamily");
         }
     }
 

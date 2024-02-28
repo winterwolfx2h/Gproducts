@@ -60,7 +60,7 @@ public class ParentController {
     }
 
     @DeleteMapping("/{po_ParentCode}")
-    public ResponseEntity<String> deleteParent(@PathVariable("po_ParentCode") int po_ParentCode) {
+    public ResponseEntity<String> deleteParent(@PathVariable("po_ParentCode") Integer po_ParentCode) {
         try {
             String resultMessage = parentService.delete(po_ParentCode);
             return ResponseEntity.ok(resultMessage);

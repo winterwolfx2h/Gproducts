@@ -45,7 +45,6 @@ public class Product {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Family family;
 
-
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "po_SubFamilyCode", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

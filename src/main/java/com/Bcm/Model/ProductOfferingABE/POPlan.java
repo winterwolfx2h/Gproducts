@@ -1,9 +1,7 @@
 package com.Bcm.Model.ProductOfferingABE;
 
 
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Parent;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -51,4 +49,14 @@ public class POPlan {
     @JoinColumn(name = "po_SubMarketCode", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private SubMarket subMarket;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "po_FamilyCode", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Family family;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "po_SubFamilyCode", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private SubFamily subFamily;
 }

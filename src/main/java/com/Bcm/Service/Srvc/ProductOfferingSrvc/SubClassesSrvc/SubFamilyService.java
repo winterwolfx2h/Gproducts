@@ -11,5 +11,5 @@ public interface SubFamilyService {
 
     List<SubFamily> read();
 
-
+    SubFamily findByName(String name);
 }

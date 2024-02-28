@@ -30,4 +30,13 @@ public interface POPlanRepository extends JpaRepository<POPlan, Integer> {
     List<POPlan> findAllWithSubMarket(String name);
     @Query("SELECT p FROM POPlan p WHERE p.subMarket.po_SubMarketCode = :po_SubMarketCode")
     List<POPlan> findBySubMarket_po_SubMarketCode(int po_SubMarketCode);
+    @Query("SELECT po FROM POPlan po JOIN po.family c WHERE  c.name = :name ")
+    List<POPlan> findAllWithFamily(String name);
+    @Query("SELECT p FROM POPlan p WHERE p.family.po_FamilyCode = :po_FamilyCode")
+    List<POPlan> findByFamily_po_FamilyCode(int po_FamilyCode);
+    @Query("SELECT po FROM POPlan po JOIN po.subFamily c WHERE  c.name = :name ")
+    List<POPlan> findAllWithSubFamily(String name);
+    @Query("SELECT p FROM POPlan p WHERE p.subFamily.po_SubFamilyCode = :po_SubFamilyCode")
+    List<POPlan> findBySubFamily_po_SubFamilyCode(int po_SubFamilyCode);
+
 }

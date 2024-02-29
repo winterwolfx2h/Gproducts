@@ -1,6 +1,8 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl.SubClassesServiceImpl;
 
+import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.SubFamily;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.FamilyRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,4 +89,14 @@ public class FamilyServiceImpl implements FamilyService {
             throw new RuntimeException("Invalid argument provided for finding Family");
         }
     }
+
+    /*@Override
+    public List<Family> findBySubFamilyName(String SubFamilyName) {
+        return familyRepository.findBySubFamilyName(SubFamilyName);
+    }*/
+
+
+
+
+
 }

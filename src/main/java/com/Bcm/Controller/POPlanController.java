@@ -54,8 +54,8 @@ public class POPlanController {
         Parent parent = parentService.findByName(parentName);
         Market market = marketService.findByName(marketName);
         SubMarket subMarket = subMarketService.findByName(subMarketName);
-        Family family = familyService.findByName(subMarketName);
-        SubFamily subFamily = subFamilyService.findByName(subMarketName);
+        Family family = familyService.findByName(familyName);
+        SubFamily subFamily = subFamilyService.findByName(subFamilyName);
 
 
         if (parent != null && market != null && subMarket != null && family != null && subFamily != null ) {

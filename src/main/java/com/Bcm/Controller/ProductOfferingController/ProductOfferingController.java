@@ -32,8 +32,8 @@ public class ProductOfferingController {
     final  CategoryService categoryService;
     final  ProductSpecificationService productSpecificationService;
     final  ParentService parentService;
-    final FamilyService familyService;
-    final TypeService typeService;
+    final  FamilyService familyService;
+    final  TypeService typeService;
 
 
     @PostMapping("/addProdOff")

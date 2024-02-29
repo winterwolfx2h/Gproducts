@@ -4,21 +4,18 @@ import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubFamily;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.SubFamilyRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubFamilyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class SubFamilyServiceImpl implements SubFamilyService {
 
-
-    @Autowired
-    SubFamilyRepository subFamilyRepository;
-
-
-
+    final SubFamilyRepository subFamilyRepository;
     @Override
     public SubFamily create(SubFamily Subfamily) {
         try {
@@ -46,6 +43,10 @@ public class SubFamilyServiceImpl implements SubFamilyService {
             throw new RuntimeException("Invalid argument provided for finding SubFamily");
         }
     }
+    /*@Override
+    public List<SubFamily> findByParentFamily(Family family) {
+        return subFamilyRepository.findByParentFamily(family);
+    }*/
 
 
 }

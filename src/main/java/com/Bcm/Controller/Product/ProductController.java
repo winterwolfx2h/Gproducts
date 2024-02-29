@@ -40,7 +40,7 @@ public class ProductController {
 
     @GetMapping("/productsWithPOBasicParent")
     public ResponseEntity<List<Product>> getProductsByPOBasicParent() {
-        String parentName = "PoParent";
+        String parentName = "PO_Basic";
         List<ProductOffering> productOfferings = productOfferingService.findByParentName(parentName);
         List<Product> products = productOfferings.stream()
                 .map(ProductOffering::convertToProduct)

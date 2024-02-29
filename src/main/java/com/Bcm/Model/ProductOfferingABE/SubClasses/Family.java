@@ -28,5 +28,10 @@ public class Family {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "po_SubFamilyCode", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private SubFamily subFamily;
+
 
 }

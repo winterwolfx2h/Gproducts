@@ -1,11 +1,11 @@
 package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.RelationType;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Status;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Type;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.RelationTypeService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.StatusService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.TypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class ProductOfferRelationController {
     private ProductOfferRelationService productOfferRelationService;
 
     @Autowired
-    private TypeService typeService;
+    private RelationTypeService relationTypeService;
 
     @Autowired
     private StatusService statusService;
@@ -33,7 +33,7 @@ public class ProductOfferRelationController {
         String typeName = productOfferRelation.getType().getName();
         String statusName = productOfferRelation.getStatus().getName();
 
-        Type type = typeService.findByName(typeName);
+        RelationType type = relationTypeService.findByName(typeName);
         Status status = statusService.findByName(statusName);
 
         if (type != null && status != null) {

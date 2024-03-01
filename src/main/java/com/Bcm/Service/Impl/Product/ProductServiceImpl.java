@@ -5,7 +5,6 @@ import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import org.springframework.stereotype.Service;
 
-
 import java.util.List;
 
 @Service
@@ -30,14 +29,6 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    @Override
-    public List<Product> searchWithFamily(String name) {
-        try {
-            return productRepository.findAllWithFamily(name);
-        } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while reading products with Families", e);
-        }
-    }
 
 
 }

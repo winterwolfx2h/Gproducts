@@ -1,7 +1,7 @@
 package com.Bcm.Model.ProductOfferingABE;
 
+import com.Bcm.Model.ProductOfferingABE.SubClasses.RelationType;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Status;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Type;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,9 +28,9 @@ public class ProductOfferRelation {
     private int PoOfferRelation_Code;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "poType_code", nullable = false)
+    @JoinColumn(name = "poRelationType_code", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Type type;
+    private RelationType type;
 
     @Column(name = "name", nullable = false)
     private String name;

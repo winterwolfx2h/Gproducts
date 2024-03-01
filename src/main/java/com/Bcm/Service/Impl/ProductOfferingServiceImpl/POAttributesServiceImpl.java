@@ -1,9 +1,11 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
+import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
 import com.Bcm.Repository.ProductOfferingRepo.POAttributesRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.POAttributesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,12 +16,16 @@ public class POAttributesServiceImpl implements POAttributesService {
 
     @Autowired
     POAttributesRepository poAttributesRepository;
-
     @Override
-    public POAttributes create(POAttributes POAttributes) {
-        return poAttributesRepository.save(POAttributes);
+    public POAttributes create(POAttributes productOffering) {
+        try {
+            return poAttributesRepository.save(productOffering);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseOperationException("Error creating product offering Attribute", e);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while creating product offering Attribute", e);
+        }
     }
-
     @Override
     public List<POAttributes> read() {
         return poAttributesRepository.findAll();
@@ -33,9 +39,7 @@ public class POAttributesServiceImpl implements POAttributesService {
             POAttributes existingProduct = existingProductOptional.get();
             existingProduct.setShortCode(updatedPOAttributes.getShortCode());
             existingProduct.setAttributeCategory(updatedPOAttributes.getAttributeCategory());
-            existingProduct.setExternalId(updatedPOAttributes.getExternalId());
-            existingProduct.setStartDate(updatedPOAttributes.getStartDate());
-            existingProduct.setEndDate(updatedPOAttributes.getEndDate());
+            existingProduct.setAttributeExternalId(updatedPOAttributes.getAttributeExternalId());
             existingProduct.setDescription(updatedPOAttributes.getDescription());
             existingProduct.setAttributeValue(updatedPOAttributes.getAttributeValue());
             existingProduct.setAttributeValDesc(updatedPOAttributes.getAttributeValDesc());
@@ -74,7 +78,5 @@ public class POAttributesServiceImpl implements POAttributesService {
             throw new RuntimeException("Invalid argument provided for finding POAttributes");
         }
     }
-
-
 }
 

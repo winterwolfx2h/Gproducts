@@ -8,20 +8,19 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-
-@Table(name = "Family")
+@Table(name = "LrServiceId")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Family {
+public class LrServiceId {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "family_seq_generator")
-    @SequenceGenerator(name = "family_seq_generator", sequenceName = "family_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LrServiceId_seq_generator")
+    @SequenceGenerator(name = "LrServiceId_seq_generator", sequenceName = "LrServiceId_sequence", allocationSize = 1)
     @JsonIgnore
     @Column(name = "id", nullable = false)
-    private int po_FamilyCode;
+    private int pr_LrServiceId;
 
     @Column(name = "name", nullable = false)
     private String name;

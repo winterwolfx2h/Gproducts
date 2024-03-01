@@ -23,5 +23,4 @@ public interface POAttributesService {
 
     POAttributes findByDescription(String description);
 
-
 }

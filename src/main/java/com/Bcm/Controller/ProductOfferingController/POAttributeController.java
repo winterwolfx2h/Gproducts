@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,20 +30,26 @@ public class POAttributeController {
     }
 
     @PostMapping("/addPOAttributes")
-    public ResponseEntity<?> create(@RequestBody POAttributes POAttributes) {
-        String attributecCategoryName = POAttributes.getAttributeCategory().getName();
-        AttributeCategory attributeCategory = attributeCategoryService.findByName(attributecCategoryName);
+    public ResponseEntity<?> create(@RequestBody List<POAttributes> POAttributesList) {
+        List<POAttributes> createdPOAttributesList = new ArrayList<>();
 
-        if (attributeCategory != null) {
-            POAttributes.setAttributeCategory(attributeCategory);
-            POAttributes createdPlan = poAttributesService.create(POAttributes);
-            return ResponseEntity.ok(createdPlan);
-        } else {
-            StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
-            if (attributeCategory == null)
-                errorMessage.append(" AttributeCategory with name: ").append(attributecCategoryName);
-            return ResponseEntity.badRequest().body(errorMessage.toString());
+        for (POAttributes POAttributes : POAttributesList) {
+            String attributecCategoryName = POAttributes.getAttributeCategory().getName();
+            AttributeCategory attributeCategory = attributeCategoryService.findByName(attributecCategoryName);
+
+            if (attributeCategory != null) {
+                POAttributes.setAttributeCategory(attributeCategory);
+                POAttributes createdPlan = poAttributesService.create(POAttributes);
+                createdPOAttributesList.add(createdPlan);
+            } else {
+                StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
+                if (attributeCategory == null)
+                    errorMessage.append(" AttributeCategory with name: ").append(attributecCategoryName);
+                return ResponseEntity.badRequest().body(errorMessage.toString());
+            }
         }
+
+        return ResponseEntity.ok(createdPOAttributesList);
     }
 
     @PutMapping("/updatePOAttributes/{poAttribute_code}")

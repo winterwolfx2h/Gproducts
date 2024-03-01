@@ -53,7 +53,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             existingProduct.setDescription(updatedProductOffering.getDescription());
             existingProduct.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
             existingProduct.setEffectiveTo(updatedProductOffering.getEffectiveTo());
-            existingProduct.setCategory(updatedProductOffering.getCategory());
 
 
             try {
@@ -111,14 +110,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         }
     }
 
-    @Override
-    public List<ProductOffering> searchWithCategory(String name) {
-        try {
-            return productOfferingRepository.findAllWithCategory(name);
-        } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while reading product offerings with categories", e);
-        }
-    }
 
     @Override
     public ProductOffering findByName(String name) {

@@ -1,8 +1,5 @@
 package com.Bcm.Service.Srvc.ProductSrvc;
 
-import com.Bcm.Model.ProductOfferingABE.POPlan;
-import com.Bcm.Model.ProductOfferingABE.ProductOffering;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Category;
 import com.Bcm.Model.product.Product;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +9,6 @@ public interface ProductService {
 
 
     List<Product> read();
-    List<Product> searchWithFamily(String name);
 
 
 

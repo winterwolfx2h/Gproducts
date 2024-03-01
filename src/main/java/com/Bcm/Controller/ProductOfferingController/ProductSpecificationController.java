@@ -1,13 +1,12 @@
 package com.Bcm.Controller.ProductOfferingController;
 
+import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.ProductOfferingABE.POPlan;
 import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
 import com.Bcm.Service.Srvc.POPlanService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductSpecificationService;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.CategoryService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.MarketService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.RatePlanService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubMarketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,37 +24,26 @@ public class ProductSpecificationController {
     @Autowired
     private FamilyService familyService;
     @Autowired
-    private MarketService marketService;
-    @Autowired
-    private SubMarketService subMarketService;
-    @Autowired
-    private RatePlanService ratePlanService;
-    @Autowired
+    private CategoryService categoryService;
     private POPlanService poPlanService;
 
-    @PostMapping
+    @PostMapping("/addProdSpec")
     public ResponseEntity<?> createProductSpecification(@RequestBody ProductSpecification ProductSpecification) {
 
-
         String poPlanName = ProductSpecification.getPoPlan().getSHDES();
-
-
         POPlan poPlan = poPlanService.findBySHDES(poPlanName);
 
         if (poPlan != null) {
-
             ProductSpecification.setPoPlan(poPlan);
 
             ProductSpecification createdProductSpecification = productSpecificationService.create(ProductSpecification);
             return ResponseEntity.ok(createdProductSpecification);
         } else {
             StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
-
             if (poPlan == null) errorMessage.append(" POPPLAN with name: ").append(poPlanName);
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }
     }
-
     @GetMapping
     public ResponseEntity<?> getAllProductSpecifications() {
         try {
@@ -76,15 +64,31 @@ public class ProductSpecificationController {
         }
     }
 
-    @PutMapping("/{po_SpecCode}")
+    /*@PutMapping("/{po_SpecCode}")
     public ResponseEntity<?> updateProductSpecification(
             @PathVariable("po_SpecCode") int po_SpecCode,
             @RequestBody ProductSpecification updatedProductSpecification) {
+
+        String categoryName = updatedProductSpecification.getCategory().getName();
+        Category category = categoryService.findByname(categoryName);
+
+        if (category != null) {
+            updatedProductSpecification.setCategory(category);
+            ProductSpecification updatedProduct = productSpecificationService.update(po_SpecCode, updatedProductSpecification);
+            return ResponseEntity.ok(updatedProduct);
+        } else {
+            return ResponseEntity.badRequest().body("Category not found with name: " + categoryName);
+        }
+    }*/
+
+
+    @PutMapping("/updatePOAttributes/{poAttribute_code}")
+    public ResponseEntity<?> update(@PathVariable int po_SpecCode, @RequestBody ProductSpecification productSpecification) {
         try {
-            ProductSpecification updatedGroup = productSpecificationService.update(po_SpecCode, updatedProductSpecification);
-            return ResponseEntity.ok(updatedGroup);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+            ProductSpecification updatedProductSpecification = productSpecificationService.update(po_SpecCode, productSpecification);
+            return ResponseEntity.ok(updatedProductSpecification);
+        } catch (InvalidInputException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -107,4 +111,5 @@ public class ProductSpecificationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
+
 }

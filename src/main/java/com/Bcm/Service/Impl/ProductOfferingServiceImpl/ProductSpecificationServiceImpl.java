@@ -13,29 +13,30 @@ import java.util.Optional;
 public class ProductSpecificationServiceImpl implements ProductSpecificationService {
 
     @Autowired
-    ProductSpecificationRepository productOfferingRepository;
+    ProductSpecificationRepository productSpecificationRepository;
 
     @Override
     public ProductSpecification create(ProductSpecification productSpecification) {
-        return productOfferingRepository.save(productSpecification);
+        return productSpecificationRepository.save(productSpecification);
     }
 
     @Override
     public List<ProductSpecification> read() {
-        return productOfferingRepository.findAll();
+        return productSpecificationRepository.findAll();
     }
 
     @Override
     public ProductSpecification update(int po_SpecCode, ProductSpecification updatedproductSpecification) {
-        Optional<ProductSpecification> existingProductOptional = productOfferingRepository.findById(po_SpecCode);
+        Optional<ProductSpecification> existingProductOptional = productSpecificationRepository.findById(po_SpecCode);
 
         if (existingProductOptional.isPresent()) {
             ProductSpecification existingProduct = existingProductOptional.get();
             existingProduct.setName(updatedproductSpecification.getName());
-
+            existingProduct.setCategory(updatedproductSpecification.getCategory());
             existingProduct.setPoPlan(updatedproductSpecification.getPoPlan());
+            existingProduct.setExternalId(updatedproductSpecification.getExternalId());
 
-            return productOfferingRepository.save(existingProduct);
+            return productSpecificationRepository.save(existingProduct);
         } else {
             throw new RuntimeException("Could not find Product Specification with ID: " + po_SpecCode);
         }
@@ -43,31 +44,32 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
 
     @Override
     public String delete(int po_SpecCode) {
-        productOfferingRepository.deleteById(po_SpecCode);
+        productSpecificationRepository.deleteById(po_SpecCode);
         return ("Product Specification was successfully deleted");
     }
 
     @Override
     public ProductSpecification findById(int po_SpecCode) {
-        Optional<ProductSpecification> optionalPlan = productOfferingRepository.findById(po_SpecCode);
+        Optional<ProductSpecification> optionalPlan = productSpecificationRepository.findById(po_SpecCode);
         return optionalPlan.orElseThrow(() -> new RuntimeException("Product Specification with ID " + po_SpecCode + " not found"));
     }
 
     @Override
     public List<ProductSpecification> searchByKeyword(String name) {
-        return productOfferingRepository.searchByKeyword(name);
+        return productSpecificationRepository.searchByKeyword(name);
     }
 
     @Override
     public ProductSpecification findByName(String name) {
         try {
-            Optional<ProductSpecification> optionalProductSpecification = productOfferingRepository.findByname(name);
+            Optional<ProductSpecification> optionalProductSpecification = productSpecificationRepository.findByname(name);
             return optionalProductSpecification.orElseThrow(() -> new RuntimeException("Product Specification with ID " + name + " not found"));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding Product Specification");
         }
     }
 
-
 }
+
+
 

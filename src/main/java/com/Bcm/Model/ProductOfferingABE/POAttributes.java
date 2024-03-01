@@ -10,7 +10,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Table(name = "POAttributes")
 @Entity
@@ -33,14 +32,8 @@ public class POAttributes {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private AttributeCategory attributeCategory;
 
-    @Column(name = "externalId", nullable = false)
-    private int externalId;
-
-    @Column(name = "startDate", nullable = false)
-    private Date startDate;
-
-    @Column(name = "endDate", nullable = false)
-    private Date endDate;
+    @Column(name = "AttributeExternalId", nullable = true)
+    private int AttributeExternalId;
 
     @Column(name = "description", nullable = false)
     private String description;

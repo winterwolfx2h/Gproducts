@@ -3,10 +3,11 @@ package com.Bcm.Controller;
 import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.ProductOfferingABE.POPlan;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.*;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Service.Srvc.POPlanService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.MarketService;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubMarketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,21 +20,14 @@ import java.util.List;
 @RequestMapping("/poplan")
 public class POPlanController {
 
-    @Autowired
-    private ParentService parentService;
-    @Autowired
-    private MarketService marketService;
-    @Autowired
-    private SubMarketService subMarketService;
-    @Autowired
-    private FamilyService familyService;
-    @Autowired
-    private SubFamilyService subFamilyService;
 
-
+    final MarketService marketService;
+    final SubMarketService subMarketService;
     final POPlanService popService;
 
-    public POPlanController(POPlanService popService) {
+    public POPlanController(MarketService marketService, SubMarketService subMarketService, POPlanService popService) {
+        this.marketService = marketService;
+        this.subMarketService = subMarketService;
         this.popService = popService;
     }
 
@@ -45,35 +39,31 @@ public class POPlanController {
     @PostMapping("/addPOPlan")
     public ResponseEntity<?> create(@RequestBody POPlan poPlan) {
 
-        String parentName = poPlan.getParent().getName();
         String marketName = poPlan.getMarket().getName();
         String subMarketName = poPlan.getSubMarket().getName();
-        String familyName = poPlan.getFamily().getName();
-        String subFamilyName = poPlan.getSubFamily().getName();
+        /*String familyName = poPlan.getFamily().getName();
+        String subFamilyName = poPlan.getSubFamily().getName();*/
 
-        Parent parent = parentService.findByName(parentName);
         Market market = marketService.findByName(marketName);
         SubMarket subMarket = subMarketService.findByName(subMarketName);
-        Family family = familyService.findByName(familyName);
-        SubFamily subFamily = subFamilyService.findByName(subFamilyName);
+        /*Family family = familyService.findByName(familyName);
+        SubFamily subFamily = subFamilyService.findByName(subFamilyName);*/
 
 
-        if (parent != null && market != null && subMarket != null && family != null && subFamily != null ) {
-            poPlan.setParent(parent);
+        if (market != null && subMarket != null/*&& family != null && subFamily != null*/) {
             poPlan.setMarket(market);
             poPlan.setSubMarket(subMarket);
-            poPlan.setFamily(family);
-            poPlan.setSubFamily(subFamily);
+            /*poPlan.setFamily(family);
+            poPlan.setSubFamily(subFamily);*/
 
             POPlan createdPlan = popService.create(poPlan);
             return ResponseEntity.ok(createdPlan);
         } else {
             StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
-            if (parent == null) errorMessage.append(" parent with name: ").append(parentName);
             if (market == null) errorMessage.append(" Market with name: ").append(marketName);
             if (subMarket == null) errorMessage.append(" SubMarket with name: ").append(subMarketName);
-            if (family == null) errorMessage.append(" Family with name: ").append(familyName);
-            if (subFamily == null) errorMessage.append(" SubFamily with name: ").append(subFamilyName);
+           /*if (family == null) errorMessage.append(" Family with name: ").append(familyName);
+            if (subFamily == null) errorMessage.append(" SubFamily with name: ").append(subFamilyName);*/
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }
     }

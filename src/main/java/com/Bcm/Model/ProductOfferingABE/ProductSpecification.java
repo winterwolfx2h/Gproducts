@@ -1,8 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE;
 
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,11 +29,15 @@ public class ProductSpecification {
     @Column(name = "name", nullable = false)
     private String name;
 
-
+    @Column(name = "category", nullable = false)
+    private String category;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "TMCODE", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private POPlan poPlan;
+
+    @Column(name = "externalId", nullable = true)
+    private String externalId;
 
 }

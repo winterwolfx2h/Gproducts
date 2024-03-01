@@ -46,14 +46,11 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
 
         if (existingServiceSpecConfigOptional.isPresent()) {
             ServiceSpecConfig existingServiceSpecConfig = existingServiceSpecConfigOptional.get();
+            existingServiceSpecConfig.setExternalId(updatedserviceSpecConfig.getExternalId());
             existingServiceSpecConfig.setServiceSpecName(updatedserviceSpecConfig.getServiceSpecName());
             existingServiceSpecConfig.setServiceSpecType(updatedserviceSpecConfig.getServiceSpecType());
-            existingServiceSpecConfig.setServiceCode(updatedserviceSpecConfig.getServiceCode());
-            existingServiceSpecConfig.setDependentService(updatedserviceSpecConfig.getDependentService());
-            existingServiceSpecConfig.setStartDate(updatedserviceSpecConfig.getStartDate());
-            existingServiceSpecConfig.setEndDate(updatedserviceSpecConfig.getEndDate());
-            existingServiceSpecConfig.setDescription(updatedserviceSpecConfig.getDescription());
             existingServiceSpecConfig.setStatus(updatedserviceSpecConfig.getStatus());
+            existingServiceSpecConfig.setDescription(updatedserviceSpecConfig.getDescription());
 
             return serviceSpecConfigRepository.save(existingServiceSpecConfig);
         } else {

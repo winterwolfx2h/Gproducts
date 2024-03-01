@@ -1,8 +1,6 @@
 package com.Bcm.Model.product;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.SubFamily;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Type;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,29 +29,27 @@ public class Product {
 
     @Column(name = "name", nullable = false)
     private String name;
+
     @Column(name = "effectiveFrom", nullable = false)
     private Date effectiveFrom;
 
     @Column(name = "effectiveTo", nullable = false)
     private Date effectiveTo;
 
-    @Column(name = "description", nullable = true)
+    @Column(name = "description", nullable = false)
     private String description;
+
+
+    @Column(name = "poType", nullable = false)
+    private String poType;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "po_FamilyCode", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Family family;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "po_SubFamilyCode", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private SubFamily subFamily;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "po_type", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Type poType;
+    @Column(name = "subFamily", nullable = false)
+    private String subFamily;
 
     public Product convertToProduct() {
         Product product = new Product();
@@ -62,6 +58,9 @@ public class Product {
         product.setEffectiveFrom(this.getEffectiveFrom());
         product.setEffectiveTo(this.getEffectiveTo());
         product.setDescription(this.getDescription());
+        product.setPoType(this.getPoType());
+        product.setFamily(this.getFamily());
+        product.setSubFamily(this.getSubFamily());
 
         return product;
     }

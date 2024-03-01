@@ -1,18 +1,13 @@
 package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
-import com.Bcm.Model.ProductOfferingABE.POPlan;
-import com.Bcm.Model.ProductOfferingABE.ProductOffering;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.*;
-import com.Bcm.Model.product.Product;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubFamilyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -24,7 +19,7 @@ public class FamilyController {
     @Autowired
     private SubFamilyService subFamilyService;
 
-    @PostMapping
+   /*@PostMapping
     public ResponseEntity<?> create(@RequestBody Family family) {
 
         String subFamilyName = family.getSubFamily().getName();
@@ -39,6 +34,17 @@ public class FamilyController {
             StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
             if (subFamily == null) errorMessage.append(" SubFamily with name: ").append(subFamilyName);
             return ResponseEntity.badRequest().body(errorMessage.toString());
+        }
+    }*/
+
+
+    @PostMapping
+    public ResponseEntity<Family> createType(@RequestBody Family family) {
+        try {
+            Family createdType = familyService.create(family);
+            return ResponseEntity.ok(createdType);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
         }
     }
 

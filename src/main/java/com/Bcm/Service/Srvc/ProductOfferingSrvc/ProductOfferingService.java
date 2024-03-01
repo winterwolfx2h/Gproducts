@@ -20,8 +20,6 @@ public interface ProductOfferingService {
 
     List<ProductOffering> searchByKeyword(String name);
 
-    List<ProductOffering> searchWithCategory(String name);
-
     ProductOffering findByName(String name);
 
     List<ProductOffering> findByParentName(String parentName);

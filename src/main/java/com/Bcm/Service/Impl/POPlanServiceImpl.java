@@ -53,7 +53,6 @@ public class POPlanServiceImpl implements POPlanService {
             POPlan existingPlan = existingPlanOptional.get();
             existingPlan.setDES(poPlan.getDES());
             existingPlan.setSHDES(poPlan.getSHDES());
-            existingPlan.setParent(poPlan.getParent());
 
             validateNotNullFields(existingPlan);
 
@@ -72,7 +71,7 @@ public class POPlanServiceImpl implements POPlanService {
     }
 
     private void validateNotNullFields(POPlan poPlan) {
-        if (poPlan.getDES() == null || poPlan.getSHDES() == null || poPlan.getParent() == null) {
+        if (poPlan.getDES() == null || poPlan.getSHDES() == null) {
             throw new InvalidInputException("DES, description, and parent cannot be null");
         }
     }

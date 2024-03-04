@@ -26,10 +26,9 @@ public class ProductRelation {
     @Column(name = "id", nullable = false)
     private int poRelation_Code;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "poRelationType_code", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private RelationType type;
+
+    @Column(name = "type", nullable = false)
+    private String type;
 
     @Column(name = "validFor", nullable = false)
     private Date validFor;

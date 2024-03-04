@@ -22,8 +22,14 @@ public class ServiceSpecConfig {
     @Column(name = "id", nullable = false)
     private int SSC_code;
 
+    @Column(name = "serviceCode", nullable = false)
+    private String serviceCode;
+
     @Column(name = "externalId", nullable = false)
     private int externalId;
+
+    @Column(name = "numPlanCode", nullable = false)
+    private String numPlanCode;
 
     @Column(name = "serviceSpecName", nullable = false)
     private String serviceSpecName;
@@ -35,5 +41,5 @@ public class ServiceSpecConfig {
     private String status;
 
     @Column(name = "description", nullable = false)
-    private Date description;
+    private String description;
 }

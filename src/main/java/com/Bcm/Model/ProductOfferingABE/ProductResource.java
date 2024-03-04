@@ -22,7 +22,7 @@ public class ProductResource {
     @Column(name = "PrResId", nullable = false)
     private int PrResId;
 
-    @Column(name = "name", nullable = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "logicalResourceType", nullable = true)

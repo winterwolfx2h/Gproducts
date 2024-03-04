@@ -27,19 +27,17 @@ public class POAttributes {
     @Column(name = "shortCode", nullable = false)
     private int shortCode;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "po_AttributeCategoryCode", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private AttributeCategory attributeCategory;
+    @Column(name = "attributeCategory", nullable = true)
+    private String attributeCategory;
 
     @Column(name = "AttributeExternalId", nullable = true)
     private int AttributeExternalId;
 
-    @Column(name = "description", nullable = false)
+    /*@Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "attributeValue", nullable = false)
-    private String attributeValue;
+    private String attributeValue;*/
 
     @Column(name = "attributeValDesc", nullable = false)
     private String attributeValDesc;

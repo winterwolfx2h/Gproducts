@@ -108,12 +108,11 @@ public class POPlanServiceImpl implements POPlanService {
             throw new RuntimeException("An unexpected error occurred while searching for POPlans by keyword: " + DES, e);
         }
     }
-
     @Override
     public POPlan findBySHDES(String SHDES) {
         try {
             Optional<POPlan> optionalPOPlan = popRepository.findBySHDES(SHDES);
-            return optionalPOPlan.orElseThrow(() -> new RuntimeException("POPlan with ID " + SHDES + " not found"));
+            return optionalPOPlan.orElseThrow(() -> new RuntimeException("POPlan with SHDES: " + SHDES + " not found"));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding POPlan");
         }

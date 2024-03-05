@@ -1,8 +1,6 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc;
 
-import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.SubFamily;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

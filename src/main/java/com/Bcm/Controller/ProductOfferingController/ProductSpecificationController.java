@@ -5,9 +5,8 @@ import com.Bcm.Model.ProductOfferingABE.POPlan;
 import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
 import com.Bcm.Service.Srvc.POPlanService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductSpecificationService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.CategoryService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +14,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/ProductSpecification")
 public class ProductSpecificationController {
 
-    @Autowired
-    private ProductSpecificationService productSpecificationService;
-    @Autowired
-    private FamilyService familyService;
-    @Autowired
-    private CategoryService categoryService;
-    private POPlanService poPlanService;
+    final private ProductSpecificationService productSpecificationService;
+    final private FamilyService familyService;
+    final private POPlanService poPlanService;
 
     @PostMapping("/addProdSpec")
     public ResponseEntity<?> createProductSpecification(@RequestBody ProductSpecification ProductSpecification) {

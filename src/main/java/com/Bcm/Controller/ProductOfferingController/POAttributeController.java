@@ -33,24 +33,25 @@ public class POAttributeController {
     public ResponseEntity<?> create(@RequestBody List<POAttributes> POAttributesList) {
         List<POAttributes> createdPOAttributesList = new ArrayList<>();
 
-        for (POAttributes POAttributes : POAttributesList) {
-            String attributecCategoryName = POAttributes.getAttributeCategory().getName();
-            AttributeCategory attributeCategory = attributeCategoryService.findByName(attributecCategoryName);
+        for (POAttributes poAttribute : POAttributesList) {
+            String attributeCategoryName = poAttribute.getAttributeCategory();
+            AttributeCategory attributeCategory = attributeCategoryService.findByName(attributeCategoryName);
 
             if (attributeCategory != null) {
-                POAttributes.setAttributeCategory(attributeCategory);
-                POAttributes createdPlan = poAttributesService.create(POAttributes);
+                poAttribute.setAttributeCategory(attributeCategoryName);
+                POAttributes createdPlan = poAttributesService.create(poAttribute);
                 createdPOAttributesList.add(createdPlan);
             } else {
                 StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
                 if (attributeCategory == null)
-                    errorMessage.append(" AttributeCategory with name: ").append(attributecCategoryName);
+                    errorMessage.append(" AttributeCategory with name: ").append(attributeCategoryName);
                 return ResponseEntity.badRequest().body(errorMessage.toString());
             }
         }
 
         return ResponseEntity.ok(createdPOAttributesList);
     }
+
 
     @PutMapping("/updatePOAttributes/{poAttribute_code}")
     public ResponseEntity<?> update(@PathVariable int poAttribute_code, @RequestBody POAttributes POAttributes) {
@@ -78,14 +79,14 @@ public class POAttributeController {
         }
     }
 
-    @GetMapping("/searchByKeyword")
-    public List<POAttributes> searchByKeyword(@RequestParam String DES) {
+    /*@GetMapping("/searchByKeyword")
+    public List<POAttributes> searchByKeyword(@RequestParam String attributeValDesc) {
         try {
-            return poAttributesService.searchByKeyword(DES);
+            return poAttributesService.searchByKeyword(attributeValDesc);
         } catch (Exception e) {
             throw handleException(e);
         }
-    }
+    }*/
 
     private RuntimeException handleException(Exception e) {
         ErrorMessage errorMessage = new ErrorMessage(

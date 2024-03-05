@@ -2,7 +2,6 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl.SubClassesServiceImpl;
 
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.SubFamily;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.FamilyRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import org.springframework.beans.factory.annotation.Autowired;

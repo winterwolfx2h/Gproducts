@@ -4,18 +4,19 @@ import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
 import com.Bcm.Repository.ProductOfferingRepo.POAttributesRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.POAttributesService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class POAttributesServiceImpl implements POAttributesService {
 
-    @Autowired
-    POAttributesRepository poAttributesRepository;
+    final POAttributesRepository poAttributesRepository;
+
     @Override
     public POAttributes create(POAttributes productOffering) {
         try {
@@ -40,8 +41,6 @@ public class POAttributesServiceImpl implements POAttributesService {
             existingProduct.setShortCode(updatedPOAttributes.getShortCode());
             existingProduct.setAttributeCategory(updatedPOAttributes.getAttributeCategory());
             existingProduct.setAttributeExternalId(updatedPOAttributes.getAttributeExternalId());
-            existingProduct.setDescription(updatedPOAttributes.getDescription());
-            existingProduct.setAttributeValue(updatedPOAttributes.getAttributeValue());
             existingProduct.setAttributeValDesc(updatedPOAttributes.getAttributeValDesc());
             existingProduct.setCharType(updatedPOAttributes.getCharType());
             existingProduct.setCharValue(updatedPOAttributes.getCharValue());
@@ -64,16 +63,16 @@ public class POAttributesServiceImpl implements POAttributesService {
         return optionalPlan.orElseThrow(() -> new RuntimeException("POAttributes with ID " + poAttribute_code + " not found"));
     }
 
-    @Override
-    public List<POAttributes> searchByKeyword(String description) {
-        return poAttributesRepository.searchByKeyword(description);
-    }
+    /*@Override
+    public List<POAttributes> searchByKeyword(String attributeValDesc) {
+        return poAttributesRepository.searchByKeyword(attributeValDesc);
+    }*/
 
     @Override
-    public POAttributes findByDescription(String description) {
+    public POAttributes findByAttributeValDesc(String attributeValDesc) {
         try {
-            Optional<POAttributes> optionalPOAttributes = poAttributesRepository.findByDescription(description);
-            return optionalPOAttributes.orElseThrow(() -> new RuntimeException("POAttributes with ID " + description + " not found"));
+            Optional<POAttributes> optionalPOAttributes = poAttributesRepository.findByAttributeValDesc(attributeValDesc);
+            return optionalPOAttributes.orElseThrow(() -> new RuntimeException("POAttributes with ID " + attributeValDesc + " not found"));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding POAttributes");
         }

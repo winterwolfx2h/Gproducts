@@ -1,13 +1,10 @@
 package com.Bcm.Model.ProductOfferingABE;
 
-import com.Bcm.Model.ProductOfferingABE.SubClasses.AttributeCategory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -32,12 +29,6 @@ public class POAttributes {
 
     @Column(name = "AttributeExternalId", nullable = true)
     private int AttributeExternalId;
-
-    /*@Column(name = "description", nullable = false)
-    private String description;
-
-    @Column(name = "attributeValue", nullable = false)
-    private String attributeValue;*/
 
     @Column(name = "attributeValDesc", nullable = false)
     private String attributeValDesc;

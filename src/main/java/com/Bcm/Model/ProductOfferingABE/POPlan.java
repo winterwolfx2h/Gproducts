@@ -44,14 +44,4 @@ public class POPlan {
     @JoinColumn(name = "po_SubMarketCode", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private SubMarket subMarket;
-
-    /*@ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "po_FamilyCode", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Family family;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "po_SubFamilyCode", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private SubFamily subFamily;*/
 }

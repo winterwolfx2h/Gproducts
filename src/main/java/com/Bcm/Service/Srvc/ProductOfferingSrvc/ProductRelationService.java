@@ -8,7 +8,7 @@ import java.util.List;
 @Service
 public interface ProductRelationService {
 
-    ProductRelation create(ProductRelation ProductRelation);
+    ProductRelation create(ProductRelation productRelation);
 
     List<ProductRelation> read();
 
@@ -17,6 +17,10 @@ public interface ProductRelationService {
     String delete(int poRelation_Code);
 
     ProductRelation findById(int poRelation_Code);
+
+    List<ProductRelation> searchByKeyword(String type);
+
+    ProductRelation findByType(String type);
 
 
 }

@@ -1,14 +1,15 @@
 package com.Bcm.Controller.ProductOfferingController;
 
+import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Model.ProductOfferingABE.ProductRelation;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.RelationType;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductRelationService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.RelationTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -18,24 +19,11 @@ import java.util.List;
 public class ProductRelationController {
 
     final ProductRelationService productRelationService;
-    final RelationTypeService relationTypeService;
-    @PostMapping("/addProdOfferingRelation`")
-    public ResponseEntity<?> createproductRelation(@RequestBody ProductRelation productRelation) {
 
-        String RelationTypeName = productRelation.getType().getName();
-
-        RelationType RelationType = relationTypeService.findByName(RelationTypeName);
-
-        if (RelationType != null) {
-            productRelation.setType(RelationType);
-
-            ProductRelation createdproductRelation = productRelationService.create(productRelation);
-            return ResponseEntity.ok(createdproductRelation);
-        } else {
-            StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
-            if (RelationType == null) errorMessage.append(" Family with name: ").append(RelationTypeName);
-            return ResponseEntity.badRequest().body(errorMessage.toString());
-        }
+    @PostMapping("/addProdOfferingRelation")
+    public ResponseEntity<ProductRelation> createproductRelation(@RequestBody ProductRelation productRelation) {
+        ProductRelation createdProductRelation = productRelationService.create(productRelation);
+        return ResponseEntity.ok(createdProductRelation);
     }
 
     @GetMapping
@@ -78,6 +66,23 @@ public class ProductRelationController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductRelation>> searchProductRelationByKeyword(@RequestParam("type") String type) {
+        List<ProductRelation> searchResults = productRelationService.searchByKeyword(type);
+        return ResponseEntity.ok(searchResults);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorMessage> globalExceptionHandler(Exception ex, WebRequest request) {
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false));
+
+        return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

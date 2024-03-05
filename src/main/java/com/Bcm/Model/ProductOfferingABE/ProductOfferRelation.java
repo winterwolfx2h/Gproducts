@@ -1,7 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE;
 
-import com.Bcm.Model.ProductOfferingABE.SubClasses.RelationType;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -41,20 +41,14 @@ public class POPlanController {
 
         String marketName = poPlan.getMarket().getName();
         String subMarketName = poPlan.getSubMarket().getName();
-        /*String familyName = poPlan.getFamily().getName();
-        String subFamilyName = poPlan.getSubFamily().getName();*/
 
         Market market = marketService.findByName(marketName);
         SubMarket subMarket = subMarketService.findByName(subMarketName);
-        /*Family family = familyService.findByName(familyName);
-        SubFamily subFamily = subFamilyService.findByName(subFamilyName);*/
 
 
-        if (market != null && subMarket != null/*&& family != null && subFamily != null*/) {
+        if (market != null && subMarket != null) {
             poPlan.setMarket(market);
             poPlan.setSubMarket(subMarket);
-            /*poPlan.setFamily(family);
-            poPlan.setSubFamily(subFamily);*/
 
             POPlan createdPlan = popService.create(poPlan);
             return ResponseEntity.ok(createdPlan);
@@ -62,8 +56,6 @@ public class POPlanController {
             StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
             if (market == null) errorMessage.append(" Market with name: ").append(marketName);
             if (subMarket == null) errorMessage.append(" SubMarket with name: ").append(subMarketName);
-           /*if (family == null) errorMessage.append(" Family with name: ").append(familyName);
-            if (subFamily == null) errorMessage.append(" SubFamily with name: ").append(subFamilyName);*/
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }
     }

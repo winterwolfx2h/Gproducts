@@ -20,8 +20,8 @@ public class ProductResourceController {
     final ProductResourceService productResourceService;
     final ServiceSpecConfigService serviceSpecConfigService;
 
-    @PostMapping
-    public ResponseEntity<ProductResource> createType(@RequestBody ProductResource productResource,
+    /*@PostMapping("/addProductResource")
+    public ResponseEntity<ProductResource> createResource(@RequestBody ProductResource productResource,
                                                       @RequestParam("lrSSC_code") int lrSSC_code,
                                                       @RequestParam("prSSC_code") int prSSC_code) {
         try {
@@ -36,9 +36,18 @@ public class ProductResourceController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(500).body(null);
         }
+    }*/
+    @PostMapping("/addProductResource")
+    public ResponseEntity<?> createcreateResource(@RequestBody ProductResource productResource) {
+        try {
+            ProductResource createdProductResource = productResourceService.create(productResource);
+            return ResponseEntity.ok(createdProductResource);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
     }
 
-    @GetMapping
+    @GetMapping("/listProductResources")
     public ResponseEntity<?> getAllProductResources() {
         try {
             List<ProductResource> ProductResources = productResourceService.read();

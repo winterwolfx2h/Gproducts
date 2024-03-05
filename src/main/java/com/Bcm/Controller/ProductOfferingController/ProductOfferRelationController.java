@@ -24,7 +24,7 @@ public class ProductOfferRelationController {
         return ResponseEntity.ok(createdProductOfferRelation);
     }
 
-    @GetMapping
+    @GetMapping("/listProdOffrelations")
     public ResponseEntity<?> getAllProductOfferRelations() {
         try {
             List<ProductOfferRelation> productOfferRelations = productOfferRelationService.read();

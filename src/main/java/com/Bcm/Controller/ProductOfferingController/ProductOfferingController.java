@@ -60,7 +60,7 @@ public class ProductOfferingController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/listProductOfferings")
     public ResponseEntity<List<ProductOffering>> getAllProductOfferings() {
         List<ProductOffering> productOfferings = productOfferingService.read();
         return ResponseEntity.ok(productOfferings);

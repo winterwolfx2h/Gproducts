@@ -23,7 +23,7 @@ public class ProductController {
     final ProductService productService;
     final ProductOfferingService productOfferingService;
 
-    @GetMapping
+    @GetMapping("/ProductList")
     public ResponseEntity<?> getAllProduct() {
         try {
             List<Product> product = productService.read();

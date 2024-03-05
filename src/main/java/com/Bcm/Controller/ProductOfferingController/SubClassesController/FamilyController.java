@@ -16,26 +16,7 @@ public class FamilyController {
     @Autowired
     private FamilyService familyService;
 
-   /*@PostMapping
-    public ResponseEntity<?> create(@RequestBody Family family) {
-
-        String subFamilyName = family.getSubFamily().getName();
-        SubFamily subFamily = subFamilyService.findByName(subFamilyName);
-
-        if (subFamily != null ) {
-            family.setSubFamily(subFamily);
-
-            Family createdFamily = familyService.create(family);
-            return ResponseEntity.ok(createdFamily);
-        } else {
-            StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
-            if (subFamily == null) errorMessage.append(" SubFamily with name: ").append(subFamilyName);
-            return ResponseEntity.badRequest().body(errorMessage.toString());
-        }
-    }*/
-
-
-    @PostMapping
+    @PostMapping("/addFamily")
     public ResponseEntity<Family> createType(@RequestBody Family family) {
         try {
             Family createdType = familyService.create(family);
@@ -45,7 +26,7 @@ public class FamilyController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/listFamily")
     public ResponseEntity<List<Family>> getAllFamilies() {
         try {
             List<Family> families = familyService.read();
@@ -97,31 +78,5 @@ public class FamilyController {
             return ResponseEntity.status(500).body(null);
         }
     }
-
-   /* @GetMapping("/{po_FamilyCode}/subfamilies")
-    public ResponseEntity<SubFamily> getSubFamilyOfFamily(@PathVariable("po_FamilyCode") int po_FamilyCode) {
-        try {
-            // Find the family by ID
-            Family family = familyService.findById(po_FamilyCode);
-
-            // Retrieve the associated subfamily from the family object
-            SubFamily subFamily = family.getSubFamily();
-
-            // Check if the subfamily is not null
-            if (subFamily != null) {
-                return ResponseEntity.ok(subFamily);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(500).body(null);
-        }
-    }*/
-
-
-
-
-
-
 
 }

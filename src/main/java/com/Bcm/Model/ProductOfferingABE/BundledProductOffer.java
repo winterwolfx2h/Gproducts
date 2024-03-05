@@ -1,6 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE;
 
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,8 +25,8 @@ public class BundledProductOffer {
 
 
     @Column(name = "status", nullable = false)
-    @OneToMany(mappedBy = "bundledProductOffer")
-    private List<Status> status;
+    private int status;
+
 
     @Column(name = "validFor", nullable = false)
     private String validFor;

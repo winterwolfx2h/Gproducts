@@ -1,6 +1,5 @@
 package com.Bcm.Controller.Product;
 
-import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.product.Product;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,7 +33,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/productsWithPOBasicParent")
+   /* @GetMapping("/productsWithPOBasicParent")
     public ResponseEntity<List<Product>> getProductsByPOBasicParent() {
         String parentName = "PO_Basic";
         List<ProductOffering> productOfferings = productOfferingService.findByParentName(parentName);
@@ -43,6 +41,6 @@ public class ProductController {
                 .map(ProductOffering::convertToProduct)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(products);
-    }
+    }*/
 }
 

@@ -16,18 +16,29 @@ public interface ProductOfferingRepository extends JpaRepository<ProductOffering
     @Query("SELECT p FROM ProductOffering p WHERE p.name = :name")
     List<ProductOffering> searchByKeyword(String name);
 
-    List<ProductOffering> findByParentName(String parentName);
+    @Query("SELECT po FROM ProductOffering po JOIN po.poAttributes c WHERE  c.attributeValDesc = :attributeValDesc ")
+    List<ProductOffering> findAllWithPoAttributes(String attributeValDesc);
 
-    @Query("SELECT po FROM ProductOffering po JOIN po.parent c WHERE  c.name = :name ")
-    List<ProductOffering> findAllWithParent(String name);
+    @Query("SELECT p FROM ProductOffering p WHERE p.poAttributes.poAttribute_code = :poAttribute_code")
+    List<ProductOffering> findByPoAttributes_poAttribute_code(int poAttribute_code);
 
-    @Query("SELECT p FROM ProductOffering p WHERE p.parent.po_ParentCode = :po_ParentCode")
-    List<ProductOffering> findByParent_po_ParentCode(int po_ParentCode);
+    @Query("SELECT po FROM ProductOffering po JOIN po.productRelation c WHERE  c.type = :type ")
+    List<ProductOffering> findAllWithProductRelation(String type);
 
+    @Query("SELECT p FROM ProductOffering p WHERE p.productRelation.poRelation_Code = :poRelation_Code")
+    List<ProductOffering> findByProductRelation_poRelation_Code(int poRelation_Code);
 
-    @Query("SELECT p FROM ProductOffering p WHERE p.productSpecification.po_SpecCode = :po_SpecCode")
-    List<ProductOffering> findByProductSpecification_po_SpecCode(int po_SpecCode);
+    @Query("SELECT po FROM ProductOffering po JOIN po.productOfferRelation c WHERE  c.name = :name ")
+    List<ProductOffering> findAllWithProductOfferRelation(String name);
 
+    @Query("SELECT p FROM ProductOffering p WHERE p.productOfferRelation.PoOfferRelation_Code = :PoOfferRelation_Code")
+    List<ProductOffering> findByProductOfferRelation_PoOfferRelation_Code(int PoOfferRelation_Code);
+
+    @Query("SELECT po FROM ProductOffering po JOIN po.productResource c WHERE  c.name = :name ")
+    List<ProductOffering> findAllWithProductResource(String name);
+
+    @Query("SELECT p FROM ProductOffering p WHERE p.productResource.PrResId = :PrResId")
+    List<ProductOffering> findByProductResource_PrResId(int PrResId);
 
 }
 

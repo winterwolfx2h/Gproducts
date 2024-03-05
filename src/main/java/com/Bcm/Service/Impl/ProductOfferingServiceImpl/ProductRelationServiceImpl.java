@@ -52,8 +52,19 @@ public class ProductRelationServiceImpl implements ProductRelationService {
         return optionalPlan.orElseThrow(() -> new RuntimeException("ProductRelation with ID " + poRelation_Code + " not found"));
     }
 
+    @Override
+    public List<ProductRelation> searchByKeyword(String type) {
+        return ProductRelationRepository.searchByKeyword(type);
+    }
 
-
-
+    @Override
+    public ProductRelation findByType(String type) {
+        try {
+            Optional<ProductRelation> optionalProductRelation = ProductRelationRepository.findByType(type);
+            return optionalProductRelation.orElseThrow(() -> new RuntimeException("ProductRelation with type " + type + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding ProductRelation");
+        }
+    }
 }
 

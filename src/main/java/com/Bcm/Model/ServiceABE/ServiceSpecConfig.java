@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Table(name = "ServiceSpecConfig")
 @Entity
@@ -22,8 +21,14 @@ public class ServiceSpecConfig {
     @Column(name = "id", nullable = false)
     private int SSC_code;
 
-    @Column(name = "externalId", nullable = false)
+    @Column(name = "serviceCode", nullable = false, columnDefinition = "int default 0")
+    private int serviceCode;
+
+    @Column(name = "externalId", nullable = false, columnDefinition = "int default 0")
     private int externalId;
+
+    @Column(name = "numPlanCode", nullable = false, columnDefinition = "int default 0")
+    private int numPlanCode;
 
     @Column(name = "serviceSpecName", nullable = false)
     private String serviceSpecName;
@@ -35,5 +40,5 @@ public class ServiceSpecConfig {
     private String status;
 
     @Column(name = "description", nullable = false)
-    private Date description;
+    private String description;
 }

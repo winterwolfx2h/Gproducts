@@ -1,6 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE;
 
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Parent;
 import com.Bcm.Model.product.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,13 +25,8 @@ public class ProductOffering extends Product {
     @Column(name = "shdes", nullable = false)
     private String shdes;
 
-    @Column(name = "description", nullable = false)
-    private String descrption;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "po_ParentCode", nullable = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Parent parent;
+    @Column(name = "parent", nullable = true)
+    private String parent;
 
     @Column(name = "externalLinkId", nullable = true)
     private String externalLinkId;

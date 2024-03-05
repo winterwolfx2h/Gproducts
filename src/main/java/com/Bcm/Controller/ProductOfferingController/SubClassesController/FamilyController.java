@@ -2,7 +2,6 @@ package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubFamilyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +15,6 @@ public class FamilyController {
 
     @Autowired
     private FamilyService familyService;
-    @Autowired
-    private SubFamilyService subFamilyService;
 
    /*@PostMapping
     public ResponseEntity<?> create(@RequestBody Family family) {

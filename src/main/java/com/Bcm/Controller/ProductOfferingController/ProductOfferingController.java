@@ -1,15 +1,8 @@
 package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Exception.ErrorMessage;
-import com.Bcm.Model.ProductOfferingABE.ProductOffering;
-import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Parent;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductSpecificationService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.CategoryService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ParentService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.TypeService;
+import com.Bcm.Model.ProductOfferingABE.*;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,31 +19,43 @@ import java.util.List;
 public class ProductOfferingController {
 
     final  ProductOfferingService productOfferingService;
-    final  CategoryService categoryService;
     final  ProductSpecificationService productSpecificationService;
-    final  ParentService parentService;
-    final  FamilyService familyService;
-    final  TypeService typeService;
+    final  POAttributesService poAttributesService;
+    final  ProductOfferRelationService productOfferRelationService;
+    final  ProductRelationService productRelationService;
+    final  ProductResourceService productResourceService;
 
 
     @PostMapping("/addProdOff")
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
         String productSpecName = productOffering.getProductSpecification().getName();
-        String parentName = productOffering.getParent().getName();
+        String poAttributeName = productOffering.getPoAttributes().getAttributeValDesc();
+        String productOfferRelationName = productOffering.getProductOfferRelation().getName();
+        String productRelationName = productOffering.getProductRelation().getType();
+        String productResourceName = productOffering.getProductResource().getName();
 
         ProductSpecification productSpec = productSpecificationService.findByName(productSpecName);
-        Parent parent = parentService.findByName(parentName);
+        POAttributes poAttributes = poAttributesService.findByAttributeValDesc(poAttributeName);
+        ProductRelation productRelation = productRelationService.findByType(productRelationName);
+        ProductOfferRelation productOfferRelation = productOfferRelationService.findByName(productOfferRelationName);
+        ProductResource productResource = productResourceService.findByName(productResourceName);
 
-        if (productSpec != null && parent != null) {
+        if (productSpec != null && poAttributes != null && productRelation != null && productOfferRelation != null && productResource != null) {
             productOffering.setProductSpecification(productSpec);
-            productOffering.setParent(parent);
+            productOffering.setPoAttributes(poAttributes);
+            productOffering.setProductRelation(productRelation);
+            productOffering.setProductOfferRelation(productOfferRelation);
+            productOffering.setProductResource(productResource);
 
             ProductOffering createdProduct = productOfferingService.create(productOffering);
             return ResponseEntity.ok(createdProduct);
         } else {
             StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
             if (productSpec == null) errorMessage.append(" ProductSpecification with name: ").append(productSpecName);
-            if (parent == null) errorMessage.append(" Parent with name: ").append(parentName);
+            if (poAttributes == null) errorMessage.append(" POAttributes with name: ").append(poAttributeName);
+            if (productRelation == null) errorMessage.append(" ProductRelation with name: ").append(productRelationName);
+            if (productOfferRelation == null) errorMessage.append(" ProductOfferRelation with name: ").append(productOfferRelationName);
+            if (productResource == null) errorMessage.append(" ProductResource with name: ").append(productResourceName);
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }
     }

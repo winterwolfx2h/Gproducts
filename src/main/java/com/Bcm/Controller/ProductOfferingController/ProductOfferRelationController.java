@@ -1,11 +1,7 @@
 package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.RelationType;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Status;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.RelationTypeService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,33 +17,11 @@ public class ProductOfferRelationController {
     @Autowired
     private ProductOfferRelationService productOfferRelationService;
 
-    @Autowired
-    private RelationTypeService relationTypeService;
-
-    @Autowired
-    private StatusService statusService;
 
     @PostMapping("/addProdOffRelation")
-    public ResponseEntity<?> createProductOfferRelation(@RequestBody ProductOfferRelation productOfferRelation) {
-
-        String typeName = productOfferRelation.getType().getName();
-        String statusName = productOfferRelation.getStatus().getName();
-
-        RelationType type = relationTypeService.findByName(typeName);
-        Status status = statusService.findByName(statusName);
-
-        if (type != null && status != null) {
-            productOfferRelation.setType(type);
-            productOfferRelation.setStatus(status);
-
-            ProductOfferRelation createdProductSpecification = productOfferRelationService.create(productOfferRelation);
-            return ResponseEntity.ok(createdProductSpecification);
-        } else {
-            StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
-            if (type == null) errorMessage.append(" Type with name: ").append(typeName);
-            if (status == null) errorMessage.append(" Status with name: ").append(statusName);
-            return ResponseEntity.badRequest().body(errorMessage.toString());
-        }
+    public ResponseEntity<ProductOfferRelation> createProductOfferRelation(@RequestBody ProductOfferRelation productOfferRelation) {
+        ProductOfferRelation createdProductOfferRelation = productOfferRelationService.create(productOfferRelation);
+        return ResponseEntity.ok(createdProductOfferRelation);
     }
 
     @GetMapping

@@ -17,7 +17,7 @@ public class BundledProductOfferController {
     @Autowired
     private BundledProductOfferService bundledProductOfferService;
 
-    @PostMapping
+    @PostMapping("/addBundledProductOffer")
     public ResponseEntity<?> createBundledProductOffer(@RequestBody BundledProductOffer bundledProductOffer) {
         try {
             BundledProductOffer createdBundledProductOffer = bundledProductOfferService.create(bundledProductOffer);
@@ -27,7 +27,7 @@ public class BundledProductOfferController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/listBundledProductOffers")
     public ResponseEntity<?> getAllBundledProductOffers() {
         try {
             List<BundledProductOffer> bundledProductOffers = bundledProductOfferService.read();

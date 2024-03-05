@@ -16,7 +16,7 @@ public class SubMarketController {
     @Autowired
     private SubMarketService subMarketService;
 
-    @PostMapping
+    @PostMapping("/addSubMarket")
     public ResponseEntity<SubMarket> createSubMarket(@RequestBody SubMarket SubMarket) {
         try {
             SubMarket createdSubMarket = subMarketService.create(SubMarket);
@@ -26,7 +26,7 @@ public class SubMarketController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/listSubMarket")
     public ResponseEntity<List<SubMarket>> getAllSubMarkets() {
         try {
             List<SubMarket> SubMarkets = subMarketService.read();

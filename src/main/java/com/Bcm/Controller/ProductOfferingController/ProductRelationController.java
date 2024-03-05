@@ -20,13 +20,13 @@ public class ProductRelationController {
 
     final ProductRelationService productRelationService;
 
-    @PostMapping("/addProdOfferingRelation")
+    @PostMapping("/addProdRelation")
     public ResponseEntity<ProductRelation> createproductRelation(@RequestBody ProductRelation productRelation) {
         ProductRelation createdProductRelation = productRelationService.create(productRelation);
         return ResponseEntity.ok(createdProductRelation);
     }
 
-    @GetMapping
+    @GetMapping("/listProdRelations")
     public ResponseEntity<?> getAllproductRelations() {
         try {
             List<ProductRelation> productRelations = productRelationService.read();

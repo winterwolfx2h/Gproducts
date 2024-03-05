@@ -16,19 +16,4 @@ public interface ProductResourceRepository extends JpaRepository<ProductResource
 
     @Query("SELECT p FROM ProductResource p WHERE p.name LIKE :name ")
     List<ProductResource> searchByKeyword(String name);
-/*
-
-    @Query("SELECT po FROM ProductResource po JOIN po.prServiceId c WHERE  c.name = :name ")
-    List<ProductResource> findAllWithPrServiceId(String name);
-
-    @Query("SELECT p FROM ProductResource p WHERE p.prServiceId.pr_PrServiceId = :pr_PrServiceId")
-    List<ProductResource> findByPrServiceId_pr_PrServiceId(int pr_PrServiceId);
-
-    @Query("SELECT po FROM ProductResource po JOIN po.lrServiceId c WHERE  c.name = :name ")
-    List<ProductResource> findAllWithLrServiceId(String name);
-
-    @Query("SELECT p FROM ProductResource p WHERE p.lrServiceId.pr_LrServiceId = :pr_LrServiceId")
-    List<ProductResource> findByPrServiceId_lr_PrServiceId(int pr_LrServiceId);
-
-*/
 }

@@ -17,7 +17,7 @@ public class ServiceSpecConfigController {
     @Autowired
     private ServiceSpecConfigService serviceSpecConfigService;
 
-    @PostMapping
+    @PostMapping("/addServiceSpecConfig")
     public ResponseEntity<?> createServiceSpecConfig(@RequestBody ServiceSpecConfig ServiceSpecConfig) {
         try {
             ServiceSpecConfig createdServiceSpecConfig = serviceSpecConfigService.create(ServiceSpecConfig);
@@ -27,7 +27,7 @@ public class ServiceSpecConfigController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/listServiceSpecConfigs")
     public ResponseEntity<?> getAllServiceSpecConfigs() {
         try {
             List<ServiceSpecConfig> ServiceSpecConfigs = serviceSpecConfigService.read();

@@ -35,24 +35,16 @@ public class POAttributeController {
 
         for (POAttributes poAttribute : POAttributesList) {
             String attributeCategoryName = poAttribute.getAttributeCategory();
-            AttributeCategory attributeCategory = attributeCategoryService.findByName(attributeCategoryName);
-
-            if (attributeCategory != null) {
-                poAttribute.setAttributeCategory(attributeCategoryName);
+            if (attributeCategoryName != null && !attributeCategoryName.isEmpty()) {
                 POAttributes createdPlan = poAttributesService.create(poAttribute);
                 createdPOAttributesList.add(createdPlan);
             } else {
-                StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
-                if (attributeCategory == null)
-                    errorMessage.append(" AttributeCategory with name: ").append(attributeCategoryName);
-                return ResponseEntity.badRequest().body(errorMessage.toString());
+                return ResponseEntity.badRequest().body("Attribute category is missing for one or more POAttributes.");
             }
         }
 
         return ResponseEntity.ok(createdPOAttributesList);
     }
-
-
     @PutMapping("/updatePOAttributes/{poAttribute_code}")
     public ResponseEntity<?> update(@PathVariable int poAttribute_code, @RequestBody POAttributes POAttributes) {
         try {
@@ -62,8 +54,6 @@ public class POAttributeController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
-
     @DeleteMapping("/{poAttribute_code}")
     public String delete(@PathVariable int poAttribute_code) {
         return poAttributesService.delete(poAttribute_code);
@@ -78,7 +68,6 @@ public class POAttributeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-
     /*@GetMapping("/searchByKeyword")
     public List<POAttributes> searchByKeyword(@RequestParam String attributeValDesc) {
         try {
@@ -87,7 +76,6 @@ public class POAttributeController {
             throw handleException(e);
         }
     }*/
-
     private RuntimeException handleException(Exception e) {
         ErrorMessage errorMessage = new ErrorMessage(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),

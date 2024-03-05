@@ -16,7 +16,7 @@ public class MarketController {
     @Autowired
     private MarketService marketService;
 
-    @PostMapping
+    @PostMapping("/addMarket")
     public ResponseEntity<Market> createMarket(@RequestBody Market market) {
         try {
             Market createdMarket = marketService.create(market);
@@ -26,7 +26,7 @@ public class MarketController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/listMarket")
     public ResponseEntity<List<Market>> getAllMarkets() {
         try {
             List<Market> markets = marketService.read();

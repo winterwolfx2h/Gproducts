@@ -40,7 +40,7 @@ public class ProductSpecificationController {
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }
     }
-    @GetMapping
+    @GetMapping("/listProdSpec")
     public ResponseEntity<?> getAllProductSpecifications() {
         try {
             List<ProductSpecification> ProductSpecifications = productSpecificationService.read();

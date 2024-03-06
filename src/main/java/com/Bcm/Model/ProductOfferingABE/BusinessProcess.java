@@ -7,30 +7,22 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
-@Table(name = "BundledProductOffer")
 @Entity
+@Table(name = "BusinessProcess")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class BundledProductOffer {
+public class BusinessProcess {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    @Column(name = "bdo_Code", nullable = false)
-    private int bdo_Code;
+    @Column(name = "businessProcessId", nullable = false)
+    private int businessProcessId;
 
-
-    @Column(name = "status", nullable = false)
-    private int status;
-
-
-    @Column(name = "validFor", nullable = false)
-    private String validFor;
-
-
+    @Column(name = "bussinessProcType", nullable = false)
+    private String bussinessProcType;
 }
 

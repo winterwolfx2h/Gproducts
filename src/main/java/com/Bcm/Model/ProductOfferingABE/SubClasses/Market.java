@@ -21,7 +21,7 @@ public class Market {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "market_seq_generator")
     @SequenceGenerator(name = "market_seq_generator", sequenceName = "market_sequence", allocationSize = 1)
     @JsonIgnore
-    @Column(name = "id", nullable = false)
+    @Column(name = "po_MarketCode", nullable = false)
     private int po_MarketCode;
 
     @Column(name = "name", nullable = false)

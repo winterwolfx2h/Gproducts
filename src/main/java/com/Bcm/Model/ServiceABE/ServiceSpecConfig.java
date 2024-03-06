@@ -18,7 +18,7 @@ public class ServiceSpecConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    @Column(name = "id", nullable = false)
+    @Column(name = "SSC_code", nullable = false)
     private int SSC_code;
 
     @Column(name = "serviceCode", nullable = false, columnDefinition = "int default 0")

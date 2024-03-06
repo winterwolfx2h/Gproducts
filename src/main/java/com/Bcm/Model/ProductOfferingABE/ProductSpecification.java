@@ -23,7 +23,7 @@ public class ProductSpecification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @SequenceGenerator(name = "ProductSpecification_seq_generator", sequenceName = "ProductSpecification_sequence", allocationSize = 1)
     @JsonIgnore
-    @Column(name = "id", nullable = false)
+    @Column(name = "po_SpecCode", nullable = false)
     private int po_SpecCode;
 
     @Column(name = "name", nullable = false)

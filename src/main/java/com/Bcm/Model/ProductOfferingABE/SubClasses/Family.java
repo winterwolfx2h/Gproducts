@@ -20,7 +20,7 @@ public class Family {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "family_seq_generator")
     @SequenceGenerator(name = "family_seq_generator", sequenceName = "family_sequence", allocationSize = 1)
     @JsonIgnore
-    @Column(name = "id", nullable = false)
+    @Column(name = "po_FamilyCode", nullable = false)
     private int po_FamilyCode;
 
     @Column(name = "name", nullable = false)

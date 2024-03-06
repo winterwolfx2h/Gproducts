@@ -40,6 +40,18 @@ public interface ProductOfferingRepository extends JpaRepository<ProductOffering
     @Query("SELECT p FROM ProductOffering p WHERE p.productResource.PrResId = :PrResId")
     List<ProductOffering> findByProductResource_PrResId(int PrResId);
 
+    @Query("SELECT po FROM ProductOffering po JOIN po.businessProcess c WHERE  c.bussinessProcType = :bussinessProcType ")
+    List<ProductOffering> findAllWithBusinessProcess(String bussinessProcType);
+
+    @Query("SELECT p FROM ProductOffering p WHERE p.businessProcess.businessProcessId = :businessProcessId")
+    List<ProductOffering> findByBusinessProcess_businessProcessId(int businessProcessId);
+
+    @Query("SELECT po FROM ProductOffering po JOIN po.eligibility c WHERE  c.channel = :channel ")
+    List<ProductOffering> findAllWithEligibility(String channel);
+
+    @Query("SELECT p FROM ProductOffering p WHERE p.eligibility.eligibilityId = :eligibilityId")
+    List<ProductOffering> findByEligibility_eligibilityId(int eligibilityId);
+
 }
 
 

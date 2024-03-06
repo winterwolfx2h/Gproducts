@@ -21,12 +21,11 @@ import javax.persistence.*;
 @Setter
 public class POPlan {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @SequenceGenerator(name = "POPlan_seq_generator", sequenceName = "POPlan_sequence", allocationSize = 1)
     @JsonIgnore
-    @Column(name = "id", nullable = false)
+    @Column(name = "TMCODE", nullable = false)
     private int TMCODE;
 
     @Column(name = "DES", nullable = false)

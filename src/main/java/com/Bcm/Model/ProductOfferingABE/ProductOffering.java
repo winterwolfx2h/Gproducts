@@ -56,4 +56,14 @@ public class ProductOffering extends Product {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductResource productResource;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "businessProcessId", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private BusinessProcess businessProcess;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "eligibilityId", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Eligibility eligibility;
+
 }

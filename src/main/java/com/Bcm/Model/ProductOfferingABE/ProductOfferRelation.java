@@ -22,7 +22,7 @@ public class ProductOfferRelation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    @Column(name = "id", nullable = false)
+    @Column(name = "PoOfferRelation_Code", nullable = false)
     private int PoOfferRelation_Code;
 
     @Column(name = "type", nullable = false)

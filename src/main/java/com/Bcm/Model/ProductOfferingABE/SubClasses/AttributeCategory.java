@@ -20,7 +20,7 @@ public class AttributeCategory {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AttributeCategory_seq_generator")
     @SequenceGenerator(name = "AttributeCategory_seq_generator", sequenceName = "AttributeCategory_sequence", allocationSize = 1)
     @JsonIgnore
-    @Column(name = "id", nullable = false)
+    @Column(name = "po_AttributeCategoryCode", nullable = false)
     private int po_AttributeCategoryCode;
 
     @Column(name = "name", nullable = false)

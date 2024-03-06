@@ -1,7 +1,6 @@
 package com.Bcm.Model.product;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +22,6 @@ import java.util.Date;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     @Column(name = "Product_id", nullable = false)
     private int Product_id;
 

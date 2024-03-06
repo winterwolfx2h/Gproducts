@@ -3,7 +3,6 @@ package com.Bcm.Model.ProductOfferingABE;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +23,6 @@ public class POPlan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @SequenceGenerator(name = "POPlan_seq_generator", sequenceName = "POPlan_sequence", allocationSize = 1)
-    @JsonIgnore
     @Column(name = "TMCODE", nullable = false)
     private int TMCODE;
 

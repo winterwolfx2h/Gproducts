@@ -1,6 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,6 @@ public class ProductSpecification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @SequenceGenerator(name = "ProductSpecification_seq_generator", sequenceName = "ProductSpecification_sequence", allocationSize = 1)
-    @JsonIgnore
     @Column(name = "po_SpecCode", nullable = false)
     private int po_SpecCode;
 

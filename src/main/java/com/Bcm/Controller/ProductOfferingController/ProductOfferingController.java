@@ -2,7 +2,11 @@ package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Model.ProductOfferingABE.*;
+import com.Bcm.Model.ProductResourceABE.LogicalResource;
+import com.Bcm.Model.ProductResourceABE.PhysicalResource;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.*;
+import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
+import com.Bcm.Service.Srvc.ProductResourceSrvc.PhysicalResourceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +27,8 @@ public class ProductOfferingController {
     final  POAttributesService poAttributesService;
     final  ProductOfferRelationService productOfferRelationService;
     final  ProductRelationService productRelationService;
-    final  ProductResourceService productResourceService;
+    final  LogicalResourceService logicalResourceService;
+    final  PhysicalResourceService physicalResourceService;
     final  BusinessProcessService businessProcessService;
     final  EligibilityService eligibilityService;
 
@@ -33,7 +38,8 @@ public class ProductOfferingController {
         String poAttributeName = productOffering.getPoAttributes().getAttributeValDesc();
         String productOfferRelationName = productOffering.getProductOfferRelation().getName();
         String productRelationName = productOffering.getProductRelation().getType();
-        String productResourceName = productOffering.getProductResource().getName();
+        String logicalResourceName = productOffering.getLogicalResource().getLogicalResourceType();
+        String physicalResourceName = productOffering.getPhysicalResource().getPhysicalResourceType();
         String businessProcessName = productOffering.getBusinessProcess().getBussinessProcType();
         String eligibilityName = productOffering.getEligibility().getChannel();
 
@@ -41,18 +47,21 @@ public class ProductOfferingController {
         POAttributes poAttributes = poAttributesService.findByAttributeValDesc(poAttributeName);
         ProductRelation productRelation = productRelationService.findByType(productRelationName);
         ProductOfferRelation productOfferRelation = productOfferRelationService.findByName(productOfferRelationName);
-        ProductResource productResource = productResourceService.findByName(productResourceName);
+        LogicalResource logicalResource = logicalResourceService.findByLogicalResourceType(logicalResourceName);
+        PhysicalResource physicalResource = physicalResourceService.findByPhysicalResourceType(physicalResourceName);
         BusinessProcess businessProcess = businessProcessService.findByBussinessProcType(businessProcessName);
         Eligibility eligibility = eligibilityService.findByChannel(eligibilityName);
 
         if (productSpec != null && poAttributes != null
                 && productRelation != null && productOfferRelation != null
-                && productResource != null && businessProcess != null && eligibility != null) {
+                && logicalResource != null  && physicalResource != null
+                && businessProcess != null && eligibility != null) {
             productOffering.setProductSpecification(productSpec);
             productOffering.setPoAttributes(poAttributes);
             productOffering.setProductRelation(productRelation);
             productOffering.setProductOfferRelation(productOfferRelation);
-            productOffering.setProductResource(productResource);
+            productOffering.setLogicalResource(logicalResource);
+            productOffering.setPhysicalResource(physicalResource);
             productOffering.setBusinessProcess(businessProcess);
             productOffering.setEligibility(eligibility);
 
@@ -64,7 +73,8 @@ public class ProductOfferingController {
             if (poAttributes == null) errorMessage.append(" POAttributes with name: ").append(poAttributeName);
             if (productRelation == null) errorMessage.append(" ProductRelation with name: ").append(productRelationName);
             if (productOfferRelation == null) errorMessage.append(" ProductOfferRelation with name: ").append(productOfferRelationName);
-            if (productResource == null) errorMessage.append(" ProductResource with name: ").append(productResourceName);
+            if (logicalResource == null) errorMessage.append(" LogicalResource with name: ").append(logicalResourceName);
+            if (physicalResource == null) errorMessage.append(" PhysicalResource with name: ").append(physicalResourceName);
             if (businessProcess == null) errorMessage.append(" BusinessProcess with Business Process Type: ").append(businessProcessName);
             if (eligibility == null) errorMessage.append(" ProductResource with Channel: ").append(eligibilityName);
             return ResponseEntity.badRequest().body(errorMessage.toString());

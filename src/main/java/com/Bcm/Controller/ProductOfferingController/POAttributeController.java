@@ -3,9 +3,7 @@ package com.Bcm.Controller.ProductOfferingController;
 import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.AttributeCategory;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.POAttributesService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.AttributeCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +20,6 @@ import java.util.List;
 public class POAttributeController {
 
     final POAttributesService poAttributesService;
-    final AttributeCategoryService attributeCategoryService;
 
     @GetMapping("/listPOAttributess")
     public List<POAttributes> read() {

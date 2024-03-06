@@ -46,15 +46,16 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
 
         if (existingServiceSpecConfigOptional.isPresent()) {
             ServiceSpecConfig existingServiceSpecConfig = existingServiceSpecConfigOptional.get();
+            existingServiceSpecConfig.setServiceCode(updatedserviceSpecConfig.getServiceCode());
             existingServiceSpecConfig.setExternalId(updatedserviceSpecConfig.getExternalId());
+            existingServiceSpecConfig.setNumPlanCode(updatedserviceSpecConfig.getNumPlanCode());
             existingServiceSpecConfig.setServiceSpecName(updatedserviceSpecConfig.getServiceSpecName());
             existingServiceSpecConfig.setServiceSpecType(updatedserviceSpecConfig.getServiceSpecType());
             existingServiceSpecConfig.setStatus(updatedserviceSpecConfig.getStatus());
             existingServiceSpecConfig.setDescription(updatedserviceSpecConfig.getDescription());
-
             return serviceSpecConfigRepository.save(existingServiceSpecConfig);
         } else {
-            throw new ResourceNotFoundException("Could not find ServiceSpecConfig Specification with ID: " + SSC_code);
+            throw new ResourceNotFoundException("Could not find ServiceSpecConfig  with ID: " + SSC_code);
         }
     }
 
@@ -66,7 +67,7 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
 
         try {
             serviceSpecConfigRepository.deleteById(SSC_code);
-            return "ServiceSpecConfig Specification with ID " + SSC_code + " was successfully deleted";
+            return "ServiceSpecConfig  with ID " + SSC_code + " was successfully deleted";
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred while deleting ServiceSpecConfig with ID: " + SSC_code, e);
         }
@@ -76,9 +77,9 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
     public ServiceSpecConfig findById(int SSC_code) {
         try {
             return serviceSpecConfigRepository.findById(SSC_code)
-                    .orElseThrow(() -> new ResourceNotFoundException("ServiceSpecConfig Specification with ID " + SSC_code + " not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("ServiceSpecConfig  with ID " + SSC_code + " not found"));
         } catch (ResourceNotFoundException e) {
-            throw new RuntimeException("ServiceSpecConfig Specification with ID \"" + SSC_code + "\" not found", e);
+            throw new RuntimeException("ServiceSpecConfig  with ID \"" + SSC_code + "\" not found", e);
         }
     }
 

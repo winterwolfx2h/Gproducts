@@ -1,6 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,6 @@ public class Eligibility {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     @Column(name = "eligibilityId", nullable = false)
     private int eligibilityId;
 

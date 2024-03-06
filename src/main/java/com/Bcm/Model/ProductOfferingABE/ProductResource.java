@@ -1,6 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +17,6 @@ public class ProductResource {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     @Column(name = "PrResId", nullable = false)
     private int PrResId;
 

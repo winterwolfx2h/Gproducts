@@ -1,6 +1,5 @@
 package com.Bcm.Model.ServiceABE;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,6 @@ import javax.persistence.*;
 public class ServiceSpecConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     @Column(name = "SSC_code", nullable = false)
     private int SSC_code;
 

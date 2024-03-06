@@ -1,6 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +19,6 @@ public class Market {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "market_seq_generator")
     @SequenceGenerator(name = "market_seq_generator", sequenceName = "market_sequence", allocationSize = 1)
-    @JsonIgnore
     @Column(name = "po_MarketCode", nullable = false)
     private int po_MarketCode;
 

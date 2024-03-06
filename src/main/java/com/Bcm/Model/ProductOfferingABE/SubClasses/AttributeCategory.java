@@ -1,6 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,6 @@ public class AttributeCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AttributeCategory_seq_generator")
     @SequenceGenerator(name = "AttributeCategory_seq_generator", sequenceName = "AttributeCategory_sequence", allocationSize = 1)
-    @JsonIgnore
     @Column(name = "po_AttributeCategoryCode", nullable = false)
     private int po_AttributeCategoryCode;
 

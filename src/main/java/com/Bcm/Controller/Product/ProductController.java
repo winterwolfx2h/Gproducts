@@ -32,7 +32,6 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
-
    /* @GetMapping("/productsWithPOBasicParent")
     public ResponseEntity<List<Product>> getProductsByPOBasicParent() {
         String parentName = "PO_Basic";

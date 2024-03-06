@@ -59,18 +59,31 @@ public class POPlanController {
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }
     }
-
     @PutMapping("/updatePOPlan/{TMCODE}")
     public ResponseEntity<?> update(@PathVariable int TMCODE, @RequestBody POPlan poPlan) {
         try {
-            POPlan updatedPlan = popService.update(TMCODE, poPlan);
+            POPlan existingPlan = popService.findById(TMCODE);
+            if (existingPlan == null) {
+                return ResponseEntity.notFound().build();
+            }
+            String marketName = poPlan.getMarket().getName();
+            String subMarketName = poPlan.getSubMarket().getName();
+            Market existingMarket = marketService.findByName(marketName);
+            SubMarket existingSubMarket = subMarketService.findByName(subMarketName);
+            if (existingMarket == null || existingSubMarket == null) {
+                return ResponseEntity.badRequest().body("Market or SubMarket not found.");
+            }
+            existingPlan.setDES(poPlan.getDES());
+            existingPlan.setSHDES(poPlan.getSHDES());
+            existingPlan.setMarket(existingMarket);
+            existingPlan.setSubMarket(existingSubMarket);
+
+            POPlan updatedPlan = popService.update(TMCODE, existingPlan);
             return ResponseEntity.ok(updatedPlan);
         } catch (InvalidInputException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
-
     @DeleteMapping("/{TMCODE}")
     public String delete(@PathVariable int TMCODE) {
         return popService.delete(TMCODE);

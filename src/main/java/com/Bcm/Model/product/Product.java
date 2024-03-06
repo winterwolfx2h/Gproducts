@@ -24,7 +24,7 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    @Column(name = "id", nullable = false)
+    @Column(name = "Product_id", nullable = false)
     private int Product_id;
 
     @Column(name = "name", nullable = false)

@@ -24,7 +24,8 @@ public class ProductOfferingController {
     final  ProductOfferRelationService productOfferRelationService;
     final  ProductRelationService productRelationService;
     final  ProductResourceService productResourceService;
-
+    final  BusinessProcessService businessProcessService;
+    final  EligibilityService eligibilityService;
 
     @PostMapping("/addProdOff")
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
@@ -33,19 +34,27 @@ public class ProductOfferingController {
         String productOfferRelationName = productOffering.getProductOfferRelation().getName();
         String productRelationName = productOffering.getProductRelation().getType();
         String productResourceName = productOffering.getProductResource().getName();
+        String businessProcessName = productOffering.getBusinessProcess().getBussinessProcType();
+        String eligibilityName = productOffering.getEligibility().getChannel();
 
         ProductSpecification productSpec = productSpecificationService.findByName(productSpecName);
         POAttributes poAttributes = poAttributesService.findByAttributeValDesc(poAttributeName);
         ProductRelation productRelation = productRelationService.findByType(productRelationName);
         ProductOfferRelation productOfferRelation = productOfferRelationService.findByName(productOfferRelationName);
         ProductResource productResource = productResourceService.findByName(productResourceName);
+        BusinessProcess businessProcess = businessProcessService.findByBussinessProcType(businessProcessName);
+        Eligibility eligibility = eligibilityService.findByChannel(eligibilityName);
 
-        if (productSpec != null && poAttributes != null && productRelation != null && productOfferRelation != null && productResource != null) {
+        if (productSpec != null && poAttributes != null
+                && productRelation != null && productOfferRelation != null
+                && productResource != null && businessProcess != null && eligibility != null) {
             productOffering.setProductSpecification(productSpec);
             productOffering.setPoAttributes(poAttributes);
             productOffering.setProductRelation(productRelation);
             productOffering.setProductOfferRelation(productOfferRelation);
             productOffering.setProductResource(productResource);
+            productOffering.setBusinessProcess(businessProcess);
+            productOffering.setEligibility(eligibility);
 
             ProductOffering createdProduct = productOfferingService.create(productOffering);
             return ResponseEntity.ok(createdProduct);
@@ -56,6 +65,8 @@ public class ProductOfferingController {
             if (productRelation == null) errorMessage.append(" ProductRelation with name: ").append(productRelationName);
             if (productOfferRelation == null) errorMessage.append(" ProductOfferRelation with name: ").append(productOfferRelationName);
             if (productResource == null) errorMessage.append(" ProductResource with name: ").append(productResourceName);
+            if (businessProcess == null) errorMessage.append(" BusinessProcess with Business Process Type: ").append(businessProcessName);
+            if (eligibility == null) errorMessage.append(" ProductResource with Channel: ").append(eligibilityName);
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }
     }
@@ -90,7 +101,6 @@ public class ProductOfferingController {
         String resultMessage = productOfferingService.delete(po_code);
         return ResponseEntity.ok(resultMessage);
     }
-
 
     @GetMapping("/search")
     public ResponseEntity<List<ProductOffering>> searchProductOfferingsByKeyword(@RequestParam("name") String name) {

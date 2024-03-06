@@ -20,7 +20,7 @@ public class SubMarket {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "submarket_seq_generator")
     @SequenceGenerator(name = "submarket_seq_generator", sequenceName = "submarket_sequence", allocationSize = 1)
     @JsonIgnore
-    @Column(name = "id", nullable = false)
+    @Column(name = "po_SubMarketCode", nullable = false)
     private int po_SubMarketCode;
 
     @Column(name = "name", nullable = false)

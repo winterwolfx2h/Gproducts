@@ -18,7 +18,7 @@ public class POAttributes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    @Column(name = "id", nullable = false)
+    @Column(name = "poAttribute_code", nullable = false)
     private int poAttribute_code;
 
     @Column(name = "shortCode", nullable = false)

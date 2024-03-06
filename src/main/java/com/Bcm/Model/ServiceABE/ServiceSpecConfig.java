@@ -20,13 +20,13 @@ public class ServiceSpecConfig {
     private int SSC_code;
 
     @Column(name = "serviceCode", nullable = false, columnDefinition = "int default 0")
-    private int serviceCode;
+    private String serviceCode;
 
     @Column(name = "externalId", nullable = false, columnDefinition = "int default 0")
-    private int externalId;
+    private String externalId;
 
     @Column(name = "numPlanCode", nullable = false, columnDefinition = "int default 0")
-    private int numPlanCode;
+    private String numPlanCode;
 
     @Column(name = "serviceSpecName", nullable = false)
     private String serviceSpecName;

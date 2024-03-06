@@ -1,5 +1,7 @@
 package com.Bcm.Model.ProductOfferingABE;
 
+import com.Bcm.Model.ProductResourceABE.LogicalResource;
+import com.Bcm.Model.ProductResourceABE.PhysicalResource;
 import com.Bcm.Model.product.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -52,9 +54,14 @@ public class ProductOffering extends Product {
     private ProductOfferRelation productOfferRelation;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "PrResId", nullable = false)
+    @JoinColumn(name = "logResourceId", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private ProductResource productResource;
+    private LogicalResource logicalResource;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "phyResourceId", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private PhysicalResource physicalResource;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "businessProcessId", nullable = false)

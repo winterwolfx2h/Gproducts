@@ -21,7 +21,6 @@ public class ProductRelation {
     @Column(name = "poRelation_Code", nullable = false)
     private int poRelation_Code;
 
-
     @Column(name = "type", nullable = false)
     private String type;
 

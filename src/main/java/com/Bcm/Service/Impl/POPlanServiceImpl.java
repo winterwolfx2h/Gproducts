@@ -52,7 +52,9 @@ public class POPlanServiceImpl implements POPlanService {
         if (existingPlanOptional.isPresent()) {
             POPlan existingPlan = existingPlanOptional.get();
             existingPlan.setDES(poPlan.getDES());
-            existingPlan.setSHDES(poPlan.getSHDES());
+            existingPlan.setDES(poPlan.getDES());
+            existingPlan.setMarket(poPlan.getMarket());
+            existingPlan.setSubMarket(poPlan.getSubMarket());
 
             validateNotNullFields(existingPlan);
 

@@ -21,7 +21,7 @@ public class BundledProductOffer {
     private int bdo_Code;
 
     @Column(name = "status", nullable = false)
-    private int status;
+    private String status;
 
     @Column(name = "validFor", nullable = false)
     private String validFor;

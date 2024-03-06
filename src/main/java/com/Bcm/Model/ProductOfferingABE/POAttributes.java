@@ -20,13 +20,13 @@ public class POAttributes {
     private int poAttribute_code;
 
     @Column(name = "shortCode", nullable = false)
-    private int shortCode;
+    private String shortCode;
 
     @Column(name = "attributeCategory", nullable = true)
     private String attributeCategory;
 
     @Column(name = "AttributeExternalId", nullable = true)
-    private int AttributeExternalId;
+    private String AttributeExternalId;
 
     @Column(name = "attributeValDesc", nullable = false)
     private String attributeValDesc;

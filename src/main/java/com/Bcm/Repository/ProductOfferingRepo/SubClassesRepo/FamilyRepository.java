@@ -1,7 +1,5 @@
 package com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo;
 
-import com.Bcm.Model.ProductOfferingABE.POPlan;
-import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

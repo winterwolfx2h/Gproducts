@@ -1,6 +1,6 @@
 package com.Bcm.Service.Impl.Product;
 
-import com.Bcm.Model.product.Product;
+import com.Bcm.Model.Product.Product;
 import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import org.springframework.stereotype.Service;
@@ -18,8 +18,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-
-
     @Override
     public List<Product> read() {
         try {
@@ -28,7 +26,6 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("An unexpected error occurred while reading Product", e);
         }
     }
-
 
 
 }

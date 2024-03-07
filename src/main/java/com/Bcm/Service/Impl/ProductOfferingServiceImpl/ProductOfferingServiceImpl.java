@@ -50,9 +50,17 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         if (existingProductOptional.isPresent()) {
             ProductOffering existingProduct = existingProductOptional.get();
             existingProduct.setName(updatedProductOffering.getName());
-            existingProduct.setDescription(updatedProductOffering.getDescription());
-            existingProduct.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
-            existingProduct.setEffectiveTo(updatedProductOffering.getEffectiveTo());
+            existingProduct.setShdes(updatedProductOffering.getShdes());
+            existingProduct.setParent(updatedProductOffering.getParent());
+            existingProduct.setExternalLinkId(updatedProductOffering.getExternalLinkId());
+            existingProduct.setProductSpecification(updatedProductOffering.getProductSpecification());
+            existingProduct.setPoAttributes(updatedProductOffering.getPoAttributes());
+            existingProduct.setProductRelation(updatedProductOffering.getProductRelation());
+            existingProduct.setProductOfferRelation(updatedProductOffering.getProductOfferRelation());
+            existingProduct.setLogicalResource(updatedProductOffering.getLogicalResource());
+            existingProduct.setPhysicalResource(updatedProductOffering.getPhysicalResource());
+            existingProduct.setBusinessProcess(updatedProductOffering.getBusinessProcess());
+            existingProduct.setEligibility(updatedProductOffering.getEligibility());
 
 
             try {

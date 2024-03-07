@@ -27,6 +27,7 @@ public class POAttributesServiceImpl implements POAttributesService {
             throw new RuntimeException("An unexpected error occurred while creating product offering Attribute", e);
         }
     }
+
     @Override
     public List<POAttributes> read() {
         return poAttributesRepository.findAll();

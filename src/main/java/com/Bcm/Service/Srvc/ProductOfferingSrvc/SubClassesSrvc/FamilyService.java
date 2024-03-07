@@ -22,8 +22,7 @@ public interface FamilyService {
 
     Family findByName(String name);
 
-   /* List<Family> findBySubFamilyName(String SubFamilyName);*/
-
+    /* List<Family> findBySubFamilyName(String SubFamilyName);*/
 
 
 }

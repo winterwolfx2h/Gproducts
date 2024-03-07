@@ -59,8 +59,12 @@ public class POPlanController {
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }
     }
+
     @PutMapping("/updatePOPlan/{TMCODE}")
-    public ResponseEntity<?> update(@PathVariable int TMCODE, @RequestBody POPlan poPlan) {
+    public ResponseEntity<?> update(
+            @PathVariable int TMCODE,
+            @RequestBody POPlan poPlan) {
+
         try {
             POPlan existingPlan = popService.findById(TMCODE);
             if (existingPlan == null) {
@@ -70,6 +74,7 @@ public class POPlanController {
             String subMarketName = poPlan.getSubMarket().getName();
             Market existingMarket = marketService.findByName(marketName);
             SubMarket existingSubMarket = subMarketService.findByName(subMarketName);
+
             if (existingMarket == null || existingSubMarket == null) {
                 return ResponseEntity.badRequest().body("Market or SubMarket not found.");
             }
@@ -84,6 +89,7 @@ public class POPlanController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     @DeleteMapping("/{TMCODE}")
     public String delete(@PathVariable int TMCODE) {
         return popService.delete(TMCODE);

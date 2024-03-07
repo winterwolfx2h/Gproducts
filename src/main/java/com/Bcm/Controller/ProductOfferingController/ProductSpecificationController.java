@@ -5,7 +5,6 @@ import com.Bcm.Model.ProductOfferingABE.POPlan;
 import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
 import com.Bcm.Service.Srvc.POPlanService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductSpecificationService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,6 @@ import java.util.List;
 public class ProductSpecificationController {
 
     final private ProductSpecificationService productSpecificationService;
-    final private FamilyService familyService;
     final private POPlanService poPlanService;
 
     @PostMapping("/addProdSpec")
@@ -40,6 +38,7 @@ public class ProductSpecificationController {
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }
     }
+
     @GetMapping("/listProdSpec")
     public ResponseEntity<?> getAllProductSpecifications() {
         try {
@@ -60,28 +59,29 @@ public class ProductSpecificationController {
         }
     }
 
-    /*@PutMapping("/{po_SpecCode}")
-    public ResponseEntity<?> updateProductSpecification(
-            @PathVariable("po_SpecCode") int po_SpecCode,
-            @RequestBody ProductSpecification updatedProductSpecification) {
+    @PutMapping("/updatePOPlan/{po_SpecCode}")
+    public ResponseEntity<?> update(
+            @PathVariable int po_SpecCode,
+            @RequestBody ProductSpecification productSpecification) {
 
-        String categoryName = updatedProductSpecification.getCategory().getName();
-        Category category = categoryService.findByname(categoryName);
-
-        if (category != null) {
-            updatedProductSpecification.setCategory(category);
-            ProductSpecification updatedProduct = productSpecificationService.update(po_SpecCode, updatedProductSpecification);
-            return ResponseEntity.ok(updatedProduct);
-        } else {
-            return ResponseEntity.badRequest().body("Category not found with name: " + categoryName);
-        }
-    }*/
-
-
-    @PutMapping("/updatePOAttributes/{poAttribute_code}")
-    public ResponseEntity<?> update(@PathVariable int po_SpecCode, @RequestBody ProductSpecification productSpecification) {
         try {
-            ProductSpecification updatedProductSpecification = productSpecificationService.update(po_SpecCode, productSpecification);
+            ProductSpecification existingProductSpecification = productSpecificationService.findById(po_SpecCode);
+            if (existingProductSpecification == null) {
+                return ResponseEntity.notFound().build();
+            }
+            String poPlanName = productSpecification.getPoPlan().getSHDES();
+            POPlan existingPoPlan = poPlanService.findBySHDES(poPlanName);
+
+            if (existingPoPlan == null) {
+                return ResponseEntity.badRequest().body("Poplan not found.");
+            }
+            existingProductSpecification.setName(productSpecification.getName());
+            existingProductSpecification.setCategory(productSpecification.getCategory());
+            existingProductSpecification.setPoPlan(existingPoPlan);
+            existingProductSpecification.setExternalId(productSpecification.getExternalId());
+
+
+            ProductSpecification updatedProductSpecification = productSpecificationService.update(po_SpecCode, existingProductSpecification);
             return ResponseEntity.ok(updatedProductSpecification);
         } catch (InvalidInputException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

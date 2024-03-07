@@ -1,4 +1,4 @@
-package com.Bcm.Model.product;
+package com.Bcm.Model.Product;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import lombok.AllArgsConstructor;

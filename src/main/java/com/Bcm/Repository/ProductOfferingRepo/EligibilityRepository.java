@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface EligibilityRepository extends JpaRepository<Eligibility, Integer> {
 
     Optional<Eligibility> findById(int eligibilityId);
+
     Optional<Eligibility> findByChannel(String channel);
 
     @Query("SELECT p FROM Eligibility p WHERE p.channel LIKE :channel ")

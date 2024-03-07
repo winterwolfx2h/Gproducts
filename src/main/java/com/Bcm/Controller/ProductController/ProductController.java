@@ -1,6 +1,6 @@
-package com.Bcm.Controller.Product;
+package com.Bcm.Controller.ProductController;
 
-import com.Bcm.Model.product.Product;
+import com.Bcm.Model.Product.Product;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import lombok.RequiredArgsConstructor;

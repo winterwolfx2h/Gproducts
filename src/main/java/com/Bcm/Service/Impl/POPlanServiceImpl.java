@@ -110,6 +110,7 @@ public class POPlanServiceImpl implements POPlanService {
             throw new RuntimeException("An unexpected error occurred while searching for POPlans by keyword: " + DES, e);
         }
     }
+
     @Override
     public POPlan findBySHDES(String SHDES) {
         try {

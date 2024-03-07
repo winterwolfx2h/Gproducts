@@ -19,13 +19,13 @@ public class ServiceSpecConfig {
     @Column(name = "SSC_code", nullable = false)
     private int SSC_code;
 
-    @Column(name = "serviceCode", nullable = false, columnDefinition = "int default 0")
+    @Column(name = "serviceCode", nullable = false)
     private String serviceCode;
 
-    @Column(name = "externalId", nullable = false, columnDefinition = "int default 0")
+    @Column(name = "externalId", nullable = false)
     private String externalId;
 
-    @Column(name = "numPlanCode", nullable = false, columnDefinition = "int default 0")
+    @Column(name = "numPlanCode", nullable = false)
     private String numPlanCode;
 
     @Column(name = "serviceSpecName", nullable = false)

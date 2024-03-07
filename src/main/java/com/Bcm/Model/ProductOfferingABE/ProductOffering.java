@@ -1,8 +1,8 @@
 package com.Bcm.Model.ProductOfferingABE;
 
+import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.ProductResourceABE.LogicalResource;
 import com.Bcm.Model.ProductResourceABE.PhysicalResource;
-import com.Bcm.Model.product.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

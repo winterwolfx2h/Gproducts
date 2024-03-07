@@ -42,6 +42,7 @@ public class POAttributeController {
 
         return ResponseEntity.ok(createdPOAttributesList);
     }
+
     @PutMapping("/updatePOAttributes/{poAttribute_code}")
     public ResponseEntity<?> update(@PathVariable int poAttribute_code, @RequestBody POAttributes POAttributes) {
         try {
@@ -51,6 +52,7 @@ public class POAttributeController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     @DeleteMapping("/{poAttribute_code}")
     public String delete(@PathVariable int poAttribute_code) {
         return poAttributesService.delete(poAttribute_code);
@@ -65,6 +67,7 @@ public class POAttributeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+
     /*@GetMapping("/searchByKeyword")
     public List<POAttributes> searchByKeyword(@RequestParam String attributeValDesc) {
         try {

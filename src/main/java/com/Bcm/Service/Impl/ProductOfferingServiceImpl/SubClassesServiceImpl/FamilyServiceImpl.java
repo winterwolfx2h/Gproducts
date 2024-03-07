@@ -1,6 +1,5 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl.SubClassesServiceImpl;
 
-import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.FamilyRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
@@ -93,9 +92,6 @@ public class FamilyServiceImpl implements FamilyService {
     public List<Family> findBySubFamilyName(String SubFamilyName) {
         return familyRepository.findBySubFamilyName(SubFamilyName);
     }*/
-
-
-
 
 
 }

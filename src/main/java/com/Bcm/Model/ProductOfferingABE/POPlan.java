@@ -32,12 +32,12 @@ public class POPlan {
     @Column(name = "SHDES", nullable = false)
     private String SHDES;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "po_MarketCode", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Market market;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "po_SubMarketCode", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private SubMarket subMarket;

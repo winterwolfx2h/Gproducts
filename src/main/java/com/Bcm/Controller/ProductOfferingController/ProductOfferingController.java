@@ -144,7 +144,6 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("One or more entities weren't found.");
             }
 
-
             existingProductOffering.setName(existingProductOffering.getName());
             existingProductOffering.setEffectiveFrom(existingProductOffering.getEffectiveFrom());
             existingProductOffering.setEffectiveTo(existingProductOffering.getEffectiveTo());
@@ -171,7 +170,6 @@ public class ProductOfferingController {
         }
     }
 
-
     @DeleteMapping("/{po_code}")
     public ResponseEntity<String> deleteProductOffering(@PathVariable("po_code") int po_code) {
         String resultMessage = productOfferingService.delete(po_code);
@@ -193,7 +191,6 @@ public class ProductOfferingController {
                 request.getDescription(false));
 
         return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
-
 
     }
 }

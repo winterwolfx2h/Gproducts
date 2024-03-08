@@ -41,7 +41,7 @@ public class Product {
     @Column(name = "poType", nullable = false)
     private String poType;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "po_FamilyCode", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Family family;

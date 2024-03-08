@@ -33,42 +33,42 @@ public class ProductOffering extends Product {
     @Column(name = "externalLinkId", nullable = true)
     private String externalLinkId;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "po_SpecCode", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductSpecification productSpecification;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "poAttribute_code", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private POAttributes poAttributes;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "poRelation_Code", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductRelation productRelation;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "PoOfferRelation_Code", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductOfferRelation productOfferRelation;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "logResourceId", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private LogicalResource logicalResource;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "phyResourceId", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private PhysicalResource physicalResource;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "businessProcessId", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private BusinessProcess businessProcess;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "eligibilityId", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Eligibility eligibility;

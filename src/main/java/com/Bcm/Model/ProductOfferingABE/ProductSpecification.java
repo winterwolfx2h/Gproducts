@@ -30,7 +30,7 @@ public class ProductSpecification {
     @Column(name = "category", nullable = false)
     private String category;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "TMCODE", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private POPlan poPlan;

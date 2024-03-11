@@ -6,10 +6,7 @@ import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,14 +29,15 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
-   /* @GetMapping("/productsWithPOBasicParent")
-    public ResponseEntity<List<Product>> getProductsByPOBasicParent() {
-        String parentName = "PO_Basic";
-        List<ProductOffering> productOfferings = productOfferingService.findByParentName(parentName);
-        List<Product> products = productOfferings.stream()
-                .map(ProductOffering::convertToProduct)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(products);
-    }*/
+    @GetMapping("/searchByFamilyName")
+    public ResponseEntity<?> searchProductsByFamilyName(@RequestParam("familyName") String familyName) {
+        List<Product> searchResults = productService.searchByFamilyName(familyName);
+        if (searchResults.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No products found for family name: " + familyName);
+        }
+        return ResponseEntity.ok(searchResults);
+    }
 }
+
+
 

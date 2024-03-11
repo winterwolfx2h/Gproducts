@@ -26,6 +26,10 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("An unexpected error occurred while reading Product", e);
         }
     }
+    @Override
+    public List<Product> searchByFamilyName(String familyName) {
+        return productRepository.findByFamily_Name(familyName);
+    }
 
 
 }

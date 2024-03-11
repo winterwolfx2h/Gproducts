@@ -7,9 +7,8 @@ import java.util.List;
 
 @Service
 public interface ProductService {
-
-
     List<Product> read();
 
+    List<Product> searchByFamilyName(String familyName);
 
 }

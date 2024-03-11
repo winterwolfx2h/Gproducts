@@ -13,6 +13,8 @@ public interface ProductOfferingRepository extends JpaRepository<ProductOffering
 
     Optional<ProductOffering> findByname(String name);
 
+    List<ProductOffering> findByParent(String parentName);
+
     @Query("SELECT p FROM ProductOffering p WHERE p.name = :name")
     List<ProductOffering> searchByKeyword(String name);
 

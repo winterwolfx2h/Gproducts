@@ -38,7 +38,7 @@ public class ProductOfferingController {
 
     @PostMapping("/addProdOff")
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
-        String productSpecName = productOffering.getProductSpecification().getName();
+        int productSpecName = productOffering.getProductSpecification().getPo_SpecCode();
         String poAttributeName = productOffering.getPoAttributes().getAttributeValDesc();
         String productOfferRelationName = productOffering.getProductOfferRelation().getName();
         String productRelationName = productOffering.getProductRelation().getType();
@@ -48,7 +48,7 @@ public class ProductOfferingController {
         String eligibilityName = productOffering.getEligibility().getChannel();
         String familyName = productOffering.getFamily().getName();
 
-        ProductSpecification productSpec = productSpecificationService.findByName(productSpecName);
+        ProductSpecification productSpec = productSpecificationService.findById(productSpecName);
         POAttributes poAttributes = poAttributesService.findByAttributeValDesc(poAttributeName);
         ProductRelation productRelation = productRelationService.findByType(productRelationName);
         ProductOfferRelation productOfferRelation = productOfferRelationService.findByName(productOfferRelationName);
@@ -117,7 +117,7 @@ public class ProductOfferingController {
                 return ResponseEntity.notFound().build();
             }
 
-            String productSpecName = updatedProductOffering.getProductSpecification().getName();
+            int productSpecName = updatedProductOffering.getProductSpecification().getPo_SpecCode();
             String poAttributeName = updatedProductOffering.getPoAttributes().getAttributeValDesc();
             String productOfferRelationName = updatedProductOffering.getProductOfferRelation().getName();
             String productRelationName = updatedProductOffering.getProductRelation().getType();
@@ -127,7 +127,7 @@ public class ProductOfferingController {
             String eligibilityName = updatedProductOffering.getEligibility().getChannel();
             String familyName = updatedProductOffering.getFamily().getName();
 
-            ProductSpecification productSpec = productSpecificationService.findByName(productSpecName);
+            ProductSpecification productSpec = productSpecificationService.findById(productSpecName);
             POAttributes poAttributes = poAttributesService.findByAttributeValDesc(poAttributeName);
             ProductRelation productRelation = productRelationService.findByType(productRelationName);
             ProductOfferRelation productOfferRelation = productOfferRelationService.findByName(productOfferRelationName);

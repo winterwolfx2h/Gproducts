@@ -24,7 +24,7 @@ public class ProductSpecification {
     @Column(name = "po_SpecCode", nullable = false)
     private int po_SpecCode;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = true)
     private String name;
 
     @Column(name = "category", nullable = false)

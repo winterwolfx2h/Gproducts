@@ -67,5 +67,10 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
             throw new RuntimeException("Invalid argument provided for finding PhysicalResource");
         }
     }
+
+    @Override
+    public boolean existsById(int phyResourceId) {
+        return physicalResourceRepository.existsById(phyResourceId);
+    }
 }
 

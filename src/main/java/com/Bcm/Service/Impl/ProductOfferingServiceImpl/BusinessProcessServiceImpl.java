@@ -27,8 +27,8 @@ public class BusinessProcessServiceImpl implements BusinessProcessService {
     }
 
     @Override
-    public BusinessProcess update(int PrResId, BusinessProcess updatedBusinessProcess) {
-        Optional<BusinessProcess> existingBusinessProcessOptional = businessProcessRepository.findById(PrResId);
+    public BusinessProcess update(int businessProcessId, BusinessProcess updatedBusinessProcess) {
+        Optional<BusinessProcess> existingBusinessProcessOptional = businessProcessRepository.findById(businessProcessId);
 
         if (existingBusinessProcessOptional.isPresent()) {
             BusinessProcess existingBusinessProcess = existingBusinessProcessOptional.get();
@@ -36,20 +36,20 @@ public class BusinessProcessServiceImpl implements BusinessProcessService {
 
             return businessProcessRepository.save(existingBusinessProcess);
         } else {
-            throw new RuntimeException("Could not find BusinessProcess with ID: " + PrResId);
+            throw new RuntimeException("Could not find BusinessProcess with ID: " + businessProcessId);
         }
     }
 
     @Override
-    public String delete(int PrResId) {
-        businessProcessRepository.deleteById(PrResId);
+    public String delete(int businessProcessId) {
+        businessProcessRepository.deleteById(businessProcessId);
         return ("BusinessProcess was successfully deleted");
     }
 
     @Override
-    public BusinessProcess findById(int PrResId) {
-        Optional<BusinessProcess> optionalPlan = businessProcessRepository.findById(PrResId);
-        return optionalPlan.orElseThrow(() -> new RuntimeException("BusinessProcess with ID " + PrResId + " not found"));
+    public BusinessProcess findById(int businessProcessId) {
+        Optional<BusinessProcess> optionalPlan = businessProcessRepository.findById(businessProcessId);
+        return optionalPlan.orElseThrow(() -> new RuntimeException("BusinessProcess with ID " + businessProcessId + " not found"));
     }
 
     @Override
@@ -65,6 +65,11 @@ public class BusinessProcessServiceImpl implements BusinessProcessService {
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding BusinessProcess");
         }
+    }
+
+    @Override
+    public boolean existsById(int businessProcessId) {
+        return businessProcessRepository.existsById(businessProcessId);
     }
 }
 

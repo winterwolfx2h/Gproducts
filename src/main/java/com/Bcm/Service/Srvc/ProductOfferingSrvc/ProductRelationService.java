@@ -22,5 +22,8 @@ public interface ProductRelationService {
 
     ProductRelation findByType(String type);
 
+    boolean existsById(int poRelation_Code);
+
+
 
 }

@@ -75,7 +75,6 @@ public class ProductSpecificationController {
             if (existingPoPlan == null) {
                 return ResponseEntity.badRequest().body("Poplan not found.");
             }
-            existingProductSpecification.setName(productSpecification.getName());
             existingProductSpecification.setCategory(productSpecification.getCategory());
             existingProductSpecification.setPoPlan(existingPoPlan);
             existingProductSpecification.setExternalId(productSpecification.getExternalId());
@@ -98,14 +97,5 @@ public class ProductSpecificationController {
         }
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<?> searchProductSpecificationsByKeyword(@RequestParam("name") String name) {
-        try {
-            List<ProductSpecification> searchResults = productSpecificationService.searchByKeyword(name);
-            return ResponseEntity.ok(searchResults);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-        }
-    }
 
 }

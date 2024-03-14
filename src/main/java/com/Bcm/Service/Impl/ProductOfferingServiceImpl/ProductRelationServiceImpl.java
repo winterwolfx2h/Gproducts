@@ -66,5 +66,10 @@ public class ProductRelationServiceImpl implements ProductRelationService {
             throw new RuntimeException("Invalid argument provided for finding ProductRelation");
         }
     }
+
+    @Override
+    public boolean existsById(int poRelation_Code) {
+        return ProductRelationRepository.existsById(poRelation_Code);
+    }
 }
 

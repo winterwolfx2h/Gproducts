@@ -137,5 +137,10 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new RuntimeException("An unexpected error occurred while searching for product offerings by parent name: " + parentName, e);
         }
     }
+
+    @Override
+    public boolean existsById(int po_code) {
+        return productOfferingRepository.existsById(po_code);
+    }
 }
 

@@ -78,5 +78,9 @@ public class POAttributesServiceImpl implements POAttributesService {
             throw new RuntimeException("Invalid argument provided for finding POAttributes");
         }
     }
+    @Override
+    public boolean existsById(int poAttribute_code) {
+        return poAttributesRepository.existsById(poAttribute_code);
+    }
 }
 

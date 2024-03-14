@@ -22,5 +22,8 @@ public interface PhysicalResourceService {
 
     PhysicalResource findByPhysicalResourceType(String physicalResourceType);
 
+    boolean existsById(int phyResourceId);
+
+
 
 }

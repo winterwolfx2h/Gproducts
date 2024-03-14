@@ -94,4 +94,10 @@ public class FamilyServiceImpl implements FamilyService {
     }*/
 
 
+    @Override
+    public boolean existsById(int po_FamilyCode) {
+        return familyRepository.existsById(po_FamilyCode);
+    }
+
+
 }

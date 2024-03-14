@@ -36,7 +36,7 @@ public class ProductOfferingController {
     final EligibilityService eligibilityService;
     final FamilyService familyService;
 
-    @PostMapping("/addProdOff")
+    /*@PostMapping("/addProdOff")
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
         int productSpecName = productOffering.getProductSpecification().getPo_SpecCode();
         String poAttributeName = productOffering.getPoAttributes().getAttributeValDesc();
@@ -92,6 +92,101 @@ public class ProductOfferingController {
             if (eligibility == null) errorMessage.append(" ProductResource with Channel: ").append(eligibilityName);
             if (family == null) errorMessage.append(" Family with name: ").append(familyName);
             return ResponseEntity.badRequest().body(errorMessage.toString());
+        }
+    }*/
+
+    @PostMapping("/addProdOff")
+    public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
+        try {
+            ensureRelatedEntitiesExist(productOffering);
+            ProductOffering createdProduct = productOfferingService.create(productOffering);
+            return ResponseEntity.ok(createdProduct);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("An error occurred while creating the product offering.");
+        }
+    }
+
+    private void ensureRelatedEntitiesExist(ProductOffering productOffering) {
+        ensureProductSpecificationExists(productOffering.getProductSpecification());
+        ensurePOAttributesExists(productOffering.getPoAttributes());
+        ensureProductRelationExists(productOffering.getProductRelation());
+        ensureProductOfferRelationExists(productOffering.getProductOfferRelation());
+        ensureLogicalResourceExists(productOffering.getLogicalResource());
+        ensurePhysicalResourceExists(productOffering.getPhysicalResource());
+        ensureBusinessProcessExists(productOffering.getBusinessProcess());
+        ensureEligibilityExists(productOffering.getEligibility());
+        ensureFamilyExists(productOffering.getFamily());
+    }
+
+    private void ensureProductSpecificationExists(ProductSpecification productSpec) {
+        if (productSpec != null && productSpec.getPo_SpecCode() != 0) {
+            if (!productSpecificationService.existsById(productSpec.getPo_SpecCode())) {
+                productSpecificationService.create(productSpec);
+            }
+        }
+    }
+
+    private void ensurePOAttributesExists(POAttributes poAttributes) {
+        if (poAttributes != null && poAttributes.getPoAttribute_code() != 0) {
+            if (!poAttributesService.existsById(poAttributes.getPoAttribute_code())) {
+                poAttributesService.create(poAttributes);
+            }
+        }
+    }
+
+    private void ensureProductRelationExists(ProductRelation productRelation) {
+        if (productRelation != null && productRelation.getPoRelation_Code() != 0) {
+            if (!productRelationService.existsById(productRelation.getPoRelation_Code())) {
+                productRelationService.create(productRelation);
+            }
+        }
+    }
+
+    private void ensureProductOfferRelationExists(ProductOfferRelation productOfferRelation) {
+        if (productOfferRelation != null && productOfferRelation.getPoOfferRelation_Code() != 0) {
+            if (!productOfferRelationService.existsById(productOfferRelation.getPoOfferRelation_Code())) {
+                productOfferRelationService.create(productOfferRelation);
+            }
+        }
+    }
+
+    private void ensureLogicalResourceExists(LogicalResource logicalResource) {
+        if (logicalResource != null && logicalResource.getLogResourceId() != 0) {
+            if (!logicalResourceService.existsById(logicalResource.getLogResourceId())) {
+                logicalResourceService.create(logicalResource);
+            }
+        }
+    }
+
+    private void ensurePhysicalResourceExists(PhysicalResource physicalResource) {
+        if (physicalResource != null && physicalResource.getPhyResourceId() != 0) {
+            if (!physicalResourceService.existsById(physicalResource.getPhyResourceId())) {
+                physicalResourceService.create(physicalResource);
+            }
+        }
+    }
+
+    private void ensureBusinessProcessExists(BusinessProcess businessProcess) {
+        if (businessProcess != null && businessProcess.getBusinessProcessId() != 0) {
+            if (!businessProcessService.existsById(businessProcess.getBusinessProcessId())) {
+                businessProcessService.create(businessProcess);
+            }
+        }
+    }
+
+    private void ensureEligibilityExists(Eligibility eligibility) {
+        if (eligibility != null && eligibility.getEligibilityId() != 0) {
+            if (!eligibilityService.existsById(eligibility.getEligibilityId())) {
+                eligibilityService.create(eligibility);
+            }
+        }
+    }
+
+    private void ensureFamilyExists(Family family) {
+        if (family != null && family.getPo_FamilyCode() != 0) {
+            if (!familyService.existsById(family.getPo_FamilyCode())) {
+                familyService.create(family);
+            }
         }
     }
 

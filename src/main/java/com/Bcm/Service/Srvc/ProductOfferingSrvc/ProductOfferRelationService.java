@@ -22,4 +22,6 @@ public interface ProductOfferRelationService {
     List<ProductOfferRelation> searchByKeyword(String name);
 
     ProductOfferRelation findByName(String name);
+
+    boolean existsById(int PoOfferRelation_Code);
 }

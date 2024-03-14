@@ -11,11 +11,6 @@ public interface ProductSpecificationRepository extends JpaRepository<ProductSpe
 
     Optional<ProductSpecification> findById(int po_SpecCode);
 
-    Optional<ProductSpecification> findByname(String name);
-
-    @Query("SELECT p FROM ProductSpecification p WHERE p.name LIKE :name ")
-    List<ProductSpecification> searchByKeyword(String name);
-
     @Query("SELECT po FROM ProductSpecification po JOIN po.poPlan c WHERE  c.SHDES = :name ")
     List<ProductSpecification> findAllWithPOPLAN(String name);
 

@@ -70,5 +70,9 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
         }
     }
 
+    @Override
+    public boolean existsById(int PoOfferRelation_Code) {
+        return ProductOfferRelationRepository.existsById(PoOfferRelation_Code);
+    }
 
 }

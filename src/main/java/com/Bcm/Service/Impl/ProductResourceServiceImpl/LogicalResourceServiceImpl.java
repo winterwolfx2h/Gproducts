@@ -67,5 +67,10 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
             throw new RuntimeException("Invalid argument provided for finding LogicalResource");
         }
     }
+
+    @Override
+    public boolean existsById(int logResourceId) {
+        return logicalResourceRepository.existsById(logResourceId);
+    }
 }
 

@@ -82,7 +82,7 @@ public class MarketServiceImpl implements MarketService {
     public Market findByName(String name) {
         try {
             Optional<Market> optionalMarket = marketRepository.findByName(name);
-            return optionalMarket.orElseThrow(() -> new RuntimeException("Market with ID " + name + " not found"));
+            return optionalMarket.orElseThrow(() -> new RuntimeException("Market with name: " + name + " not found"));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding Market");
         }

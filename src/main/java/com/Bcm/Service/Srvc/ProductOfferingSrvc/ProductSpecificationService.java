@@ -18,9 +18,6 @@ public interface ProductSpecificationService {
 
     ProductSpecification findById(int po_SpecCode);
 
-    List<ProductSpecification> searchByKeyword(String name);
-
-    ProductSpecification findByName(String name);
-
+    boolean existsById(int po_SpecCode);
 
 }

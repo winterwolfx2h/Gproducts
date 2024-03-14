@@ -24,5 +24,8 @@ public interface FamilyService {
 
     /* List<Family> findBySubFamilyName(String SubFamilyName);*/
 
+    boolean existsById(int po_FamilyCode);
+
+
 
 }

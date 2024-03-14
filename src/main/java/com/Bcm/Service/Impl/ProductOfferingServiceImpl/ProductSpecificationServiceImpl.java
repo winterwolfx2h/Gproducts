@@ -31,7 +31,6 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
 
         if (existingProductOptional.isPresent()) {
             ProductSpecification existingProduct = existingProductOptional.get();
-            existingProduct.setName(updatedproductSpecification.getName());
             existingProduct.setCategory(updatedproductSpecification.getCategory());
             existingProduct.setPoPlan(updatedproductSpecification.getPoPlan());
             existingProduct.setExternalId(updatedproductSpecification.getExternalId());
@@ -55,20 +54,9 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
     }
 
     @Override
-    public List<ProductSpecification> searchByKeyword(String name) {
-        return productSpecificationRepository.searchByKeyword(name);
+    public boolean existsById(int po_SpecCode) {
+        return productSpecificationRepository.existsById(po_SpecCode);
     }
-
-    @Override
-    public ProductSpecification findByName(String name) {
-        try {
-            Optional<ProductSpecification> optionalProductSpecification = productSpecificationRepository.findByname(name);
-            return optionalProductSpecification.orElseThrow(() -> new RuntimeException("Product Specification with ID " + name + " not found"));
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid argument provided for finding Product Specification");
-        }
-    }
-
 }
 
 

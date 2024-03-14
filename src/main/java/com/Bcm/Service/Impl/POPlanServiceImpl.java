@@ -120,4 +120,9 @@ public class POPlanServiceImpl implements POPlanService {
             throw new RuntimeException("Invalid argument provided for finding POPlan");
         }
     }
+
+    @Override
+    public boolean existsById(int TMCODE) {
+        return popRepository.existsById(TMCODE);
+    }
 }

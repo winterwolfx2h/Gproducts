@@ -23,4 +23,7 @@ public interface POAttributesService {
 
     POAttributes findByAttributeValDesc(String attributeValDesc);
 
+    boolean existsById(int poAttribute_code);
+
+
 }

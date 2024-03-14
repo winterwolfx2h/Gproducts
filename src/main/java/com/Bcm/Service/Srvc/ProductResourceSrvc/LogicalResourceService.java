@@ -22,5 +22,8 @@ public interface LogicalResourceService {
 
     LogicalResource findByLogicalResourceType(String logicalResourceType);
 
+    boolean existsById(int logResourceId);
+
+
 
 }

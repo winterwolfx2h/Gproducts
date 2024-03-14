@@ -22,5 +22,8 @@ public interface BusinessProcessService {
 
     BusinessProcess findByBussinessProcType(String bussinessProcType);
 
+    boolean existsById(int businessProcessId);
+
+
 
 }

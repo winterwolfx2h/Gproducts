@@ -202,7 +202,7 @@ public class ProductOfferingController {
         return ResponseEntity.ok(productOffering);
     }
 
-    @PutMapping("/{po_code}")
+    /*@PutMapping("/{po_code}")
     public ResponseEntity<?> updateProductOffering(
             @PathVariable("po_code") int po_code,
             @RequestBody ProductOffering updatedProductOffering) {
@@ -263,7 +263,46 @@ public class ProductOfferingController {
         } catch (InvalidInputException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }*/
+
+    @PutMapping("/{po_code}")
+    public ResponseEntity<?> updateProductOffering(
+            @PathVariable("po_code") int po_code,
+            @RequestBody ProductOffering updatedProductOffering) {
+        try {
+            ProductOffering existingProductOffering = productOfferingService.findById(po_code);
+            if (existingProductOffering == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Update the fields of the existingProductOffering with the values from updatedProductOffering
+            existingProductOffering.setName(updatedProductOffering.getName());
+            existingProductOffering.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
+            existingProductOffering.setEffectiveTo(updatedProductOffering.getEffectiveTo());
+            existingProductOffering.setDescription(updatedProductOffering.getDescription());
+            existingProductOffering.setPoType(updatedProductOffering.getPoType());
+            existingProductOffering.setFamily(updatedProductOffering.getFamily());
+            existingProductOffering.setSubFamily(updatedProductOffering.getSubFamily());
+            existingProductOffering.setShdes(updatedProductOffering.getShdes());
+            existingProductOffering.setParent(updatedProductOffering.getParent());
+            existingProductOffering.setExternalLinkId(updatedProductOffering.getExternalLinkId());
+            existingProductOffering.setProductSpecification(updatedProductOffering.getProductSpecification());
+            existingProductOffering.setPoAttributes(updatedProductOffering.getPoAttributes());
+            existingProductOffering.setProductRelation(updatedProductOffering.getProductRelation());
+            existingProductOffering.setProductOfferRelation(updatedProductOffering.getProductOfferRelation());
+            existingProductOffering.setLogicalResource(updatedProductOffering.getLogicalResource());
+            existingProductOffering.setPhysicalResource(updatedProductOffering.getPhysicalResource());
+            existingProductOffering.setBusinessProcess(updatedProductOffering.getBusinessProcess());
+            existingProductOffering.setEligibility(updatedProductOffering.getEligibility());
+
+            // Call the update method in the service
+            ProductOffering updatedProductOfferingResult = productOfferingService.update(po_code, existingProductOffering);
+            return ResponseEntity.ok(updatedProductOfferingResult);
+        } catch (InvalidInputException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
+
 
     @DeleteMapping("/{po_code}")
     public ResponseEntity<String> deleteProductOffering(@PathVariable("po_code") int po_code) {

@@ -1,6 +1,7 @@
 package com.Bcm.Model.Product;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,9 +30,11 @@ public class Product {
     private String name;
 
     @Column(name = "effectiveFrom", nullable = false)
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date effectiveFrom;
 
     @Column(name = "effectiveTo", nullable = false)
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date effectiveTo;
 
     @Column(name = "description", nullable = false)

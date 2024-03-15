@@ -22,6 +22,8 @@ public interface FamilyService {
 
     Family findByName(String name);
 
+    boolean findByNameexist(String name);
+
     /* List<Family> findBySubFamilyName(String SubFamilyName);*/
 
     boolean existsById(int po_FamilyCode);

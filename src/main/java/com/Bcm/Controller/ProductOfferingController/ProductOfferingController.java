@@ -115,7 +115,7 @@ public class ProductOfferingController {
         ensurePhysicalResourceExists(productOffering.getPhysicalResource());
         ensureBusinessProcessExists(productOffering.getBusinessProcess());
         ensureEligibilityExists(productOffering.getEligibility());
-        ensureFamilyExists(productOffering.getFamily());
+        ensureFamilyExists(productOffering.getFamilyName());
     }
 
     private void ensureProductSpecificationExists(ProductSpecification productSpec) {
@@ -182,9 +182,13 @@ public class ProductOfferingController {
         }
     }
 
-    private void ensureFamilyExists(Family family) {
-        if (family != null && family.getPo_FamilyCode() != 0) {
-            if (!familyService.existsById(family.getPo_FamilyCode())) {
+    private void ensureFamilyExists(String familyName) {
+        if (familyName != null && !familyName.isEmpty()) {
+
+            if (!familyService.findByNameexist(familyName)) {
+
+                Family family = new Family();
+                family.setName(familyName);
                 familyService.create(family);
             }
         }
@@ -220,7 +224,7 @@ public class ProductOfferingController {
             String physicalResourceName = updatedProductOffering.getPhysicalResource().getPhysicalResourceType();
             String businessProcessName = updatedProductOffering.getBusinessProcess().getBussinessProcType();
             String eligibilityName = updatedProductOffering.getEligibility().getChannel();
-            String familyName = updatedProductOffering.getFamily().getName();
+            String familyName = updatedProductOffering.getFamilyName();
 
             ProductSpecification productSpec = productSpecificationService.findById(productSpecName);
             POAttributes poAttributes = poAttributesService.findByAttributeValDesc(poAttributeName);
@@ -244,7 +248,7 @@ public class ProductOfferingController {
             existingProductOffering.setEffectiveTo(existingProductOffering.getEffectiveTo());
             existingProductOffering.setDescription(existingProductOffering.getDescription());
             existingProductOffering.setPoType(existingProductOffering.getPoType());
-            existingProductOffering.setFamily(family);
+            existingProductOffering.setFamilyName(existingProductOffering.getFamilyName());
             existingProductOffering.setSubFamily(existingProductOffering.getSubFamily());
             existingProductOffering.setShdes(existingProductOffering.getShdes());
             existingProductOffering.setParent(existingProductOffering.getParent());

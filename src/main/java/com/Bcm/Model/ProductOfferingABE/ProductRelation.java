@@ -1,5 +1,6 @@
 package com.Bcm.Model.ProductOfferingABE;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class ProductRelation {
     private String type;
 
     @Column(name = "validFor", nullable = false)
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date validFor;
 
 }

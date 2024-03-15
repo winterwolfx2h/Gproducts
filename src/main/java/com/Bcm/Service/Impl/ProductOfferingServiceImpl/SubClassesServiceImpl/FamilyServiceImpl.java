@@ -88,6 +88,16 @@ public class FamilyServiceImpl implements FamilyService {
         }
     }
 
+    @Override
+    public boolean findByNameexist(String name) {
+        try {
+            Optional<Family> optionalFamily = familyRepository.findByName(name);
+            return optionalFamily.isPresent(); // Return true if family exists, false otherwise
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding Family");
+        }
+    }
+
     /*@Override
     public List<Family> findBySubFamilyName(String SubFamilyName) {
         return familyRepository.findBySubFamilyName(SubFamilyName);

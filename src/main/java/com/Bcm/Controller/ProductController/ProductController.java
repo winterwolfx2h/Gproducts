@@ -52,7 +52,7 @@ public class ProductController {
                         productOfferingDTO.setEffectiveTo(product.getEffectiveTo());
                         productOfferingDTO.setDescription(product.getDescription());
                         productOfferingDTO.setPoType(product.getPoType());
-                        productOfferingDTO.setFamily(product.getFamily());
+                        productOfferingDTO.setFamilyName(product.getFamilyName());
                         productOfferingDTO.setSubFamily(product.getSubFamily());
                         productOfferingDTO.setShdes(productOffering.getShdes());
                         productOfferingDTO.setParent(productOffering.getParent());

@@ -32,7 +32,10 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
         if (existingProductOptional.isPresent()) {
             ProductSpecification existingProduct = existingProductOptional.get();
             existingProduct.setCategory(updatedproductSpecification.getCategory());
-            existingProduct.setPoPlan(updatedproductSpecification.getPoPlan());
+
+            existingProduct.getPoPlanSHDES();
+
+
             existingProduct.setExternalId(updatedproductSpecification.getExternalId());
 
             return productSpecificationRepository.save(existingProduct);

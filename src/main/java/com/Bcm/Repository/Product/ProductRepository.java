@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
-    List<Product> findByFamily(String familyName);
 
-    List<Product> findByFamily_Name(String familyName);
+
+    List<Product> findByFamilyName(String familyName);
     List<ProductOffering> findByParent(String parentName);
 
 }

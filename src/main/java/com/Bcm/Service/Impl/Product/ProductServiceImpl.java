@@ -29,7 +29,7 @@ public class ProductServiceImpl implements ProductService {
     }
     @Override
     public List<Product> searchByFamilyName(String familyName) {
-        return productRepository.findByFamily_Name(familyName);
+        return productRepository.findByFamilyName(familyName);
     }
 
 

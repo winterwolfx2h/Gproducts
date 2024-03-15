@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -22,22 +24,45 @@ public class ProductSpecificationController {
     final private POPlanService poPlanService;
 
     @PostMapping("/addProdSpec")
-    public ResponseEntity<?> createProductSpecification(@RequestBody ProductSpecification ProductSpecification) {
+    public ResponseEntity<?> createProductSpecification(@RequestBody ProductSpecification productSpecification) {
 
-        String poPlanName = ProductSpecification.getPoPlan().getSHDES();
-        POPlan poPlan = poPlanService.findBySHDES(poPlanName);
+        List<String> poPlanSHDES = productSpecification.getPoPlanSHDES(); // Assuming poPlanSHDES contains only shdes
 
-        if (poPlan != null) {
-            ProductSpecification.setPoPlan(poPlan);
+        List<POPlan> existingPOPlans = new ArrayList<>();
+        List<String> nonExistingShdes = new ArrayList<>(); // List to store non-existing shdes
 
-            ProductSpecification createdProductSpecification = productSpecificationService.create(ProductSpecification);
-            return ResponseEntity.ok(createdProductSpecification);
-        } else {
-            StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
-            if (poPlan == null) errorMessage.append(" POPPLAN with name: ").append(poPlanName);
+        for (String shdes : poPlanSHDES) {
+            POPlan poPlan = poPlanService.findBySHDES(shdes);
+            if (poPlan != null) {
+                existingPOPlans.add(poPlan);
+            } else {
+                nonExistingShdes.add(shdes);
+            }
+        }
+
+        if (!nonExistingShdes.isEmpty()) {
+            // If any POPlan doesn't exist, return bad request
+            StringBuilder errorMessage = new StringBuilder("The following POPlans do not exist:");
+            for (String shdes : nonExistingShdes) {
+                errorMessage.append(" SHDES: ").append(shdes);
+            }
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }
+
+        if (!existingPOPlans.isEmpty()) {
+            List<String> existingShdes = new ArrayList<>();
+            for (POPlan poPlan : existingPOPlans) {
+                existingShdes.add(poPlan.getSHDES());
+            }
+            productSpecification.setPoPlanSHDES(existingShdes);
+        }
+
+        ProductSpecification createdProductSpecification = productSpecificationService.create(productSpecification);
+        return ResponseEntity.ok(createdProductSpecification);
     }
+
+
+
 
     @GetMapping("/listProdSpec")
     public ResponseEntity<?> getAllProductSpecifications() {
@@ -69,14 +94,14 @@ public class ProductSpecificationController {
             if (existingProductSpecification == null) {
                 return ResponseEntity.notFound().build();
             }
-            String poPlanName = productSpecification.getPoPlan().getSHDES();
+            String poPlanName = productSpecification.getPoPlanSHDES().toString();
             POPlan existingPoPlan = poPlanService.findBySHDES(poPlanName);
 
             if (existingPoPlan == null) {
                 return ResponseEntity.badRequest().body("Poplan not found.");
             }
             existingProductSpecification.setCategory(productSpecification.getCategory());
-            existingProductSpecification.setPoPlan(existingPoPlan);
+            existingProductSpecification.getPoPlanSHDES();
             existingProductSpecification.setExternalId(productSpecification.getExternalId());
 
 
@@ -86,6 +111,8 @@ public class ProductSpecificationController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+
 
     @DeleteMapping("/{po_SpecCode}")
     public ResponseEntity<?> deleteProductSpecification(@PathVariable("po_SpecCode") int po_SpecCode) {

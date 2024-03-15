@@ -4,10 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Table(name = "ProductSpecification")
@@ -27,10 +26,10 @@ public class ProductSpecification {
     @Column(name = "category", nullable = false)
     private String category;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "TMCODE", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private POPlan poPlan;
+    @ElementCollection
+    @CollectionTable(name = "product_specification_po_plan", joinColumns = @JoinColumn(name = "po_spec_code"))
+    @Column(name = "shdes")
+    private List<String> poPlanSHDES;
 
     @Column(name = "externalId", nullable = true)
     private String externalId;

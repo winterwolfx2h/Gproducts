@@ -3,6 +3,8 @@ package com.Bcm.Controller.ProductOfferingController;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +21,14 @@ public class ProductOfferRelationController {
 
 
     @PostMapping("/addProdOffRelation")
+    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
     public ResponseEntity<ProductOfferRelation> createProductOfferRelation(@RequestBody ProductOfferRelation productOfferRelation) {
         ProductOfferRelation createdProductOfferRelation = productOfferRelationService.create(productOfferRelation);
         return ResponseEntity.ok(createdProductOfferRelation);
     }
 
     @GetMapping("/listProdOffrelations")
+    @Cacheable(value = "ProdOfferRelationCache")
     public ResponseEntity<?> getAllProductOfferRelations() {
         try {
             List<ProductOfferRelation> productOfferRelations = productOfferRelationService.read();
@@ -45,6 +49,7 @@ public class ProductOfferRelationController {
     }
 
     @PutMapping("/{PoOfferRelation_Code}")
+    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
     public ResponseEntity<?> updateProductOfferRelation(
             @PathVariable("PoOfferRelation_Code") int PoOfferRelation_Code,
             @RequestBody ProductOfferRelation updatedProductOfferRelation) {
@@ -57,6 +62,7 @@ public class ProductOfferRelationController {
     }
 
     @DeleteMapping("/{PoOfferRelation_Code}")
+    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
     public ResponseEntity<?> deleteProductOfferRelation(@PathVariable("PoOfferRelation_Code") int PoOfferRelation_Code) {
         try {
             String resultMessage = productOfferRelationService.delete(PoOfferRelation_Code);
@@ -74,5 +80,9 @@ public class ProductOfferRelationController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
+    }
+
+    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
+    public void invalidateProdOfferRelationCache() {
     }
 }

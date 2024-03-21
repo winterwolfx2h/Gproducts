@@ -6,6 +6,8 @@ import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
 import com.Bcm.Service.Srvc.POPlanService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductSpecificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,7 @@ public class ProductSpecificationController {
     final private POPlanService poPlanService;
 
     @PostMapping("/addProdSpec")
+    @CacheEvict(value = "ProdSpecCache", allEntries = true)
     public ResponseEntity<?> createProductSpecification(@RequestBody ProductSpecification productSpecification) {
 
         List<String> poPlanSHDES = productSpecification.getPoPlanSHDES(); // Assuming poPlanSHDES contains only shdes
@@ -65,6 +68,7 @@ public class ProductSpecificationController {
 
 
     @GetMapping("/listProdSpec")
+    @Cacheable(value = "ProdSpecCache")
     public ResponseEntity<?> getAllProductSpecifications() {
         try {
             List<ProductSpecification> ProductSpecifications = productSpecificationService.read();
@@ -85,6 +89,7 @@ public class ProductSpecificationController {
     }
 
     @PutMapping("/updatePOPlan/{po_SpecCode}")
+    @CacheEvict(value = "ProdSpecCache", allEntries = true)
     public ResponseEntity<?> update(
             @PathVariable int po_SpecCode,
             @RequestBody ProductSpecification productSpecification) {
@@ -115,6 +120,7 @@ public class ProductSpecificationController {
 
 
     @DeleteMapping("/{po_SpecCode}")
+    @CacheEvict(value = "ProdSpecCache", allEntries = true)
     public ResponseEntity<?> deleteProductSpecification(@PathVariable("po_SpecCode") int po_SpecCode) {
         try {
             String resultMessage = productSpecificationService.delete(po_SpecCode);
@@ -124,5 +130,8 @@ public class ProductSpecificationController {
         }
     }
 
+    @CacheEvict(value = "ProdSpecCache", allEntries = true)
+    public void invalidateProdSpecCache() {
+    }
 
 }

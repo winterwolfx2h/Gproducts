@@ -6,6 +6,7 @@ import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ public class ProductController {
     final ProductOfferingService productOfferingService;
 
     @GetMapping("/ProductList")
+    @Cacheable(value = "productCache")
     public ResponseEntity<?> getAllProduct() {
         try {
             List<Product> product = productService.read();

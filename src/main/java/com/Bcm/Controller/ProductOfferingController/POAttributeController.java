@@ -5,6 +5,8 @@ import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.POAttributesService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +23,14 @@ public class POAttributeController {
 
     final POAttributesService poAttributesService;
 
-    @GetMapping("/listPOAttributess")
+    @GetMapping("/listPOAttributes")
+    @Cacheable(value = "AttributesCache")
     public List<POAttributes> read() {
         return poAttributesService.read();
     }
 
     @PostMapping("/addPOAttributes")
+    @CacheEvict(value = "AttributesCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody List<POAttributes> POAttributesList) {
         List<POAttributes> createdPOAttributesList = new ArrayList<>();
 
@@ -44,6 +48,7 @@ public class POAttributeController {
     }
 
     @PutMapping("/updatePOAttributes/{poAttribute_code}")
+    @CacheEvict(value = "AttributesCache", allEntries = true)
     public ResponseEntity<?> update(@PathVariable int poAttribute_code, @RequestBody POAttributes POAttributes) {
         try {
             POAttributes updatedPlan = poAttributesService.update(poAttribute_code, POAttributes);
@@ -54,6 +59,7 @@ public class POAttributeController {
     }
 
     @DeleteMapping("/{poAttribute_code}")
+    @CacheEvict(value = "AttributesCache", allEntries = true)
     public String delete(@PathVariable int poAttribute_code) {
         return poAttributesService.delete(poAttribute_code);
     }
@@ -67,15 +73,6 @@ public class POAttributeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-
-    /*@GetMapping("/searchByKeyword")
-    public List<POAttributes> searchByKeyword(@RequestParam String attributeValDesc) {
-        try {
-            return poAttributesService.searchByKeyword(attributeValDesc);
-        } catch (Exception e) {
-            throw handleException(e);
-        }
-    }*/
     private RuntimeException handleException(Exception e) {
         ErrorMessage errorMessage = new ErrorMessage(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -84,5 +81,9 @@ public class POAttributeController {
                 "There was an error processing the request."
         );
         return new RuntimeException(errorMessage.toString(), e);
+    }
+
+    @CacheEvict(value = "AttributesCache", allEntries = true)
+    public void invalidateAttributesCache() {
     }
 }

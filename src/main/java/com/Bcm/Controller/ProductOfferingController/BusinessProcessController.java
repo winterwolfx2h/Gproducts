@@ -3,6 +3,8 @@ package com.Bcm.Controller.ProductOfferingController;
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.BusinessProcessService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ public class BusinessProcessController {
     final BusinessProcessService businessProcessService;
 
     @PostMapping("/addBusinessProcess")
+    @CacheEvict(value = "BusinessProcesssCache", allEntries = true)
     public ResponseEntity<?> createcreateResource(@RequestBody BusinessProcess BusinessProcess) {
         try {
             BusinessProcess createdBusinessProcess = businessProcessService.create(BusinessProcess);
@@ -28,6 +31,7 @@ public class BusinessProcessController {
     }
 
     @GetMapping("/listBusinessProcesss")
+    @Cacheable(value = "BusinessProcesssCache")
     public ResponseEntity<?> getAllBusinessProcesss() {
         try {
             List<BusinessProcess> BusinessProcesss = businessProcessService.read();
@@ -48,6 +52,7 @@ public class BusinessProcessController {
     }
 
     @PutMapping("/{businessProcessId}")
+    @CacheEvict(value = "BusinessProcesssCache", allEntries = true)
     public ResponseEntity<?> updateBusinessProcess(
             @PathVariable("businessProcessId") int businessProcessId,
             @RequestBody BusinessProcess updatedBusinessProcess) {
@@ -60,6 +65,7 @@ public class BusinessProcessController {
     }
 
     @DeleteMapping("/{businessProcessId}")
+    @CacheEvict(value = "BusinessProcesssCache", allEntries = true)
     public ResponseEntity<?> deleteBusinessProcess(@PathVariable("businessProcessId") int businessProcessId) {
         try {
             String resultMessage = businessProcessService.delete(businessProcessId);
@@ -77,5 +83,9 @@ public class BusinessProcessController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
+    }
+
+    @CacheEvict(value = "BusinessProcesssCache", allEntries = true)
+    public void invalidateBusinessProcesssCache() {
     }
 }

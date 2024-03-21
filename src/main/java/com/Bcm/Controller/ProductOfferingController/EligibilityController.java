@@ -3,6 +3,8 @@ package com.Bcm.Controller.ProductOfferingController;
 import com.Bcm.Model.ProductOfferingABE.Eligibility;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ public class EligibilityController {
     final EligibilityService eligibilityService;
 
     @PostMapping("/addEligibility")
+    @CacheEvict(value = "EligibilityCache", allEntries = true)
     public ResponseEntity<?> createcreateResource(@RequestBody Eligibility Eligibility) {
         try {
             Eligibility createdEligibility = eligibilityService.create(Eligibility);
@@ -28,6 +31,7 @@ public class EligibilityController {
     }
 
     @GetMapping("/listEligibilitys")
+    @Cacheable(value = "EligibilityCache")
     public ResponseEntity<?> getAllEligibilitys() {
         try {
             List<Eligibility> Eligibilitys = eligibilityService.read();
@@ -48,6 +52,7 @@ public class EligibilityController {
     }
 
     @PutMapping("/{eligibilityId}")
+    @CacheEvict(value = "EligibilityCache", allEntries = true)
     public ResponseEntity<?> updateEligibility(
             @PathVariable("eligibilityId") int eligibilityId,
             @RequestBody Eligibility updatedEligibility) {
@@ -60,6 +65,7 @@ public class EligibilityController {
     }
 
     @DeleteMapping("/{eligibilityId}")
+    @CacheEvict(value = "EligibilityCache", allEntries = true)
     public ResponseEntity<?> deleteEligibility(@PathVariable("eligibilityId") int eligibilityId) {
         try {
             String resultMessage = eligibilityService.delete(eligibilityId);
@@ -77,5 +83,9 @@ public class EligibilityController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
+    }
+
+    @CacheEvict(value = "EligibilityCache", allEntries = true)
+    public void invalidateEligibilityCache() {
     }
 }

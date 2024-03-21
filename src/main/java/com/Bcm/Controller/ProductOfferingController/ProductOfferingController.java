@@ -11,6 +11,7 @@ import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.PhysicalResourceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,14 +39,20 @@ public class ProductOfferingController {
     final FamilyService familyService;
 
     @PostMapping("/addProdOff")
+    @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
         try {
             ensureRelatedEntitiesExist(productOffering);
             ProductOffering createdProduct = productOfferingService.create(productOffering);
+            invalidateProductOfferingsCache();
             return ResponseEntity.ok(createdProduct);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("An error occurred while creating the product offering.");
         }
+    }
+
+    @CacheEvict(value = "productOfferingsCache", allEntries = true)
+    public void invalidateProductOfferingsCache() {
     }
 
     private void ensureRelatedEntitiesExist(ProductOffering productOffering) {
@@ -150,6 +157,7 @@ public class ProductOfferingController {
     }
 
     @PutMapping("/{po_code}")
+    @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> updateProductOffering(
             @PathVariable("po_code") int po_code,
             @RequestBody ProductOffering updatedProductOffering) {
@@ -187,6 +195,7 @@ public class ProductOfferingController {
 
 
     @DeleteMapping("/{po_code}")
+    @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<String> deleteProductOffering(@PathVariable("po_code") int po_code) {
         String resultMessage = productOfferingService.delete(po_code);
         return ResponseEntity.ok(resultMessage);

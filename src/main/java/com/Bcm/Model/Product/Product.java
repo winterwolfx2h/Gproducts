@@ -37,7 +37,7 @@ public class Product {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date effectiveTo;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = true)
     private String description;
 
 

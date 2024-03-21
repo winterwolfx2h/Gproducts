@@ -24,7 +24,7 @@ public class ProductOffering extends Product {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "shdes", nullable = false)
+    @Column(name = "shdes", nullable = true)
     private String shdes;
 
     @Column(name = "parent", nullable = true)

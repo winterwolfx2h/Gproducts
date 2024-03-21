@@ -11,6 +11,7 @@ import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.PhysicalResourceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,65 +36,6 @@ public class ProductOfferingController {
     final BusinessProcessService businessProcessService;
     final EligibilityService eligibilityService;
     final FamilyService familyService;
-
-    /*@PostMapping("/addProdOff")
-    public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
-        int productSpecName = productOffering.getProductSpecification().getPo_SpecCode();
-        String poAttributeName = productOffering.getPoAttributes().getAttributeValDesc();
-        String productOfferRelationName = productOffering.getProductOfferRelation().getName();
-        String productRelationName = productOffering.getProductRelation().getType();
-        String logicalResourceName = productOffering.getLogicalResource().getLogicalResourceType();
-        String physicalResourceName = productOffering.getPhysicalResource().getPhysicalResourceType();
-        String businessProcessName = productOffering.getBusinessProcess().getBussinessProcType();
-        String eligibilityName = productOffering.getEligibility().getChannel();
-        String familyName = productOffering.getFamily().getName();
-
-        ProductSpecification productSpec = productSpecificationService.findById(productSpecName);
-        POAttributes poAttributes = poAttributesService.findByAttributeValDesc(poAttributeName);
-        ProductRelation productRelation = productRelationService.findByType(productRelationName);
-        ProductOfferRelation productOfferRelation = productOfferRelationService.findByName(productOfferRelationName);
-        LogicalResource logicalResource = logicalResourceService.findByLogicalResourceType(logicalResourceName);
-        PhysicalResource physicalResource = physicalResourceService.findByPhysicalResourceType(physicalResourceName);
-        BusinessProcess businessProcess = businessProcessService.findByBussinessProcType(businessProcessName);
-        Eligibility eligibility = eligibilityService.findByChannel(eligibilityName);
-        Family family = familyService.findByName(familyName);
-
-        if (productSpec != null && poAttributes != null && productRelation != null
-                && productOfferRelation != null && logicalResource != null
-                && physicalResource != null && businessProcess != null
-                && eligibility != null && family != null) {
-
-            productOffering.setProductSpecification(productSpec);
-            productOffering.setPoAttributes(poAttributes);
-            productOffering.setProductRelation(productRelation);
-            productOffering.setProductOfferRelation(productOfferRelation);
-            productOffering.setLogicalResource(logicalResource);
-            productOffering.setPhysicalResource(physicalResource);
-            productOffering.setBusinessProcess(businessProcess);
-            productOffering.setEligibility(eligibility);
-            productOffering.setFamily(family);
-
-            ProductOffering createdProduct = productOfferingService.create(productOffering);
-            return ResponseEntity.ok(createdProduct);
-        } else {
-            StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
-            if (productSpec == null) errorMessage.append(" ProductSpecification with name: ").append(productSpecName);
-            if (poAttributes == null) errorMessage.append(" POAttributes with name: ").append(poAttributeName);
-            if (productRelation == null)
-                errorMessage.append(" ProductRelation with name: ").append(productRelationName);
-            if (productOfferRelation == null)
-                errorMessage.append(" ProductOfferRelation with name: ").append(productOfferRelationName);
-            if (logicalResource == null)
-                errorMessage.append(" LogicalResource with name: ").append(logicalResourceName);
-            if (physicalResource == null)
-                errorMessage.append(" PhysicalResource with name: ").append(physicalResourceName);
-            if (businessProcess == null)
-                errorMessage.append(" BusinessProcess with Business Process Type: ").append(businessProcessName);
-            if (eligibility == null) errorMessage.append(" ProductResource with Channel: ").append(eligibilityName);
-            if (family == null) errorMessage.append(" Family with name: ").append(familyName);
-            return ResponseEntity.badRequest().body(errorMessage.toString());
-        }
-    }*/
 
     @PostMapping("/addProdOff")
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
@@ -195,6 +137,7 @@ public class ProductOfferingController {
     }
 
     @GetMapping("/listProductOfferings")
+    @Cacheable(value = "productOfferingsCache")
     public ResponseEntity<List<ProductOffering>> getAllProductOfferings() {
         List<ProductOffering> productOfferings = productOfferingService.read();
         return ResponseEntity.ok(productOfferings);
@@ -206,69 +149,6 @@ public class ProductOfferingController {
         return ResponseEntity.ok(productOffering);
     }
 
-    /*@PutMapping("/{po_code}")
-    public ResponseEntity<?> updateProductOffering(
-            @PathVariable("po_code") int po_code,
-            @RequestBody ProductOffering updatedProductOffering) {
-        try {
-            ProductOffering existingProductOffering = productOfferingService.findById(po_code);
-            if (existingProductOffering == null) {
-                return ResponseEntity.notFound().build();
-            }
-
-            int productSpecName = updatedProductOffering.getProductSpecification().getPo_SpecCode();
-            String poAttributeName = updatedProductOffering.getPoAttributes().getAttributeValDesc();
-            String productOfferRelationName = updatedProductOffering.getProductOfferRelation().getName();
-            String productRelationName = updatedProductOffering.getProductRelation().getType();
-            String logicalResourceName = updatedProductOffering.getLogicalResource().getLogicalResourceType();
-            String physicalResourceName = updatedProductOffering.getPhysicalResource().getPhysicalResourceType();
-            String businessProcessName = updatedProductOffering.getBusinessProcess().getBussinessProcType();
-            String eligibilityName = updatedProductOffering.getEligibility().getChannel();
-            String familyName = updatedProductOffering.getFamilyName();
-
-            ProductSpecification productSpec = productSpecificationService.findById(productSpecName);
-            POAttributes poAttributes = poAttributesService.findByAttributeValDesc(poAttributeName);
-            ProductRelation productRelation = productRelationService.findByType(productRelationName);
-            ProductOfferRelation productOfferRelation = productOfferRelationService.findByName(productOfferRelationName);
-            LogicalResource logicalResource = logicalResourceService.findByLogicalResourceType(logicalResourceName);
-            PhysicalResource physicalResource = physicalResourceService.findByPhysicalResourceType(physicalResourceName);
-            BusinessProcess businessProcess = businessProcessService.findByBussinessProcType(businessProcessName);
-            Eligibility eligibility = eligibilityService.findByChannel(eligibilityName);
-            Family family = familyService.findByName(familyName);
-
-            if (productSpec == null || poAttributes == null || productRelation == null
-                    || productOfferRelation == null || logicalResource == null
-                    || physicalResource == null || businessProcess == null
-                    || eligibility == null || family == null) {
-                return ResponseEntity.badRequest().body("One or more entities weren't found.");
-            }
-
-            existingProductOffering.setName(existingProductOffering.getName());
-            existingProductOffering.setEffectiveFrom(existingProductOffering.getEffectiveFrom());
-            existingProductOffering.setEffectiveTo(existingProductOffering.getEffectiveTo());
-            existingProductOffering.setDescription(existingProductOffering.getDescription());
-            existingProductOffering.setPoType(existingProductOffering.getPoType());
-            existingProductOffering.setFamilyName(existingProductOffering.getFamilyName());
-            existingProductOffering.setSubFamily(existingProductOffering.getSubFamily());
-            existingProductOffering.setShdes(existingProductOffering.getShdes());
-            existingProductOffering.setParent(existingProductOffering.getParent());
-            existingProductOffering.setExternalLinkId(existingProductOffering.getExternalLinkId());
-            existingProductOffering.setProductSpecification(productSpec);
-            existingProductOffering.setPoAttributes(poAttributes);
-            existingProductOffering.setProductRelation(productRelation);
-            existingProductOffering.setProductOfferRelation(productOfferRelation);
-            existingProductOffering.setLogicalResource(logicalResource);
-            existingProductOffering.setPhysicalResource(physicalResource);
-            existingProductOffering.setBusinessProcess(businessProcess);
-            existingProductOffering.setEligibility(eligibility);
-
-            ProductOffering updatedProductOfferingResult = productOfferingService.update(po_code, existingProductOffering);
-            return ResponseEntity.ok(updatedProductOfferingResult);
-        } catch (InvalidInputException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }*/
-
     @PutMapping("/{po_code}")
     public ResponseEntity<?> updateProductOffering(
             @PathVariable("po_code") int po_code,
@@ -279,7 +159,6 @@ public class ProductOfferingController {
                 return ResponseEntity.notFound().build();
             }
 
-            // Update the fields of the existingProductOffering with the values from updatedProductOffering
             existingProductOffering.setName(updatedProductOffering.getName());
             existingProductOffering.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
             existingProductOffering.setEffectiveTo(updatedProductOffering.getEffectiveTo());
@@ -299,7 +178,6 @@ public class ProductOfferingController {
             existingProductOffering.setBusinessProcess(updatedProductOffering.getBusinessProcess());
             existingProductOffering.setEligibility(updatedProductOffering.getEligibility());
 
-            // Call the update method in the service
             ProductOffering updatedProductOfferingResult = productOfferingService.update(po_code, existingProductOffering);
             return ResponseEntity.ok(updatedProductOfferingResult);
         } catch (InvalidInputException e) {
@@ -327,8 +205,6 @@ public class ProductOfferingController {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
-
         return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
-
     }
 }

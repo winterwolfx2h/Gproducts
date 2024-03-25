@@ -19,21 +19,16 @@ public class POAttributes {
     @Column(name = "poAttribute_code", nullable = false)
     private int poAttribute_code;
 
-    @Column(name = "shortCode", nullable = false)
-    private String shortCode;
+    @Column(name = "categoryType", nullable = true)
+    private String category;
 
-    @Column(name = "attributeCategory", nullable = true)
-    private String attributeCategory;
+    @Column(name = "externalId", nullable = true)
+    private String externalId;
 
-    @Column(name = "AttributeExternalId", nullable = true)
-    private String AttributeExternalId;
+    @Column(name = "value", nullable = false)
+    private String value;
 
-    @Column(name = "attributeValDesc", nullable = false)
-    private String attributeValDesc;
+    @Column(name = "description", nullable = false)
+    private String description;
 
-    @Column(name = "charType", nullable = false)
-    private String charType;
-
-    @Column(name = "charValue", nullable = false)
-    private String charValue;
 }

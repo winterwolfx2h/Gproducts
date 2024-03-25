@@ -12,7 +12,7 @@ public interface ServiceSpecConfigRepository extends JpaRepository<ServiceSpecCo
 
     Optional<ServiceSpecConfig> findById(int SSC_code);
 
-    @Query("SELECT p FROM ServiceSpecConfig p WHERE p.serviceSpecName LIKE %:name% ")
-    List<ServiceSpecConfig> searchByKeyword(String name);
+    @Query("SELECT p FROM ServiceSpecConfig p WHERE p.description LIKE %:description% ")
+    List<ServiceSpecConfig> searchByKeyword(String description);
 }
 

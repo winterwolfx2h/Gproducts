@@ -19,17 +19,11 @@ public class ServiceSpecConfig {
     @Column(name = "SSC_code", nullable = false)
     private int SSC_code;
 
-    @Column(name = "serviceCode", nullable = false)
-    private String serviceCode;
-
     @Column(name = "externalId", nullable = false)
     private String externalId;
 
     @Column(name = "numPlanCode", nullable = false)
     private String numPlanCode;
-
-    @Column(name = "serviceSpecName", nullable = false)
-    private String serviceSpecName;
 
     @Column(name = "serviceSpecType", nullable = false)
     private String serviceSpecType;

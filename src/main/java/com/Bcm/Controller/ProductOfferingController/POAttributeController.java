@@ -35,7 +35,7 @@ public class POAttributeController {
         List<POAttributes> createdPOAttributesList = new ArrayList<>();
 
         for (POAttributes poAttribute : POAttributesList) {
-            String attributeCategoryName = poAttribute.getAttributeCategory();
+            String attributeCategoryName = poAttribute.getCategory();
             if (attributeCategoryName != null && !attributeCategoryName.isEmpty()) {
                 POAttributes createdPlan = poAttributesService.create(poAttribute);
                 createdPOAttributesList.add(createdPlan);

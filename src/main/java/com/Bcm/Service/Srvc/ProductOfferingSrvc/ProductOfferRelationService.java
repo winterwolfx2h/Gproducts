@@ -19,9 +19,9 @@ public interface ProductOfferRelationService {
 
     ProductOfferRelation findById(int PoOfferRelation_Code);
 
-    List<ProductOfferRelation> searchByKeyword(String name);
+    List<ProductOfferRelation> searchByKeyword(String type);
 
-    ProductOfferRelation findByName(String name);
+    ProductOfferRelation findByType(String type);
 
     boolean existsById(int PoOfferRelation_Code);
 }

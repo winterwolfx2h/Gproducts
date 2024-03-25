@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "Eligibility")
@@ -20,6 +21,7 @@ public class Eligibility {
     @Column(name = "eligibilityId", nullable = false)
     private int eligibilityId;
 
-    @Column(name = "channel", nullable = false)
-    private String channel;
+    @ElementCollection
+    @Column(name = "channel")
+    private List<String> channel;
 }

@@ -10,10 +10,10 @@ import java.util.Optional;
 public interface ProductOfferRelationRepository extends JpaRepository<ProductOfferRelation, Integer> {
     Optional<ProductOfferRelation> findById(int PoOfferRelation_Code);
 
-    Optional<ProductOfferRelation> findByName(String name);
+    Optional<ProductOfferRelation> findByType(String type);
 
-    @Query("SELECT p FROM ProductOfferRelation p WHERE p.name LIKE %:name% ")
-    List<ProductOfferRelation> searchByKeyword(String name);
+    @Query("SELECT p FROM ProductOfferRelation p WHERE p.type LIKE %:type% ")
+    List<ProductOfferRelation> searchByKeyword(String type);
 
     /*@Query("SELECT po FROM ProductOfferRelation po JOIN po.type c WHERE  c.name = :name ")
     List<ProductOfferRelation> findAllWithType(String name);

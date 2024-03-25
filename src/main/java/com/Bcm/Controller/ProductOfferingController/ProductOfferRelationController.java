@@ -73,9 +73,9 @@ public class ProductOfferRelationController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchProductOfferRelationsByKeyword(@RequestParam("name") String name) {
+    public ResponseEntity<?> searchProductOfferRelationsByKeyword(@RequestParam("type") String type) {
         try {
-            List<ProductOfferRelation> searchResults = productOfferRelationService.searchByKeyword(name);
+            List<ProductOfferRelation> searchResults = productOfferRelationService.searchByKeyword(type);
             return ResponseEntity.ok(searchResults);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");

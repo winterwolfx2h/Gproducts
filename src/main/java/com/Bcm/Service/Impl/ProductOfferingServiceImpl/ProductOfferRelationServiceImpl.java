@@ -31,11 +31,9 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
 
         if (existingProductOptional.isPresent()) {
             ProductOfferRelation existingProduct = existingProductOptional.get();
-            existingProduct.setName(updatedProductOfferRelation.getName());
+            existingProduct.setType(updatedProductOfferRelation.getType());
             existingProduct.setValidFor(updatedProductOfferRelation.getValidFor());
-            existingProduct.setStatus(updatedProductOfferRelation.getStatus());
-            existingProduct.setNumberRelationOfferLowerLimit(updatedProductOfferRelation.getNumberRelationOfferLowerLimit());
-            existingProduct.setNumberRelationOfferUpperLimit(updatedProductOfferRelation.getNumberRelationOfferUpperLimit());
+            existingProduct.setLength(updatedProductOfferRelation.getLength());
 
             return ProductOfferRelationRepository.save(existingProduct);
         } else {
@@ -61,10 +59,10 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
     }
 
     @Override
-    public ProductOfferRelation findByName(String name) {
+    public ProductOfferRelation findByType(String type) {
         try {
-            Optional<ProductOfferRelation> optionalProductOfferRelation = ProductOfferRelationRepository.findByName(name);
-            return optionalProductOfferRelation.orElseThrow(() -> new RuntimeException("ProductOfferRelation with ID " + name + " not found"));
+            Optional<ProductOfferRelation> optionalProductOfferRelation = ProductOfferRelationRepository.findByType(type);
+            return optionalProductOfferRelation.orElseThrow(() -> new RuntimeException("ProductOfferRelation with Type " + type + " not found"));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding ProductOfferRelation");
         }

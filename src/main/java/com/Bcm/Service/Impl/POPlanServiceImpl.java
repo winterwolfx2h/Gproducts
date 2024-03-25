@@ -55,6 +55,7 @@ public class POPlanServiceImpl implements POPlanService {
             existingPlan.setSHDES(poPlan.getSHDES());
             existingPlan.setMarket(poPlan.getMarket());
             existingPlan.setSubMarket(poPlan.getSubMarket());
+            existingPlan.setStatus(poPlan.getStatus());
 
             validateNotNullFields(existingPlan);
 

@@ -19,9 +19,8 @@ public interface POAttributesService {
 
     POAttributes findById(int poAttribute_code);
 
-    /*List<POAttributes> searchByKeyword(String attributeValDesc);*/
 
-    POAttributes findByAttributeValDesc(String attributeValDesc);
+    POAttributes findByDescription(String description);
 
     boolean existsById(int poAttribute_code);
 

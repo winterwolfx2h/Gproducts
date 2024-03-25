@@ -40,6 +40,8 @@ public class Product {
     @Column(name = "description", nullable = true)
     private String description;
 
+    @Column(name = "detailedDescription", nullable = true)
+    private String detailedDescription;
 
     @Column(name = "poType", nullable = false)
     private String poType;

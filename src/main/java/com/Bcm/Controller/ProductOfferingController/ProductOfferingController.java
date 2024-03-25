@@ -171,6 +171,7 @@ public class ProductOfferingController {
             existingProductOffering.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
             existingProductOffering.setEffectiveTo(updatedProductOffering.getEffectiveTo());
             existingProductOffering.setDescription(updatedProductOffering.getDescription());
+            existingProductOffering.setDetailedDescription(updatedProductOffering.getDetailedDescription());
             existingProductOffering.setPoType(updatedProductOffering.getPoType());
             existingProductOffering.setFamilyName(updatedProductOffering.getFamilyName());
             existingProductOffering.setSubFamily(updatedProductOffering.getSubFamily());

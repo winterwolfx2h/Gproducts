@@ -39,12 +39,10 @@ public class POAttributesServiceImpl implements POAttributesService {
 
         if (existingProductOptional.isPresent()) {
             POAttributes existingProduct = existingProductOptional.get();
-            existingProduct.setShortCode(updatedPOAttributes.getShortCode());
-            existingProduct.setAttributeCategory(updatedPOAttributes.getAttributeCategory());
-            existingProduct.setAttributeExternalId(updatedPOAttributes.getAttributeExternalId());
-            existingProduct.setAttributeValDesc(updatedPOAttributes.getAttributeValDesc());
-            existingProduct.setCharType(updatedPOAttributes.getCharType());
-            existingProduct.setCharValue(updatedPOAttributes.getCharValue());
+            existingProduct.setCategory(updatedPOAttributes.getCategory());
+            existingProduct.setExternalId(updatedPOAttributes.getExternalId());
+            existingProduct.setValue(updatedPOAttributes.getValue());
+            existingProduct.setDescription(updatedPOAttributes.getDescription());
 
             return poAttributesRepository.save(existingProduct);
         } else {
@@ -63,17 +61,11 @@ public class POAttributesServiceImpl implements POAttributesService {
         Optional<POAttributes> optionalPlan = poAttributesRepository.findById(poAttribute_code);
         return optionalPlan.orElseThrow(() -> new RuntimeException("POAttributes with ID " + poAttribute_code + " not found"));
     }
-
-    /*@Override
-    public List<POAttributes> searchByKeyword(String attributeValDesc) {
-        return poAttributesRepository.searchByKeyword(attributeValDesc);
-    }*/
-
     @Override
-    public POAttributes findByAttributeValDesc(String attributeValDesc) {
+    public POAttributes findByDescription(String description) {
         try {
-            Optional<POAttributes> optionalPOAttributes = poAttributesRepository.findByAttributeValDesc(attributeValDesc);
-            return optionalPOAttributes.orElseThrow(() -> new RuntimeException("POAttributes with ID " + attributeValDesc + " not found"));
+            Optional<POAttributes> optionalPOAttributes = poAttributesRepository.findByDescription(description);
+            return optionalPOAttributes.orElseThrow(() -> new RuntimeException("POAttributes with Descrptiib " + description + " not found"));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding POAttributes");
         }

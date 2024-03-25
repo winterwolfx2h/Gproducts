@@ -18,8 +18,8 @@ public interface ProductOfferingRepository extends JpaRepository<ProductOffering
     @Query("SELECT p FROM ProductOffering p WHERE p.name = :name")
     List<ProductOffering> searchByKeyword(String name);
 
-    @Query("SELECT po FROM ProductOffering po JOIN po.poAttributes c WHERE  c.attributeValDesc = :attributeValDesc ")
-    List<ProductOffering> findAllWithPoAttributes(String attributeValDesc);
+    @Query("SELECT po FROM ProductOffering po JOIN po.poAttributes c WHERE  c.description = :description ")
+    List<ProductOffering> findAllWithPoAttributes(String description);
 
     @Query("SELECT p FROM ProductOffering p WHERE p.poAttributes.poAttribute_code = :poAttribute_code")
     List<ProductOffering> findByPoAttributes_poAttribute_code(int poAttribute_code);
@@ -30,8 +30,8 @@ public interface ProductOfferingRepository extends JpaRepository<ProductOffering
     @Query("SELECT p FROM ProductOffering p WHERE p.productRelation.poRelation_Code = :poRelation_Code")
     List<ProductOffering> findByProductRelation_poRelation_Code(int poRelation_Code);
 
-    @Query("SELECT po FROM ProductOffering po JOIN po.productOfferRelation c WHERE  c.name = :name ")
-    List<ProductOffering> findAllWithProductOfferRelation(String name);
+    @Query("SELECT po FROM ProductOffering po JOIN po.productOfferRelation c WHERE  c.type = :type ")
+    List<ProductOffering> findAllWithProductOfferRelation(String type);
 
     @Query("SELECT p FROM ProductOffering p WHERE p.productOfferRelation.PoOfferRelation_Code = :PoOfferRelation_Code")
     List<ProductOffering> findByProductOfferRelation_PoOfferRelation_Code(int PoOfferRelation_Code);

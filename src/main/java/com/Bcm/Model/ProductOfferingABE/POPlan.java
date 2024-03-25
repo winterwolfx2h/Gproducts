@@ -41,4 +41,8 @@ public class POPlan {
     @JoinColumn(name = "po_SubMarketCode", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private SubMarket subMarket;
+
+    @Column(name = "status", nullable = false)
+    private String status;
+
 }

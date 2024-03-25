@@ -25,21 +25,11 @@ public class ProductOfferRelation {
     @Column(name = "type", nullable = false)
     private String type;
 
-    @Column(name = "name", nullable = true)
-    private String name;
-
     @Column(name = "validFor", nullable = false)
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date validFor;
 
-    @Column(name = "status", nullable = false)
-    private String status;
-
-    @Column(name = "numberRelationOfferLowerLimit", nullable = false)
-    private String numberRelationOfferLowerLimit;
-
-    @Column(name = "numberRelationOfferUpperLimit", nullable = false)
-    private String numberRelationOfferUpperLimit;
-
+    @Column(name = "length", nullable = false)
+    private String length;
 }
 

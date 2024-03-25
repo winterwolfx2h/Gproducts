@@ -46,10 +46,8 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
 
         if (existingServiceSpecConfigOptional.isPresent()) {
             ServiceSpecConfig existingServiceSpecConfig = existingServiceSpecConfigOptional.get();
-            existingServiceSpecConfig.setServiceCode(updatedserviceSpecConfig.getServiceCode());
             existingServiceSpecConfig.setExternalId(updatedserviceSpecConfig.getExternalId());
             existingServiceSpecConfig.setNumPlanCode(updatedserviceSpecConfig.getNumPlanCode());
-            existingServiceSpecConfig.setServiceSpecName(updatedserviceSpecConfig.getServiceSpecName());
             existingServiceSpecConfig.setServiceSpecType(updatedserviceSpecConfig.getServiceSpecType());
             existingServiceSpecConfig.setStatus(updatedserviceSpecConfig.getStatus());
             existingServiceSpecConfig.setDescription(updatedserviceSpecConfig.getDescription());
@@ -84,7 +82,7 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
     }
 
     private void validateNotNullFields(ServiceSpecConfig serviceSpecConfig) {
-        if (serviceSpecConfig.getServiceSpecName() == null || serviceSpecConfig.getServiceSpecType() == null) {
+        if ( serviceSpecConfig.getServiceSpecType() == null) {
             throw new InvalidInputException("ServiceSpecName, ServiceSpecType, and ServiceCode cannot be null");
         }
     }

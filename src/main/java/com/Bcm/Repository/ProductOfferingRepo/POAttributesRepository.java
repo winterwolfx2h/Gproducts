@@ -10,5 +10,5 @@ public interface POAttributesRepository extends JpaRepository<POAttributes, Inte
 
     Optional<POAttributes> findById(int poAttribute_code);
 
-    Optional<POAttributes> findByAttributeValDesc(String attributeValDesc);
+    Optional<POAttributes> findByDescription(String description);
 }

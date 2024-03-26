@@ -28,6 +28,7 @@ public class POPlanServiceImpl implements POPlanService {
     public POPlan create(POPlan poPlan) {
         validateNotNullFields(poPlan);
         try {
+            poPlan.setStatus("SUSPENDED");
             return popRepository.save(poPlan);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseOperationException("Error creating POPlan", e);
@@ -119,6 +120,23 @@ public class POPlanServiceImpl implements POPlanService {
             return optionalPOPlan.orElseThrow(() -> new RuntimeException("POPlan with SHDES: " + SHDES + " not found"));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding POPlan");
+        }
+    }
+
+    @Override
+    public POPlan changePoplanStatus(int TMCODE) {
+        try {
+            POPlan existingPlan = findById(TMCODE);
+
+            if (existingPlan.getStatus().equals("Suspendu")) {
+                existingPlan.setStatus("Actif");
+            } else {
+                existingPlan.setStatus("Suspendu");
+            }
+
+            return popRepository.save(existingPlan);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while changing POPlan status", e);
         }
     }
 

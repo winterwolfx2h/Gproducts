@@ -22,6 +22,8 @@ public interface POPlanService {
 
     POPlan findBySHDES(String SHDES);
 
+    POPlan changePoplanStatus(int TMCODE);
+
     boolean existsById(int TMCODE);
 
 }

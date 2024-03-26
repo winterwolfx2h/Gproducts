@@ -61,7 +61,6 @@ public class POAttributesServiceImpl implements POAttributesService {
         Optional<POAttributes> optionalPlan = poAttributesRepository.findById(poAttribute_code);
         return optionalPlan.orElseThrow(() -> new RuntimeException("POAttributes with ID " + poAttribute_code + " not found"));
     }
-
     @Override
     public POAttributes findByDescription(String description) {
         try {
@@ -71,7 +70,6 @@ public class POAttributesServiceImpl implements POAttributesService {
             throw new RuntimeException("Invalid argument provided for finding POAttributes");
         }
     }
-
     @Override
     public boolean existsById(int poAttribute_code) {
         return poAttributesRepository.existsById(poAttribute_code);

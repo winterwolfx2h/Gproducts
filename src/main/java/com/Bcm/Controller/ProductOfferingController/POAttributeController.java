@@ -73,7 +73,6 @@ public class POAttributeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-
     private RuntimeException handleException(Exception e) {
         ErrorMessage errorMessage = new ErrorMessage(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),

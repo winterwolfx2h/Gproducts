@@ -2,6 +2,7 @@ package com.Bcm.Controller;
 
 import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Exception.InvalidInputException;
+import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.POPlan;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
@@ -111,6 +112,15 @@ public class POPlanController {
             return popService.searchByKeyword(DES);
         } catch (Exception e) {
             throw handleException(e);
+        }
+    }
+    @PutMapping("/changeStatus/{TMCODE}")
+    public ResponseEntity<?> changePoplanStatus(@PathVariable int TMCODE) {
+        try {
+            POPlan updatedPlan = popService.changePoplanStatus(TMCODE);
+            return ResponseEntity.ok(updatedPlan);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 

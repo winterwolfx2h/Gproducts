@@ -1,6 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE;
 
-
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import lombok.AllArgsConstructor;
@@ -44,5 +43,4 @@ public class POPlan {
 
     @Column(name = "status", nullable = false)
     private String status;
-
 }

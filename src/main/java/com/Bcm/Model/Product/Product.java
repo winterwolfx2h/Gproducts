@@ -1,5 +1,7 @@
 package com.Bcm.Model.Product;
 
+import com.Bcm.Model.ProductOfferingABE.POPlan;
+import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -59,10 +61,12 @@ public class Product {
         product.setEffectiveFrom(this.getEffectiveFrom());
         product.setEffectiveTo(this.getEffectiveTo());
         product.setDescription(this.getDescription());
+        product.setDetailedDescription(this.getDetailedDescription());
         product.setPoType(this.getPoType());
         product.setFamilyName(this.getFamilyName());
         product.setSubFamily(this.getSubFamily());
 
         return product;
     }
+
 }

@@ -6,28 +6,30 @@ import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ServiceABE.ServiceSpecConfig;
 import com.Bcm.Repository.ServiceConfigRepo.ServiceSpecConfigRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.ServiceSpecConfigService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+
+@RequiredArgsConstructor
 @Service
 public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
 
-    @Autowired
-    ServiceSpecConfigRepository serviceSpecConfigRepository;
+    final ServiceSpecConfigRepository serviceSpecConfigRepository;
 
     @Override
     public ServiceSpecConfig create(ServiceSpecConfig serviceSpecConfig) {
         validateNotNullFields(serviceSpecConfig);
         try {
+            serviceSpecConfig.setStatus("SUSPENDED");
             return serviceSpecConfigRepository.save(serviceSpecConfig);
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseOperationException("Error creating ServiceSpecConfig", e);
+            throw new DatabaseOperationException("Error creating POPlan", e);
         } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while creating ServiceSpecConfig", e);
+            throw new RuntimeException("An unexpected error occurred while creating POPlan", e);
         }
     }
 
@@ -81,8 +83,25 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
         }
     }
 
+    @Override
+    public ServiceSpecConfig changePoplanStatus(int SSC_code) {
+        try {
+            ServiceSpecConfig existingServiceSpecConfig = findById(SSC_code);
+
+            if (existingServiceSpecConfig.getStatus().equals("Suspendu")) {
+                existingServiceSpecConfig.setStatus("Actif");
+            } else {
+                existingServiceSpecConfig.setStatus("Suspendu");
+            }
+
+            return serviceSpecConfigRepository.save(existingServiceSpecConfig);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while changing ServiceSpecConfig status", e);
+        }
+    }
+
     private void validateNotNullFields(ServiceSpecConfig serviceSpecConfig) {
-        if ( serviceSpecConfig.getServiceSpecType() == null) {
+        if (serviceSpecConfig.getServiceSpecType() == null) {
             throw new InvalidInputException("ServiceSpecName, ServiceSpecType, and ServiceCode cannot be null");
         }
     }

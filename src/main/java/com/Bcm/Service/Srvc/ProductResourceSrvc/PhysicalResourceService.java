@@ -25,5 +25,4 @@ public interface PhysicalResourceService {
     boolean existsById(int phyResourceId);
 
 
-
 }

@@ -68,4 +68,14 @@ public class ServiceSpecConfigController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
+
+    @PutMapping("/changeStatus/{SSC_code}")
+    public ResponseEntity<?> changeServiceSpecConfigStatus(@PathVariable int SSC_code) {
+        try {
+            ServiceSpecConfig updatedPlan = serviceSpecConfigService.changePoplanStatus(SSC_code);
+            return ResponseEntity.ok(updatedPlan);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.Bcm.Controller.ServiceController;
 
+import com.Bcm.Model.ProductOfferingABE.POPlan;
 import com.Bcm.Model.ServiceABE.ServiceSpecConfig;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.ServiceSpecConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,16 @@ public class ServiceSpecConfigController {
             return ResponseEntity.ok(resultMessage);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @PutMapping("/changeStatus/{SSC_code}")
+    public ResponseEntity<?> changeServiceSpecConfigStatus(@PathVariable int SSC_code) {
+        try {
+            ServiceSpecConfig updatedPlan = serviceSpecConfigService.changePoplanStatus(SSC_code);
+            return ResponseEntity.ok(updatedPlan);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 }

@@ -17,4 +17,5 @@ public interface ServiceSpecConfigService {
 
     ServiceSpecConfig findById(int SSC_code);
 
+    ServiceSpecConfig changePoplanStatus(int SSC_code);
 }

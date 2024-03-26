@@ -3,9 +3,11 @@ package com.Bcm.Service.Impl.ServiceConfigServiceImpl;
 import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Model.ProductOfferingABE.POPlan;
 import com.Bcm.Model.ServiceABE.ServiceSpecConfig;
 import com.Bcm.Repository.ServiceConfigRepo.ServiceSpecConfigRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.ServiceSpecConfigService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -13,21 +15,22 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+
+@RequiredArgsConstructor
 @Service
 public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
 
-    @Autowired
-    ServiceSpecConfigRepository serviceSpecConfigRepository;
-
+     final ServiceSpecConfigRepository serviceSpecConfigRepository;
     @Override
     public ServiceSpecConfig create(ServiceSpecConfig serviceSpecConfig) {
         validateNotNullFields(serviceSpecConfig);
         try {
+            serviceSpecConfig.setStatus("SUSPENDED");
             return serviceSpecConfigRepository.save(serviceSpecConfig);
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseOperationException("Error creating ServiceSpecConfig", e);
+            throw new DatabaseOperationException("Error creating POPlan", e);
         } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while creating ServiceSpecConfig", e);
+            throw new RuntimeException("An unexpected error occurred while creating POPlan", e);
         }
     }
 
@@ -70,7 +73,6 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
             throw new RuntimeException("An unexpected error occurred while deleting ServiceSpecConfig with ID: " + SSC_code, e);
         }
     }
-
     @Override
     public ServiceSpecConfig findById(int SSC_code) {
         try {
@@ -78,6 +80,23 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
                     .orElseThrow(() -> new ResourceNotFoundException("ServiceSpecConfig  with ID " + SSC_code + " not found"));
         } catch (ResourceNotFoundException e) {
             throw new RuntimeException("ServiceSpecConfig  with ID \"" + SSC_code + "\" not found", e);
+        }
+    }
+
+    @Override
+    public ServiceSpecConfig changePoplanStatus(int SSC_code) {
+        try {
+            ServiceSpecConfig existingServiceSpecConfig = findById(SSC_code);
+
+            if (existingServiceSpecConfig.getStatus().equals("Suspendu")) {
+                existingServiceSpecConfig.setStatus("Actif");
+            } else {
+                existingServiceSpecConfig.setStatus("Suspendu");
+            }
+
+            return serviceSpecConfigRepository.save(existingServiceSpecConfig);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while changing ServiceSpecConfig status", e);
         }
     }
 

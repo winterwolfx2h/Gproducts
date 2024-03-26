@@ -36,7 +36,6 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
-
     @GetMapping("/productsWithPOBasicParent")
     public ResponseEntity<?> getProductsByPOBasicParent() {
         try {
@@ -81,7 +80,6 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
-
     @GetMapping("/searchByFamilyName")
     public ResponseEntity<?> searchProductsByFamilyName(@RequestParam("familyName") String familyName) {
         List<Product> searchResults = productService.searchByFamilyName(familyName);
@@ -91,22 +89,20 @@ public class ProductController {
         return ResponseEntity.ok(searchResults);
     }
 
-    @GetMapping("/getSpec")
-    public ResponseEntity<?> getSpec() {
+    @GetMapping("/searchSpec")
+    public ResponseEntity<?> searchSpec(@RequestParam String name) {
         try {
-            List<Product> products = productService.read();
+            List<Product> products = productService.searchByKeyword(name);
             List<ProductSpecificationDTO> dtos = new ArrayList<>();
 
             for (Product product : products) {
                 if (product instanceof ProductOffering) {
                     ProductOffering productOffering = (ProductOffering) product;
                     ProductSpecification productSpecification = productOffering.getProductSpecification();
-
                     ProductSpecificationDTO dto = new ProductSpecificationDTO();
                     dto.setFamilyName(productOffering.getFamilyName());
                     dto.setSubFamily(productOffering.getSubFamily());
                     dto.setPoPlanSHDES(productSpecification.getPoPlanSHDES());
-
                     dtos.add(dto);
                 }
             }
@@ -116,6 +112,4 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
-
-
 }

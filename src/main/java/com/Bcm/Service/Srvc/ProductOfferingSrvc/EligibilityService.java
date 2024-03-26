@@ -20,6 +20,7 @@ public interface EligibilityService {
     List<Eligibility> searchByKeyword(String channel);
 
     Eligibility findByChannel(String channel);
+
     boolean existsById(int eligibilityId);
 
 

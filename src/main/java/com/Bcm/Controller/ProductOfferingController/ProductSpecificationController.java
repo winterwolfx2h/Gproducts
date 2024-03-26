@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -65,8 +64,6 @@ public class ProductSpecificationController {
     }
 
 
-
-
     @GetMapping("/listProdSpec")
     @Cacheable(value = "ProdSpecCache")
     public ResponseEntity<?> getAllProductSpecifications() {
@@ -116,6 +113,7 @@ public class ProductSpecificationController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     @DeleteMapping("/{po_SpecCode}")
     @CacheEvict(value = "ProdSpecCache", allEntries = true)
     public ResponseEntity<?> deleteProductSpecification(@PathVariable("po_SpecCode") int po_SpecCode) {

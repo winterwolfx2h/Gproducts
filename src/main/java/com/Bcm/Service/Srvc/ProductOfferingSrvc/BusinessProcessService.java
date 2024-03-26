@@ -25,5 +25,4 @@ public interface BusinessProcessService {
     boolean existsById(int businessProcessId);
 
 
-
 }

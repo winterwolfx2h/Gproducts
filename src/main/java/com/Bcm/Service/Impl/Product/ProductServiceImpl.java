@@ -2,7 +2,6 @@ package com.Bcm.Service.Impl.Product;
 
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.Product.Product;
-import com.Bcm.Model.ProductOfferingABE.POPlan;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
@@ -29,6 +28,7 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("An unexpected error occurred while reading Product", e);
         }
     }
+
     @Override
     public List<Product> searchByFamilyName(String familyName) {
         return productRepository.findByFamilyName(familyName);
@@ -43,6 +43,7 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("An unexpected error occurred while searching for product offerings by parent name: " + parentName, e);
         }
     }
+
     @Override
     public Product findById(int Product_id) {
         try {

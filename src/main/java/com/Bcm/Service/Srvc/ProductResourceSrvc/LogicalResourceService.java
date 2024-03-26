@@ -25,5 +25,4 @@ public interface LogicalResourceService {
     boolean existsById(int logResourceId);
 
 
-
 }

@@ -3,12 +3,10 @@ package com.Bcm.Service.Impl.ServiceConfigServiceImpl;
 import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ResourceNotFoundException;
-import com.Bcm.Model.ProductOfferingABE.POPlan;
 import com.Bcm.Model.ServiceABE.ServiceSpecConfig;
 import com.Bcm.Repository.ServiceConfigRepo.ServiceSpecConfigRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.ServiceSpecConfigService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +18,8 @@ import java.util.Optional;
 @Service
 public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
 
-     final ServiceSpecConfigRepository serviceSpecConfigRepository;
+    final ServiceSpecConfigRepository serviceSpecConfigRepository;
+
     @Override
     public ServiceSpecConfig create(ServiceSpecConfig serviceSpecConfig) {
         validateNotNullFields(serviceSpecConfig);
@@ -73,6 +72,7 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
             throw new RuntimeException("An unexpected error occurred while deleting ServiceSpecConfig with ID: " + SSC_code, e);
         }
     }
+
     @Override
     public ServiceSpecConfig findById(int SSC_code) {
         try {
@@ -101,7 +101,7 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
     }
 
     private void validateNotNullFields(ServiceSpecConfig serviceSpecConfig) {
-        if ( serviceSpecConfig.getServiceSpecType() == null) {
+        if (serviceSpecConfig.getServiceSpecType() == null) {
             throw new InvalidInputException("ServiceSpecName, ServiceSpecType, and ServiceCode cannot be null");
         }
     }

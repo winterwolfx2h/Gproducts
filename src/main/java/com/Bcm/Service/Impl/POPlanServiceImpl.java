@@ -4,6 +4,8 @@ import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.POPlan;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Repository.ProductOfferingRepo.POPlanRepository;
 import com.Bcm.Service.Srvc.POPlanService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -138,6 +140,11 @@ public class POPlanServiceImpl implements POPlanService {
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred while changing POPlan status", e);
         }
+    }
+
+    @Override
+    public boolean existsByMarketAndSubMarket(Market market, SubMarket subMarket) {
+        return popRepository.existsByMarketAndSubMarket(market, subMarket);
     }
 
     @Override

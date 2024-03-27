@@ -26,6 +26,9 @@ public interface ProductOfferingService {
 
     boolean existsById(int po_code);
 
+    List<ProductOffering> findByPoType(String poType);
+
+
 }
 
 

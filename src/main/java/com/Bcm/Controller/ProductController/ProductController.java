@@ -36,14 +36,14 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
-    @GetMapping("/productsWithPOBasicParent")
-    public ResponseEntity<?> getProductsByPOBasicParent() {
+    @GetMapping("/productsWithPOBasicPoType")
+    public ResponseEntity<?> getProductsByPOBasicPoType() {
         try {
-            String parentName = "PO-Basic";
-            List<ProductOffering> productOfferings = productOfferingService.findByParentName(parentName);
+            String poType = "PO-Basic"; // Change this to the desired poType value
+            List<ProductOffering> productOfferings = productOfferingService.findByPoType(poType);
 
             if (productOfferings.isEmpty()) {
-                throw new ResourceNotFoundException("No products found for parent: " + parentName);
+                throw new ResourceNotFoundException("No products found for poType: " + poType);
             }
 
             List<Object> products = productOfferings.stream()
@@ -80,6 +80,7 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
+
     @GetMapping("/searchByFamilyName")
     public ResponseEntity<?> searchProductsByFamilyName(@RequestParam("familyName") String familyName) {
         List<Product> searchResults = productService.searchByFamilyName(familyName);

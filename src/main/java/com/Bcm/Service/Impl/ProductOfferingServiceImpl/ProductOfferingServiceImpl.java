@@ -139,6 +139,15 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
     }
 
     @Override
+    public List<ProductOffering> findByPoType(String poType) {
+        try {
+            return productOfferingRepository.findByPoType(poType);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while searching for product offerings by poType: " + poType, e);
+        }
+    }
+
+    @Override
     public boolean existsById(int po_code) {
         return productOfferingRepository.existsById(po_code);
     }

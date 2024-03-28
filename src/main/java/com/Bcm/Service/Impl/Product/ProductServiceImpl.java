@@ -28,6 +28,7 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("An unexpected error occurred while reading Product", e);
         }
     }
+
     @Override
     public List<Product> searchByFamilyName(String familyName) {
         return productRepository.findByFamilyName(familyName);
@@ -41,6 +42,7 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("An unexpected error occurred while searching for product offerings by parent name: " + parentName, e);
         }
     }
+
     @Override
     public Product findById(int Product_id) {
         try {

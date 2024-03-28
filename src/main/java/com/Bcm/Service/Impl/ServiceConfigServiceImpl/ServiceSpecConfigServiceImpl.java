@@ -19,6 +19,7 @@ import java.util.Optional;
 public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
 
     final ServiceSpecConfigRepository serviceSpecConfigRepository;
+
     @Override
     public ServiceSpecConfig create(ServiceSpecConfig serviceSpecConfig) {
         validateNotNullFields(serviceSpecConfig);
@@ -71,6 +72,7 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
             throw new RuntimeException("An unexpected error occurred while deleting ServiceSpecConfig with ID: " + SSC_code, e);
         }
     }
+
     @Override
     public ServiceSpecConfig findById(int SSC_code) {
         try {

@@ -17,6 +17,7 @@ public interface POPlanRepository extends JpaRepository<POPlan, Integer> {
     Optional<POPlan> findById(int TMCODE);
 
     Optional<POPlan> findBySHDES(String SHDES);
+
     boolean existsByMarketAndSubMarket(Market market, SubMarket subMarket);
 
     @Query("SELECT p FROM POPlan p WHERE p.DES LIKE %:DES% ")

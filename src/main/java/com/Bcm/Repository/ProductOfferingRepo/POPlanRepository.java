@@ -1,6 +1,8 @@
 package com.Bcm.Repository.ProductOfferingRepo;
 
 import com.Bcm.Model.ProductOfferingABE.POPlan;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,6 +17,7 @@ public interface POPlanRepository extends JpaRepository<POPlan, Integer> {
     Optional<POPlan> findById(int TMCODE);
 
     Optional<POPlan> findBySHDES(String SHDES);
+    boolean existsByMarketAndSubMarket(Market market, SubMarket subMarket);
 
     @Query("SELECT p FROM POPlan p WHERE p.DES LIKE %:DES% ")
     List<POPlan> searchByKeyword(String DES);

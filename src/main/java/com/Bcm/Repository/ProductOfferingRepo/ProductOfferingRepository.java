@@ -15,6 +15,8 @@ public interface ProductOfferingRepository extends JpaRepository<ProductOffering
 
     List<ProductOffering> findByParent(String parentName);
 
+    List<ProductOffering> findByPoType(String poType);
+
     @Query("SELECT p FROM ProductOffering p WHERE p.name = :name")
     List<ProductOffering> searchByKeyword(String name);
 

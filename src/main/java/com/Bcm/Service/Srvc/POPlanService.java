@@ -1,6 +1,8 @@
 package com.Bcm.Service.Srvc;
 
 import com.Bcm.Model.ProductOfferingABE.POPlan;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,5 +27,8 @@ public interface POPlanService {
     POPlan changePoplanStatus(int TMCODE);
 
     boolean existsById(int TMCODE);
+
+    boolean existsByMarketAndSubMarket(Market market, SubMarket subMarket);
+
 
 }

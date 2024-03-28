@@ -34,6 +34,7 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
             existingProduct.setPhysicalResourceType(updatedPhysicalResource.getPhysicalResourceType());
             existingProduct.setPhysicalResourceFromat(updatedPhysicalResource.getPhysicalResourceFromat());
             existingProduct.setServiceId(updatedPhysicalResource.getServiceId());
+            existingProduct.setLength(updatedPhysicalResource.getLength());
 
             return physicalResourceRepository.save(existingProduct);
         } else {

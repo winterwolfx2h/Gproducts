@@ -2,6 +2,7 @@ package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Exception.InvalidInputException;
+import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
 import com.Bcm.Model.ProductOfferingABE.*;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductResourceABE.LogicalResource;
@@ -38,7 +39,6 @@ public class ProductOfferingController {
     final EligibilityService eligibilityService;
     final FamilyService familyService;
 
-
     @PostMapping("/addProdOff")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
@@ -47,10 +47,14 @@ public class ProductOfferingController {
             ProductOffering createdProduct = productOfferingService.create(productOffering);
             invalidateProductOfferingsCache();
             return ResponseEntity.ok(createdProduct);
+        } catch (ProductOfferingAlreadyExistsException e) {
+            return ResponseEntity.badRequest().body("A product offering with the same name already exists.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("An error occurred while creating the product offering.");
         }
     }
+
+
 
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public void invalidateProductOfferingsCache() {

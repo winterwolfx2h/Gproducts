@@ -28,8 +28,5 @@ public class ProductOfferRelation {
     @Column(name = "validFor", nullable = false)
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date validFor;
-
-    @Column(name = "length", nullable = false)
-    private String length;
 }
 

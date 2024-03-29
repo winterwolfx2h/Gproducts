@@ -1,9 +1,6 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
-import com.Bcm.Exception.DatabaseOperationException;
-import com.Bcm.Exception.InputException;
-import com.Bcm.Exception.InvalidInput;
-import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Exception.*;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
@@ -25,6 +22,12 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
 
     @Override
     public ProductOffering create(ProductOffering productOffering) {
+        // Check if a product offering with the same name already exists
+        Optional<ProductOffering> existingProduct = productOfferingRepository.findByname(productOffering.getName());
+        if (existingProduct.isPresent()) {
+            throw new ProductOfferingAlreadyExistsException("A product offering with the same name already exists.");
+        }
+
         try {
             return productOfferingRepository.save(productOffering);
         } catch (DataIntegrityViolationException e) {
@@ -33,6 +36,8 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new RuntimeException("An unexpected error occurred while creating product offering", e);
         }
     }
+
+
 
     @Override
     public List<ProductOffering> read() {

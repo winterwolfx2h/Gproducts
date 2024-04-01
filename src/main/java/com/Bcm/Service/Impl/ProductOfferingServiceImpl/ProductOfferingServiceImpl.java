@@ -22,7 +22,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
 
     @Override
     public ProductOffering create(ProductOffering productOffering) {
-        // Check if a product offering with the same name already exists
         Optional<ProductOffering> existingProduct = productOfferingRepository.findByname(productOffering.getName());
         if (existingProduct.isPresent()) {
             throw new ProductOfferingAlreadyExistsException("A product offering with the same name already exists.");

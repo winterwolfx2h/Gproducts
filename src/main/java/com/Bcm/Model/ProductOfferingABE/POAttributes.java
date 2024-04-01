@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Table(name = "POAttributes")
 @Entity
@@ -25,10 +26,15 @@ public class POAttributes {
     @Column(name = "externalId", nullable = true)
     private String externalId;
 
-    @Column(name = "value", nullable = false)
+    /*@Column(name = "value", nullable = false)
     private String value;
 
     @Column(name = "description", nullable = false)
-    private String description;
+    private String description;*/
+
+    @ElementCollection
+    @CollectionTable(name = "POAttribute_ValueDescription", joinColumns = @JoinColumn(name = "poAttribute_code"))
+    @Column(name = "valueDescription")
+    private List<String> valueDescription;
 
 }

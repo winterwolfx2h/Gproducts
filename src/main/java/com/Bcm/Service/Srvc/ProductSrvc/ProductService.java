@@ -17,5 +17,4 @@ public interface ProductService {
     Product findById(int Product_id);
 
     List<Product> searchByKeyword(String name);
-
 }

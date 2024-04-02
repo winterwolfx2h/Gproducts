@@ -30,7 +30,7 @@ public class POPlanServiceImpl implements POPlanService {
     public POPlan create(POPlan poPlan) {
         validateNotNullFields(poPlan);
         try {
-            poPlan.setStatus("SUSPENDED");
+            poPlan.setStatus("Suspendu");
             return popRepository.save(poPlan);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseOperationException("Error creating POPlan", e);

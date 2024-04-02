@@ -124,7 +124,8 @@ public class POAttributesServiceImpl implements POAttributesService {
             POAttributes existingProduct = existingProductOptional.get();
             existingProduct.setCategory(updatedPOAttributes.getCategory());
             existingProduct.setExternalId(updatedPOAttributes.getExternalId());
-            existingProduct.setValueDescription(updatedPOAttributes.getValueDescription());
+            existingProduct.setValue(updatedPOAttributes.getValue());
+            existingProduct.setDescription(updatedPOAttributes.getDescription());
 
             return poAttributesRepository.save(existingProduct);
         } else {

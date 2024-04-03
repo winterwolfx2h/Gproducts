@@ -129,7 +129,7 @@ public class ProductOfferingController {
     private void ensureEligibilityExists(Eligibility eligibility) {
         if (eligibility != null && eligibility.getEligibilityId() != 0) {
             if (!eligibilityService.existsById(eligibility.getEligibilityId())) {
-                eligibilityService.create(eligibility);
+                eligibilityService.create((List<Eligibility>) eligibility);
             }
         }
     }

@@ -21,10 +21,10 @@ public class EligibilityController {
 
     @PostMapping("/addEligibility")
     @CacheEvict(value = "EligibilityCache", allEntries = true)
-    public ResponseEntity<?> createcreateResource(@RequestBody Eligibility Eligibility) {
+    public ResponseEntity<?> createEligibility(@RequestBody List<Eligibility> eligibilityList) {
         try {
-            Eligibility createdEligibility = eligibilityService.create(Eligibility);
-            return ResponseEntity.ok(createdEligibility);
+            List<Eligibility> createdEligibilities = eligibilityService.create(eligibilityList);
+            return ResponseEntity.ok(createdEligibilities);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }

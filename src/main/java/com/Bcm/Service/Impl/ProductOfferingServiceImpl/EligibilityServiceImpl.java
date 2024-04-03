@@ -1,4 +1,4 @@
-package com.Bcm.Service.Impl.EligibilityOfferingServiceImpl;
+package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
 import com.Bcm.Model.ProductOfferingABE.Eligibility;
 import com.Bcm.Repository.ProductOfferingRepo.EligibilityRepository;
@@ -16,9 +16,10 @@ public class EligibilityServiceImpl implements EligibilityService {
     EligibilityRepository eligibilityRepository;
 
     @Override
-    public Eligibility create(Eligibility Eligibility) {
-        return eligibilityRepository.save(Eligibility);
+    public List<Eligibility> create(List<Eligibility> eligibilityList) {
+        return eligibilityRepository.saveAll(eligibilityList);
     }
+
 
     @Override
     public List<Eligibility> read() {

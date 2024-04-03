@@ -7,7 +7,7 @@ import java.util.List;
 
 @Service
 public interface EligibilityService {
-    Eligibility create(Eligibility Eligibility);
+    List<Eligibility> create(List<Eligibility> eligibilityList);
 
     List<Eligibility> read();
 

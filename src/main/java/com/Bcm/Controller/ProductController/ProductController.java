@@ -85,9 +85,6 @@ public class ProductController {
     @GetMapping("/searchByFamilyName")
     public ResponseEntity<?> searchProductsByFamilyName(@RequestParam("familyName") String familyName) {
         List<Product> searchResults = productService.searchByFamilyName(familyName);
-        if (searchResults.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No products found for family name: " + familyName);
-        }
         return ResponseEntity.ok(searchResults);
     }
 

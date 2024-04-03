@@ -7,6 +7,7 @@ import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -31,8 +32,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> searchByFamilyName(String familyName) {
-        return productRepository.findByFamilyName(familyName);
+        List<Product> products = productRepository.findByFamilyName(familyName);
+        boolean hasLinkedProductOffering = products.stream()
+                .anyMatch(product -> product instanceof ProductOffering);
+        if (!hasLinkedProductOffering) {
+            return Collections.emptyList();
+        }
+        return products;
     }
+
 
     @Override
     public List<ProductOffering> findByParentName(String parentName) {
@@ -57,4 +65,5 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> searchByKeyword(String name) {
         return productRepository.findByNameContainingIgnoreCase(name);
     }
+
 }

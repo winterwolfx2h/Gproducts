@@ -24,7 +24,7 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
     public ServiceSpecConfig create(ServiceSpecConfig serviceSpecConfig) {
         validateNotNullFields(serviceSpecConfig);
         try {
-            serviceSpecConfig.setStatus("SUSPENDED");
+            serviceSpecConfig.setStatus("Suspendu");
             return serviceSpecConfigRepository.save(serviceSpecConfig);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseOperationException("Error creating POPlan", e);

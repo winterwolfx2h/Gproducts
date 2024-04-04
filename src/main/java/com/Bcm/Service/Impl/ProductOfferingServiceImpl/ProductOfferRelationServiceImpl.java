@@ -33,7 +33,6 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
             ProductOfferRelation existingProduct = existingProductOptional.get();
             existingProduct.setType(updatedProductOfferRelation.getType());
             existingProduct.setValidFor(updatedProductOfferRelation.getValidFor());
-            existingProduct.setLength(updatedProductOfferRelation.getLength());
             return ProductOfferRelationRepository.save(existingProduct);
         } else {
             throw new RuntimeException("Could not find ProductOfferRelation with ID: " + PoOfferRelation_Code);

@@ -28,8 +28,5 @@ public class PhysicalResource {
 
     @Column(name = "serviceId", nullable = false)
     private String serviceId;
-
-    @Column(name = "length", nullable = false)
-    private String length;
 }
 

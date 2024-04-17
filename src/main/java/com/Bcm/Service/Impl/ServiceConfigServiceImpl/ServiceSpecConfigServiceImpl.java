@@ -3,6 +3,7 @@ package com.Bcm.Service.Impl.ServiceConfigServiceImpl;
 import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Exception.ServiceAlreadyExistsException;
 import com.Bcm.Model.ServiceABE.ServiceSpecConfig;
 import com.Bcm.Repository.ServiceConfigRepo.ServiceSpecConfigRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.ServiceSpecConfigService;
@@ -23,13 +24,16 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
     @Override
     public ServiceSpecConfig create(ServiceSpecConfig serviceSpecConfig) {
         validateNotNullFields(serviceSpecConfig);
+        if (serviceSpecConfigRepository.findByServiceSpecType(serviceSpecConfig.getServiceSpecType()).isPresent()) {
+            throw new ServiceAlreadyExistsException("Service with the same name already exists");
+        }
         try {
             serviceSpecConfig.setStatus("Suspendu");
             return serviceSpecConfigRepository.save(serviceSpecConfig);
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseOperationException("Error creating POPlan", e);
+            throw new DatabaseOperationException("Error creating ServiceSpecConfig", e);
         } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while creating POPlan", e);
+            throw new RuntimeException("An unexpected error occurred while creating ServiceSpecConfig", e);
         }
     }
 
@@ -48,6 +52,11 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
 
         if (existingServiceSpecConfigOptional.isPresent()) {
             ServiceSpecConfig existingServiceSpecConfig = existingServiceSpecConfigOptional.get();
+            if (!existingServiceSpecConfig.getServiceSpecType().equals(updatedserviceSpecConfig.getServiceSpecType())) {
+                if (serviceSpecConfigRepository.findByServiceSpecType(updatedserviceSpecConfig.getServiceSpecType()).isPresent()) {
+                    throw new ServiceAlreadyExistsException("Service with the same name already exists");
+                }
+            }
             existingServiceSpecConfig.setExternalId(updatedserviceSpecConfig.getExternalId());
             existingServiceSpecConfig.setNumPlanCode(updatedserviceSpecConfig.getNumPlanCode());
             existingServiceSpecConfig.setServiceSpecType(updatedserviceSpecConfig.getServiceSpecType());
@@ -55,9 +64,10 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
             existingServiceSpecConfig.setDescription(updatedserviceSpecConfig.getDescription());
             return serviceSpecConfigRepository.save(existingServiceSpecConfig);
         } else {
-            throw new ResourceNotFoundException("Could not find ServiceSpecConfig  with ID: " + SSC_code);
+            throw new ResourceNotFoundException("Could not find ServiceSpecConfig with ID: " + SSC_code);
         }
     }
+
 
     @Override
     public String delete(int SSC_code) {

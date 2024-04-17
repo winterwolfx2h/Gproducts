@@ -4,6 +4,7 @@ import com.Bcm.Exception.*;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -13,11 +14,11 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class ProductOfferingServiceImpl implements ProductOfferingService {
 
-    @Autowired
-    ProductOfferingRepository productOfferingRepository;
+    final ProductOfferingRepository productOfferingRepository;
 
     @Override
     public ProductOffering create(ProductOffering productOffering) {
@@ -34,7 +35,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new RuntimeException("An unexpected error occurred while creating product offering", e);
         }
     }
-
 
 
     @Override
@@ -102,35 +102,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         }
     }
 
-
-
-/*
-    @Override
-    public String delete(int po_code) {
-        if (!productOfferingRepository.existsById(po_code)) {
-            throw new ResourceNotFoundException("Product offering with ID " + po_code + " not found");
-        }
-
-        try {
-            // Fetch product offering by ID
-            ProductOffering productOffering = productOfferingRepository.findById(po_code)
-                    .orElseThrow(() -> new ResourceNotFoundException("Product offering with ID " + po_code + " not found"));
-
-            // If the product offering has a family associated with it, remove it
-            if (productOffering.getFamilyName() != null) {
-                productOffering.setFamilyName(null);
-            }
-
-            productOfferingRepository.deleteById(po_code);
-            return "Product offering with ID " + po_code + " was successfully deleted";
-        } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while deleting product offering with ID: " + po_code, e);
-        }
-    }
-
-*/
-
-
     @Override
     public ProductOffering findById(int po_code) {
         try {
@@ -181,6 +152,15 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
     @Override
     public boolean existsById(int po_code) {
         return productOfferingRepository.existsById(po_code);
+    }
+
+    @Override
+    public List<ProductOffering> findByFamilyName(String familyName) {
+        try {
+            return productOfferingRepository.findByFamilyName(familyName);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while searching for product offerings by family name: " + familyName, e);
+        }
     }
 }
 

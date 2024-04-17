@@ -1,5 +1,6 @@
 package com.Bcm.Repository.ProductOfferingRepo;
 
+import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,14 +18,17 @@ public interface ProductOfferingRepository extends JpaRepository<ProductOffering
 
     List<ProductOffering> findByPoType(String poType);
 
+    List<ProductOffering> findByFamilyName(String familyName);
+
     @Query("SELECT p FROM ProductOffering p WHERE p.name = :name")
     List<ProductOffering> searchByKeyword(String name);
 
-    @Query("SELECT po FROM ProductOffering po JOIN po.poAttributes c WHERE  c.description = :description ")
-    List<ProductOffering> findAllWithPoAttributes(String description);
+    @Query("SELECT po FROM ProductOffering po JOIN po.poAttributes c WHERE  c.charValue = :charValue ")
+    List<ProductOffering> findAllWithPoAttributes(String charValue);
 
-    @Query("SELECT p FROM ProductOffering p WHERE p.poAttributes.poAttribute_code = :poAttribute_code")
+    @Query("SELECT p FROM ProductOffering p JOIN p.poAttributes pa WHERE pa.poAttribute_code = :poAttribute_code")
     List<ProductOffering> findByPoAttributes_poAttribute_code(int poAttribute_code);
+
 
     @Query("SELECT po FROM ProductOffering po JOIN po.productRelation c WHERE  c.type = :type ")
     List<ProductOffering> findAllWithProductRelation(String type);

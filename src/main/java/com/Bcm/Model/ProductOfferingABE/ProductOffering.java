@@ -11,6 +11,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Table(name = "ProductOffering")
 @Entity
@@ -38,10 +39,8 @@ public class ProductOffering extends Product {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductSpecification productSpecification;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "poAttribute_code", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private POAttributes poAttributes;
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<POAttributes> poAttributes;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "poRelation_Code", nullable = false)

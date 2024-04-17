@@ -24,12 +24,4 @@ public class Family {
     @Column(name = "name", nullable = false)
     private String name;
 
-
-    /*
-
-    @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductOffering> productOfferings = new ArrayList<>();
-
-    */
-
 }

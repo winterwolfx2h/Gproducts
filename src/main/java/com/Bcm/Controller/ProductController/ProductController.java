@@ -101,6 +101,7 @@ public class ProductController {
                     ProductSpecificationDTO dto = new ProductSpecificationDTO();
                     dto.setFamilyName(productOffering.getFamilyName());
                     dto.setSubFamily(productOffering.getSubFamily());
+                    dto.setCategory(productOffering.getProductSpecification().getCategory());
                     dto.setPoPlanSHDES(productSpecification.getPoPlanSHDES());
                     dtos.add(dto);
                 }

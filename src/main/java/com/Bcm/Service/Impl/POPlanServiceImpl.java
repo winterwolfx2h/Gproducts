@@ -2,6 +2,7 @@ package com.Bcm.Service.Impl;
 
 import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.InvalidInputException;
+import com.Bcm.Exception.ResourceAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.POPlan;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
@@ -29,6 +30,9 @@ public class POPlanServiceImpl implements POPlanService {
     @Override
     public POPlan create(POPlan poPlan) {
         validateNotNullFields(poPlan);
+        if (popRepository.findBySHDES(poPlan.getSHDES()).isPresent()) {
+            throw new ResourceAlreadyExistsException("A POPlan with the same name already exists.");
+        }
         try {
             poPlan.setStatus("Suspendu");
             return popRepository.save(poPlan);
@@ -38,7 +42,6 @@ public class POPlanServiceImpl implements POPlanService {
             throw new RuntimeException("An unexpected error occurred while creating POPlan", e);
         }
     }
-
     @Override
     public List<POPlan> read() {
         try {
@@ -54,6 +57,12 @@ public class POPlanServiceImpl implements POPlanService {
 
         if (existingPlanOptional.isPresent()) {
             POPlan existingPlan = existingPlanOptional.get();
+            if (!existingPlan.getSHDES().equals(poPlan.getSHDES())) {
+                if (popRepository.findBySHDES(poPlan.getSHDES()).isPresent()) {
+                    throw new ResourceAlreadyExistsException("A POPlan with the updated name already exists.");
+                }
+            }
+
             existingPlan.setDES(poPlan.getDES());
             existingPlan.setSHDES(poPlan.getSHDES());
             existingPlan.setMarket(poPlan.getMarket());

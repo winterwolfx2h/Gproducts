@@ -46,14 +46,6 @@ public class Product {
     @Column(name = "family_name", nullable = false)
     private String familyName;
 
-    /*
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "family_id")
-    private Family family;
-
-     */
-
     @Column(name = "subFamily", nullable = false)
     private String subFamily;
 

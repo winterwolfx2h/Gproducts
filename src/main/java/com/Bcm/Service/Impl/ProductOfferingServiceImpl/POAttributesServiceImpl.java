@@ -124,14 +124,14 @@ public class POAttributesServiceImpl implements POAttributesService {
             POAttributes existingProduct = existingProductOptional.get();
             existingProduct.setCategory(updatedPOAttributes.getCategory());
             existingProduct.setExternalId(updatedPOAttributes.getExternalId());
-            existingProduct.setValue(updatedPOAttributes.getValue());
-            existingProduct.setDescription(updatedPOAttributes.getDescription());
+            existingProduct.setValueDescription(updatedPOAttributes.getValueDescription()); // Update valueDescription
 
             return poAttributesRepository.save(existingProduct);
         } else {
             throw new RuntimeException("Could not find POAttributes with ID: " + poAttribute_code);
         }
     }
+
 
     @Override
     public String delete(int poAttribute_code) {
@@ -148,7 +148,7 @@ public class POAttributesServiceImpl implements POAttributesService {
     @Override
     public POAttributes findByDescription(String description) {
         try {
-            Optional<POAttributes> optionalPOAttributes = poAttributesRepository.findByDescription(description);
+            Optional<POAttributes> optionalPOAttributes = poAttributesRepository.findByValueDescription_Value(description);
             return optionalPOAttributes.orElseThrow(() -> new RuntimeException("POAttributes with Description " + description + " not found"));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding POAttributes");

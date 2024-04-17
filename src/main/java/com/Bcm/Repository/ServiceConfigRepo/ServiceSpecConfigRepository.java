@@ -10,6 +10,9 @@ import java.util.Optional;
 
 public interface ServiceSpecConfigRepository extends JpaRepository<ServiceSpecConfig, Integer> {
 
+
+    Optional<ServiceSpecConfig> findByServiceSpecType(String serviceSpecType);
+
     Optional<ServiceSpecConfig> findById(int SSC_code);
 
     @Query("SELECT p FROM ServiceSpecConfig p WHERE p.description LIKE %:description% ")

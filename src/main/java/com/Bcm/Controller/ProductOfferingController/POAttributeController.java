@@ -37,6 +37,12 @@ public class POAttributeController {
         for (POAttributes poAttribute : POAttributesList) {
             String attributeCategoryName = poAttribute.getCategory();
             if (attributeCategoryName != null && !attributeCategoryName.isEmpty()) {
+                for (POAttributes.ValueDescription valueDescription : poAttribute.getValueDescription()) {
+                    if (valueDescription.description == null) {
+                        valueDescription.description = "Default Description";
+                    }
+                }
+
                 POAttributes createdPlan = poAttributesService.create(poAttribute);
                 createdPOAttributesList.add(createdPlan);
             } else {
@@ -46,6 +52,7 @@ public class POAttributeController {
 
         return ResponseEntity.ok(createdPOAttributesList);
     }
+
 
     @PutMapping("/updatePOAttributes/{poAttribute_code}")
     @CacheEvict(value = "AttributesCache", allEntries = true)

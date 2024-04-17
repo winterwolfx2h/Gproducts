@@ -7,8 +7,7 @@ import java.util.Optional;
 
 
 public interface POAttributesRepository extends JpaRepository<POAttributes, Integer> {
-
     Optional<POAttributes> findById(int poAttribute_code);
 
-    Optional<POAttributes> findByDescription(String description);
+    Optional<POAttributes> findByValueDescription_Value(String value);
 }

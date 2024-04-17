@@ -60,7 +60,7 @@ public class ProductOfferingController {
 
     private void ensureRelatedEntitiesExist(ProductOffering productOffering) {
         ensureProductSpecificationExists(productOffering.getProductSpecification());
-        ensurePOAttributesExists(productOffering.getPoAttributes());
+        ensurePOAttributesExists((List<POAttributes>) productOffering.getPoAttributes());
         ensureProductRelationExists(productOffering.getProductRelation());
         ensureProductOfferRelationExists(productOffering.getProductOfferRelation());
         ensureLogicalResourceExists(productOffering.getLogicalResource());
@@ -78,10 +78,12 @@ public class ProductOfferingController {
         }
     }
 
-    private void ensurePOAttributesExists(POAttributes poAttributes) {
-        if (poAttributes != null && poAttributes.getPoAttribute_code() != 0) {
-            if (!poAttributesService.existsById(poAttributes.getPoAttribute_code())) {
-                poAttributesService.create(poAttributes);
+    private void ensurePOAttributesExists(List<POAttributes> poAttributesList) {
+        if (poAttributesList != null && !poAttributesList.isEmpty()) {
+            for (POAttributes poAttribute : poAttributesList) {
+                if (!poAttributesService.existsById(poAttribute.getPoAttribute_code())) {
+                    poAttributesService.create(poAttribute);
+                }
             }
         }
     }

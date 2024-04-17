@@ -1,5 +1,6 @@
 package com.Bcm.Controller.ServiceController;
 
+import com.Bcm.Exception.ServiceAlreadyExistsException;
 import com.Bcm.Model.ServiceABE.ServiceSpecConfig;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.ServiceSpecConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class ServiceSpecConfigController {
         try {
             ServiceSpecConfig createdServiceSpecConfig = serviceSpecConfigService.create(ServiceSpecConfig);
             return ResponseEntity.ok(createdServiceSpecConfig);
+        } catch (ServiceAlreadyExistsException e) {
+            return ResponseEntity.badRequest().body("Service with the same name already exists");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
@@ -54,6 +57,8 @@ public class ServiceSpecConfigController {
         try {
             ServiceSpecConfig updatedProduct = serviceSpecConfigService.update(SSC_code, updatedServiceSpecConfig);
             return ResponseEntity.ok(updatedProduct);
+        } catch (ServiceAlreadyExistsException e) {
+            return ResponseEntity.badRequest().body("Service with the same name already exists");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }

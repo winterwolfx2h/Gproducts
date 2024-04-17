@@ -42,6 +42,7 @@ public class POPlanServiceImpl implements POPlanService {
             throw new RuntimeException("An unexpected error occurred while creating POPlan", e);
         }
     }
+
     @Override
     public List<POPlan> read() {
         try {

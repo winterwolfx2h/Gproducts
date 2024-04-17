@@ -8,8 +8,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.List;
 
-@Table(name = "POAttributes")
 @Entity
+@Table(name = "POAttributes")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -20,21 +20,29 @@ public class POAttributes {
     @Column(name = "poAttribute_code", nullable = false)
     private int poAttribute_code;
 
-    @Column(name = "categoryType", nullable = true)
+    @Column(name = "category", nullable = true)
     private String category;
 
     @Column(name = "externalId", nullable = true)
     private String externalId;
 
-    @Column(name = "value", nullable = false)
-    private String value;
+    @Column(name = "charType", nullable = false)
+    private String charType;
 
-    @Column(name = "description", nullable = false)
-    private String description;
-/*
+    @Column(name = "charValue", nullable = false)
+    private String charValue;
+
     @ElementCollection
-    @CollectionTable(name = "POAttribute_ValueDescription", joinColumns = @JoinColumn(name = "poAttribute_code"))
-    @Column(name = "valueDescription")
-    private List<String> valueDescription;
-*/
+    @CollectionTable(name = "ValueDescription", joinColumns = @JoinColumn(name = "poAttribute_code"))
+    private List<ValueDescription> valueDescription;
+
+    @Embeddable
+    public static class ValueDescription {
+        @Column(name = "value", nullable = false)
+        public String value;
+
+        @Column(name = "description", nullable = false)
+        public String description;
+    }
+
 }

@@ -1,19 +1,23 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl.SubClassesServiceImpl;
 
+import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.FamilyRepository;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+
+@RequiredArgsConstructor
 @Service
 public class FamilyServiceImpl implements FamilyService {
 
-    @Autowired
-    FamilyRepository familyRepository;
+    final FamilyRepository familyRepository;
+    final ProductOfferingService productOfferingService;
 
     @Override
     public Family create(Family family) {
@@ -52,12 +56,23 @@ public class FamilyServiceImpl implements FamilyService {
     @Override
     public String delete(int po_FamilyCode) {
         try {
+            Family family = findById(po_FamilyCode);
             familyRepository.deleteById(po_FamilyCode);
+            updateProductOfferingsWithDeletedFamily(family.getName());
             return ("Family with ID " + po_FamilyCode + " was successfully deleted");
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for deleting Family");
         }
     }
+
+    private void updateProductOfferingsWithDeletedFamily(String familyName) {
+        List<ProductOffering> productOfferings = productOfferingService.findByFamilyName(familyName);
+        for (ProductOffering offering : productOfferings) {
+            offering.setFamilyName(null);
+            productOfferingService.update(offering.getProduct_id(), offering);
+        }
+    }
+
 
     @Override
     public Family findById(int po_FamilyCode) {
@@ -98,16 +113,8 @@ public class FamilyServiceImpl implements FamilyService {
         }
     }
 
-    /*@Override
-    public List<Family> findBySubFamilyName(String SubFamilyName) {
-        return familyRepository.findBySubFamilyName(SubFamilyName);
-    }*/
-
-
     @Override
     public boolean existsById(int po_FamilyCode) {
         return familyRepository.existsById(po_FamilyCode);
     }
-
-
 }

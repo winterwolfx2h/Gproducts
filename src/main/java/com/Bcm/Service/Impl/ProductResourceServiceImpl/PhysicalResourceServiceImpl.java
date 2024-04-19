@@ -32,7 +32,7 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
         if (existingProductOptional.isPresent()) {
             PhysicalResource existingProduct = existingProductOptional.get();
             existingProduct.setPhysicalResourceType(updatedPhysicalResource.getPhysicalResourceType());
-            existingProduct.setPhysicalResourceFromat(updatedPhysicalResource.getPhysicalResourceFromat());
+            existingProduct.setPhysicalResourceFormat(updatedPhysicalResource.getPhysicalResourceFormat());
             existingProduct.setServiceId(updatedPhysicalResource.getServiceId());
 
             return physicalResourceRepository.save(existingProduct);

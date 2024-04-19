@@ -25,8 +25,7 @@ public class ProductOffering extends Product {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "shdes", nullable = true)
-    private String shdes;
+
 
     @Column(name = "parent", nullable = true)
     private String parent;
@@ -67,9 +66,20 @@ public class ProductOffering extends Product {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private BusinessProcess businessProcess;
 
+    @ElementCollection
+    @CollectionTable(name = "product_offering_eligibility", joinColumns = @JoinColumn(name = "eligibilityId"))
+    @Column(name = "channel")
+    private List<String> eligibilityChannels;
+
+   /*
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "eligibilityId", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Eligibility eligibility;
+
+    */
+
+
 
 }

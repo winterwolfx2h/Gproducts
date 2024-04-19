@@ -23,8 +23,8 @@ public class PhysicalResource {
     @Column(name = "physicalResourceType", nullable = false)
     private String physicalResourceType;
 
-    @Column(name = "physicalResourceFromat", nullable = false)
-    private String physicalResourceFromat;
+    @Column(name = "physicalResourceFormat", nullable = false)
+    private String physicalResourceFormat;
 
     @Column(name = "serviceId", nullable = false)
     private String serviceId;

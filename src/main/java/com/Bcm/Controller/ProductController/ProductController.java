@@ -59,7 +59,7 @@ public class ProductController {
                         productOfferingDTO.setPoType(product.getPoType());
                         productOfferingDTO.setFamilyName(product.getFamilyName());
                         productOfferingDTO.setSubFamily(product.getSubFamily());
-                        productOfferingDTO.setShdes(productOffering.getShdes());
+
                         productOfferingDTO.setParent(productOffering.getParent());
                         productOfferingDTO.setExternalLinkId(productOffering.getExternalLinkId());
                         productOfferingDTO.setProductSpecification(productOffering.getProductSpecification());
@@ -69,7 +69,7 @@ public class ProductController {
                         productOfferingDTO.setLogicalResource(productOffering.getLogicalResource());
                         productOfferingDTO.setPhysicalResource(productOffering.getPhysicalResource());
                         productOfferingDTO.setBusinessProcess(productOffering.getBusinessProcess());
-                        productOfferingDTO.setEligibility(productOffering.getEligibility());
+                       // productOfferingDTO.setEligibility(productOffering.getEligibility());
                         return productOfferingDTO;
                     })
                     .collect(Collectors.toList());

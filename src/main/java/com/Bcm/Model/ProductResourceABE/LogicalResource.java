@@ -23,8 +23,8 @@ public class LogicalResource {
     @Column(name = "logicalResourceType", nullable = false)
     private String logicalResourceType;
 
-    @Column(name = "logicalResourceFromat", nullable = false)
-    private String logicalResourceFromat;
+    @Column(name = "logicalResourceFormat", nullable = false)
+    private String logicalResourceFormat;
 
     @Column(name = "serviceId", nullable = false)
     private String serviceId;

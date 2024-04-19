@@ -32,7 +32,7 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
         if (existingProductOptional.isPresent()) {
             LogicalResource existingProduct = existingProductOptional.get();
             existingProduct.setLogicalResourceType(updatedLogicalResource.getLogicalResourceType());
-            existingProduct.setLogicalResourceFromat(updatedLogicalResource.getLogicalResourceFromat());
+            existingProduct.setLogicalResourceFormat(updatedLogicalResource.getLogicalResourceFormat());
             existingProduct.setServiceId(updatedLogicalResource.getServiceId());
 
             return logicalResourceRepository.save(existingProduct);

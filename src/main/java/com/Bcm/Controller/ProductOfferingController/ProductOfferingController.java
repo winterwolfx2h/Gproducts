@@ -46,12 +46,19 @@ public class ProductOfferingController {
             ensureRelatedEntitiesExist(productOffering);
             ProductOffering createdProduct = productOfferingService.create(productOffering);
             invalidateProductOfferingsCache();
+
             return ResponseEntity.ok(createdProduct);
         } catch (ProductOfferingAlreadyExistsException e) {
             return ResponseEntity.badRequest().body("A product offering with the same name already exists.");
-        } catch (Exception e) {
+        }
+
+
+        /*
+        catch (Exception e) {
             return ResponseEntity.badRequest().body("An error occurred while creating the product offering.");
         }
+
+         */
     }
 
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
@@ -66,7 +73,7 @@ public class ProductOfferingController {
         ensureLogicalResourceExists(productOffering.getLogicalResource());
         ensurePhysicalResourceExists(productOffering.getPhysicalResource());
         ensureBusinessProcessExists(productOffering.getBusinessProcess());
-        ensureEligibilityExists(productOffering.getEligibility());
+        //ensureEligibilityExists(productOffering.getEligibility());
         ensureFamilyExists(productOffering.getFamilyName());
     }
 
@@ -180,7 +187,7 @@ public class ProductOfferingController {
             existingProductOffering.setPoType(updatedProductOffering.getPoType());
             existingProductOffering.setFamilyName(updatedProductOffering.getFamilyName());
             existingProductOffering.setSubFamily(updatedProductOffering.getSubFamily());
-            existingProductOffering.setShdes(updatedProductOffering.getShdes());
+
             existingProductOffering.setParent(updatedProductOffering.getParent());
             existingProductOffering.setExternalLinkId(updatedProductOffering.getExternalLinkId());
             existingProductOffering.setProductSpecification(updatedProductOffering.getProductSpecification());
@@ -190,7 +197,7 @@ public class ProductOfferingController {
             existingProductOffering.setLogicalResource(updatedProductOffering.getLogicalResource());
             existingProductOffering.setPhysicalResource(updatedProductOffering.getPhysicalResource());
             existingProductOffering.setBusinessProcess(updatedProductOffering.getBusinessProcess());
-            existingProductOffering.setEligibility(updatedProductOffering.getEligibility());
+            //existingProductOffering.setEligibility(updatedProductOffering.getEligibility());
 
             ProductOffering updatedProductOfferingResult = productOfferingService.update(po_code, existingProductOffering);
             return ResponseEntity.ok(updatedProductOfferingResult);

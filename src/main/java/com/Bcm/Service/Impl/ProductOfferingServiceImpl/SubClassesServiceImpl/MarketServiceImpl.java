@@ -3,17 +3,18 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl.SubClassesServiceImpl;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.MarketRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.MarketService;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
+@RequiredArgsConstructor
 @Service
 public class MarketServiceImpl implements MarketService {
 
-    @Autowired
-    MarketRepository marketRepository;
+    final MarketRepository marketRepository;
 
     @Override
     public Market create(Market market) {
@@ -27,7 +28,6 @@ public class MarketServiceImpl implements MarketService {
             throw new RuntimeException("Invalid argument provided for creating Market");
         }
     }
-
 
     @Override
     public List<Market> read() {

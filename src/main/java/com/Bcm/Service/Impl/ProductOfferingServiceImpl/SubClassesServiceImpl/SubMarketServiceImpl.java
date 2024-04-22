@@ -16,13 +16,18 @@ public class SubMarketServiceImpl implements SubMarketService {
     SubMarketRepository SubMarketRepository;
 
     @Override
-    public SubMarket create(SubMarket SubMarket) {
+    public SubMarket create(SubMarket subMarket) {
         try {
-            return SubMarketRepository.save(SubMarket);
+            Optional<SubMarket> existingSubMarketOptional = SubMarketRepository.findByName(subMarket.getName());
+            if (existingSubMarketOptional.isPresent()) {
+                throw new RuntimeException("SubMarket with name '" + subMarket.getName() + "' already exists.");
+            }
+            return SubMarketRepository.save(subMarket);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for creating SubMarket");
         }
     }
+
 
     @Override
     public List<SubMarket> read() {

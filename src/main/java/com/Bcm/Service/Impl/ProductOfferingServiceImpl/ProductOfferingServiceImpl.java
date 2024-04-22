@@ -52,7 +52,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         if (existingProductOptional.isPresent()) {
             ProductOffering existingProduct = existingProductOptional.get();
             existingProduct.setName(updatedProductOffering.getName());
-
             existingProduct.setParent(updatedProductOffering.getParent());
             existingProduct.setExternalLinkId(updatedProductOffering.getExternalLinkId());
             existingProduct.setProductSpecification(updatedProductOffering.getProductSpecification());
@@ -63,7 +62,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             existingProduct.setPhysicalResource(updatedProductOffering.getPhysicalResource());
             existingProduct.setBusinessProcess(updatedProductOffering.getBusinessProcess());
             existingProduct.getEligibilityChannels();
-
 
             try {
                 if (updatedProductOffering.getName() == null || updatedProductOffering.getDescription() == null) {

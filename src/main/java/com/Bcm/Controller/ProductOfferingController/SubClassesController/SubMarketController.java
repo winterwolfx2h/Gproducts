@@ -3,6 +3,7 @@ package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubMarketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,12 +18,16 @@ public class SubMarketController {
     private SubMarketService subMarketService;
 
     @PostMapping("/addSubMarket")
-    public ResponseEntity<SubMarket> createSubMarket(@RequestBody SubMarket SubMarket) {
+    public ResponseEntity<?> createSubMarket(@RequestBody SubMarket subMarket) {
         try {
-            SubMarket createdSubMarket = subMarketService.create(SubMarket);
+            SubMarket createdSubMarket = subMarketService.create(subMarket);
             return ResponseEntity.ok(createdSubMarket);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(500).body(null);
+            if (e.getMessage().contains("already exists")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            } else {
+                return ResponseEntity.status(500).body("An error occurred while creating the SubMarket.");
+            }
         }
     }
 

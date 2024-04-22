@@ -24,6 +24,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -86,7 +87,6 @@ public class ProductOfferingController {
             return ResponseEntity.badRequest().body("A product offering with the same name already exists.");
         }
     }
-
 
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public void invalidateProductOfferingsCache() {
@@ -195,44 +195,54 @@ public class ProductOfferingController {
         return ResponseEntity.ok(productOffering);
     }
 
+
     @PutMapping("/{po_code}")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> updateProductOffering(
             @PathVariable("po_code") int po_code,
-            @RequestBody ProductOffering updatedProductOffering) {
+            @RequestBody ProductOffering updatedProductOffering
+    ) {
         try {
             ProductOffering existingProductOffering = productOfferingService.findById(po_code);
             if (existingProductOffering == null) {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Offering with ID " + po_code + " not found.");
             }
 
-            existingProductOffering.setName(updatedProductOffering.getName());
-            existingProductOffering.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
-            existingProductOffering.setEffectiveTo(updatedProductOffering.getEffectiveTo());
-            existingProductOffering.setDescription(updatedProductOffering.getDescription());
-            existingProductOffering.setDetailedDescription(updatedProductOffering.getDetailedDescription());
-            existingProductOffering.setPoType(updatedProductOffering.getPoType());
-            existingProductOffering.setFamilyName(updatedProductOffering.getFamilyName());
-            existingProductOffering.setSubFamily(updatedProductOffering.getSubFamily());
+            if (!Objects.equals(existingProductOffering.getName(), updatedProductOffering.getName())) {
+                existingProductOffering.setName(updatedProductOffering.getName());
+                existingProductOffering.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
+                existingProductOffering.setEffectiveTo(updatedProductOffering.getEffectiveTo());
+                existingProductOffering.setDescription(updatedProductOffering.getDescription());
+                existingProductOffering.setDetailedDescription(updatedProductOffering.getDetailedDescription());
+                existingProductOffering.setPoType(updatedProductOffering.getPoType());
+                existingProductOffering.setFamilyName(updatedProductOffering.getFamilyName());
+                existingProductOffering.setSubFamily(updatedProductOffering.getSubFamily());
+                existingProductOffering.setParent(updatedProductOffering.getParent());
+                existingProductOffering.setExternalLinkId(updatedProductOffering.getExternalLinkId());
+                existingProductOffering.setProductSpecification(updatedProductOffering.getProductSpecification());
+                existingProductOffering.setPoAttributes(updatedProductOffering.getPoAttributes());
+                existingProductOffering.setProductRelation(updatedProductOffering.getProductRelation());
+                existingProductOffering.setProductOfferRelation(updatedProductOffering.getProductOfferRelation());
+                existingProductOffering.setLogicalResource(updatedProductOffering.getLogicalResource());
+                existingProductOffering.setPhysicalResource(updatedProductOffering.getPhysicalResource());
+                existingProductOffering.setBusinessProcess(updatedProductOffering.getBusinessProcess());
+                existingProductOffering.setEligibilityChannels(updatedProductOffering.getEligibilityChannels());
+            }
 
-            existingProductOffering.setParent(updatedProductOffering.getParent());
-            existingProductOffering.setExternalLinkId(updatedProductOffering.getExternalLinkId());
-            existingProductOffering.setProductSpecification(updatedProductOffering.getProductSpecification());
-            existingProductOffering.setPoAttributes(updatedProductOffering.getPoAttributes());
-            existingProductOffering.setProductRelation(updatedProductOffering.getProductRelation());
-            existingProductOffering.setProductOfferRelation(updatedProductOffering.getProductOfferRelation());
-            existingProductOffering.setLogicalResource(updatedProductOffering.getLogicalResource());
-            existingProductOffering.setPhysicalResource(updatedProductOffering.getPhysicalResource());
-            existingProductOffering.setBusinessProcess(updatedProductOffering.getBusinessProcess());
-            existingProductOffering.setEligibilityChannels(updatedProductOffering.getEligibilityChannels());
+            ensureRelatedEntitiesExist(updatedProductOffering);
 
-            ProductOffering updatedProductOfferingResult = productOfferingService.update(po_code, existingProductOffering);
-            return ResponseEntity.ok(updatedProductOfferingResult);
+            ProductOffering updatedResult = productOfferingService.update(po_code, existingProductOffering);
+
+            return ResponseEntity.ok(updatedResult);
+
+        } catch (ProductOfferingAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("A Product Offering with the same name already exists.");
         } catch (InvalidInputException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while updating the Product Offering.");
         }
     }
-
 
     @DeleteMapping("/{po_code}")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)

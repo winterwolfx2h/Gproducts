@@ -73,4 +73,3 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
         return logicalResourceRepository.existsById(logResourceId);
     }
 }
-

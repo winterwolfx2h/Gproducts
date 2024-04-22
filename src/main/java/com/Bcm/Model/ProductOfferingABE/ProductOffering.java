@@ -71,15 +71,4 @@ public class ProductOffering extends Product {
     @Column(name = "channel")
     private List<String> eligibilityChannels;
 
-   /*
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "eligibilityId", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Eligibility eligibility;
-
-    */
-
-
-
 }

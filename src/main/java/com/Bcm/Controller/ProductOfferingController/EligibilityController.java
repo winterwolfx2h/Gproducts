@@ -1,5 +1,6 @@
 package com.Bcm.Controller.ProductOfferingController;
 
+import com.Bcm.Exception.AllChannelsAlreadyExistException;
 import com.Bcm.Model.ProductOfferingABE.Eligibility;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +21,12 @@ public class EligibilityController {
     final EligibilityService eligibilityService;
 
     @PostMapping("/addEligibility")
-    @CacheEvict(value = "EligibilityCache", allEntries = true)
     public ResponseEntity<?> createEligibility(@RequestBody List<Eligibility> eligibilityList) {
         try {
             List<Eligibility> createdEligibilities = eligibilityService.create(eligibilityList);
             return ResponseEntity.ok(createdEligibilities);
+        } catch (AllChannelsAlreadyExistException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
@@ -90,3 +92,4 @@ public class EligibilityController {
     public void invalidateEligibilityCache() {
     }
 }
+

@@ -20,6 +20,9 @@ public interface POPlanRepository extends JpaRepository<POPlan, Integer> {
 
     boolean existsByMarketAndSubMarket(Market market, SubMarket subMarket);
 
+    boolean existsBySHDES(String SHDES);
+
+
     @Query("SELECT p FROM POPlan p WHERE p.DES LIKE %:DES% ")
     List<POPlan> searchByKeyword(String DES);
 

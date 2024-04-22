@@ -30,5 +30,6 @@ public interface POPlanService {
 
     boolean existsByMarketAndSubMarket(Market market, SubMarket subMarket);
 
+    boolean existsBySHDES(String SHDES);
 
 }

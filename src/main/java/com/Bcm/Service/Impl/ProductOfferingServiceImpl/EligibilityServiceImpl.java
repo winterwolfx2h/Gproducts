@@ -1,23 +1,44 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
+import com.Bcm.Exception.AllChannelsAlreadyExistException;
 import com.Bcm.Model.ProductOfferingABE.Eligibility;
 import com.Bcm.Repository.ProductOfferingRepo.EligibilityRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
+@RequiredArgsConstructor
 @Service
 public class EligibilityServiceImpl implements EligibilityService {
 
-    @Autowired
-    EligibilityRepository eligibilityRepository;
+
+    final EligibilityRepository eligibilityRepository;
 
     @Override
     public List<Eligibility> create(List<Eligibility> eligibilityList) {
-        return eligibilityRepository.saveAll(eligibilityList);
+        List<Eligibility> nonDuplicateEligibilities = new ArrayList<>();
+        List<Eligibility> existingEligibilities = new ArrayList<>();
+
+        for (Eligibility eligibility : eligibilityList) {
+            if (existsByChannel(eligibility.getChannel())) {
+                existingEligibilities.add(eligibility);
+            } else {
+                nonDuplicateEligibilities.add(eligibility);
+            }
+        }
+
+        if (nonDuplicateEligibilities.isEmpty()) {
+            throw new AllChannelsAlreadyExistException("All the channels are already existing");
+        }
+
+        eligibilityRepository.saveAll(nonDuplicateEligibilities);
+
+        return nonDuplicateEligibilities;
     }
 
 
@@ -59,17 +80,25 @@ public class EligibilityServiceImpl implements EligibilityService {
 
     @Override
     public Eligibility findByChannel(String channel) {
-        try {
-            Optional<Eligibility> optionalEligibility = eligibilityRepository.findByChannel(channel);
-            return optionalEligibility.orElseThrow(() -> new RuntimeException("Eligibility  with " + channel + " not found"));
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid argument provided for finding Eligibility ");
+        List<Eligibility> eligibilities = eligibilityRepository.findByChannel(channel);
+        if (!eligibilities.isEmpty()) {
+            return eligibilities.get(0);
+        } else {
+            throw new RuntimeException("Eligibility with channel '" + channel + "' not found");
         }
     }
+
 
     @Override
     public boolean existsById(int eligibilityId) {
         return eligibilityRepository.existsById(eligibilityId);
+    }
+
+
+    @Override
+    public boolean existsByChannel(String channel) {
+        List<Eligibility> eligibilities = eligibilityRepository.findByChannel(channel);
+        return !eligibilities.isEmpty();
     }
 }
 

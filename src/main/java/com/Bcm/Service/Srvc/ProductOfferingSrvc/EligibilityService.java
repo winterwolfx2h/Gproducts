@@ -23,5 +23,7 @@ public interface EligibilityService {
 
     boolean existsById(int eligibilityId);
 
+    boolean existsByChannel(String channel);
 
 }
+

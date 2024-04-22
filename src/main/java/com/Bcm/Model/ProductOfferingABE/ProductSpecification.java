@@ -31,7 +31,10 @@ public class ProductSpecification {
     @Column(name = "shdes")
     private List<String> poPlanSHDES;
 
-    @Column(name = "externalId", nullable = true)
-    private String externalId;
+    @Column(name = "BS_externalId", nullable = true)
+    private String BS_externalId;
+
+    @Column(name = "CS_externalId", nullable = true)
+    private String CS_externalId;
 
 }

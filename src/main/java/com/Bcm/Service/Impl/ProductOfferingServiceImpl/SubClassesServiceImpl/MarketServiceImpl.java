@@ -18,11 +18,16 @@ public class MarketServiceImpl implements MarketService {
     @Override
     public Market create(Market market) {
         try {
+            Optional<Market> existingMarket = marketRepository.findByName(market.getName());
+            if (existingMarket.isPresent()) {
+                throw new RuntimeException("Market with name " + market.getName() + " already exists");
+            }
             return marketRepository.save(market);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for creating Market");
         }
     }
+
 
     @Override
     public List<Market> read() {

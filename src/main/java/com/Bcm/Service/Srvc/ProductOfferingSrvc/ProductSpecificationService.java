@@ -1,5 +1,6 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 
+import com.Bcm.Model.ProductOfferingABE.POPlan;
 import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
 import org.springframework.stereotype.Service;
 
@@ -19,5 +20,10 @@ public interface ProductSpecificationService {
     ProductSpecification findById(int po_SpecCode);
 
     boolean existsById(int po_SpecCode);
+
+    POPlan findPOPlanBySHDES(String poPlanSHDES);
+
+    boolean existsByPoPlanSHDES(String poPlanSHDES);
+
 
 }

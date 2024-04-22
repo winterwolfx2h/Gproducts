@@ -17,12 +17,15 @@ public class MarketController {
     private MarketService marketService;
 
     @PostMapping("/addMarket")
-    public ResponseEntity<Market> createMarket(@RequestBody Market market) {
+    public ResponseEntity<String> createMarket(@RequestBody Market market) {
         try {
             Market createdMarket = marketService.create(market);
-            return ResponseEntity.ok(createdMarket);
+            return ResponseEntity.ok(createdMarket.toString());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(500).body(null);
+            if (e.getMessage().contains("already exists")) {
+                return ResponseEntity.status(409).body("Market with name '" + market.getName() + "' already exists");
+            }
+            return ResponseEntity.status(500).body("Internal server error");
         }
     }
 

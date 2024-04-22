@@ -161,4 +161,9 @@ public class POPlanServiceImpl implements POPlanService {
     public boolean existsById(int TMCODE) {
         return popRepository.existsById(TMCODE);
     }
+
+    @Override
+    public boolean existsBySHDES(String SHDES) {
+        return popRepository.existsBySHDES(SHDES);
+    }
 }

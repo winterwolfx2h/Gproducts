@@ -8,6 +8,7 @@ import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class ProductController {
     final ProductOfferingService productOfferingService;
 
     @GetMapping("/ProductList")
-    //@Cacheable(value = "productCache")
+    @Cacheable(value = "productCache")
     public ResponseEntity<?> getAllProduct() {
         try {
             List<Product> product = productService.read();
@@ -69,7 +70,7 @@ public class ProductController {
                         productOfferingDTO.setLogicalResource(productOffering.getLogicalResource());
                         productOfferingDTO.setPhysicalResource(productOffering.getPhysicalResource());
                         productOfferingDTO.setBusinessProcess(productOffering.getBusinessProcess());
-                       // productOfferingDTO.setEligibility(productOffering.getEligibility());
+                        // productOfferingDTO.setEligibility(productOffering.getEligibility());
                         return productOfferingDTO;
                     })
                     .collect(Collectors.toList());
@@ -103,6 +104,8 @@ public class ProductController {
                     dto.setSubFamily(productOffering.getSubFamily());
                     dto.setCategory(productOffering.getProductSpecification().getCategory());
                     dto.setPoPlanSHDES(productSpecification.getPoPlanSHDES());
+                    dto.setBS_externalId(productSpecification.getBS_externalId());
+                    dto.setCS_externalId(productSpecification.getCS_externalId());
                     dtos.add(dto);
                 }
             }

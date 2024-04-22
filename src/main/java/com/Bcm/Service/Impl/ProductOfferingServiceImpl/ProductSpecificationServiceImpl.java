@@ -1,25 +1,27 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
+import com.Bcm.Model.ProductOfferingABE.POPlan;
 import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
 import com.Bcm.Repository.ProductOfferingRepo.ProductSpecificationRepository;
+import com.Bcm.Service.Srvc.POPlanService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductSpecificationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ProductSpecificationServiceImpl implements ProductSpecificationService {
 
-    @Autowired
-    ProductSpecificationRepository productSpecificationRepository;
+    final ProductSpecificationRepository productSpecificationRepository;
+    final POPlanService poPlanService;
 
     @Override
     public ProductSpecification create(ProductSpecification productSpecification) {
         return productSpecificationRepository.save(productSpecification);
     }
-
     @Override
     public List<ProductSpecification> read() {
         return productSpecificationRepository.findAll();
@@ -32,11 +34,9 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
         if (existingProductOptional.isPresent()) {
             ProductSpecification existingProduct = existingProductOptional.get();
             existingProduct.setCategory(updatedproductSpecification.getCategory());
-
             existingProduct.getPoPlanSHDES();
-
-
-            existingProduct.setExternalId(updatedproductSpecification.getExternalId());
+            existingProduct.setBS_externalId(updatedproductSpecification.getBS_externalId());
+            existingProduct.setCS_externalId(updatedproductSpecification.getCS_externalId());
 
             return productSpecificationRepository.save(existingProduct);
         } else {
@@ -59,6 +59,23 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
     @Override
     public boolean existsById(int po_SpecCode) {
         return productSpecificationRepository.existsById(po_SpecCode);
+    }
+
+    @Override
+    public POPlan findPOPlanBySHDES(String poPlanSHDES) {
+        ProductSpecification productSpecification = productSpecificationRepository.findByPoPlanSHDES(poPlanSHDES);
+
+        if (productSpecification == null) {
+            throw new RuntimeException("ProductSpecification with poPlanSHDES " + poPlanSHDES + " not found");
+        }
+        String firstSHDES = productSpecification.getPoPlanSHDES().get(0);
+
+        return poPlanService.findBySHDES(firstSHDES);
+    }
+
+    @Override
+    public boolean existsByPoPlanSHDES(String poPlanSHDES) {
+        return productSpecificationRepository.existsByPoPlanSHDES(poPlanSHDES);
     }
 }
 

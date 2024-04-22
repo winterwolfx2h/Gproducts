@@ -28,10 +28,10 @@ public class ProductSpecificationController {
     @CacheEvict(value = "ProdSpecCache", allEntries = true)
     public ResponseEntity<?> createProductSpecification(@RequestBody ProductSpecification productSpecification) {
 
-        List<String> poPlanSHDES = productSpecification.getPoPlanSHDES(); // Assuming poPlanSHDES contains only shdes
+        List<String> poPlanSHDES = productSpecification.getPoPlanSHDES();
 
         List<POPlan> existingPOPlans = new ArrayList<>();
-        List<String> nonExistingShdes = new ArrayList<>(); // List to store non-existing shdes
+        List<String> nonExistingShdes = new ArrayList<>();
 
         for (String shdes : poPlanSHDES) {
             POPlan poPlan = poPlanService.findBySHDES(shdes);
@@ -43,7 +43,6 @@ public class ProductSpecificationController {
         }
 
         if (!nonExistingShdes.isEmpty()) {
-            // If any POPlan doesn't exist, return bad request
             StringBuilder errorMessage = new StringBuilder("The following POPlans do not exist:");
             for (String shdes : nonExistingShdes) {
                 errorMessage.append(" SHDES: ").append(shdes);
@@ -104,7 +103,8 @@ public class ProductSpecificationController {
             }
             existingProductSpecification.setCategory(productSpecification.getCategory());
             existingProductSpecification.getPoPlanSHDES();
-            existingProductSpecification.setExternalId(productSpecification.getExternalId());
+            existingProductSpecification.setBS_externalId(productSpecification.getBS_externalId());
+            existingProductSpecification.setCS_externalId(productSpecification.getCS_externalId());
 
 
             ProductSpecification updatedProductSpecification = productSpecificationService.update(po_SpecCode, existingProductSpecification);

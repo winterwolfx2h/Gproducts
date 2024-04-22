@@ -1,8 +1,10 @@
 package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
+import com.Bcm.Exception.FamilyAlreadyExistsException;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,14 +19,17 @@ public class FamilyController {
     private FamilyService familyService;
 
     @PostMapping("/addFamily")
-    public ResponseEntity<Family> createType(@RequestBody Family family) {
+    public ResponseEntity<?> createType(@RequestBody Family family) {
         try {
-            Family createdType = familyService.create(family);
-            return ResponseEntity.ok(createdType);
+            Family createdFamily = familyService.create(family);
+            return ResponseEntity.ok(createdFamily);
+        } catch (FamilyAlreadyExistsException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
+
 
     @GetMapping("/listFamily")
     public ResponseEntity<List<Family>> getAllFamilies() {

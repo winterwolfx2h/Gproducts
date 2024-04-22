@@ -7,6 +7,8 @@ import com.Bcm.Model.ProductOfferingABE.*;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductResourceABE.LogicalResource;
 import com.Bcm.Model.ProductResourceABE.PhysicalResource;
+import com.Bcm.Repository.ProductOfferingRepo.ProductSpecificationRepository;
+import com.Bcm.Service.Srvc.POPlanService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.*;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
@@ -19,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -38,11 +41,42 @@ public class ProductOfferingController {
     final BusinessProcessService businessProcessService;
     final EligibilityService eligibilityService;
     final FamilyService familyService;
+    final POPlanService poplanService;
+    final ProductSpecificationRepository productSpecificationRepository;
 
     @PostMapping("/addProdOff")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
         try {
+            String familyName = productOffering.getFamilyName();
+            if (!familyService.findByNameexist(familyName)) {
+                return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
+            }
+
+            List<String> poPlanSHDESList = productOffering.getProductSpecification().getPoPlanSHDES();
+            List<String> nonExistingPoPlanSHDESList = new ArrayList<>();
+            for (String poPlanSHDES : poPlanSHDESList) {
+                if (!poplanService.existsBySHDES(poPlanSHDES)) {
+                    nonExistingPoPlanSHDESList.add(poPlanSHDES);
+                }
+            }
+
+            if (!nonExistingPoPlanSHDESList.isEmpty()) {
+                return ResponseEntity.badRequest().body("POPlan(s) with SHDES '" + nonExistingPoPlanSHDESList.toString() + "' do(es) not exist.");
+            }
+
+            List<String> eligibilityChannels = productOffering.getEligibilityChannels();
+            List<String> nonExistingChannels = new ArrayList<>();
+            for (String channel : eligibilityChannels) {
+                if (!eligibilityService.existsByChannel(channel)) {
+                    nonExistingChannels.add(channel);
+                }
+            }
+
+            if (!nonExistingChannels.isEmpty()) {
+                return ResponseEntity.badRequest().body("Eligibility with channels '" + nonExistingChannels.toString() + "' do(es) not exist.");
+            }
+
             ensureRelatedEntitiesExist(productOffering);
             ProductOffering createdProduct = productOfferingService.create(productOffering);
             invalidateProductOfferingsCache();
@@ -51,15 +85,8 @@ public class ProductOfferingController {
         } catch (ProductOfferingAlreadyExistsException e) {
             return ResponseEntity.badRequest().body("A product offering with the same name already exists.");
         }
-
-
-        /*
-        catch (Exception e) {
-            return ResponseEntity.badRequest().body("An error occurred while creating the product offering.");
-        }
-
-         */
     }
+
 
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public void invalidateProductOfferingsCache() {
@@ -73,7 +100,7 @@ public class ProductOfferingController {
         ensureLogicalResourceExists(productOffering.getLogicalResource());
         ensurePhysicalResourceExists(productOffering.getPhysicalResource());
         ensureBusinessProcessExists(productOffering.getBusinessProcess());
-        //ensureEligibilityExists(productOffering.getEligibility());
+        //ensureEligibilityExists((productOffering).getEligibility());
         ensureFamilyExists(productOffering.getFamilyName());
     }
 
@@ -197,7 +224,7 @@ public class ProductOfferingController {
             existingProductOffering.setLogicalResource(updatedProductOffering.getLogicalResource());
             existingProductOffering.setPhysicalResource(updatedProductOffering.getPhysicalResource());
             existingProductOffering.setBusinessProcess(updatedProductOffering.getBusinessProcess());
-            //existingProductOffering.setEligibility(updatedProductOffering.getEligibility());
+            existingProductOffering.setEligibilityChannels(updatedProductOffering.getEligibilityChannels());
 
             ProductOffering updatedProductOfferingResult = productOfferingService.update(po_code, existingProductOffering);
             return ResponseEntity.ok(updatedProductOfferingResult);

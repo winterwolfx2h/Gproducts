@@ -28,34 +28,34 @@ public class ProductSpecificationController {
     @CacheEvict(value = "ProdSpecCache", allEntries = true)
     public ResponseEntity<?> createProductSpecification(@RequestBody ProductSpecification productSpecification) {
 
-        List<String> poPlanSHDES = productSpecification.getPoPlanSHDES();
+        List<String> poPlanName = productSpecification.getPoPlanName();
 
         List<POPlan> existingPOPlans = new ArrayList<>();
-        List<String> nonExistingShdes = new ArrayList<>();
+        List<String> nonExistingName = new ArrayList<>();
 
-        for (String shdes : poPlanSHDES) {
-            POPlan poPlan = poPlanService.findBySHDES(shdes);
+        for (String name : poPlanName) {
+            POPlan poPlan = poPlanService.findByName(name);
             if (poPlan != null) {
                 existingPOPlans.add(poPlan);
             } else {
-                nonExistingShdes.add(shdes);
+                nonExistingName.add(name);
             }
         }
 
-        if (!nonExistingShdes.isEmpty()) {
+        if (!nonExistingName.isEmpty()) {
             StringBuilder errorMessage = new StringBuilder("The following POPlans do not exist:");
-            for (String shdes : nonExistingShdes) {
-                errorMessage.append(" SHDES: ").append(shdes);
+            for (String name : nonExistingName) {
+                errorMessage.append(" name: ").append(name);
             }
             return ResponseEntity.badRequest().body(errorMessage.toString());
         }
 
         if (!existingPOPlans.isEmpty()) {
-            List<String> existingShdes = new ArrayList<>();
+            List<String> existingName = new ArrayList<>();
             for (POPlan poPlan : existingPOPlans) {
-                existingShdes.add(poPlan.getSHDES());
+                existingName.add(poPlan.getName());
             }
-            productSpecification.setPoPlanSHDES(existingShdes);
+            productSpecification.setPoPlanName(existingName);
         }
 
         ProductSpecification createdProductSpecification = productSpecificationService.create(productSpecification);
@@ -95,14 +95,14 @@ public class ProductSpecificationController {
             if (existingProductSpecification == null) {
                 return ResponseEntity.notFound().build();
             }
-            String poPlanName = productSpecification.getPoPlanSHDES().toString();
-            POPlan existingPoPlan = poPlanService.findBySHDES(poPlanName);
+            String poPlanName = productSpecification.getPoPlanName().toString();
+            POPlan existingPoPlan = poPlanService.findByName(poPlanName);
 
             if (existingPoPlan == null) {
                 return ResponseEntity.badRequest().body("Poplan not found.");
             }
             existingProductSpecification.setCategory(productSpecification.getCategory());
-            existingProductSpecification.getPoPlanSHDES();
+            existingProductSpecification.getPoPlanName();
             existingProductSpecification.setBS_externalId(productSpecification.getBS_externalId());
             existingProductSpecification.setCS_externalId(productSpecification.getCS_externalId());
 

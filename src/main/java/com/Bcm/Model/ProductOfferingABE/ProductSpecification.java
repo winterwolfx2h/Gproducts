@@ -28,8 +28,8 @@ public class ProductSpecification {
 
     @ElementCollection
     @CollectionTable(name = "product_specification_po_plan", joinColumns = @JoinColumn(name = "po_spec_code"))
-    @Column(name = "shdes")
-    private List<String> poPlanSHDES;
+    @Column(name = "name")
+    private List<String> poPlanName;
 
     @Column(name = "BS_externalId", nullable = true)
     private String BS_externalId;

@@ -25,11 +25,14 @@ public class POPlan {
     @Column(name = "TMCODE", nullable = false)
     private int TMCODE;
 
-    @Column(name = "DES", nullable = false)
-    private String DES;
+    @Column(name = "name", nullable = false)
+    private String name;
 
-    @Column(name = "SHDES", nullable = false)
-    private String SHDES;
+    @Column(name = "detailedDescription", nullable = false)
+    private String detailedDescription;
+
+    @Column(name = "externalId", nullable = false)
+    private String externalId;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "po_MarketCode", nullable = false)

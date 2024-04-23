@@ -17,7 +17,7 @@ public class ProductSpecificationDTO {
     private String familyName;
     private String subFamily;
     private String category;
-    private List<String> poPlanSHDES;
+    private List<String> poPlanName;
     private String BS_externalId;
     private String CS_externalId;
 

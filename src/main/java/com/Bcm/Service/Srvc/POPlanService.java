@@ -20,9 +20,9 @@ public interface POPlanService {
 
     POPlan findById(int TMCODE);
 
-    List<POPlan> searchByKeyword(String DES);
+    List<POPlan> searchByKeyword(String detailedDescription);
 
-    POPlan findBySHDES(String SHDES);
+    POPlan findByName(String name);
 
     POPlan changePoplanStatus(int TMCODE);
 
@@ -30,6 +30,6 @@ public interface POPlanService {
 
     boolean existsByMarketAndSubMarket(Market market, SubMarket subMarket);
 
-    boolean existsBySHDES(String SHDES);
+    boolean existsByName(String name);
 
 }

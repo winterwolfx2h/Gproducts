@@ -61,7 +61,8 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             existingProduct.setLogicalResource(updatedProductOffering.getLogicalResource());
             existingProduct.setPhysicalResource(updatedProductOffering.getPhysicalResource());
             existingProduct.setBusinessProcess(updatedProductOffering.getBusinessProcess());
-            existingProduct.getEligibilityChannels();
+            existingProduct.setEligibilityChannels(updatedProductOffering.getEligibilityChannels());
+            //existingProduct.getEligibilityChannels();
 
             try {
                 if (updatedProductOffering.getName() == null || updatedProductOffering.getDescription() == null) {

@@ -34,7 +34,7 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
         if (existingProductOptional.isPresent()) {
             ProductSpecification existingProduct = existingProductOptional.get();
             existingProduct.setCategory(updatedproductSpecification.getCategory());
-            existingProduct.getPoPlanSHDES();
+            existingProduct.getPoPlanName();
             existingProduct.setBS_externalId(updatedproductSpecification.getBS_externalId());
             existingProduct.setCS_externalId(updatedproductSpecification.getCS_externalId());
 
@@ -62,20 +62,20 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
     }
 
     @Override
-    public POPlan findPOPlanBySHDES(String poPlanSHDES) {
-        ProductSpecification productSpecification = productSpecificationRepository.findByPoPlanSHDES(poPlanSHDES);
+    public POPlan findPOPlanByName(String poPlanName) {
+        ProductSpecification productSpecification = productSpecificationRepository.findBypoPlanName(poPlanName);
 
         if (productSpecification == null) {
-            throw new RuntimeException("ProductSpecification with poPlanSHDES " + poPlanSHDES + " not found");
+            throw new RuntimeException("ProductSpecification with poPlanName " + poPlanName + " not found");
         }
-        String firstSHDES = productSpecification.getPoPlanSHDES().get(0);
+        String firstpoPlanName = productSpecification.getPoPlanName().get(0);
 
-        return poPlanService.findBySHDES(firstSHDES);
+        return poPlanService.findByName(firstpoPlanName);
     }
 
     @Override
-    public boolean existsByPoPlanSHDES(String poPlanSHDES) {
-        return productSpecificationRepository.existsByPoPlanSHDES(poPlanSHDES);
+    public boolean existsByPoPlanName(String poPlanName) {
+        return productSpecificationRepository.existsBypoPlanName(poPlanName);
     }
 }
 

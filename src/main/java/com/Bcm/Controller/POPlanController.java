@@ -78,8 +78,9 @@ public class POPlanController {
             if (existingMarket == null || existingSubMarket == null) {
                 return ResponseEntity.badRequest().body("Market or SubMarket not found.");
             }
-            existingPlan.setDES(poPlan.getDES());
-            existingPlan.setSHDES(poPlan.getSHDES());
+            existingPlan.setName(poPlan.getName());
+            existingPlan.setDetailedDescription(poPlan.getDetailedDescription());
+            existingPlan.setExternalId(poPlan.getExternalId());
             existingPlan.setMarket(existingMarket);
             existingPlan.setSubMarket(existingSubMarket);
 

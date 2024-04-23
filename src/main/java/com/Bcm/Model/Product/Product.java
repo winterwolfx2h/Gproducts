@@ -52,6 +52,9 @@ public class Product {
     @Column(name = "subFamily", nullable = false)
     private String subFamily;
 
+    @Column(name = "status", nullable = false)
+    private String status;
+
     public Product convertToProduct() {
         Product product = new Product();
         product.setProduct_id(this.getProduct_id());

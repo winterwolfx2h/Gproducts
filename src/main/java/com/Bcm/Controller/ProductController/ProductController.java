@@ -1,10 +1,12 @@
 package com.Bcm.Controller.ProductController;
 
 import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Exception.ServiceLogicException;
 import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.Product.ProductSpecificationDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
+import com.Bcm.Model.ServiceABE.ServiceSpecConfig;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +43,7 @@ public class ProductController {
     @GetMapping("/productsWithPOBasicPoType")
     public ResponseEntity<?> getProductsByPOBasicPoType() {
         try {
-            String poType = "PO-Basic"; // Change this to the desired poType value
+            String poType = "PO-Basic";
             List<ProductOffering> productOfferings = productOfferingService.findByPoType(poType);
 
             if (productOfferings.isEmpty()) {

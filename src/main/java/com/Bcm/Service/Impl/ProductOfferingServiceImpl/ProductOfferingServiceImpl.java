@@ -26,6 +26,8 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new ProductOfferingAlreadyExistsException("A product offering with the same name already exists.");
         }
 
+        productOffering.setStatus("Working state");
+
         try {
             return productOfferingRepository.save(productOffering);
         } catch (DataIntegrityViolationException e) {
@@ -34,7 +36,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new RuntimeException("An unexpected error occurred while creating product offering", e);
         }
     }
-
 
     @Override
     public List<ProductOffering> read() {
@@ -160,4 +161,40 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new RuntimeException("An unexpected error occurred while searching for product offerings by family name: " + familyName, e);
         }
     }
+
+
+    @Override
+    public ProductOffering changeProductOfferingStatus(int po_code) {
+        try {
+            ProductOffering existingProduct = findById(po_code);
+
+            switch (existingProduct.getStatus()) {
+                case "Working state":
+                    existingProduct.setStatus("Validated");
+                    break;
+
+                case "Validated":
+                    existingProduct.setStatus("Suspended");
+                    break;
+
+                case "Suspended":
+                    throw new ProductOfferingLogicException("Product " + existingProduct.getName() + " isn't fit to be offered for sale anymore.");
+
+                default:
+                    throw new InvalidInputException("Invalid status transition.");
+            }
+
+            return productOfferingRepository.save(existingProduct);
+
+        } catch (ResourceNotFoundException e) {
+            throw new RuntimeException("Product Offering with ID \"" + po_code + "\" not found", e);
+        } catch (ProductOfferingLogicException e) {
+            throw new ProductOfferingLogicException(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while changing Product status", e);
+        }
+    }
+
+
+
 }

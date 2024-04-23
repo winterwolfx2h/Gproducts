@@ -1,8 +1,7 @@
 package com.Bcm.Controller.ProductOfferingController;
 
-import com.Bcm.Exception.ErrorMessage;
-import com.Bcm.Exception.InvalidInputException;
-import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
+import com.Bcm.Exception.*;
+import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.ProductOfferingABE.*;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductResourceABE.LogicalResource;
@@ -266,4 +265,18 @@ public class ProductOfferingController {
                 request.getDescription(false));
         return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @PutMapping("/changeStatus/{po_code}")
+    public ResponseEntity<?> changeProductStatus(@PathVariable int po_code) {
+        try {
+            ProductOffering updatedProduct = productOfferingService.changeProductOfferingStatus(po_code);
+            return ResponseEntity.ok(updatedProduct);
+        } catch (ProductOfferingLogicException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+
 }

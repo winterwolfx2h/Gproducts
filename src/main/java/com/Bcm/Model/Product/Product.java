@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -50,7 +49,7 @@ public class Product {
     @Column(name = "family_name", nullable = false)
     private String familyName;
 
-    @Column(name = "subFamily", nullable = false  )
+    @Column(name = "subFamily", nullable = false)
     private String subFamily;
 
     public Product convertToProduct() {

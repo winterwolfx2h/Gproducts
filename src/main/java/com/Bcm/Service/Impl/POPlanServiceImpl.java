@@ -148,7 +148,7 @@ public class POPlanServiceImpl implements POPlanService {
                     break;
 
                 case "Suspended":
-                    throw new BusinessLogicException("POPLAN " + existingPlan.getName() +" isn't fit to be offered for sale anymore.");
+                    throw new BusinessLogicException("POPLAN " + existingPlan.getName() + " isn't fit to be offered for sale anymore.");
 
                 default:
                     throw new InvalidInputException("Invalid status transition.");

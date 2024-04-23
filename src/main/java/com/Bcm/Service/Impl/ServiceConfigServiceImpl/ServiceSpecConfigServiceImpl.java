@@ -1,9 +1,6 @@
 package com.Bcm.Service.Impl.ServiceConfigServiceImpl;
 
-import com.Bcm.Exception.DatabaseOperationException;
-import com.Bcm.Exception.InvalidInputException;
-import com.Bcm.Exception.ResourceNotFoundException;
-import com.Bcm.Exception.ServiceAlreadyExistsException;
+import com.Bcm.Exception.*;
 import com.Bcm.Model.ServiceABE.ServiceSpecConfig;
 import com.Bcm.Repository.ServiceConfigRepo.ServiceSpecConfigRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.ServiceSpecConfigService;
@@ -28,7 +25,7 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
             throw new ServiceAlreadyExistsException("Service with the same name already exists");
         }
         try {
-            serviceSpecConfig.setStatus("Suspendu");
+            serviceSpecConfig.setStatus("Working state");
             return serviceSpecConfigRepository.save(serviceSpecConfig);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseOperationException("Error creating ServiceSpecConfig", e);
@@ -93,22 +90,37 @@ public class ServiceSpecConfigServiceImpl implements ServiceSpecConfigService {
         }
     }
 
-    @Override
-    public ServiceSpecConfig changePoplanStatus(int SSC_code) {
+    public ServiceSpecConfig changeServiceStatus(int SSC_code) {
         try {
-            ServiceSpecConfig existingServiceSpecConfig = findById(SSC_code);
+            ServiceSpecConfig existingService = findById(SSC_code);
 
-            if (existingServiceSpecConfig.getStatus().equals("Suspendu")) {
-                existingServiceSpecConfig.setStatus("Actif");
-            } else {
-                existingServiceSpecConfig.setStatus("Suspendu");
+            switch (existingService.getStatus()) {
+                case "Working state":
+                    existingService.setStatus("Validated");
+                    break;
+
+                case "Validated":
+                    existingService.setStatus("Suspended");
+                    break;
+
+                case "Suspended":
+                    throw new ServiceLogicException("ServiceSpecConfig " + existingService.getServiceSpecType() + " isn't fit to be offered for sale anymore.");
+
+                default:
+                    throw new InvalidInputException("Invalid status transition.");
             }
 
-            return serviceSpecConfigRepository.save(existingServiceSpecConfig);
+            return serviceSpecConfigRepository.save(existingService);
+
+        } catch (ServiceLogicException e) {
+            throw e;
+        } catch (ResourceNotFoundException e) {
+            throw new RuntimeException("ServiceSpecConfig with ID \"" + SSC_code + "\" not found", e);
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred while changing ServiceSpecConfig status", e);
         }
     }
+
 
     private void validateNotNullFields(ServiceSpecConfig serviceSpecConfig) {
         if (serviceSpecConfig.getServiceSpecType() == null) {

@@ -1,6 +1,7 @@
 package com.Bcm.Controller.ServiceController;
 
 import com.Bcm.Exception.ServiceAlreadyExistsException;
+import com.Bcm.Exception.ServiceLogicException;
 import com.Bcm.Model.ServiceABE.ServiceSpecConfig;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.ServiceSpecConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,10 +78,16 @@ public class ServiceSpecConfigController {
     @PutMapping("/changeStatus/{SSC_code}")
     public ResponseEntity<?> changeServiceSpecConfigStatus(@PathVariable int SSC_code) {
         try {
-            ServiceSpecConfig updatedPlan = serviceSpecConfigService.changePoplanStatus(SSC_code);
-            return ResponseEntity.ok(updatedPlan);
+            ServiceSpecConfig updatedService = serviceSpecConfigService.changeServiceStatus(SSC_code);
+            return ResponseEntity.ok(updatedService);
+
+        } catch (ServiceLogicException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
+
+
 }

@@ -22,6 +22,7 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
     public ProductSpecification create(ProductSpecification productSpecification) {
         return productSpecificationRepository.save(productSpecification);
     }
+
     @Override
     public List<ProductSpecification> read() {
         return productSpecificationRepository.findAll();

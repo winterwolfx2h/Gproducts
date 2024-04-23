@@ -30,7 +30,7 @@ public class POPlanServiceImpl implements POPlanService {
     @Override
     public POPlan create(POPlan poPlan) {
         validateNotNullFields(poPlan);
-        if (popRepository.findBySHDES(poPlan.getSHDES()).isPresent()) {
+        if (popRepository.findByName(poPlan.getName()).isPresent()) {
             throw new ResourceAlreadyExistsException("A POPlan with the same name already exists.");
         }
         try {
@@ -58,14 +58,15 @@ public class POPlanServiceImpl implements POPlanService {
 
         if (existingPlanOptional.isPresent()) {
             POPlan existingPlan = existingPlanOptional.get();
-            if (!existingPlan.getSHDES().equals(poPlan.getSHDES())) {
-                if (popRepository.findBySHDES(poPlan.getSHDES()).isPresent()) {
+            if (!existingPlan.getName().equals(poPlan.getName())) {
+                if (popRepository.findByName(poPlan.getName()).isPresent()) {
                     throw new ResourceAlreadyExistsException("A POPlan with the updated name already exists.");
                 }
             }
 
-            existingPlan.setDES(poPlan.getDES());
-            existingPlan.setSHDES(poPlan.getSHDES());
+            existingPlan.setName(poPlan.getName());
+            existingPlan.setDetailedDescription(poPlan.getDetailedDescription());
+            existingPlan.setExternalId(poPlan.getExternalId());
             existingPlan.setMarket(poPlan.getMarket());
             existingPlan.setSubMarket(poPlan.getSubMarket());
             existingPlan.setStatus(poPlan.getStatus());
@@ -87,8 +88,8 @@ public class POPlanServiceImpl implements POPlanService {
     }
 
     private void validateNotNullFields(POPlan poPlan) {
-        if (poPlan.getDES() == null || poPlan.getSHDES() == null) {
-            throw new InvalidInputException("DES, description, and parent cannot be null");
+        if (poPlan.getName() == null) {
+            throw new InvalidInputException("POPLAN's name cannot be null");
         }
     }
 
@@ -117,19 +118,19 @@ public class POPlanServiceImpl implements POPlanService {
     }
 
     @Override
-    public List<POPlan> searchByKeyword(String DES) {
+    public List<POPlan> searchByKeyword(String detailedDescription) {
         try {
-            return popRepository.searchByKeyword(DES);
+            return popRepository.searchByKeyword(detailedDescription);
         } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while searching for POPlans by keyword: " + DES, e);
+            throw new RuntimeException("An unexpected error occurred while searching for POPlans by keyword: " + detailedDescription, e);
         }
     }
 
     @Override
-    public POPlan findBySHDES(String SHDES) {
+    public POPlan findByName(String name) {
         try {
-            Optional<POPlan> optionalPOPlan = popRepository.findBySHDES(SHDES);
-            return optionalPOPlan.orElseThrow(() -> new RuntimeException("POPlan with SHDES: " + SHDES + " not found"));
+            Optional<POPlan> optionalPOPlan = popRepository.findByName(name);
+            return optionalPOPlan.orElseThrow(() -> new RuntimeException("POPlan with name: " + name + " not found"));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding POPlan");
         }
@@ -163,7 +164,7 @@ public class POPlanServiceImpl implements POPlanService {
     }
 
     @Override
-    public boolean existsBySHDES(String SHDES) {
-        return popRepository.existsBySHDES(SHDES);
+    public boolean existsByName(String name) {
+        return popRepository.existsByName(name);
     }
 }

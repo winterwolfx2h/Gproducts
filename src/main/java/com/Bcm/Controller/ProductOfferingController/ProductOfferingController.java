@@ -54,16 +54,16 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
             }
 
-            List<String> poPlanSHDESList = productOffering.getProductSpecification().getPoPlanSHDES();
-            List<String> nonExistingPoPlanSHDESList = new ArrayList<>();
-            for (String poPlanSHDES : poPlanSHDESList) {
-                if (!poplanService.existsBySHDES(poPlanSHDES)) {
-                    nonExistingPoPlanSHDESList.add(poPlanSHDES);
+            List<String> poPlanNameList = productOffering.getProductSpecification().getPoPlanName();
+            List<String> nonExistingPoPlanNameList = new ArrayList<>();
+            for (String poPlanName : poPlanNameList) {
+                if (!poplanService.existsByName(poPlanName)) {
+                    nonExistingPoPlanNameList.add(poPlanName);
                 }
             }
 
-            if (!nonExistingPoPlanSHDESList.isEmpty()) {
-                return ResponseEntity.badRequest().body("POPlan(s) with SHDES '" + nonExistingPoPlanSHDESList.toString() + "' do(es) not exist.");
+            if (!nonExistingPoPlanNameList.isEmpty()) {
+                return ResponseEntity.badRequest().body("POPlan(s) with name '" + nonExistingPoPlanNameList.toString() + "' do(es) not exist.");
             }
 
             List<String> eligibilityChannels = productOffering.getEligibilityChannels();

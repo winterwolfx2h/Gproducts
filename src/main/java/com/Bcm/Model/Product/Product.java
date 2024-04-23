@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -43,10 +44,13 @@ public class Product {
     @Column(name = "poType", nullable = false)
     private String poType;
 
+    @Column(name = "paramDependent", nullable = false)
+    private Boolean paramDependent;
+
     @Column(name = "family_name", nullable = false)
     private String familyName;
 
-    @Column(name = "subFamily", nullable = false)
+    @Column(name = "subFamily", nullable = false  )
     private String subFamily;
 
     public Product convertToProduct() {
@@ -60,6 +64,8 @@ public class Product {
         product.setPoType(this.getPoType());
         product.setFamilyName(this.getFamilyName());
         product.setSubFamily(this.getSubFamily());
+        product.setParamDependent(this.getParamDependent());
+
 
         return product;
     }

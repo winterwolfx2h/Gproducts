@@ -16,15 +16,15 @@ public interface POPlanRepository extends JpaRepository<POPlan, Integer> {
 
     Optional<POPlan> findById(int TMCODE);
 
-    Optional<POPlan> findBySHDES(String SHDES);
+    Optional<POPlan> findByName(String name);
 
     boolean existsByMarketAndSubMarket(Market market, SubMarket subMarket);
 
-    boolean existsBySHDES(String SHDES);
+    boolean existsByName(String name);
 
 
-    @Query("SELECT p FROM POPlan p WHERE p.DES LIKE %:DES% ")
-    List<POPlan> searchByKeyword(String DES);
+    @Query("SELECT p FROM POPlan p WHERE p.detailedDescription LIKE %:detailedDescription% ")
+    List<POPlan> searchByKeyword(String detailedDescription);
 
     @Query("SELECT po FROM POPlan po JOIN po.market c WHERE  c.name = :name ")
     List<POPlan> findAllWithMarket(String name);

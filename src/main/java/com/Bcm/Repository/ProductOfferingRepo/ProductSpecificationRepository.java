@@ -10,8 +10,8 @@ import java.util.Optional;
 public interface ProductSpecificationRepository extends JpaRepository<ProductSpecification, Integer> {
     Optional<ProductSpecification> findById(int po_SpecCode);
 
-    @Query("SELECT ps FROM ProductSpecification ps WHERE :poPlanSHDES MEMBER OF ps.poPlanSHDES")
-    ProductSpecification findByPoPlanSHDES(@Param("poPlanSHDES") String poPlanSHDES);
+    @Query("SELECT ps FROM ProductSpecification ps WHERE :poPlanName MEMBER OF ps.poPlanName")
+    ProductSpecification findBypoPlanName(@Param("poPlanName") String poPlanName);
 
-    boolean existsByPoPlanSHDES(String poPlanSHDES);
+    boolean existsBypoPlanName(String poPlanName);
 }

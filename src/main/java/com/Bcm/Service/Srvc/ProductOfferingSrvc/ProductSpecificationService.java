@@ -21,9 +21,9 @@ public interface ProductSpecificationService {
 
     boolean existsById(int po_SpecCode);
 
-    POPlan findPOPlanBySHDES(String poPlanSHDES);
+    POPlan findPOPlanByName(String poPlanName);
 
-    boolean existsByPoPlanSHDES(String poPlanSHDES);
+    boolean existsByPoPlanName(String poPlanName);
 
 
 }

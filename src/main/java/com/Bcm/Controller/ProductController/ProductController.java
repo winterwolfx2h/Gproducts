@@ -58,9 +58,9 @@ public class ProductController {
                         productOfferingDTO.setEffectiveTo(product.getEffectiveTo());
                         productOfferingDTO.setDescription(product.getDescription());
                         productOfferingDTO.setPoType(product.getPoType());
+                        productOfferingDTO.setParamDependent(product.getParamDependent());
                         productOfferingDTO.setFamilyName(product.getFamilyName());
                         productOfferingDTO.setSubFamily(product.getSubFamily());
-
                         productOfferingDTO.setParent(productOffering.getParent());
                         productOfferingDTO.setExternalLinkId(productOffering.getExternalLinkId());
                         productOfferingDTO.setProductSpecification(productOffering.getProductSpecification());
@@ -70,7 +70,7 @@ public class ProductController {
                         productOfferingDTO.setLogicalResource(productOffering.getLogicalResource());
                         productOfferingDTO.setPhysicalResource(productOffering.getPhysicalResource());
                         productOfferingDTO.setBusinessProcess(productOffering.getBusinessProcess());
-                        // productOfferingDTO.setEligibility(productOffering.getEligibility());
+                        productOfferingDTO.setEligibilityChannels(productOffering.getEligibilityChannels());
                         return productOfferingDTO;
                     })
                     .collect(Collectors.toList());
@@ -103,7 +103,7 @@ public class ProductController {
                     dto.setFamilyName(productOffering.getFamilyName());
                     dto.setSubFamily(productOffering.getSubFamily());
                     dto.setCategory(productOffering.getProductSpecification().getCategory());
-                    dto.setPoPlanSHDES(productSpecification.getPoPlanSHDES());
+                    dto.setPoPlanName(productSpecification.getPoPlanName());
                     dto.setBS_externalId(productSpecification.getBS_externalId());
                     dto.setCS_externalId(productSpecification.getCS_externalId());
                     dtos.add(dto);

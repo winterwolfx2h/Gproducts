@@ -1,5 +1,6 @@
 package com.Bcm.Controller;
 
+import com.Bcm.Exception.BusinessLogicException;
 import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.ProductOfferingABE.POPlan;
@@ -120,10 +121,15 @@ public class POPlanController {
         try {
             POPlan updatedPlan = popService.changePoplanStatus(TMCODE);
             return ResponseEntity.ok(updatedPlan);
+
+        } catch (BusinessLogicException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
 
     private RuntimeException handleException(Exception e) {
         ErrorMessage errorMessage = new ErrorMessage(

@@ -1,9 +1,6 @@
 package com.Bcm.Service.Impl;
 
-import com.Bcm.Exception.DatabaseOperationException;
-import com.Bcm.Exception.InvalidInputException;
-import com.Bcm.Exception.ResourceAlreadyExistsException;
-import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Exception.*;
 import com.Bcm.Model.ProductOfferingABE.POPlan;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
@@ -34,7 +31,7 @@ public class POPlanServiceImpl implements POPlanService {
             throw new ResourceAlreadyExistsException("A POPlan with the same name already exists.");
         }
         try {
-            poPlan.setStatus("Suspendu");
+            poPlan.setStatus("Working state");
             return popRepository.save(poPlan);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseOperationException("Error creating POPlan", e);
@@ -141,17 +138,33 @@ public class POPlanServiceImpl implements POPlanService {
         try {
             POPlan existingPlan = findById(TMCODE);
 
-            if (existingPlan.getStatus().equals("Suspendu")) {
-                existingPlan.setStatus("Actif");
-            } else {
-                existingPlan.setStatus("Suspendu");
+            switch (existingPlan.getStatus()) {
+                case "Working state":
+                    existingPlan.setStatus("Validated");
+                    break;
+
+                case "Validated":
+                    existingPlan.setStatus("Suspended");
+                    break;
+
+                case "Suspended":
+                    throw new BusinessLogicException("POPLAN " + existingPlan.getName() +" isn't fit to be offered for sale anymore.");
+
+                default:
+                    throw new InvalidInputException("Invalid status transition.");
             }
 
             return popRepository.save(existingPlan);
+
+        } catch (ResourceNotFoundException e) {
+            throw new RuntimeException("POPlan with ID \"" + TMCODE + "\" not found", e);
+        } catch (BusinessLogicException e) {
+            throw new BusinessLogicException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred while changing POPlan status", e);
         }
     }
+
 
     @Override
     public boolean existsByMarketAndSubMarket(Market market, SubMarket subMarket) {

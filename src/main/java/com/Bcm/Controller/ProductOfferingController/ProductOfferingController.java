@@ -1,7 +1,9 @@
 package com.Bcm.Controller.ProductOfferingController;
 
-import com.Bcm.Exception.*;
-import com.Bcm.Model.Product.Product;
+import com.Bcm.Exception.ErrorMessage;
+import com.Bcm.Exception.InvalidInputException;
+import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
+import com.Bcm.Exception.ProductOfferingLogicException;
 import com.Bcm.Model.ProductOfferingABE.*;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductResourceABE.LogicalResource;
@@ -99,7 +101,6 @@ public class ProductOfferingController {
         ensureLogicalResourceExists(productOffering.getLogicalResource());
         ensurePhysicalResourceExists(productOffering.getPhysicalResource());
         ensureBusinessProcessExists(productOffering.getBusinessProcess());
-        //ensureEligibilityExists((productOffering).getEligibility());
         ensureFamilyExists(productOffering.getFamilyName());
     }
 
@@ -277,6 +278,4 @@ public class ProductOfferingController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
-
-
 }

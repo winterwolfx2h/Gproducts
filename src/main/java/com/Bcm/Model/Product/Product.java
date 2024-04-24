@@ -43,8 +43,8 @@ public class Product {
     @Column(name = "poType", nullable = false)
     private String poType;
 
-    @Column(name = "paramDependent", nullable = false)
-    private Boolean paramDependent;
+    @Column(name = "paramDependent", nullable = false, columnDefinition = "boolean default false")
+    private boolean paramDependent = false;
 
     @Column(name = "family_name", nullable = false)
     private String familyName;
@@ -66,7 +66,6 @@ public class Product {
         product.setPoType(this.getPoType());
         product.setFamilyName(this.getFamilyName());
         product.setSubFamily(this.getSubFamily());
-        product.setParamDependent(this.getParamDependent());
 
 
         return product;

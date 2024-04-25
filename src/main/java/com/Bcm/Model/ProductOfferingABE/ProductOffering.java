@@ -19,7 +19,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-
 public class ProductOffering extends Product {
 
     @Column(name = "name", nullable = false)

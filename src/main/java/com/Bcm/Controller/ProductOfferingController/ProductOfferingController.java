@@ -1,7 +1,9 @@
 package com.Bcm.Controller.ProductOfferingController;
 
-import com.Bcm.Exception.*;
-import com.Bcm.Model.Product.Product;
+import com.Bcm.Exception.ErrorMessage;
+import com.Bcm.Exception.InvalidInputException;
+import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
+import com.Bcm.Exception.ProductOfferingLogicException;
 import com.Bcm.Model.ProductOfferingABE.*;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductResourceABE.LogicalResource;
@@ -23,7 +25,6 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -99,7 +100,6 @@ public class ProductOfferingController {
         ensureLogicalResourceExists(productOffering.getLogicalResource());
         ensurePhysicalResourceExists(productOffering.getPhysicalResource());
         ensureBusinessProcessExists(productOffering.getBusinessProcess());
-        //ensureEligibilityExists((productOffering).getEligibility());
         ensureFamilyExists(productOffering.getFamilyName());
     }
 
@@ -207,28 +207,33 @@ public class ProductOfferingController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Offering with ID " + po_code + " not found.");
             }
 
-            if (!Objects.equals(existingProductOffering.getName(), updatedProductOffering.getName())) {
-                existingProductOffering.setName(updatedProductOffering.getName());
-                existingProductOffering.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
-                existingProductOffering.setEffectiveTo(updatedProductOffering.getEffectiveTo());
-                existingProductOffering.setDescription(updatedProductOffering.getDescription());
-                existingProductOffering.setDetailedDescription(updatedProductOffering.getDetailedDescription());
-                existingProductOffering.setPoType(updatedProductOffering.getPoType());
-                existingProductOffering.setFamilyName(updatedProductOffering.getFamilyName());
-                existingProductOffering.setSubFamily(updatedProductOffering.getSubFamily());
-                existingProductOffering.setParent(updatedProductOffering.getParent());
-                existingProductOffering.setExternalLinkId(updatedProductOffering.getExternalLinkId());
-                existingProductOffering.setProductSpecification(updatedProductOffering.getProductSpecification());
-                existingProductOffering.setPoAttributes(updatedProductOffering.getPoAttributes());
-                existingProductOffering.setProductRelation(updatedProductOffering.getProductRelation());
-                existingProductOffering.setProductOfferRelation(updatedProductOffering.getProductOfferRelation());
-                existingProductOffering.setLogicalResource(updatedProductOffering.getLogicalResource());
-                existingProductOffering.setPhysicalResource(updatedProductOffering.getPhysicalResource());
-                existingProductOffering.setBusinessProcess(updatedProductOffering.getBusinessProcess());
-                existingProductOffering.setEligibilityChannels(updatedProductOffering.getEligibilityChannels());
+            existingProductOffering.setName(updatedProductOffering.getName());
+            existingProductOffering.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
+            existingProductOffering.setEffectiveTo(updatedProductOffering.getEffectiveTo());
+            existingProductOffering.setDescription(updatedProductOffering.getDescription());
+            existingProductOffering.setDetailedDescription(updatedProductOffering.getDetailedDescription());
+            existingProductOffering.setPoType(updatedProductOffering.getPoType());
+
+            String newFamilyName = updatedProductOffering.getFamilyName();
+            if (newFamilyName != null && !familyService.findByNameexist(newFamilyName)) {
+                return ResponseEntity.badRequest().body("Family with name '" + newFamilyName + "' does not exist.");
             }
 
-            ensureRelatedEntitiesExist(updatedProductOffering);
+            existingProductOffering.setFamilyName(newFamilyName);
+            existingProductOffering.setSubFamily(updatedProductOffering.getSubFamily());
+            existingProductOffering.setParent(updatedProductOffering.getParent());
+            existingProductOffering.setExternalLinkId(updatedProductOffering.getExternalLinkId());
+
+            existingProductOffering.setProductSpecification(updatedProductOffering.getProductSpecification());
+            existingProductOffering.setPoAttributes(updatedProductOffering.getPoAttributes());
+            existingProductOffering.setProductRelation(updatedProductOffering.getProductRelation());
+            existingProductOffering.setProductOfferRelation(updatedProductOffering.getProductOfferRelation());
+            existingProductOffering.setLogicalResource(updatedProductOffering.getLogicalResource());
+            existingProductOffering.setPhysicalResource(updatedProductOffering.getPhysicalResource());
+            existingProductOffering.setBusinessProcess(updatedProductOffering.getBusinessProcess());
+            existingProductOffering.setEligibilityChannels(updatedProductOffering.getEligibilityChannels());
+
+            ensureRelatedEntitiesExist(existingProductOffering);
 
             ProductOffering updatedResult = productOfferingService.update(po_code, existingProductOffering);
 
@@ -242,6 +247,7 @@ public class ProductOfferingController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while updating the Product Offering.");
         }
     }
+
 
     @DeleteMapping("/{po_code}")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
@@ -277,6 +283,4 @@ public class ProductOfferingController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
-
-
 }

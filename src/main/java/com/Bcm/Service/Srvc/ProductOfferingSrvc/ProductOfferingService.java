@@ -8,6 +8,7 @@ import java.util.List;
 
 @Service
 public interface ProductOfferingService {
+
     ProductOffering create(ProductOffering productOffering);
 
     List<ProductOffering> read();

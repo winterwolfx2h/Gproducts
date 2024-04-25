@@ -1,4 +1,4 @@
-package com.Bcm.Service.Impl.BusinessProcessOfferingServiceImpl;
+package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
 import com.Bcm.Repository.ProductOfferingRepo.BusinessProcessRepository;

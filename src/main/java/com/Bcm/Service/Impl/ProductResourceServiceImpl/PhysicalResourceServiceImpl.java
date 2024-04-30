@@ -3,17 +3,17 @@ package com.Bcm.Service.Impl.ProductResourceServiceImpl;
 import com.Bcm.Model.ProductResourceABE.PhysicalResource;
 import com.Bcm.Repository.ProductResourceRepository.PhysicalResourceRepository;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.PhysicalResourceService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class PhysicalResourceServiceImpl implements PhysicalResourceService {
 
-    @Autowired
-    PhysicalResourceRepository physicalResourceRepository;
+    final PhysicalResourceRepository physicalResourceRepository;
 
     @Override
     public PhysicalResource create(PhysicalResource PhysicalResource) {

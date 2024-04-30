@@ -3,17 +3,18 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl.SubClassesServiceImpl;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.SubMarketRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubMarketService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class SubMarketServiceImpl implements SubMarketService {
 
-    @Autowired
-    SubMarketRepository SubMarketRepository;
+
+    final SubMarketRepository SubMarketRepository;
 
     @Override
     public SubMarket create(SubMarket subMarket) {

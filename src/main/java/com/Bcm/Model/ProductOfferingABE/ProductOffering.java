@@ -1,7 +1,8 @@
 package com.Bcm.Model.ProductOfferingABE;
 
 import com.Bcm.Model.Product.Product;
-import com.Bcm.Model.ProductResourceABE.LogicalResource;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Model.ProductResourceABE.PhysicalResource;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,10 +20,11 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+
 public class ProductOffering extends Product {
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "poType", nullable = false)
+    private String poType;
 
     @Column(name = "parent", nullable = true)
     private String parent;
@@ -30,42 +32,50 @@ public class ProductOffering extends Product {
     @Column(name = "externalLinkId", nullable = true)
     private String externalLinkId;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "po_SpecCode", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private ProductSpecification productSpecification;
+    @Column(name = "parameter", nullable = false)
+    private boolean parameter;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private List<POAttributes> poAttributes;
+    @Column(name = "sellIndicator", nullable = false)
+    private boolean sellIndicator;
+
+    @Column(name = "category", nullable = false)
+    private String category;
+
+    @Column(name = "BS_externalId", nullable = true)
+    private String BS_externalId;
+
+    @Column(name = "CS_externalId", nullable = true)
+    private String CS_externalId;
+
+    @Column(name = "businessProcess", nullable = false)
+    private String businessProcess;
+
+    @ElementCollection
+    @CollectionTable(name = "product_offering_channels", joinColumns = @JoinColumn(name = "Product_id"))
+    @Column(name = "channel")
+    private List<String> channels;
+
+    @Column(name = "poParent_Child", nullable = false)
+    private String poParent_Child;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "poRelation_Code", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private ProductRelation productRelation;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "PoOfferRelation_Code", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private ProductOfferRelation productOfferRelation;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "logResourceId", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private LogicalResource logicalResource;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "phyResourceId", nullable = false)
+    @JoinColumn(name = "physicalResource", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private PhysicalResource physicalResource;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "businessProcessId", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private BusinessProcess businessProcess;
-
     @ElementCollection
-    @CollectionTable(name = "product_offering_eligibility", joinColumns = @JoinColumn(name = "eligibilityId"))
-    @Column(name = "channel")
-    private List<String> eligibilityChannels;
+    @CollectionTable(name = "product_offering_CFSS", joinColumns = @JoinColumn(name = "Product_id"))
+    @Column(name = "serviceSpecType")
+    private List<String> customerFacingServiceSpec;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "po_MarketCode", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Market market;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "po_SubMarketCode", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private SubMarket subMarket;
 
 }

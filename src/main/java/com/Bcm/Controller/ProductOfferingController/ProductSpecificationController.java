@@ -21,8 +21,8 @@ import java.util.List;
 @RequestMapping("/api/ProductSpecification")
 public class ProductSpecificationController {
 
-    final private ProductSpecificationService productSpecificationService;
-    final private POPlanService poPlanService;
+    final ProductSpecificationService productSpecificationService;
+    final POPlanService poPlanService;
 
     @PostMapping("/addProdSpec")
     @CacheEvict(value = "ProdSpecCache", allEntries = true)

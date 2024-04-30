@@ -1,11 +1,15 @@
 package com.Bcm.Model.ProductResourceABE;
 
+import com.Bcm.Model.ServiceABE.ResourceFacingServiceSpec;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 
 @Entity
 @Table(name = "LogicalResource")
@@ -13,12 +17,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class LogicalResource {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "logResourceId", nullable = false)
-    private int logResourceId;
+public class LogicalResource extends ResourceFacingServiceSpec {
 
     @Column(name = "logicalResourceType", nullable = false)
     private String logicalResourceType;

@@ -21,8 +21,12 @@ public class LogicalResourceController {
     final LogicalResourceService logicalResourceService;
 
     @PostMapping("/addLogicalResource")
-    public ResponseEntity<LogicalResource> createLogicalResource(@RequestBody LogicalResource LogicalResource) {
-        LogicalResource createdLogicalResource = logicalResourceService.create(LogicalResource);
+    public ResponseEntity<LogicalResource> createLogicalResource(@RequestBody LogicalResource logicalResource) {
+        if (logicalResource.getStatus() == null || logicalResource.getStatus().isEmpty()) {
+            logicalResource.setStatus("Working state");
+        }
+
+        LogicalResource createdLogicalResource = logicalResourceService.create(logicalResource);
         return ResponseEntity.ok(createdLogicalResource);
     }
 

@@ -4,20 +4,24 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
-@Table(name = "ServiceSpecConfig")
+
+@Table(name = "CustomerFacingServiceSpec")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class ServiceSpecConfig {
+public class CustomerFacingServiceSpec {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "SSC_code", nullable = false)
-    private int SSC_code;
+    @Column(name = "CFSS_code", nullable = false)
+    private int CFSS_code;
 
     @Column(name = "externalId", nullable = false)
     private String externalId;
@@ -33,4 +37,9 @@ public class ServiceSpecConfig {
 
     @Column(name = "description", nullable = false)
     private String description;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "resourceFacingServiceSpec", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ResourceFacingServiceSpec resourceFacingServiceSpec;
 }

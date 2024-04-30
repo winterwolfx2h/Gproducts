@@ -6,17 +6,23 @@ import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
 import com.Bcm.Exception.ProductOfferingLogicException;
 import com.Bcm.Model.ProductOfferingABE.*;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
-import com.Bcm.Model.ProductResourceABE.LogicalResource;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Model.ProductResourceABE.PhysicalResource;
+import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Repository.ProductOfferingRepo.ProductSpecificationRepository;
 import com.Bcm.Service.Srvc.POPlanService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.*;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.MarketService;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubMarketService;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.PhysicalResourceService;
+import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,62 +50,85 @@ public class ProductOfferingController {
     final FamilyService familyService;
     final POPlanService poplanService;
     final ProductSpecificationRepository productSpecificationRepository;
+    final CustomerFacingServiceSpecService customerFacingServiceSpecService;
+    final MarketService marketService;
+    final SubMarketService subMarketService;
 
     @PostMapping("/addProdOff")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
         try {
+            String marketName = productOffering.getMarket().getName();
+            String subMarketName = productOffering.getSubMarket().getName();
+
+            Market market = marketService.findByName(marketName);
+            SubMarket subMarket = subMarketService.findByName(subMarketName);
+
+            if (market == null || subMarket == null) {
+                StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
+                if (market == null) errorMessage.append(" Market with name: ").append(marketName);
+                if (subMarket == null) errorMessage.append(" SubMarket with name: ").append(subMarketName);
+                return ResponseEntity.badRequest().body(errorMessage.toString());
+            }
+
+            productOffering.setMarket(market);
+            productOffering.setSubMarket(subMarket);
+
             String familyName = productOffering.getFamilyName();
-            if (!familyService.findByNameexist(familyName)) {
+            if (familyName == null || !familyService.findByNameexist(familyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
             }
 
-            List<String> poPlanNameList = productOffering.getProductSpecification().getPoPlanName();
-            List<String> nonExistingPoPlanNameList = new ArrayList<>();
-            for (String poPlanName : poPlanNameList) {
-                if (!poplanService.existsByName(poPlanName)) {
-                    nonExistingPoPlanNameList.add(poPlanName);
+            List<String> serviceSpecConfigs = productOffering.getCustomerFacingServiceSpec();
+            List<String> missingServices = new ArrayList<>();
+            for (String serviceType : serviceSpecConfigs) {
+                if (!customerFacingServiceSpecService.findByNameexist(serviceType)) {
+                    missingServices.add(serviceType);
                 }
             }
 
-            if (!nonExistingPoPlanNameList.isEmpty()) {
-                return ResponseEntity.badRequest().body("POPlan(s) with name '" + nonExistingPoPlanNameList.toString() + "' do(es) not exist.");
+            if (!missingServices.isEmpty()) {
+                return ResponseEntity.badRequest().body("Service(s) with Service Spec Type '" + String.join(", ", missingServices) + "' do not exist.");
             }
 
-            List<String> eligibilityChannels = productOffering.getEligibilityChannels();
-            List<String> nonExistingChannels = new ArrayList<>();
-            for (String channel : eligibilityChannels) {
-                if (!eligibilityService.existsByChannel(channel)) {
-                    nonExistingChannels.add(channel);
-                }
+            if (productOfferingService.existsByName(productOffering.getName())) {
+                throw new ProductOfferingAlreadyExistsException("A product offering with the same name already exists.");
             }
 
-            if (!nonExistingChannels.isEmpty()) {
-                return ResponseEntity.badRequest().body("Eligibility with channels '" + nonExistingChannels.toString() + "' do(es) not exist.");
+            if (productOffering.getChannels() == null || productOffering.getChannels().isEmpty()) {
+                return ResponseEntity.badRequest().body("Channels cannot be null or empty.");
             }
 
             ensureRelatedEntitiesExist(productOffering);
-            ProductOffering createdProduct = productOfferingService.create(productOffering);
+
+            ProductOffering createdProductOffering = productOfferingService.create(productOffering);
             invalidateProductOfferingsCache();
 
-            return ResponseEntity.ok(createdProduct);
+            return ResponseEntity.ok(createdProductOffering);
+
         } catch (ProductOfferingAlreadyExistsException e) {
             return ResponseEntity.badRequest().body("A product offering with the same name already exists.");
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Data integrity violation: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
         }
     }
+
 
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public void invalidateProductOfferingsCache() {
     }
 
     private void ensureRelatedEntitiesExist(ProductOffering productOffering) {
-        ensureProductSpecificationExists(productOffering.getProductSpecification());
+        //ensureProductSpecificationExists(productOffering.getProductSpecification());
         ensurePOAttributesExists((List<POAttributes>) productOffering.getPoAttributes());
         ensureProductRelationExists(productOffering.getProductRelation());
-        ensureProductOfferRelationExists(productOffering.getProductOfferRelation());
-        ensureLogicalResourceExists(productOffering.getLogicalResource());
-        ensurePhysicalResourceExists(productOffering.getPhysicalResource());
-        ensureBusinessProcessExists(productOffering.getBusinessProcess());
+        //ensureProductOfferRelationExists(productOffering.getProductOfferRelation());
+        //ensureLogicalResourceExists(productOffering.getLogicalResource());
+        //ensurePhysicalResourceExists(productOffering.getPhysicalResource());
+        //ensureBusinessProcessExists(productOffering.getBusinessProcess());
+        ensureCustomerFacingServiceSpecExists(productOffering.getCustomerFacingServiceSpec());
         ensureFamilyExists(productOffering.getFamilyName());
     }
 
@@ -137,13 +166,13 @@ public class ProductOfferingController {
         }
     }
 
-    private void ensureLogicalResourceExists(LogicalResource logicalResource) {
+    /*private void ensureLogicalResourceExists(LogicalResource logicalResource) {
         if (logicalResource != null && logicalResource.getLogResourceId() != 0) {
             if (!logicalResourceService.existsById(logicalResource.getLogResourceId())) {
                 logicalResourceService.create(logicalResource);
             }
         }
-    }
+    }*/
 
     private void ensurePhysicalResourceExists(PhysicalResource physicalResource) {
         if (physicalResource != null && physicalResource.getPhyResourceId() != 0) {
@@ -177,6 +206,18 @@ public class ProductOfferingController {
                 Family family = new Family();
                 family.setName(familyName);
                 familyService.create(family);
+            }
+        }
+    }
+
+    private void ensureCustomerFacingServiceSpecExists(List<String> customerFacingServiceSpec) {
+        if (customerFacingServiceSpec != null && !customerFacingServiceSpec.isEmpty()) {
+            for (String serviceSpecType : customerFacingServiceSpec) {
+                if (!customerFacingServiceSpecService.findByNameexist(serviceSpecType)) {
+                    CustomerFacingServiceSpec newCustomerFacingServiceSpec = new CustomerFacingServiceSpec();
+                    newCustomerFacingServiceSpec.setServiceSpecType(serviceSpecType);
+                    customerFacingServiceSpecService.create(newCustomerFacingServiceSpec);
+                }
             }
         }
     }
@@ -224,14 +265,14 @@ public class ProductOfferingController {
             existingProductOffering.setParent(updatedProductOffering.getParent());
             existingProductOffering.setExternalLinkId(updatedProductOffering.getExternalLinkId());
 
-            existingProductOffering.setProductSpecification(updatedProductOffering.getProductSpecification());
+            //existingProductOffering.setProductSpecification(updatedProductOffering.getProductSpecification());
             existingProductOffering.setPoAttributes(updatedProductOffering.getPoAttributes());
             existingProductOffering.setProductRelation(updatedProductOffering.getProductRelation());
-            existingProductOffering.setProductOfferRelation(updatedProductOffering.getProductOfferRelation());
-            existingProductOffering.setLogicalResource(updatedProductOffering.getLogicalResource());
+            //existingProductOffering.setProductOfferRelation(updatedProductOffering.getProductOfferRelation());
+            //existingProductOffering.setLogicalResource(updatedProductOffering.getLogicalResource());
             existingProductOffering.setPhysicalResource(updatedProductOffering.getPhysicalResource());
             existingProductOffering.setBusinessProcess(updatedProductOffering.getBusinessProcess());
-            existingProductOffering.setEligibilityChannels(updatedProductOffering.getEligibilityChannels());
+            //existingProductOffering.setEligibilityChannels(updatedProductOffering.getEligibilityChannels());
 
             ensureRelatedEntitiesExist(existingProductOffering);
 
@@ -247,7 +288,6 @@ public class ProductOfferingController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while updating the Product Offering.");
         }
     }
-
 
     @DeleteMapping("/{po_code}")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)

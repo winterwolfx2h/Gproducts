@@ -3,7 +3,7 @@ package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 import com.Bcm.Exception.FamilyAlreadyExistsException;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +13,11 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/family")
+@RequiredArgsConstructor
 public class FamilyController {
 
-    @Autowired
-    private FamilyService familyService;
+
+    final FamilyService familyService;
 
     @PostMapping("/addFamily")
     public ResponseEntity<?> createType(@RequestBody Family family) {

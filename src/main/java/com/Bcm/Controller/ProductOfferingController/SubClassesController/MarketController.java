@@ -2,7 +2,7 @@ package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.MarketService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,10 +11,11 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/market")
+@RequiredArgsConstructor
 public class MarketController {
 
-    @Autowired
-    private MarketService marketService;
+
+    final MarketService marketService;
 
     @PostMapping("/addMarket")
     public ResponseEntity<String> createMarket(@RequestBody Market market) {

@@ -35,7 +35,10 @@ public interface ProductOfferingRepository extends JpaRepository<ProductOffering
     @Query("SELECT p FROM ProductOffering p WHERE p.productRelation.poRelation_Code = :poRelation_Code")
     List<ProductOffering> findByProductRelation_poRelation_Code(int poRelation_Code);
 
-    @Query("SELECT po FROM ProductOffering po JOIN po.productOfferRelation c WHERE  c.type = :type ")
+    Optional<ProductOffering> findByName(String name);
+
+
+    /*@Query("SELECT po FROM ProductOffering po JOIN po.productOfferRelation c WHERE  c.type = :type ")
     List<ProductOffering> findAllWithProductOfferRelation(String type);
 
     @Query("SELECT p FROM ProductOffering p WHERE p.productOfferRelation.PoOfferRelation_Code = :PoOfferRelation_Code")
@@ -57,6 +60,6 @@ public interface ProductOfferingRepository extends JpaRepository<ProductOffering
     List<ProductOffering> findAllWithBusinessProcess(String bussinessProcType);
 
     @Query("SELECT p FROM ProductOffering p WHERE p.businessProcess.businessProcessId = :businessProcessId")
-    List<ProductOffering> findByBusinessProcess_businessProcessId(int businessProcessId);
+    List<ProductOffering> findByBusinessProcess_businessProcessId(int businessProcessId);*/
 
 }

@@ -35,17 +35,24 @@ public class POAttributesServiceImpl implements POAttributesService {
 
     @Override
     public POAttributes update(int poAttribute_code, POAttributes updatedPOAttributes) {
-        Optional<POAttributes> existingProductOptional = poAttributesRepository.findById(poAttribute_code);
+        Optional<POAttributes> existingPOAttributesOptional = poAttributesRepository.findById(poAttribute_code);
 
-        if (existingProductOptional.isPresent()) {
-            POAttributes existingProduct = existingProductOptional.get();
-            existingProduct.setCategory(updatedPOAttributes.getCategory());
-            existingProduct.setExternalId(updatedPOAttributes.getExternalId());
-            existingProduct.setValueDescription(updatedPOAttributes.getValueDescription()); // Update valueDescription
+        if (existingPOAttributesOptional.isPresent()) {
+            POAttributes existingPOAttributes = existingPOAttributesOptional.get();
 
-            return poAttributesRepository.save(existingProduct);
+            existingPOAttributes.setCategory(updatedPOAttributes.getCategory());
+            existingPOAttributes.setExternalId(updatedPOAttributes.getExternalId());
+            existingPOAttributes.setCharType(updatedPOAttributes.getCharType());
+            existingPOAttributes.setCharValue(updatedPOAttributes.getCharValue());
+
+            if (updatedPOAttributes.getValueDescription() != null) {
+                existingPOAttributes.getValueDescription().clear();
+                existingPOAttributes.getValueDescription().addAll(updatedPOAttributes.getValueDescription());
+            }
+
+            return poAttributesRepository.save(existingPOAttributes);
         } else {
-            throw new RuntimeException("Could not find POAttributes with ID: " + poAttribute_code);
+            throw new RuntimeException("POAttributes with ID: " + poAttribute_code + " not found");
         }
     }
 

@@ -3,17 +3,17 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ProductOfferRelationServiceImpl implements ProductOfferRelationService {
 
-    @Autowired
-    ProductOfferRelationRepository ProductOfferRelationRepository;
+    final ProductOfferRelationRepository ProductOfferRelationRepository;
 
     @Override
     public ProductOfferRelation create(ProductOfferRelation ProductOfferRelation) {

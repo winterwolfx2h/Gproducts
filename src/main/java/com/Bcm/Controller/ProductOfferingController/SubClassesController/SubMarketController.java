@@ -2,7 +2,7 @@ package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubMarketService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +12,11 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/SubMarket")
+@RequiredArgsConstructor
 public class SubMarketController {
 
-    @Autowired
-    private SubMarketService subMarketService;
+
+    final SubMarketService subMarketService;
 
     @PostMapping("/addSubMarket")
     public ResponseEntity<?> createSubMarket(@RequestBody SubMarket subMarket) {

@@ -1,13 +1,18 @@
 package com.Bcm.Model.Product;
 
+import com.Bcm.Model.ProductOfferingABE.POAttributes;
+import com.Bcm.Model.ProductOfferingABE.ProductRelation;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "Product")
 @Entity
@@ -40,12 +45,6 @@ public class Product {
     @Column(name = "detailedDescription", nullable = true)
     private String detailedDescription;
 
-    @Column(name = "poType", nullable = false)
-    private String poType;
-
-    @Column(name = "paramDependent", nullable = false, columnDefinition = "boolean default false")
-    private boolean paramDependent = false;
-
     @Column(name = "family_name", nullable = false)
     private String familyName;
 
@@ -55,6 +54,14 @@ public class Product {
     @Column(name = "status", nullable = false)
     private String status;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "poRelation_Code", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ProductRelation productRelation;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<POAttributes> poAttributes;
+
     public Product convertToProduct() {
         Product product = new Product();
         product.setProduct_id(this.getProduct_id());
@@ -63,10 +70,8 @@ public class Product {
         product.setEffectiveTo(this.getEffectiveTo());
         product.setDescription(this.getDescription());
         product.setDetailedDescription(this.getDetailedDescription());
-        product.setPoType(this.getPoType());
         product.setFamilyName(this.getFamilyName());
         product.setSubFamily(this.getSubFamily());
-
 
         return product;
     }

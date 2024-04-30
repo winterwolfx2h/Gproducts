@@ -3,21 +3,22 @@ package com.Bcm.Service.Impl.ProductResourceServiceImpl;
 import com.Bcm.Model.ProductResourceABE.LogicalResource;
 import com.Bcm.Repository.ProductResourceRepository.LogicalResourceRepository;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class LogicalResourceServiceImpl implements LogicalResourceService {
 
-    @Autowired
-    LogicalResourceRepository logicalResourceRepository;
+    final LogicalResourceRepository logicalResourceRepository;
 
     @Override
-    public LogicalResource create(LogicalResource LogicalResource) {
-        return logicalResourceRepository.save(LogicalResource);
+    public LogicalResource create(LogicalResource logicalResource) {
+        logicalResource.setStatus("Working state");
+        return logicalResourceRepository.save(logicalResource);
     }
 
     @Override

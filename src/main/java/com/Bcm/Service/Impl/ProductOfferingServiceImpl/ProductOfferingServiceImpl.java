@@ -22,6 +22,11 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
     @Override
     public ProductOffering create(ProductOffering productOffering) {
         Optional<ProductOffering> existingProduct = productOfferingRepository.findByname(productOffering.getName());
+
+        if (productOffering.getChannels() == null || productOffering.getChannels().isEmpty()) {
+            throw new InvalidInputException("Channels list cannot be empty.");
+        }
+
         if (existingProduct.isPresent()) {
             throw new ProductOfferingAlreadyExistsException("A product offering with the same name already exists.");
         }
@@ -55,14 +60,17 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             existingProduct.setName(updatedProductOffering.getName());
             existingProduct.setParent(updatedProductOffering.getParent());
             existingProduct.setExternalLinkId(updatedProductOffering.getExternalLinkId());
-            existingProduct.setProductSpecification(updatedProductOffering.getProductSpecification());
+            // existingProduct.setProductSpecification(updatedProductOffering.getProductSpecification());
             existingProduct.setPoAttributes(updatedProductOffering.getPoAttributes());
             existingProduct.setProductRelation(updatedProductOffering.getProductRelation());
-            existingProduct.setProductOfferRelation(updatedProductOffering.getProductOfferRelation());
-            existingProduct.setLogicalResource(updatedProductOffering.getLogicalResource());
+            //existingProduct.setProductOfferRelation(updatedProductOffering.getProductOfferRelation());
+            //existingProduct.setLogicalResource(updatedProductOffering.getLogicalResource());
             existingProduct.setPhysicalResource(updatedProductOffering.getPhysicalResource());
             existingProduct.setBusinessProcess(updatedProductOffering.getBusinessProcess());
-            existingProduct.setEligibilityChannels(updatedProductOffering.getEligibilityChannels());
+            //existingProduct.setEligibilityChannels(updatedProductOffering.getEligibilityChannels());
+            existingProduct.setPoParent_Child(updatedProductOffering.getPoParent_Child());
+            existingProduct.setChannels(updatedProductOffering.getChannels());
+
             //existingProduct.getEligibilityChannels();
 
             try {
@@ -195,5 +203,9 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         }
     }
 
+    @Override
+    public boolean existsByName(String name) {
+        return productOfferingRepository.findByName(name).isPresent();
+    }
 
 }

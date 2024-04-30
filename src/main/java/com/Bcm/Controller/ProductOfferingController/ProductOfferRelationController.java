@@ -2,7 +2,7 @@ package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -14,10 +14,11 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/ProductOfferRelation")
+@RequiredArgsConstructor
 public class ProductOfferRelationController {
 
-    @Autowired
-    private ProductOfferRelationService productOfferRelationService;
+
+    final ProductOfferRelationService productOfferRelationService;
 
 
     @PostMapping("/addProdOffRelation")

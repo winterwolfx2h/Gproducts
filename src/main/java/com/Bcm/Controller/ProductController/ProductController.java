@@ -4,7 +4,6 @@ import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.Product.ProductSpecificationDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
-import com.Bcm.Model.ProductOfferingABE.ProductSpecification;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -57,19 +56,19 @@ public class ProductController {
                         productOfferingDTO.setEffectiveFrom(product.getEffectiveFrom());
                         productOfferingDTO.setEffectiveTo(product.getEffectiveTo());
                         productOfferingDTO.setDescription(product.getDescription());
-                        productOfferingDTO.setPoType(product.getPoType());
+                        //productOfferingDTO.setPoType(product.getPoType());
                         productOfferingDTO.setFamilyName(product.getFamilyName());
                         productOfferingDTO.setSubFamily(product.getSubFamily());
                         productOfferingDTO.setParent(productOffering.getParent());
                         productOfferingDTO.setExternalLinkId(productOffering.getExternalLinkId());
-                        productOfferingDTO.setProductSpecification(productOffering.getProductSpecification());
+                        //productOfferingDTO.setProductSpecification(productOffering.getProductSpecification());
                         productOfferingDTO.setPoAttributes(productOffering.getPoAttributes());
                         productOfferingDTO.setProductRelation(productOffering.getProductRelation());
-                        productOfferingDTO.setProductOfferRelation(productOffering.getProductOfferRelation());
-                        productOfferingDTO.setLogicalResource(productOffering.getLogicalResource());
+                        //productOfferingDTO.setProductOfferRelation(productOffering.getProductOfferRelation());
+                        //productOfferingDTO.setLogicalResource(productOffering.getLogicalResource());
                         productOfferingDTO.setPhysicalResource(productOffering.getPhysicalResource());
                         productOfferingDTO.setBusinessProcess(productOffering.getBusinessProcess());
-                        productOfferingDTO.setEligibilityChannels(productOffering.getEligibilityChannels());
+                        //productOfferingDTO.setEligibilityChannels(productOffering.getEligibilityChannels());
                         return productOfferingDTO;
                     })
                     .collect(Collectors.toList());
@@ -97,14 +96,14 @@ public class ProductController {
             for (Product product : products) {
                 if (product instanceof ProductOffering) {
                     ProductOffering productOffering = (ProductOffering) product;
-                    ProductSpecification productSpecification = productOffering.getProductSpecification();
+                    //ProductSpecification productSpecification = productOffering.getProductSpecification();
                     ProductSpecificationDTO dto = new ProductSpecificationDTO();
                     dto.setFamilyName(productOffering.getFamilyName());
                     dto.setSubFamily(productOffering.getSubFamily());
-                    dto.setCategory(productOffering.getProductSpecification().getCategory());
-                    dto.setPoPlanName(productSpecification.getPoPlanName());
-                    dto.setBS_externalId(productSpecification.getBS_externalId());
-                    dto.setCS_externalId(productSpecification.getCS_externalId());
+                    //dto.setCategory(productOffering.getProductSpecification().getCategory());
+                    //dto.setPoPlanName(productSpecification.getPoPlanName());
+                    //dto.setBS_externalId(productSpecification.getBS_externalId());
+                    //dto.setCS_externalId(productSpecification.getCS_externalId());
                     dtos.add(dto);
                 }
             }

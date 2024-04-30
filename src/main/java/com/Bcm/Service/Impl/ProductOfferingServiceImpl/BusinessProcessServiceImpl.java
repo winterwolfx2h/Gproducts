@@ -3,7 +3,7 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
 import com.Bcm.Repository.ProductOfferingRepo.BusinessProcessRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.BusinessProcessService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,10 +11,11 @@ import java.util.Optional;
 
 
 @Service
+@RequiredArgsConstructor
 public class BusinessProcessServiceImpl implements BusinessProcessService {
 
-    @Autowired
-    BusinessProcessRepository businessProcessRepository;
+
+    final BusinessProcessRepository businessProcessRepository;
 
     @Override
     public BusinessProcess create(BusinessProcess BusinessProcess) {

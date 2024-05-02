@@ -2,6 +2,7 @@ package com.Bcm.Model.ProductOfferingABE;
 
 import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Model.ProductResourceABE.PhysicalResource;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -94,6 +95,6 @@ public class ProductOffering extends Product {
             joinColumns = @JoinColumn(name = "Product_id"),
             inverseJoinColumns = @JoinColumn(name = "po_SubMarketCode")
     )
-    private List<Market> submarkets;
+    private List<SubMarket> submarkets;
 
 }

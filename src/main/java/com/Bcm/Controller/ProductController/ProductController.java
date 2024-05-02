@@ -56,19 +56,25 @@ public class ProductController {
                         productOfferingDTO.setEffectiveFrom(product.getEffectiveFrom());
                         productOfferingDTO.setEffectiveTo(product.getEffectiveTo());
                         productOfferingDTO.setDescription(product.getDescription());
-                        //productOfferingDTO.setPoType(product.getPoType());
+                        productOfferingDTO.setDetailedDescription(product.getDetailedDescription());
+                        productOfferingDTO.setPoType(productOffering.getPoType());
                         productOfferingDTO.setFamilyName(product.getFamilyName());
                         productOfferingDTO.setSubFamily(product.getSubFamily());
                         productOfferingDTO.setParent(productOffering.getParent());
+                        productOfferingDTO.setStatus(productOffering.getStatus());
+                        productOfferingDTO.setCategory(productOffering.getCategory());
+                        productOfferingDTO.setChannels(productOffering.getChannels());
+                        productOfferingDTO.setPoParent_Child(productOffering.getPoParent_Child());
                         productOfferingDTO.setExternalLinkId(productOffering.getExternalLinkId());
-                        //productOfferingDTO.setProductSpecification(productOffering.getProductSpecification());
+                        productOfferingDTO.setCustomerFacingServiceSpec(productOffering.getCustomerFacingServiceSpec());
+                        productOfferingDTO.setMarkets(productOffering.getMarkets());
+                        productOfferingDTO.setSubMarket(productOffering.getSubMarket());
+                        productOfferingDTO.setBS_externalId(productOffering.getBS_externalId());
+                        productOfferingDTO.setCS_externalId(productOffering.getCS_externalId());
                         productOfferingDTO.setPoAttributes(productOffering.getPoAttributes());
                         productOfferingDTO.setProductRelation(productOffering.getProductRelation());
-                        //productOfferingDTO.setProductOfferRelation(productOffering.getProductOfferRelation());
-                        //productOfferingDTO.setLogicalResource(productOffering.getLogicalResource());
                         productOfferingDTO.setPhysicalResource(productOffering.getPhysicalResource());
                         productOfferingDTO.setBusinessProcess(productOffering.getBusinessProcess());
-                        //productOfferingDTO.setEligibilityChannels(productOffering.getEligibilityChannels());
                         return productOfferingDTO;
                     })
                     .collect(Collectors.toList());
@@ -110,6 +116,57 @@ public class ProductController {
 
             return ResponseEntity.ok(dtos);
         } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+
+    @GetMapping("/productsWithPOPLANPoType")
+    public ResponseEntity<?> getProductsByPOPlanPoType() {
+        try {
+            String poType = "PO-PLAN";
+            List<ProductOffering> productOfferings = productOfferingService.findByPoType(poType);
+
+            if (productOfferings.isEmpty()) {
+                throw new ResourceNotFoundException("No products found for poType: " + poType);
+            }
+
+            List<Object> products = productOfferings.stream()
+                    .map(productOffering -> {
+                        Product product = productOffering.convertToProduct();
+                        ProductOffering productOfferingDTO = new ProductOffering();
+                        productOfferingDTO.setProduct_id(product.getProduct_id());
+                        productOfferingDTO.setName(product.getName());
+                        productOfferingDTO.setEffectiveFrom(product.getEffectiveFrom());
+                        productOfferingDTO.setEffectiveTo(product.getEffectiveTo());
+                        productOfferingDTO.setDescription(product.getDescription());
+                        productOfferingDTO.setDetailedDescription(product.getDetailedDescription());
+                        productOfferingDTO.setPoType(productOffering.getPoType());
+                        productOfferingDTO.setFamilyName(product.getFamilyName());
+                        productOfferingDTO.setSubFamily(product.getSubFamily());
+                        productOfferingDTO.setParent(productOffering.getParent());
+                        productOfferingDTO.setStatus(productOffering.getStatus());
+                        productOfferingDTO.setCategory(productOffering.getCategory());
+                        productOfferingDTO.setChannels(productOffering.getChannels());
+                        productOfferingDTO.setPoParent_Child(productOffering.getPoParent_Child());
+                        productOfferingDTO.setExternalLinkId(productOffering.getExternalLinkId());
+                        productOfferingDTO.setCustomerFacingServiceSpec(productOffering.getCustomerFacingServiceSpec());
+                        productOfferingDTO.setMarkets(productOffering.getMarkets());
+                        productOfferingDTO.setSubMarket(productOffering.getSubMarket());
+                        productOfferingDTO.setBS_externalId(productOffering.getBS_externalId());
+                        productOfferingDTO.setCS_externalId(productOffering.getCS_externalId());
+                        productOfferingDTO.setPoAttributes(productOffering.getPoAttributes());
+                        productOfferingDTO.setProductRelation(productOffering.getProductRelation());
+                        productOfferingDTO.setPhysicalResource(productOffering.getPhysicalResource());
+                        productOfferingDTO.setBusinessProcess(productOffering.getBusinessProcess());
+                        return productOfferingDTO;
+                    })
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(products);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }

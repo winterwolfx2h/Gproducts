@@ -68,7 +68,7 @@ public class ProductController {
                         productOfferingDTO.setExternalLinkId(productOffering.getExternalLinkId());
                         productOfferingDTO.setCustomerFacingServiceSpec(productOffering.getCustomerFacingServiceSpec());
                         productOfferingDTO.setMarkets(productOffering.getMarkets());
-                        productOfferingDTO.setSubMarket(productOffering.getSubMarket());
+                        productOfferingDTO.setSubmarkets(productOffering.getSubmarkets());
                         productOfferingDTO.setBS_externalId(productOffering.getBS_externalId());
                         productOfferingDTO.setCS_externalId(productOffering.getCS_externalId());
                         productOfferingDTO.setPoAttributes(productOffering.getPoAttributes());
@@ -152,7 +152,7 @@ public class ProductController {
                         productOfferingDTO.setExternalLinkId(productOffering.getExternalLinkId());
                         productOfferingDTO.setCustomerFacingServiceSpec(productOffering.getCustomerFacingServiceSpec());
                         productOfferingDTO.setMarkets(productOffering.getMarkets());
-                        productOfferingDTO.setSubMarket(productOffering.getSubMarket());
+                        productOfferingDTO.setSubmarkets(productOffering.getSubmarkets());
                         productOfferingDTO.setBS_externalId(productOffering.getBS_externalId());
                         productOfferingDTO.setCS_externalId(productOffering.getCS_externalId());
                         productOfferingDTO.setPoAttributes(productOffering.getPoAttributes());

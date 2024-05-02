@@ -66,11 +66,11 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Markets list cannot be empty.");
             }
 
-            // Ensure incoming markets have valid references
             List<Market> validIncomingMarkets = incomingMarkets.stream()
                     .filter(incomingMarket ->
-                            validMarkets.stream().anyMatch(validMarket ->
-                                    validMarket.getPo_MarketCode() == incomingMarket.getPo_MarketCode()))
+                            validMarkets.stream()
+                                    .anyMatch(validMarket ->
+                                            validMarket.getPo_MarketCode() == incomingMarket.getPo_MarketCode()))
                     .collect(Collectors.toList());
 
             if (validIncomingMarkets.size() != incomingMarkets.size()) {
@@ -79,21 +79,33 @@ public class ProductOfferingController {
 
             productOffering.setMarkets(validIncomingMarkets);
 
-            // Validate sub-market
-            String subMarketName = productOffering.getSubMarket().getName();
-            SubMarket subMarket = subMarketService.findByName(subMarketName);
-            if (subMarket == null) {
-                return ResponseEntity.badRequest().body("SubMarket with name '" + subMarketName + "' does not exist.");
-            }
-            productOffering.setSubMarket(subMarket);
+            // Ensure incoming submarkets are valid
+            List<SubMarket> validSubMarkets = subMarketService.read();
+            List<SubMarket> incomingSubMarkets = productOffering.getSubmarkets();
 
-            // Validate family name
+            if (incomingSubMarkets == null || incomingSubMarkets.isEmpty()) {
+                return ResponseEntity.badRequest().body("Submarkets list cannot be empty.");
+            }
+
+            List<SubMarket> validIncomingSubMarkets = incomingSubMarkets.stream()
+                    .filter(incomingSubMarket ->
+                            validSubMarkets.stream()
+                                    .anyMatch(validSubMarket ->
+                                            validSubMarket.getPo_SubMarketCode() == incomingSubMarket.getPo_SubMarketCode()))
+                    .collect(Collectors.toList());
+
+            if (validIncomingSubMarkets.size() != incomingSubMarkets.size()) {
+                return ResponseEntity.badRequest().body("Some provided submarkets are invalid.");
+            }
+
+            productOffering.setSubmarkets(validIncomingSubMarkets);
+
+            // Validate other fields (family, channels, customer-facing specs, etc.)
             String familyName = productOffering.getFamilyName();
             if (familyName == null || !familyService.findByNameexist(familyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
             }
 
-            // Validate channels
             List<String> validChannels = eligibilityService.read()
                     .stream()
                     .map(Eligibility::getChannel)
@@ -103,7 +115,6 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Invalid channel(s) in the Product Offering.");
             }
 
-            // Validate customer-facing service specs
             List<String> serviceSpecConfigs = productOffering.getCustomerFacingServiceSpec();
             List<String> missingServices = serviceSpecConfigs.stream()
                     .filter(serviceType -> !customerFacingServiceSpecService.findByNameexist(serviceType))
@@ -115,7 +126,7 @@ public class ProductOfferingController {
 
             // Check for existing product offerings with the same name
             if (productOfferingService.existsByName(productOffering.getName())) {
-                throw new ProductOfferingAlreadyExistsException("A product offering with the same name already exists.");
+                return ResponseEntity.badRequest().body("A product offering with the same name already exists.");
             }
 
             // Ensure related entities exist before saving
@@ -132,10 +143,13 @@ public class ProductOfferingController {
         } catch (ProductOfferingAlreadyExistsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
+            e.printStackTrace(); // Log the exception stack trace for more details
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An unexpected error occurred: " + e.getMessage());
         }
     }
+
+
 
 
 

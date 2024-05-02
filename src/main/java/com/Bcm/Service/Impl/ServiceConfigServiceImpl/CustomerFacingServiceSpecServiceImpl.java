@@ -16,6 +16,7 @@ import java.util.Optional;
 public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServiceSpecService {
 
     final CustomerFacingServiceSpecRepository customerFacingServiceSpecRepository;
+
     @Override
     public CustomerFacingServiceSpec create(CustomerFacingServiceSpec customerFacingServiceSpec) {
         validateNotNullFields(customerFacingServiceSpec);

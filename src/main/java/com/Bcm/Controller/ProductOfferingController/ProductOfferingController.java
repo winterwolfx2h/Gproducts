@@ -150,10 +150,6 @@ public class ProductOfferingController {
     }
 
 
-
-
-
-
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public void invalidateProductOfferingsCache() {
     }

@@ -28,6 +28,9 @@ public class POPlan {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "description", nullable = true)
+    private String description;
+
     @Column(name = "detailedDescription", nullable = false)
     private String detailedDescription;
 

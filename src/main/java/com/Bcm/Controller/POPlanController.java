@@ -82,6 +82,7 @@ public class POPlanController {
             existingPlan.setName(poPlan.getName());
             existingPlan.setDetailedDescription(poPlan.getDetailedDescription());
             existingPlan.setExternalId(poPlan.getExternalId());
+            existingPlan.setDescription(poPlan.getDescription());
             existingPlan.setMarket(existingMarket);
             existingPlan.setSubMarket(existingSubMarket);
 

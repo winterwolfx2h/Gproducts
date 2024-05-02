@@ -97,4 +97,23 @@ public class ProductOffering extends Product {
     )
     private List<SubMarket> submarkets;
 
+
+/*
+    // Making the Market and SubMarket an array of objects that interacts with the Product Offering Controller
+            to be eligible for posting more than one instance per product offering payload.
+
+
+   // UnderDevelopment
+    @ElementCollection
+    @CollectionTable(name = "product_offering_submarkets", joinColumns = @JoinColumn(name = "Product_id"))
+    @Column(name = "name")
+    private List<String> markets;
+
+   // UnderDevelopment
+    @ElementCollection
+    @CollectionTable(name = "product_offering_CFSS", joinColumns = @JoinColumn(name = "Product_id"))
+    @Column(name = "name")
+    private List<String> submarkets;
+    */
+
 }

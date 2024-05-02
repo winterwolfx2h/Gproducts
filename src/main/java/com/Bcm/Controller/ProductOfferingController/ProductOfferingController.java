@@ -28,9 +28,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,62 +58,86 @@ public class ProductOfferingController {
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
         try {
-            String marketName = productOffering.getMarket().getName();
-            String subMarketName = productOffering.getSubMarket().getName();
+            // Ensure incoming markets are valid
+            List<Market> validMarkets = marketService.read();
+            List<Market> incomingMarkets = productOffering.getMarkets();
 
-            Market market = marketService.findByName(marketName);
-            SubMarket subMarket = subMarketService.findByName(subMarketName);
-
-            if (market == null || subMarket == null) {
-                StringBuilder errorMessage = new StringBuilder("The following entities were not found:");
-                if (market == null) errorMessage.append(" Market with name: ").append(marketName);
-                if (subMarket == null) errorMessage.append(" SubMarket with name: ").append(subMarketName);
-                return ResponseEntity.badRequest().body(errorMessage.toString());
+            if (incomingMarkets == null || incomingMarkets.isEmpty()) {
+                return ResponseEntity.badRequest().body("Markets list cannot be empty.");
             }
 
-            productOffering.setMarket(market);
+            // Ensure incoming markets have valid references
+            List<Market> validIncomingMarkets = incomingMarkets.stream()
+                    .filter(incomingMarket ->
+                            validMarkets.stream().anyMatch(validMarket ->
+                                    validMarket.getPo_MarketCode() == incomingMarket.getPo_MarketCode()))
+                    .collect(Collectors.toList());
+
+            if (validIncomingMarkets.size() != incomingMarkets.size()) {
+                return ResponseEntity.badRequest().body("Some provided markets are invalid.");
+            }
+
+            productOffering.setMarkets(validIncomingMarkets);
+
+            // Validate sub-market
+            String subMarketName = productOffering.getSubMarket().getName();
+            SubMarket subMarket = subMarketService.findByName(subMarketName);
+            if (subMarket == null) {
+                return ResponseEntity.badRequest().body("SubMarket with name '" + subMarketName + "' does not exist.");
+            }
             productOffering.setSubMarket(subMarket);
 
+            // Validate family name
             String familyName = productOffering.getFamilyName();
             if (familyName == null || !familyService.findByNameexist(familyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
             }
 
-            List<String> serviceSpecConfigs = productOffering.getCustomerFacingServiceSpec();
-            List<String> missingServices = new ArrayList<>();
-            for (String serviceType : serviceSpecConfigs) {
-                if (!customerFacingServiceSpecService.findByNameexist(serviceType)) {
-                    missingServices.add(serviceType);
-                }
+            // Validate channels
+            List<String> validChannels = eligibilityService.read()
+                    .stream()
+                    .map(Eligibility::getChannel)
+                    .collect(Collectors.toList());
+
+            if (!validChannels.containsAll(productOffering.getChannels())) {
+                return ResponseEntity.badRequest().body("Invalid channel(s) in the Product Offering.");
             }
+
+            // Validate customer-facing service specs
+            List<String> serviceSpecConfigs = productOffering.getCustomerFacingServiceSpec();
+            List<String> missingServices = serviceSpecConfigs.stream()
+                    .filter(serviceType -> !customerFacingServiceSpecService.findByNameexist(serviceType))
+                    .collect(Collectors.toList());
 
             if (!missingServices.isEmpty()) {
                 return ResponseEntity.badRequest().body("Service(s) with Service Spec Type '" + String.join(", ", missingServices) + "' do not exist.");
             }
 
+            // Check for existing product offerings with the same name
             if (productOfferingService.existsByName(productOffering.getName())) {
                 throw new ProductOfferingAlreadyExistsException("A product offering with the same name already exists.");
             }
 
-            if (productOffering.getChannels() == null || productOffering.getChannels().isEmpty()) {
-                return ResponseEntity.badRequest().body("Channels cannot be null or empty.");
-            }
-
+            // Ensure related entities exist before saving
             ensureRelatedEntitiesExist(productOffering);
 
+            // Create the new product offering
             ProductOffering createdProductOffering = productOfferingService.create(productOffering);
-            invalidateProductOfferingsCache();
 
             return ResponseEntity.ok(createdProductOffering);
 
-        } catch (ProductOfferingAlreadyExistsException e) {
-            return ResponseEntity.badRequest().body("A product offering with the same name already exists.");
         } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Data integrity violation: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Data integrity violation: " + e.getRootCause().getMessage());
+        } catch (ProductOfferingAlreadyExistsException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred: " + e.getMessage());
         }
     }
+
+
 
 
     @CacheEvict(value = "productOfferingsCache", allEntries = true)

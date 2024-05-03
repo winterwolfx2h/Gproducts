@@ -58,7 +58,6 @@ public class ProductOfferingController {
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
         try {
-            // Ensure incoming markets are valid
             List<Market> validMarkets = marketService.read();
             List<Market> incomingMarkets = productOffering.getMarkets();
 
@@ -79,7 +78,6 @@ public class ProductOfferingController {
 
             productOffering.setMarkets(validIncomingMarkets);
 
-            // Ensure incoming submarkets are valid
             List<SubMarket> validSubMarkets = subMarketService.read();
             List<SubMarket> incomingSubMarkets = productOffering.getSubmarkets();
 
@@ -100,7 +98,6 @@ public class ProductOfferingController {
 
             productOffering.setSubmarkets(validIncomingSubMarkets);
 
-            // Validate other fields (family, channels, customer-facing specs, etc.)
             String familyName = productOffering.getFamilyName();
             if (familyName == null || !familyService.findByNameexist(familyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
@@ -124,15 +121,12 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Service(s) with Service Spec Type '" + String.join(", ", missingServices) + "' do not exist.");
             }
 
-            // Check for existing product offerings with the same name
             if (productOfferingService.existsByName(productOffering.getName())) {
                 return ResponseEntity.badRequest().body("A product offering with the same name already exists.");
             }
 
-            // Ensure related entities exist before saving
             ensureRelatedEntitiesExist(productOffering);
 
-            // Create the new product offering
             ProductOffering createdProductOffering = productOfferingService.create(productOffering);
 
             return ResponseEntity.ok(createdProductOffering);
@@ -297,7 +291,7 @@ public class ProductOfferingController {
             existingProductOffering.setFamilyName(newFamilyName);
             existingProductOffering.setSubFamily(updatedProductOffering.getSubFamily());
             existingProductOffering.setParent(updatedProductOffering.getParent());
-            existingProductOffering.setExternalLinkId(updatedProductOffering.getExternalLinkId());
+            //existingProductOffering.setExternalLinkId(updatedProductOffering.getExternalLinkId());
 
             //existingProductOffering.setProductSpecification(updatedProductOffering.getProductSpecification());
             existingProductOffering.setPoAttributes(updatedProductOffering.getPoAttributes());

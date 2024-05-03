@@ -291,7 +291,6 @@ public class ProductOfferingController {
             existingProductOffering.setFamilyName(newFamilyName);
             existingProductOffering.setSubFamily(updatedProductOffering.getSubFamily());
             existingProductOffering.setParent(updatedProductOffering.getParent());
-            //existingProductOffering.setExternalLinkId(updatedProductOffering.getExternalLinkId());
 
             //existingProductOffering.setProductSpecification(updatedProductOffering.getProductSpecification());
             existingProductOffering.setPoAttributes(updatedProductOffering.getPoAttributes());
@@ -341,6 +340,7 @@ public class ProductOfferingController {
     }
 
     @PutMapping("/changeStatus/{po_code}")
+    @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> changeProductStatus(@PathVariable int po_code) {
         try {
             ProductOffering updatedProduct = productOfferingService.changeProductOfferingStatus(po_code);

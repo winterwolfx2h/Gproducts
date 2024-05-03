@@ -57,24 +57,14 @@ public class ProductOffering extends Product {
 
     @Column(name = "poParent_Child", nullable = false)
     private String poParent_Child = "PO-Parent";
-
-    public void setPoParent_Child(String poParent_Child) {
-        if (!"PO-Parent".equals(poParent_Child) && !"PO-Child".equals(poParent_Child)) {
-            throw new IllegalArgumentException("Invalid value for poParent_Child. Allowed values are 'PO-Parent' or 'PO-Child'.");
-        }
-        this.poParent_Child = poParent_Child;
-    }
-
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "physicalResource", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private PhysicalResource physicalResource;
-
     @ElementCollection
     @CollectionTable(name = "product_offering_CFSS", joinColumns = @JoinColumn(name = "Product_id"))
     @Column(name = "serviceSpecType")
     private List<String> customerFacingServiceSpec;
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "product_offering_markets",
@@ -82,7 +72,6 @@ public class ProductOffering extends Product {
             inverseJoinColumns = @JoinColumn(name = "po_MarketCode")
     )
     private List<Market> markets;
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "product_offering_submarkets",
@@ -90,6 +79,13 @@ public class ProductOffering extends Product {
             inverseJoinColumns = @JoinColumn(name = "po_SubMarketCode")
     )
     private List<SubMarket> submarkets;
+
+    public void setPoParent_Child(String poParent_Child) {
+        if (!"PO-Parent".equals(poParent_Child) && !"PO-Child".equals(poParent_Child)) {
+            throw new IllegalArgumentException("Invalid value for poParent_Child. Allowed values are 'PO-Parent' or 'PO-Child'.");
+        }
+        this.poParent_Child = poParent_Child;
+    }
 
 /*
     // Making the Market and SubMarket an array of objects that interacts with the Product Offering Controller

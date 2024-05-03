@@ -27,6 +27,16 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new InvalidInputException("Channels list cannot be empty.");
         }
 
+        if (productOffering.getPoParent_Child() == null || productOffering.getPoParent_Child().isEmpty()) {
+            productOffering.setPoParent_Child("PO-Parent");
+        }
+
+        try {
+            productOffering.setPoParent_Child(productOffering.getPoParent_Child());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidInputException("Invalid value for poParent_Child: " + e.getMessage());
+        }
+
         if (existingProduct.isPresent()) {
             throw new ProductOfferingAlreadyExistsException("A product offering with the same name already exists.");
         }
@@ -59,7 +69,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             ProductOffering existingProduct = existingProductOptional.get();
             existingProduct.setName(updatedProductOffering.getName());
             existingProduct.setParent(updatedProductOffering.getParent());
-            existingProduct.setExternalLinkId(updatedProductOffering.getExternalLinkId());
+            //existingProduct.setExternalLinkId(updatedProductOffering.getExternalLinkId());
             // existingProduct.setProductSpecification(updatedProductOffering.getProductSpecification());
             existingProduct.setPoAttributes(updatedProductOffering.getPoAttributes());
             existingProduct.setProductRelation(updatedProductOffering.getProductRelation());

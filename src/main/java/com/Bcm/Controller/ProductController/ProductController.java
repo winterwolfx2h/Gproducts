@@ -65,7 +65,7 @@ public class ProductController {
                         productOfferingDTO.setCategory(productOffering.getCategory());
                         productOfferingDTO.setChannels(productOffering.getChannels());
                         productOfferingDTO.setPoParent_Child(productOffering.getPoParent_Child());
-                        productOfferingDTO.setExternalLinkId(productOffering.getExternalLinkId());
+                        //productOfferingDTO.setExternalLinkId(productOffering.getExternalLinkId());
                         productOfferingDTO.setCustomerFacingServiceSpec(productOffering.getCustomerFacingServiceSpec());
                         productOfferingDTO.setMarkets(productOffering.getMarkets());
                         productOfferingDTO.setSubmarkets(productOffering.getSubmarkets());
@@ -149,7 +149,7 @@ public class ProductController {
                         productOfferingDTO.setCategory(productOffering.getCategory());
                         productOfferingDTO.setChannels(productOffering.getChannels());
                         productOfferingDTO.setPoParent_Child(productOffering.getPoParent_Child());
-                        productOfferingDTO.setExternalLinkId(productOffering.getExternalLinkId());
+                        //productOfferingDTO.setExternalLinkId(productOffering.getExternalLinkId());
                         productOfferingDTO.setCustomerFacingServiceSpec(productOffering.getCustomerFacingServiceSpec());
                         productOfferingDTO.setMarkets(productOffering.getMarkets());
                         productOfferingDTO.setSubmarkets(productOffering.getSubmarkets());

@@ -1,9 +1,11 @@
 package com.Bcm.Controller.ServiceController;
 
 import com.Bcm.Exception.InvalidInputException;
+import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Exception.ServiceAlreadyExistsException;
 import com.Bcm.Exception.ServiceLogicException;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
+import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpecDTO;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -94,5 +96,28 @@ public class CustomerFacingServiceSpecController {
         }
     }
 
+
+    @GetMapping("/dto/{CFSS_code}")
+    public ResponseEntity<?> getCustomerFacingServiceSpecDTO(@PathVariable("CFSS_code") int CFSS_code) {
+        try {
+            CustomerFacingServiceSpecDTO customerFacingServiceSpecDTO = customerFacingServiceSpecService.getCustomerFacingServiceSpecDTO(CFSS_code);
+            return ResponseEntity.ok(customerFacingServiceSpecDTO);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+
+    @GetMapping("/dto")
+    public ResponseEntity<?> getAllCustomerFacingServiceSpecsDTO() {
+        try {
+            List<CustomerFacingServiceSpecDTO> customerFacingServiceSpecDTOs = customerFacingServiceSpecService.getAllCustomerFacingServiceSpecDTOs();
+            return ResponseEntity.ok(customerFacingServiceSpecDTOs);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
+        }
+    }
 
 }

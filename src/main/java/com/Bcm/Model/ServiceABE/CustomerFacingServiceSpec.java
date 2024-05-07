@@ -42,5 +42,4 @@ public class CustomerFacingServiceSpec {
     @CollectionTable(name = "CFSS_RFSS", joinColumns = @JoinColumn(name = "CFSS_code"))
     @Column(name = "rfss_name")
     private List<String> resourceFacingServiceSpec = new ArrayList<>();
-    ;
 }

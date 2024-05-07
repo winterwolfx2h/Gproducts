@@ -1,6 +1,7 @@
 package com.Bcm.Service.Srvc.ServiceConfigSrvc;
 
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
+import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpecDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,4 +21,8 @@ public interface CustomerFacingServiceSpecService {
     boolean findByNameexist(String serviceSpecType);
 
     CustomerFacingServiceSpec changeServiceStatus(int CFSS_code);
+
+    CustomerFacingServiceSpecDTO getCustomerFacingServiceSpecDTO(int CFSS_code);
+
+    List<CustomerFacingServiceSpecDTO> getAllCustomerFacingServiceSpecDTOs();
 }

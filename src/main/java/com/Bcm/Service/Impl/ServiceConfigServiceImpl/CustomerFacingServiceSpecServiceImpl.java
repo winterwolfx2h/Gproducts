@@ -2,6 +2,9 @@ package com.Bcm.Service.Impl.ServiceConfigServiceImpl;
 
 import com.Bcm.Exception.*;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
+import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpecDTO;
+import com.Bcm.Model.ServiceABE.ResourceFacingServiceSpec;
+import com.Bcm.Model.ServiceABE.ResourceFacingServiceSpecDTO;
 import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Repository.ServiceConfigRepo.ResourceFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -153,6 +157,72 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding the service");
         }
+    }
+
+
+    public CustomerFacingServiceSpecDTO getCustomerFacingServiceSpecDTO(int CFSS_code) {
+        CustomerFacingServiceSpec customerFacingServiceSpec = customerFacingServiceSpecRepository.findById(CFSS_code)
+                .orElseThrow(() -> new ResourceNotFoundException("CustomerFacingServiceSpec with ID " + CFSS_code + " not found"));
+
+        List<ResourceFacingServiceSpecDTO> resourceSpecs = customerFacingServiceSpec.getResourceFacingServiceSpec().stream()
+                .map(rfssName -> {
+                    Optional<ResourceFacingServiceSpec> resourceSpec = resourceFacingServiceSpecRepository.findByName(rfssName);
+                    if (resourceSpec.isPresent()) {
+                        ResourceFacingServiceSpec spec = resourceSpec.get();
+                        return new ResourceFacingServiceSpecDTO(
+                                spec.getRfss_code(),
+                                spec.getName(),
+                                spec.getDescription(),
+                                spec.getValidFor(),
+                                spec.getStatus()
+                        );
+                    } else {
+                        throw new ResourceNotFoundException("ResourceFacingServiceSpec with name '" + rfssName + "' not found");
+                    }
+                })
+                .collect(Collectors.toList());
+
+        return new CustomerFacingServiceSpecDTO(
+                customerFacingServiceSpec.getCFSS_code(),
+                customerFacingServiceSpec.getExternalId(),
+                customerFacingServiceSpec.getNumPlanCode(),
+                customerFacingServiceSpec.getServiceSpecType(),
+                customerFacingServiceSpec.getStatus(),
+                customerFacingServiceSpec.getDescription(),
+                resourceSpecs
+        );
+    }
+
+
+    public List<CustomerFacingServiceSpecDTO> getAllCustomerFacingServiceSpecDTOs() {
+        List<CustomerFacingServiceSpec> customerFacingServiceSpecs = customerFacingServiceSpecRepository.findAll();
+
+        return customerFacingServiceSpecs.stream().map(customerFacingServiceSpec -> {
+            List<ResourceFacingServiceSpecDTO> resourceSpecs = customerFacingServiceSpec.getResourceFacingServiceSpec().stream()
+                    .map(rfssName -> {
+                        ResourceFacingServiceSpec spec = resourceFacingServiceSpecRepository.findByName(rfssName)
+                                .orElseThrow(() -> new ResourceNotFoundException("ResourceFacingServiceSpec with name '" + rfssName + "' not found"));
+
+                        return new ResourceFacingServiceSpecDTO(
+                                spec.getRfss_code(),
+                                spec.getName(),
+                                spec.getDescription(),
+                                spec.getValidFor(),
+                                spec.getStatus()
+                        );
+                    })
+                    .collect(Collectors.toList());
+
+            return new CustomerFacingServiceSpecDTO(
+                    customerFacingServiceSpec.getCFSS_code(),
+                    customerFacingServiceSpec.getExternalId(),
+                    customerFacingServiceSpec.getNumPlanCode(),
+                    customerFacingServiceSpec.getServiceSpecType(),
+                    customerFacingServiceSpec.getStatus(),
+                    customerFacingServiceSpec.getDescription(),
+                    resourceSpecs
+            );
+        }).collect(Collectors.toList());
     }
 
     private void validateNotNullFields(CustomerFacingServiceSpec customerFacingServiceSpec) {

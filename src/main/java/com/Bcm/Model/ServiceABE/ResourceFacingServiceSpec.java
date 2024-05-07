@@ -2,6 +2,7 @@ package com.Bcm.Model.ServiceABE;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jdk.jfr.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ public class ResourceFacingServiceSpec {
 
     @Column(name = "validFor", nullable = false)
     @JsonFormat(pattern = "dd/MM/yyyy")
+    @Timestamp
     private Date validFor;
 
     @Column(name = "status", nullable = false)

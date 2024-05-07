@@ -18,7 +18,5 @@ public class CustomerFacingServiceSpecDTO {
     private String serviceSpecType;
     private String status;
     private String description;
-    private List<ResourceFacingServiceSpecDTO> resourceFacingServiceSpec;  // Nested DTO for resource details
+    private List<ResourceFacingServiceSpecDTO> resourceFacingServiceSpec;
 }
-
-

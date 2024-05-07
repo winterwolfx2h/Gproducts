@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -18,7 +16,6 @@ public class CustomerFacingServiceSpecDTO {
     private String serviceSpecType;
     private String status;
     private String description;
-    private List<ResourceFacingServiceSpecDTO> resourceFacingServiceSpec;
 }
 
 

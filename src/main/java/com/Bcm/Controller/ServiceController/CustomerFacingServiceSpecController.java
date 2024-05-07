@@ -1,5 +1,6 @@
 package com.Bcm.Controller.ServiceController;
 
+import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ServiceAlreadyExistsException;
 import com.Bcm.Exception.ServiceLogicException;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
@@ -23,16 +24,15 @@ public class CustomerFacingServiceSpecController {
     @PostMapping("/addCustomerFacingServiceSpec")
     public ResponseEntity<?> createCustomerFacingServiceSpec(@RequestBody CustomerFacingServiceSpec customerFacingServiceSpec) {
         try {
-            if (customerFacingServiceSpec.getResourceFacingServiceSpec() != null) {
-                customerFacingServiceSpec.getResourceFacingServiceSpec().setStatus("Working state");
-            }
-
             CustomerFacingServiceSpec createdCustomerFacingServiceSpec = customerFacingServiceSpecService.create(customerFacingServiceSpec);
             return ResponseEntity.ok(createdCustomerFacingServiceSpec);
+
         } catch (ServiceAlreadyExistsException e) {
-            return ResponseEntity.badRequest().body("Service with the same name already exists");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (InvalidInputException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
         }
     }
 

@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Table(name = "CustomerFacingServiceSpec")
@@ -38,8 +38,9 @@ public class CustomerFacingServiceSpec {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "resourceFacingServiceSpec", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private ResourceFacingServiceSpec resourceFacingServiceSpec;
+    @ElementCollection
+    @CollectionTable(name = "CFSS_RFSS", joinColumns = @JoinColumn(name = "CFSS_code"))
+    @Column(name = "rfss_name")
+    private List<String> resourceFacingServiceSpec = new ArrayList<>();
+    ;
 }

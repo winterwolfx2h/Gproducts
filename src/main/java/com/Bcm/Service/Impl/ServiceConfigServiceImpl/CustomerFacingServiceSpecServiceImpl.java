@@ -3,6 +3,7 @@ package com.Bcm.Service.Impl.ServiceConfigServiceImpl;
 import com.Bcm.Exception.*;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
+import com.Bcm.Repository.ServiceConfigRepo.ResourceFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,25 +17,45 @@ import java.util.Optional;
 public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServiceSpecService {
 
     final CustomerFacingServiceSpecRepository customerFacingServiceSpecRepository;
+    final ResourceFacingServiceSpecRepository resourceFacingServiceSpecRepository;
 
     @Override
     public CustomerFacingServiceSpec create(CustomerFacingServiceSpec customerFacingServiceSpec) {
-        validateNotNullFields(customerFacingServiceSpec);
-
-        Optional<CustomerFacingServiceSpec> existingService = customerFacingServiceSpecRepository.findByServiceSpecType(customerFacingServiceSpec.getServiceSpecType());
-        if (existingService.isPresent()) {
-            throw new ServiceAlreadyExistsException("Service with the same name already exists");
-        }
-
         try {
+            validateNotNullFields(customerFacingServiceSpec);
+
+            Optional<CustomerFacingServiceSpec> existingServiceSpec = customerFacingServiceSpecRepository.findByServiceSpecType(
+                    customerFacingServiceSpec.getServiceSpecType()
+            );
+
+            if (existingServiceSpec.isPresent()) {
+                throw new ServiceAlreadyExistsException(
+                        "CustomerFacingServiceSpec with serviceSpecType '" + customerFacingServiceSpec.getServiceSpecType() + "' already exists."
+                );
+            }
+
+            if (customerFacingServiceSpec.getResourceFacingServiceSpec() != null) {
+                for (String rfssName : customerFacingServiceSpec.getResourceFacingServiceSpec()) {
+                    if (!resourceFacingServiceSpecRepository.existsByName(rfssName)) {
+                        throw new InvalidInputException("ResourceFacingServiceSpec '" + rfssName + "' does not exist.");
+                    }
+                }
+            }
+
             customerFacingServiceSpec.setStatus("Working state");
             return customerFacingServiceSpecRepository.save(customerFacingServiceSpec);
+
+        } catch (CFSSAlreadyExistsException e) {
+            throw e;
+        } catch (InvalidInputException e) {
+            throw new InvalidInputException("Invalid input: " + e.getMessage());
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseOperationException("Error creating CustomerFacingServiceSpec", e);
+            throw new RuntimeException("Database error: " + e.getRootCause().getMessage(), e);
         } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while creating CustomerFacingServiceSpec", e);
+            throw new RuntimeException("An unexpected error occurred: " + e.getMessage(), e);
         }
     }
+
 
     @Override
     public List<CustomerFacingServiceSpec> read() {

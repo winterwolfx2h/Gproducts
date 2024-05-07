@@ -277,6 +277,14 @@ public class ProductOfferingController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Offering with ID " + po_code + " not found.");
             }
 
+            // Check if the new name is different and if it already exists
+            String newName = updatedProductOffering.getName();
+            if (!existingProductOffering.getName().equals(newName)) {
+                if (productOfferingService.existsByName(newName)) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("Product Offering with the name '" + newName + "' already exists.");
+                }
+            }
+
             // Validate incoming markets
             List<Market> validMarkets = marketService.read();
             List<Market> incomingMarkets = updatedProductOffering.getMarkets();
@@ -352,7 +360,6 @@ public class ProductOfferingController {
             existingProductOffering.setCustomerFacingServiceSpec(serviceSpecConfigs);
 
             // Update other fields
-            existingProductOffering.setName(updatedProductOffering.getName());
             existingProductOffering.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
             existingProductOffering.setEffectiveTo(updatedProductOffering.getEffectiveTo());
             existingProductOffering.setDescription(updatedProductOffering.getDescription());

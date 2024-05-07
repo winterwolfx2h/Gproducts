@@ -17,4 +17,7 @@ public interface ResourceFacingServiceSpecRepository extends JpaRepository<Resou
     @Query("SELECT r FROM ResourceFacingServiceSpec r WHERE r.name LIKE %:name%")
     List<ResourceFacingServiceSpec> searchByKeyword(@Param("name") String name);
 
+    boolean existsByName(String name);
+
+
 }

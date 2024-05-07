@@ -271,11 +271,87 @@ public class ProductOfferingController {
             @RequestBody ProductOffering updatedProductOffering
     ) {
         try {
+            // Check if the product offering with the given ID exists
             ProductOffering existingProductOffering = productOfferingService.findById(po_code);
             if (existingProductOffering == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Offering with ID " + po_code + " not found.");
             }
 
+            // Validate incoming markets
+            List<Market> validMarkets = marketService.read();
+            List<Market> incomingMarkets = updatedProductOffering.getMarkets();
+
+            if (incomingMarkets == null || incomingMarkets.isEmpty()) {
+                return ResponseEntity.badRequest().body("Markets list cannot be empty.");
+            }
+
+            List<Market> validIncomingMarkets = incomingMarkets.stream()
+                    .filter(incomingMarket ->
+                            validMarkets.stream()
+                                    .anyMatch(validMarket ->
+                                            validMarket.getPo_MarketCode() == incomingMarket.getPo_MarketCode()))
+                    .collect(Collectors.toList());
+
+            if (validIncomingMarkets.size() != incomingMarkets.size()) {
+                return ResponseEntity.badRequest().body("Some provided markets are invalid.");
+            }
+
+            existingProductOffering.setMarkets(validIncomingMarkets);
+
+            // Validate incoming submarkets
+            List<SubMarket> validSubMarkets = subMarketService.read();
+            List<SubMarket> incomingSubMarkets = updatedProductOffering.getSubmarkets();
+
+            if (incomingSubMarkets == null || incomingSubMarkets.isEmpty()) {
+                return ResponseEntity.badRequest().body("Submarkets list cannot be empty.");
+            }
+
+            List<SubMarket> validIncomingSubMarkets = incomingSubMarkets.stream()
+                    .filter(incomingSubMarket ->
+                            validSubMarkets.stream()
+                                    .anyMatch(validSubMarket ->
+                                            validSubMarket.getPo_SubMarketCode() == incomingSubMarket.getPo_SubMarketCode()))
+                    .collect(Collectors.toList());
+
+            if (validIncomingSubMarkets.size() != incomingSubMarkets.size()) {
+                return ResponseEntity.badRequest().body("Some provided submarkets are invalid.");
+            }
+
+            existingProductOffering.setSubmarkets(validIncomingSubMarkets);
+
+            // Validate family name
+            String newFamilyName = updatedProductOffering.getFamilyName();
+            if (newFamilyName != null && !familyService.findByNameexist(newFamilyName)) {
+                return ResponseEntity.badRequest().body("Family with name '" + newFamilyName + "' does not exist.");
+            }
+
+            existingProductOffering.setFamilyName(newFamilyName);
+
+            // Validate channels
+            List<String> validChannels = eligibilityService.read()
+                    .stream()
+                    .map(Eligibility::getChannel)
+                    .collect(Collectors.toList());
+
+            if (!validChannels.containsAll(updatedProductOffering.getChannels())) {
+                return ResponseEntity.badRequest().body("Invalid channel(s) in the Product Offering.");
+            }
+
+            existingProductOffering.setChannels(updatedProductOffering.getChannels());
+
+            // Validate customer-facing service specs
+            List<String> serviceSpecConfigs = updatedProductOffering.getCustomerFacingServiceSpec();
+            List<String> missingServices = serviceSpecConfigs.stream()
+                    .filter(serviceType -> !customerFacingServiceSpecService.findByNameexist(serviceType))
+                    .collect(Collectors.toList());
+
+            if (!missingServices.isEmpty()) {
+                return ResponseEntity.badRequest().body("Service(s) with Service Spec Type '" + String.join(", ", missingServices) + "' do not exist.");
+            }
+
+            existingProductOffering.setCustomerFacingServiceSpec(serviceSpecConfigs);
+
+            // Update other fields
             existingProductOffering.setName(updatedProductOffering.getName());
             existingProductOffering.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
             existingProductOffering.setEffectiveTo(updatedProductOffering.getEffectiveTo());
@@ -283,26 +359,10 @@ public class ProductOfferingController {
             existingProductOffering.setDetailedDescription(updatedProductOffering.getDetailedDescription());
             existingProductOffering.setPoType(updatedProductOffering.getPoType());
 
-            String newFamilyName = updatedProductOffering.getFamilyName();
-            if (newFamilyName != null && !familyService.findByNameexist(newFamilyName)) {
-                return ResponseEntity.badRequest().body("Family with name '" + newFamilyName + "' does not exist.");
-            }
-
-            existingProductOffering.setFamilyName(newFamilyName);
-            existingProductOffering.setSubFamily(updatedProductOffering.getSubFamily());
-            existingProductOffering.setParent(updatedProductOffering.getParent());
-
-            //existingProductOffering.setProductSpecification(updatedProductOffering.getProductSpecification());
-            existingProductOffering.setPoAttributes(updatedProductOffering.getPoAttributes());
-            existingProductOffering.setProductRelation(updatedProductOffering.getProductRelation());
-            //existingProductOffering.setProductOfferRelation(updatedProductOffering.getProductOfferRelation());
-            //existingProductOffering.setLogicalResource(updatedProductOffering.getLogicalResource());
-            existingProductOffering.setPhysicalResource(updatedProductOffering.getPhysicalResource());
-            existingProductOffering.setBusinessProcess(updatedProductOffering.getBusinessProcess());
-            //existingProductOffering.setEligibilityChannels(updatedProductOffering.getEligibilityChannels());
-
+            // Update other relationships and related entities
             ensureRelatedEntitiesExist(existingProductOffering);
 
+            // Save the updated product offering
             ProductOffering updatedResult = productOfferingService.update(po_code, existingProductOffering);
 
             return ResponseEntity.ok(updatedResult);
@@ -315,6 +375,7 @@ public class ProductOfferingController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while updating the Product Offering.");
         }
     }
+
 
     @DeleteMapping("/{po_code}")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)

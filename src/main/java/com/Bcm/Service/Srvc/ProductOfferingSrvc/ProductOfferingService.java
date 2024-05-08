@@ -34,6 +34,9 @@ public interface ProductOfferingService {
     ProductOffering changeProductOfferingStatus(int po_code);
 
     boolean existsByName(String name);
+
+    List<ProductOffering> changeMultipleProductStatuses(List<Integer> poCodes);
+
 }
 
 

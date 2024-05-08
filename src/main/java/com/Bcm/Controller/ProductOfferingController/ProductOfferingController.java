@@ -30,6 +30,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -58,51 +59,57 @@ public class ProductOfferingController {
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
         try {
+            // Validate market names and convert to Market objects
             List<Market> validMarkets = marketService.read();
-            List<Market> incomingMarkets = productOffering.getMarkets();
+            List<String> marketNames = productOffering.getMarkets();
 
-            if (incomingMarkets == null || incomingMarkets.isEmpty()) {
-                return ResponseEntity.badRequest().body("Markets list cannot be empty.");
+            if (marketNames == null || marketNames.isEmpty()) {
+                return ResponseEntity.badRequest().body("Market names list cannot be empty.");
             }
 
-            List<Market> validIncomingMarkets = incomingMarkets.stream()
-                    .filter(incomingMarket ->
-                            validMarkets.stream()
-                                    .anyMatch(validMarket ->
-                                            validMarket.getPo_MarketCode() == incomingMarket.getPo_MarketCode()))
+            List<Market> validIncomingMarkets = marketNames.stream()
+                    .map(name -> validMarkets.stream()
+                            .filter(validMarket -> validMarket.getName().equals(name))
+                            .findFirst())
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .collect(Collectors.toList());
 
-            if (validIncomingMarkets.size() != incomingMarkets.size()) {
-                return ResponseEntity.badRequest().body("Some provided markets are invalid.");
+            if (validIncomingMarkets.size() != marketNames.size()) {
+                return ResponseEntity.badRequest().body("Some provided market names are invalid.");
             }
 
-            productOffering.setMarkets(validIncomingMarkets);
+            productOffering.setMarkets(marketNames); // Setting the correct field
 
+            // Validate and convert submarket names to valid SubMarket objects
             List<SubMarket> validSubMarkets = subMarketService.read();
-            List<SubMarket> incomingSubMarkets = productOffering.getSubmarkets();
+            List<String> submarketNames = productOffering.getSubmarkets();
 
-            if (incomingSubMarkets == null || incomingSubMarkets.isEmpty()) {
-                return ResponseEntity.badRequest().body("Submarkets list cannot be empty.");
+            if (submarketNames == null || submarketNames.isEmpty()) {
+                return ResponseEntity.badRequest().body("Submarket names list cannot be empty.");
             }
 
-            List<SubMarket> validIncomingSubMarkets = incomingSubMarkets.stream()
-                    .filter(incomingSubMarket ->
-                            validSubMarkets.stream()
-                                    .anyMatch(validSubMarket ->
-                                            validSubMarket.getPo_SubMarketCode() == incomingSubMarket.getPo_SubMarketCode()))
+            List<SubMarket> validIncomingSubMarkets = submarketNames.stream()
+                    .map(name -> validSubMarkets.stream()
+                            .filter(validSubMarket -> validSubMarket.getName().equals(name))
+                            .findFirst())
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .collect(Collectors.toList());
 
-            if (validIncomingSubMarkets.size() != incomingSubMarkets.size()) {
-                return ResponseEntity.badRequest().body("Some provided submarkets are invalid.");
+            if (validIncomingSubMarkets.size() != submarketNames.size()) {
+                return ResponseEntity.badRequest().body("Some provided submarket names are invalid.");
             }
 
-            productOffering.setSubmarkets(validIncomingSubMarkets);
+            productOffering.setSubmarkets(submarketNames); // Setting the correct field
 
+            // Validate family name
             String familyName = productOffering.getFamilyName();
             if (familyName == null || !familyService.findByNameexist(familyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
             }
 
+            // Validate channels
             List<String> validChannels = eligibilityService.read()
                     .stream()
                     .map(Eligibility::getChannel)
@@ -112,6 +119,7 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Invalid channel(s) in the Product Offering.");
             }
 
+            // Validate customer-facing service specs
             List<String> serviceSpecConfigs = productOffering.getCustomerFacingServiceSpec();
             List<String> missingServices = serviceSpecConfigs.stream()
                     .filter(serviceType -> !customerFacingServiceSpecService.findByNameexist(serviceType))
@@ -125,6 +133,7 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("A product offering with the same name already exists.");
             }
 
+            // Ensure other related entities exist
             ensureRelatedEntitiesExist(productOffering);
 
             ProductOffering createdProductOffering = productOfferingService.create(productOffering);
@@ -137,9 +146,9 @@ public class ProductOfferingController {
         } catch (ProductOfferingAlreadyExistsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
-            e.printStackTrace(); // Log the exception stack trace for more details
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An unexpected error occurred: " + e.getMessage());
+                    .body("An unexpected error occurred while creating the Product Offering: " + e.getMessage());
         }
     }
 
@@ -271,13 +280,13 @@ public class ProductOfferingController {
             @RequestBody ProductOffering updatedProductOffering
     ) {
         try {
-            // Check if the product offering with the given ID exists
+            // Retrieve the existing product offering
             ProductOffering existingProductOffering = productOfferingService.findById(po_code);
             if (existingProductOffering == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Offering with ID " + po_code + " not found.");
             }
 
-            // Check if the new name is different and if it already exists
+            // Ensure the new name doesn't conflict with an existing product offering
             String newName = updatedProductOffering.getName();
             if (!existingProductOffering.getName().equals(newName)) {
                 if (productOfferingService.existsByName(newName)) {
@@ -285,47 +294,49 @@ public class ProductOfferingController {
                 }
             }
 
-            // Validate incoming markets
+            // Validate incoming market names
             List<Market> validMarkets = marketService.read();
-            List<Market> incomingMarkets = updatedProductOffering.getMarkets();
+            List<String> marketNames = updatedProductOffering.getMarkets();
 
-            if (incomingMarkets == null || incomingMarkets.isEmpty()) {
-                return ResponseEntity.badRequest().body("Markets list cannot be empty.");
+            if (marketNames == null || marketNames.isEmpty()) {
+                return ResponseEntity.badRequest().body("Market names list cannot be empty.");
             }
 
-            List<Market> validIncomingMarkets = incomingMarkets.stream()
-                    .filter(incomingMarket ->
-                            validMarkets.stream()
-                                    .anyMatch(validMarket ->
-                                            validMarket.getPo_MarketCode() == incomingMarket.getPo_MarketCode()))
+            List<Market> validIncomingMarkets = marketNames.stream()
+                    .map(name -> validMarkets.stream()
+                            .filter(market -> market.getName().equals(name))
+                            .findFirst())
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .collect(Collectors.toList());
 
-            if (validIncomingMarkets.size() != incomingMarkets.size()) {
-                return ResponseEntity.badRequest().body("Some provided markets are invalid.");
+            if (validIncomingMarkets.size() != marketNames.size()) {
+                return ResponseEntity.badRequest().body("Some provided market names are invalid.");
             }
 
-            existingProductOffering.setMarkets(validIncomingMarkets);
+            existingProductOffering.setMarkets(marketNames); // Set the field to the list of names
 
-            // Validate incoming submarkets
+            // Validate incoming submarket names
             List<SubMarket> validSubMarkets = subMarketService.read();
-            List<SubMarket> incomingSubMarkets = updatedProductOffering.getSubmarkets();
+            List<String> submarketNames = updatedProductOffering.getSubmarkets();
 
-            if (incomingSubMarkets == null || incomingSubMarkets.isEmpty()) {
-                return ResponseEntity.badRequest().body("Submarkets list cannot be empty.");
+            if (submarketNames == null || submarketNames.isEmpty()) {
+                return ResponseEntity.badRequest().body("Submarket names list cannot be empty.");
             }
 
-            List<SubMarket> validIncomingSubMarkets = incomingSubMarkets.stream()
-                    .filter(incomingSubMarket ->
-                            validSubMarkets.stream()
-                                    .anyMatch(validSubMarket ->
-                                            validSubMarket.getPo_SubMarketCode() == incomingSubMarket.getPo_SubMarketCode()))
+            List<SubMarket> validIncomingSubMarkets = submarketNames.stream()
+                    .map(name -> validSubMarkets.stream()
+                            .filter(submarket -> submarket.getName().equals(name))
+                            .findFirst())
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .collect(Collectors.toList());
 
-            if (validIncomingSubMarkets.size() != incomingSubMarkets.size()) {
-                return ResponseEntity.badRequest().body("Some provided submarkets are invalid.");
+            if (validIncomingSubMarkets.size() != submarketNames.size()) {
+                return ResponseEntity.badRequest().body("Some provided submarket names are invalid.");
             }
 
-            existingProductOffering.setSubmarkets(validIncomingSubMarkets);
+            existingProductOffering.setSubmarkets(submarketNames); // Set the field to the list of names
 
             // Validate family name
             String newFamilyName = updatedProductOffering.getFamilyName();
@@ -384,6 +395,7 @@ public class ProductOfferingController {
     }
 
 
+
     @DeleteMapping("/{po_code}")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<String> deleteProductOffering(@PathVariable("po_code") int po_code) {
@@ -419,4 +431,18 @@ public class ProductOfferingController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
+
+    @PutMapping("/changeStatus/multiple")
+    @CacheEvict(value = "productOfferingsCache", allEntries = true)
+    public ResponseEntity<?> changeMultipleProductStatuses(@RequestBody List<Integer> poCodes) {
+        try {
+            List<ProductOffering> updatedProducts = productOfferingService.changeMultipleProductStatuses(poCodes);
+            return ResponseEntity.ok(updatedProducts);
+        } catch (ProductOfferingLogicException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
 }

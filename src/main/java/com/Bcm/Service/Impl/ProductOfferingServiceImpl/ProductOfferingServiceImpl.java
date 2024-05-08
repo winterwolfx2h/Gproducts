@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Optional;
@@ -211,6 +212,33 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred while changing Product status", e);
         }
+    }
+
+    @Override
+    public List<ProductOffering> changeMultipleProductStatuses(List<Integer> poCodes) {
+        List<ProductOffering> updatedProducts = new ArrayList<>();
+
+        for (int po_code : poCodes) {
+            ProductOffering existingProduct = findById(po_code);
+
+            switch (existingProduct.getStatus()) {
+                case "Working state":
+                    existingProduct.setStatus("Validated");
+                    break;
+                case "Validated":
+                    existingProduct.setStatus("Suspended");
+                    break;
+                case "Suspended":
+                    throw new ProductOfferingLogicException("Product " + existingProduct.getName() + " isn't fit to be offered for sale anymore.");
+                default:
+                    throw new InvalidInputException("Invalid status transition.");
+            }
+
+            productOfferingRepository.save(existingProduct);
+            updatedProducts.add(existingProduct);
+        }
+
+        return updatedProducts;
     }
 
     @Override

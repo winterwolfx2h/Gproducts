@@ -26,6 +26,7 @@ public class ProductOffering extends Product {
     @Column(name = "poType", nullable = false)
     private String poType;
 
+    //Might Delete Later
     @Column(name = "externalId", nullable = true)
     private String externalId;
 

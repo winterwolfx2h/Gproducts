@@ -29,10 +29,10 @@ public class ProductOffering extends Product {
     @Column(name = "parent", nullable = true)
     private String parent;
 
-    @Column(name = "sellIndicator", nullable = false)
+    @Column(name = "sellIndicator", nullable = true)
     private boolean sellIndicator;
 
-    @Column(name = "category", nullable = false)
+    @Column(name = "category", nullable = true)
     private String category;
 
     @Column(name = "BS_externalId", nullable = true)
@@ -46,22 +46,22 @@ public class ProductOffering extends Product {
 
     @ElementCollection
     @CollectionTable(name = "product_offering_channels", joinColumns = @JoinColumn(name = "Product_id"))
-    @Column(name = "channel")
+    @Column(name = "channel", nullable = true)
     private List<String> channels;
 
-    @Column(name = "poParent_Child", nullable = false)
+    @Column(name = "poParent_Child", nullable = true)
     private String poParent_Child = "PO-Parent";
 
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "physicalResource", nullable = false)
+    @JoinColumn(name = "physicalResource", nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private PhysicalResource physicalResource;
 
 
     @ElementCollection
     @CollectionTable(name = "product_offering_CFSS", joinColumns = @JoinColumn(name = "Product_id"))
-    @Column(name = "serviceSpecType")
+    @Column(name = "serviceSpecType", nullable = true)
     private List<String> customerFacingServiceSpec;
 
 

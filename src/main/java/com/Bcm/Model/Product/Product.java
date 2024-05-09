@@ -54,8 +54,8 @@ public class Product {
     @Column(name = "status", nullable = false)
     private String status;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "poRelation_Code", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "poRelation_Code", nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductRelation productRelation;
 

@@ -45,7 +45,7 @@ public class ProductOffering extends Product {
     @Column(name = "CS_externalId", nullable = true)
     private String CS_externalId;
 
-    @Column(name = "businessProcess", nullable = false)
+    @Column(name = "businessProcess", nullable = true)
     private String businessProcess;
 
     @ElementCollection
@@ -57,7 +57,7 @@ public class ProductOffering extends Product {
     private String poParent_Child = "PO-Parent";
 
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "physicalResource", nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private PhysicalResource physicalResource;

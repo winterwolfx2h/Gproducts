@@ -4,6 +4,7 @@ import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
 import com.Bcm.Exception.ProductOfferingLogicException;
+import com.Bcm.Model.Product.ProductOfferingDTO;
 import com.Bcm.Model.ProductOfferingABE.*;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
@@ -66,6 +67,7 @@ public class ProductOfferingController {
             if (marketNames == null || marketNames.isEmpty()) {
                 return ResponseEntity.badRequest().body("Market names list cannot be empty.");
             }
+
 
             List<Market> validIncomingMarkets = marketNames.stream()
                     .map(name -> validMarkets.stream()
@@ -155,6 +157,70 @@ public class ProductOfferingController {
 
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public void invalidateProductOfferingsCache() {
+    }
+
+
+    @PostMapping("/AddProdOffDTO")
+    @CacheEvict(value = "productOfferingsCache", allEntries = true)
+    public ResponseEntity<?> createProductOfferingDTO(@RequestBody ProductOfferingDTO dto) {
+        try {
+
+            // Validate market names and convert to Market objects
+            List<Market> validMarkets = marketService.read();
+            List<String> marketNames = dto.getMarkets();
+
+            if (marketNames == null || marketNames.isEmpty()) {
+                return ResponseEntity.badRequest().body("Market names list cannot be empty.");
+            }
+
+
+            List<Market> validIncomingMarkets = marketNames.stream()
+                    .map(name -> validMarkets.stream()
+                            .filter(validMarket -> validMarket.getName().equals(name))
+                            .findFirst())
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+
+            if (validIncomingMarkets.size() != marketNames.size()) {
+                return ResponseEntity.badRequest().body("Some provided market names are invalid.");
+            }
+
+            dto.setMarkets(marketNames); // Setting the correct field
+
+            // Validate and convert submarket names to valid SubMarket objects
+            List<SubMarket> validSubMarkets = subMarketService.read();
+            List<String> submarketNames = dto.getSubmarkets();
+
+            if (submarketNames == null || submarketNames.isEmpty()) {
+                return ResponseEntity.badRequest().body("Submarket names list cannot be empty.");
+            }
+
+            List<SubMarket> validIncomingSubMarkets = submarketNames.stream()
+                    .map(name -> validSubMarkets.stream()
+                            .filter(validSubMarket -> validSubMarket.getName().equals(name))
+                            .findFirst())
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+
+            if (validIncomingSubMarkets.size() != submarketNames.size()) {
+                return ResponseEntity.badRequest().body("Some provided submarket names are invalid.");
+            }
+
+            dto.setSubmarkets(submarketNames); // Setting the correct field
+
+            // Validate family name
+            String familyName = dto.getFamilyName();
+            if (familyName == null || !familyService.findByNameexist(familyName)) {
+                return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
+            }
+            ProductOffering createdProductOffering = productOfferingService.createProductOfferingDTO(dto);
+            return new ResponseEntity<>(createdProductOffering, HttpStatus.CREATED);
+        } catch (ProductOfferingAlreadyExistsException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(ex.getMessage());
+        }
     }
 
     private void ensureRelatedEntitiesExist(ProductOffering productOffering) {

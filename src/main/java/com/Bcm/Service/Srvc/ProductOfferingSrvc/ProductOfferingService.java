@@ -1,5 +1,6 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 
+import com.Bcm.Model.Product.ProductOfferingDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,8 @@ public interface ProductOfferingService {
     boolean existsByName(String name);
 
     List<ProductOffering> changeMultipleProductStatuses(List<Integer> poCodes);
+
+    ProductOffering createProductOfferingDTO(ProductOfferingDTO dto);
 
 }
 

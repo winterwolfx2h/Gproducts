@@ -1,8 +1,10 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
 import com.Bcm.Exception.*;
+import com.Bcm.Model.Product.ProductOfferingDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
+import com.Bcm.Repository.ProductOfferingRepo.ProductRelationRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,6 +21,7 @@ import java.util.Optional;
 public class ProductOfferingServiceImpl implements ProductOfferingService {
 
     final ProductOfferingRepository productOfferingRepository;
+    final ProductRelationRepository productRelationRepository;
 
     @Override
     public ProductOffering create(ProductOffering productOffering) {
@@ -52,6 +55,33 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new RuntimeException("An unexpected error occurred while creating product offering", e);
         }
     }
+
+
+    @Override
+    public ProductOffering createProductOfferingDTO(ProductOfferingDTO dto) {
+        Optional<ProductOffering> existingProduct = productOfferingRepository.findByName(dto.getName());
+
+        if (existingProduct.isPresent()) {
+            throw new ProductOfferingAlreadyExistsException("A product offering with the same name already exists.");
+        }
+
+        ProductOffering productOffering = new ProductOffering();
+        productOffering.setName(dto.getName());
+        productOffering.setEffectiveFrom(dto.getEffectiveFrom());
+        productOffering.setEffectiveTo(dto.getEffectiveTo());
+        productOffering.setDescription(dto.getDescription());
+        productOffering.setDetailedDescription(dto.getDetailedDescription());
+        productOffering.setFamilyName(dto.getFamilyName());
+        productOffering.setSubFamily(dto.getSubFamily());
+        productOffering.setStatus(dto.getStatus());
+        productOffering.setMarkets(dto.getMarkets());
+        productOffering.setSubmarkets(dto.getSubmarkets());
+        productOffering.setPoType(dto.getPoType());
+        productOffering.setExternalId(dto.getExternalId());
+
+        return productOfferingRepository.save(productOffering);
+    }
+
 
     @Override
     public List<ProductOffering> read() {

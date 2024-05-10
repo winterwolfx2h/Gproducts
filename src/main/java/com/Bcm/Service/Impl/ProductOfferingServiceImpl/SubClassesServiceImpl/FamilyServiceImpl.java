@@ -2,6 +2,7 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl.SubClassesServiceImpl;
 
 import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.FamilyAlreadyExistsException;
+import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.FamilyRepository;
@@ -46,27 +47,24 @@ public class FamilyServiceImpl implements FamilyService {
 
     @Override
     public Family update(int po_FamilyCode, Family updatedFamily) {
-        try {
-            Optional<Family> existingFamilyOptional = familyRepository.findById(po_FamilyCode);
-            if (existingFamilyOptional.isPresent()) {
-                Family existingFamily = existingFamilyOptional.get();
-                existingFamily.setName(updatedFamily.getName());
-                existingFamily.setDescription(updatedFamily.getDescription());
-                String newName = updatedFamily.getName();
-                if (!existingFamily.getName().equals(newName) && findByNameexist(newName)) {
-                    throw new RuntimeException("Family with name '" + newName + "' already exists");
-                }
-                existingFamily.setName(newName);
-                return familyRepository.save(existingFamily);
-            } else {
-                throw new RuntimeException("Family with ID " + po_FamilyCode + " not found");
+        Optional<Family> existingFamilyOptional = familyRepository.findById(po_FamilyCode);
+        if (existingFamilyOptional.isPresent()) {
+            Family existingFamily = existingFamilyOptional.get();
+
+            String newName = updatedFamily.getName();
+            // Check if there's another family with the same name
+            if (!existingFamily.getName().equals(newName) && familyRepository.existsByName(newName)) {
+                throw new FamilyAlreadyExistsException("Family with name '" + newName + "' already exists.");
             }
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid argument provided for updating Family", e);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Error occurred while updating Family", e);
+
+            existingFamily.setName(newName);
+            existingFamily.setDescription(updatedFamily.getDescription());
+            return familyRepository.save(existingFamily);
+        } else {
+            throw new ResourceNotFoundException("Family with ID " + po_FamilyCode + " not found.");
         }
     }
+
 
     @Override
     public String delete(int po_FamilyCode) {

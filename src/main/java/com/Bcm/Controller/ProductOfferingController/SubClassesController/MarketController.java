@@ -1,8 +1,11 @@
 package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
+import com.Bcm.Exception.MarketAlreadyExistsException;
+import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.MarketService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,15 +54,19 @@ public class MarketController {
     }
 
     @PutMapping("/{po_MarketCode}")
-    public ResponseEntity<Market> updateMarket(
+    public ResponseEntity<?> updateMarket(
             @PathVariable("po_MarketCode") int po_MarketCode,
             @RequestBody Market updatedMarket) {
-
         try {
             Market updatedMarketResult = marketService.update(po_MarketCode, updatedMarket);
             return ResponseEntity.ok(updatedMarketResult);
+
+        } catch (MarketAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
         }
     }
 

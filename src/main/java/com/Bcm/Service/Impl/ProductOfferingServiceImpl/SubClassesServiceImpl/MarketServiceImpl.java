@@ -1,5 +1,7 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl.SubClassesServiceImpl;
 
+import com.Bcm.Exception.MarketAlreadyExistsException;
+import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.MarketRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.MarketService;
@@ -39,19 +41,26 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public Market update(int po_MarketCode, Market updatedMarket) {
-        try {
-            Optional<Market> existingMarketOptional = marketRepository.findById(po_MarketCode);
-            if (existingMarketOptional.isPresent()) {
-                Market existingMarket = existingMarketOptional.get();
-                existingMarket.setName(updatedMarket.getName());
-                existingMarket.setDescription(updatedMarket.getDescription());
-                return marketRepository.save(existingMarket);
-            } else {
-                throw new RuntimeException("Market with ID " + po_MarketCode + " not found");
-            }
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid argument provided for updating Market");
+        // Find the existing market by ID
+        Optional<Market> existingMarketOptional = marketRepository.findById(po_MarketCode);
+
+        if (existingMarketOptional.isEmpty()) {
+            throw new ResourceNotFoundException("Market with ID " + po_MarketCode + " not found.");
         }
+
+        Market existingMarket = existingMarketOptional.get();
+
+        // Check if there's another market with the same name
+        Optional<Market> marketWithSameName = marketRepository.findByName(updatedMarket.getName());
+        if (marketWithSameName.isPresent() && marketWithSameName.get().getPo_MarketCode() != po_MarketCode) {
+            throw new MarketAlreadyExistsException("Market with name '" + updatedMarket.getName() + "' already exists.");
+        }
+
+        // Update the existing market with the new data
+        existingMarket.setName(updatedMarket.getName());
+        existingMarket.setDescription(updatedMarket.getDescription());
+
+        return marketRepository.save(existingMarket);
     }
 
     @Override

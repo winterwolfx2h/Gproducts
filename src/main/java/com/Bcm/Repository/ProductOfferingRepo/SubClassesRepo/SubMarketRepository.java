@@ -15,4 +15,7 @@ public interface SubMarketRepository extends JpaRepository<SubMarket, Integer> {
 
     @Query("SELECT p FROM SubMarket p WHERE p.name = :name")
     List<SubMarket> searchByKeyword(String name);
+
+    boolean existsByName(String name);
+
 }

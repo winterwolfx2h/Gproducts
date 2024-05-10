@@ -16,4 +16,5 @@ public interface FamilyRepository extends JpaRepository<Family, Integer> {
     @Query("SELECT p FROM Family p WHERE p.name = :name")
     List<Family> searchByKeyword(String name);
 
+    boolean existsByName(String name);
 }

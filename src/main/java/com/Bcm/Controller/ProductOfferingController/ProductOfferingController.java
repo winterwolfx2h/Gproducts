@@ -1,5 +1,6 @@
 package com.Bcm.Controller.ProductOfferingController;
 
+import com.Bcm.BCMDrools.ProductOfferingDrools.ProductOfferingValidationService;
 import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
@@ -29,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -55,6 +57,8 @@ public class ProductOfferingController {
     final CustomerFacingServiceSpecService customerFacingServiceSpecService;
     final MarketService marketService;
     final SubMarketService subMarketService;
+    final ProductOfferingValidationService validationService;
+
 
     @PostMapping("/addProdOff")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
@@ -162,64 +166,33 @@ public class ProductOfferingController {
 
     @PostMapping("/AddProdOffDTO")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
-    public ResponseEntity<?> createProductOfferingDTO(@RequestBody ProductOfferingDTO dto) {
+    public ResponseEntity<?> createProductOfferingDTO(@Valid @RequestBody ProductOfferingDTO dto) {
         try {
-
-            // Validate market names and convert to Market objects
-            List<Market> validMarkets = marketService.read();
-            List<String> marketNames = dto.getMarkets();
-
-            if (marketNames == null || marketNames.isEmpty()) {
-                return ResponseEntity.badRequest().body("Market names list cannot be empty.");
-            }
-
-
-            List<Market> validIncomingMarkets = marketNames.stream()
-                    .map(name -> validMarkets.stream()
-                            .filter(validMarket -> validMarket.getName().equals(name))
-                            .findFirst())
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-
-            if (validIncomingMarkets.size() != marketNames.size()) {
-                return ResponseEntity.badRequest().body("Some provided market names are invalid.");
-            }
-
-            dto.setMarkets(marketNames); // Setting the correct field
-
-            // Validate and convert submarket names to valid SubMarket objects
-            List<SubMarket> validSubMarkets = subMarketService.read();
-            List<String> submarketNames = dto.getSubmarkets();
-
-            if (submarketNames == null || submarketNames.isEmpty()) {
-                return ResponseEntity.badRequest().body("Submarket names list cannot be empty.");
-            }
-
-            List<SubMarket> validIncomingSubMarkets = submarketNames.stream()
-                    .map(name -> validSubMarkets.stream()
-                            .filter(validSubMarket -> validSubMarket.getName().equals(name))
-                            .findFirst())
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-
-            if (validIncomingSubMarkets.size() != submarketNames.size()) {
-                return ResponseEntity.badRequest().body("Some provided submarket names are invalid.");
-            }
-
-            dto.setSubmarkets(submarketNames); // Setting the correct field
-
             // Validate family name
             String familyName = dto.getFamilyName();
             if (familyName == null || !familyService.findByNameexist(familyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
             }
+
+            // Validate market
+            String marketName = dto.getMarkets();
+            if (marketName == null || !marketService.findByNameexist(marketName)) {
+                return ResponseEntity.badRequest().body("Market with name '" + marketName + "' does not exist.");
+            }
+
+            // Validate submarket
+            String submarketName = dto.getSubmarkets();
+            if (submarketName == null || !subMarketService.findByNameexist(submarketName)) {
+                return ResponseEntity.badRequest().body("Submarket with name '" + submarketName + "' does not exist.");
+            }
+
             ProductOffering createdProductOffering = productOfferingService.createProductOfferingDTO(dto);
             return new ResponseEntity<>(createdProductOffering, HttpStatus.CREATED);
+
         } catch (ProductOfferingAlreadyExistsException ex) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while creating the Product Offering.");
         }
     }
 

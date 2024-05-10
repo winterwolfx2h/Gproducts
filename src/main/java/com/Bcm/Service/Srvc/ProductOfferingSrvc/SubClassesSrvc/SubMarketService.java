@@ -22,4 +22,7 @@ public interface SubMarketService {
 
     SubMarket findByName(String name);
 
+    boolean findByNameexist(String name);
+
+
 }

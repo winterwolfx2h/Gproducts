@@ -15,6 +15,7 @@ public class SubMarketServiceImpl implements SubMarketService {
 
 
     final SubMarketRepository SubMarketRepository;
+    private final SubMarketRepository subMarketRepository;
 
     @Override
     public SubMarket create(SubMarket subMarket) {
@@ -46,6 +47,7 @@ public class SubMarketServiceImpl implements SubMarketService {
             if (existingSubMarketOptional.isPresent()) {
                 SubMarket existingSubMarket = existingSubMarketOptional.get();
                 existingSubMarket.setName(updatedSubMarket.getName());
+                existingSubMarket.setDescription(updatedSubMarket.getDescription());
                 return SubMarketRepository.save(existingSubMarket);
             } else {
                 throw new RuntimeException("SubMarket with ID " + po_SubMarketCode + " not found");
@@ -93,4 +95,15 @@ public class SubMarketServiceImpl implements SubMarketService {
             throw new RuntimeException("Invalid argument provided for finding SubMarket");
         }
     }
+
+    @Override
+    public boolean findByNameexist(String name) {
+        try {
+            Optional<SubMarket> optionalFamily = subMarketRepository.findByName(name);
+            return optionalFamily.isPresent();
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding SubMarket");
+        }
+    }
+
 }

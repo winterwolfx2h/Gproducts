@@ -1,5 +1,7 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl.SubClassesServiceImpl;
 
+import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Exception.SubMarketAlreadyExistsException;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.SubMarketRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubMarketService;
@@ -42,19 +44,25 @@ public class SubMarketServiceImpl implements SubMarketService {
 
     @Override
     public SubMarket update(int po_SubMarketCode, SubMarket updatedSubMarket) {
-        try {
-            Optional<SubMarket> existingSubMarketOptional = SubMarketRepository.findById(po_SubMarketCode);
-            if (existingSubMarketOptional.isPresent()) {
-                SubMarket existingSubMarket = existingSubMarketOptional.get();
-                existingSubMarket.setName(updatedSubMarket.getName());
-                existingSubMarket.setDescription(updatedSubMarket.getDescription());
-                return SubMarketRepository.save(existingSubMarket);
-            } else {
-                throw new RuntimeException("SubMarket with ID " + po_SubMarketCode + " not found");
-            }
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid argument provided for updating SubMarket");
+        Optional<SubMarket> existingSubMarketOptional = subMarketRepository.findById(po_SubMarketCode);
+
+        if (existingSubMarketOptional.isEmpty()) {
+            throw new ResourceNotFoundException("SubMarket with ID " + po_SubMarketCode + " not found.");
         }
+
+        SubMarket existingSubMarket = existingSubMarketOptional.get();
+
+        // Check if there's another submarket with the same name
+        Optional<SubMarket> subMarketWithSameName = subMarketRepository.findByName(updatedSubMarket.getName());
+        if (subMarketWithSameName.isPresent() && subMarketWithSameName.get().getPo_SubMarketCode() != po_SubMarketCode) {
+            throw new SubMarketAlreadyExistsException("SubMarket with name '" + updatedSubMarket.getName() + "' already exists.");
+        }
+
+        // Update the existing submarket with the new data
+        existingSubMarket.setName(updatedSubMarket.getName());
+        existingSubMarket.setDescription(updatedSubMarket.getDescription());
+
+        return subMarketRepository.save(existingSubMarket);
     }
 
     @Override

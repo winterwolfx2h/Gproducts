@@ -29,15 +29,15 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new InvalidInputException("Channels list cannot be empty.");
         }
 
-//        if (productOffering.getPoParent_Child() == null || productOffering.getPoParent_Child().isEmpty()) {
-//            productOffering.setPoParent_Child("PO-Parent");
-//        }
-
-        try {
-            productOffering.setPoParent_Child(productOffering.getPoParent_Child());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidInputException("Invalid value for poParent_Child: " + e.getMessage());
+        if (productOffering.getPoParent_Child() == null || productOffering.getPoParent_Child().isEmpty()) {
+            productOffering.setPoParent_Child("PO-Parent");
         }
+
+//        try {
+//            productOffering.setPoParent_Child(productOffering.getPoParent_Child());
+//        } catch (IllegalArgumentException e) {
+//            throw new InvalidInputException("Invalid value for poParent_Child: " + e.getMessage());
+//        }
 
         if (existingProduct.isPresent()) {
             throw new ProductOfferingAlreadyExistsException("A product offering with the same name already exists.");
@@ -81,6 +81,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         productOffering.setSubmarkets(Collections.singletonList(dto.getSubmarkets()));
 
         productOffering.setPoParent_Child(null);
+        productOffering.setSellIndicator(null);
 
         return productOfferingRepository.save(productOffering);
     }

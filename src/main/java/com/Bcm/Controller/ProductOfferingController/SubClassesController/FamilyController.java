@@ -1,6 +1,7 @@
 package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
 import com.Bcm.Exception.FamilyAlreadyExistsException;
+import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import lombok.RequiredArgsConstructor;
@@ -53,15 +54,18 @@ public class FamilyController {
     }
 
     @PutMapping("/{po_FamilyCode}")
-    public ResponseEntity<Family> updateFamily(
+    public ResponseEntity<?> updateFamily(
             @PathVariable("po_FamilyCode") int po_FamilyCode,
             @RequestBody Family updatedFamily) {
-
         try {
             Family updatedGroup = familyService.update(po_FamilyCode, updatedFamily);
             return ResponseEntity.ok(updatedGroup);
+        } catch (FamilyAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
         }
     }
 

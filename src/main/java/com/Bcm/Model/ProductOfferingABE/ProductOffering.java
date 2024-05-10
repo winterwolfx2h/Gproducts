@@ -35,7 +35,7 @@ public class ProductOffering extends Product {
     private String parent;
 
     @Column(name = "sellIndicator", nullable = true)
-    private boolean sellIndicator;
+    private Boolean sellIndicator;
 
     @Column(name = "category", nullable = true)
     private String category;
@@ -55,7 +55,7 @@ public class ProductOffering extends Product {
     private List<String> channels;
 
 
-    @Pattern(regexp = "^(PO_PLAN|PO_CHILD)$", message = "invalid code")
+    @Pattern(regexp = "^(PO_PARENT|PO_CHILD)$", message = "invalid code")
     @Column(name = "poParent_Child", nullable = true)
     private String poParent_Child;
 
@@ -70,7 +70,6 @@ public class ProductOffering extends Product {
     @Column(name = "serviceSpecType", nullable = true)
     private List<String> customerFacingServiceSpec;
 
-
     @ElementCollection
     @CollectionTable(name = "product_offering_markets", joinColumns = @JoinColumn(name = "Product_id"))
     @Column(name = "name")
@@ -80,7 +79,6 @@ public class ProductOffering extends Product {
     @CollectionTable(name = "product_offering_submarkets", joinColumns = @JoinColumn(name = "Product_id"))
     @Column(name = "name")
     private List<String> submarkets;
-
 
     public enum poParent_Child {
 

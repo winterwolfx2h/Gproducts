@@ -72,7 +72,6 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Market names list cannot be empty.");
             }
 
-
             List<Market> validIncomingMarkets = marketNames.stream()
                     .map(name -> validMarkets.stream()
                             .filter(validMarket -> validMarket.getName().equals(name))

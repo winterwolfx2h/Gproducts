@@ -1,5 +1,7 @@
 package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
+import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Exception.SubMarketAlreadyExistsException;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubMarketService;
 import lombok.RequiredArgsConstructor;
@@ -53,15 +55,19 @@ public class SubMarketController {
     }
 
     @PutMapping("/{po_SubMarketCode}")
-    public ResponseEntity<SubMarket> updateSubMarket(
+    public ResponseEntity<?> updateSubMarket(
             @PathVariable("po_SubMarketCode") int po_SubMarketCode,
             @RequestBody SubMarket updatedSubMarket) {
-
         try {
             SubMarket updatedSubMarketResult = subMarketService.update(po_SubMarketCode, updatedSubMarket);
             return ResponseEntity.ok(updatedSubMarketResult);
+
+        } catch (SubMarketAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
         }
     }
 

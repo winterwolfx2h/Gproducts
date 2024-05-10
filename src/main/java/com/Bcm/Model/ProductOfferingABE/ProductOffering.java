@@ -11,6 +11,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -53,9 +54,10 @@ public class ProductOffering extends Product {
     @Column(name = "channel", nullable = true)
     private List<String> channels;
 
-    @Column(name = "poParent_Child", nullable = true)
-    private String poParent_Child = "PO-Parent";
 
+    @Pattern(regexp = "^(PO_PLAN|PO_CHILD)$", message = "invalid code")
+    @Column(name = "poParent_Child", nullable = true)
+    private String poParent_Child;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "physicalResource", nullable = true)
@@ -80,11 +82,16 @@ public class ProductOffering extends Product {
     private List<String> submarkets;
 
 
-    public void setPoParent_Child(String poParent_Child) {
-        if (!"PO-Parent".equals(poParent_Child) && !"PO-Child".equals(poParent_Child)) {
-            throw new IllegalArgumentException("Invalid value for poParent_Child. Allowed values are 'PO-Parent' or 'PO-Child'.");
-        }
-        this.poParent_Child = poParent_Child;
+    public enum poParent_Child {
+
+        PO_Parent,
+        PO_Child
     }
 
+//    public void setPoParent_Child(String poParent_Child) {
+////        if (!"PO-Parent".equals(poParent_Child) && !"PO-Child".equals(poParent_Child)) {
+////            throw new IllegalArgumentException("Invalid value for poParent_Child. Allowed values are 'PO-Parent' or 'PO-Child'.");
+////        }
+//        this.poParent_Child = poParent_Child;
+//    }
 }

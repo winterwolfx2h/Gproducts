@@ -11,10 +11,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -31,9 +29,9 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new InvalidInputException("Channels list cannot be empty.");
         }
 
-        if (productOffering.getPoParent_Child() == null || productOffering.getPoParent_Child().isEmpty()) {
-            productOffering.setPoParent_Child("PO-Parent");
-        }
+//        if (productOffering.getPoParent_Child() == null || productOffering.getPoParent_Child().isEmpty()) {
+//            productOffering.setPoParent_Child("PO-Parent");
+//        }
 
         try {
             productOffering.setPoParent_Child(productOffering.getPoParent_Child());
@@ -62,7 +60,9 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         Optional<ProductOffering> existingProduct = productOfferingRepository.findByName(dto.getName());
 
         if (existingProduct.isPresent()) {
-            throw new ProductOfferingAlreadyExistsException("A product offering with the same name already exists.");
+            throw new ProductOfferingAlreadyExistsException(
+                    "A product offering with the name '" + dto.getName() + "' already exists."
+            );
         }
 
         ProductOffering productOffering = new ProductOffering();
@@ -73,11 +73,14 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         productOffering.setDetailedDescription(dto.getDetailedDescription());
         productOffering.setFamilyName(dto.getFamilyName());
         productOffering.setSubFamily(dto.getSubFamily());
-        productOffering.setStatus(dto.getStatus());
-        productOffering.setMarkets(dto.getMarkets());
-        productOffering.setSubmarkets(dto.getSubmarkets());
+        productOffering.setStatus("Working state");
         productOffering.setPoType(dto.getPoType());
         productOffering.setExternalId(dto.getExternalId());
+
+        productOffering.setMarkets(Collections.singletonList(dto.getMarkets()));
+        productOffering.setSubmarkets(Collections.singletonList(dto.getSubmarkets()));
+
+        productOffering.setPoParent_Child(null);
 
         return productOfferingRepository.save(productOffering);
     }

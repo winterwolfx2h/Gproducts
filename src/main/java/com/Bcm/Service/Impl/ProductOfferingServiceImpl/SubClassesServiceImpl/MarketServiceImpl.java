@@ -44,6 +44,7 @@ public class MarketServiceImpl implements MarketService {
             if (existingMarketOptional.isPresent()) {
                 Market existingMarket = existingMarketOptional.get();
                 existingMarket.setName(updatedMarket.getName());
+                existingMarket.setDescription(updatedMarket.getDescription());
                 return marketRepository.save(existingMarket);
             } else {
                 throw new RuntimeException("Market with ID " + po_MarketCode + " not found");
@@ -91,4 +92,15 @@ public class MarketServiceImpl implements MarketService {
             throw new RuntimeException("Invalid argument provided for finding Market");
         }
     }
+
+    @Override
+    public boolean findByNameexist(String name) {
+        try {
+            Optional<Market> optionalFamily = marketRepository.findByName(name);
+            return optionalFamily.isPresent();
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding Market");
+        }
+    }
+
 }

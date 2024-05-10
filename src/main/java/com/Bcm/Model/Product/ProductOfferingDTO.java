@@ -7,12 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.JoinColumn;
 import java.util.Date;
-import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
@@ -53,16 +49,9 @@ public class ProductOfferingDTO {
     @Column(name = "externalId", nullable = false)
     private String externalId;
 
-    @ElementCollection
-    @CollectionTable(name = "product_offering_markets", joinColumns = @JoinColumn(name = "Product_id"))
-    @Column(name = "name")
-    private List<String> markets;
+    @Column(name = "market", nullable = true)
+    private String markets;
 
-    @ElementCollection
-    @CollectionTable(name = "product_offering_submarkets", joinColumns = @JoinColumn(name = "Product_id"))
-    @Column(name = "name")
-    private List<String> submarkets;
-
+    @Column(name = "submarket", nullable = true)
+    private String submarkets;
 }
-
-

@@ -22,4 +22,7 @@ public interface MarketService {
 
     Market findByName(String name);
 
+    boolean findByNameexist(String name);
+
+
 }

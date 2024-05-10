@@ -13,6 +13,7 @@ public interface MarketRepository extends JpaRepository<Market, Integer> {
 
     Optional<Market> findByName(String name);
 
+
     @Query("SELECT p FROM Market p WHERE p.name = :name")
     List<Market> searchByKeyword(String name);
 }

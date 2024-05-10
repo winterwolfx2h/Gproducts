@@ -25,4 +25,7 @@ public class Market {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "description", nullable = true)
+    private String description;
+
 }

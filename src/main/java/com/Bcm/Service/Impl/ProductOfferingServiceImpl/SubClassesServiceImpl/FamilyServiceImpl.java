@@ -50,6 +50,8 @@ public class FamilyServiceImpl implements FamilyService {
             Optional<Family> existingFamilyOptional = familyRepository.findById(po_FamilyCode);
             if (existingFamilyOptional.isPresent()) {
                 Family existingFamily = existingFamilyOptional.get();
+                existingFamily.setName(updatedFamily.getName());
+                existingFamily.setDescription(updatedFamily.getDescription());
                 String newName = updatedFamily.getName();
                 if (!existingFamily.getName().equals(newName) && findByNameexist(newName)) {
                     throw new RuntimeException("Family with name '" + newName + "' already exists");

@@ -18,6 +18,4 @@ public interface ResourceFacingServiceSpecRepository extends JpaRepository<Resou
     List<ResourceFacingServiceSpec> searchByKeyword(@Param("name") String name);
 
     boolean existsByName(String name);
-
-
 }

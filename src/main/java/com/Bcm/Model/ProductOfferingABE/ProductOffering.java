@@ -27,7 +27,6 @@ public class ProductOffering extends Product {
     @Column(name = "poType", nullable = false)
     private String poType;
 
-    //Might Delete Later
     @Column(name = "externalId", nullable = true)
     private String externalId;
 
@@ -54,7 +53,6 @@ public class ProductOffering extends Product {
     @Column(name = "channel", nullable = true)
     private List<String> channels;
 
-
     @Pattern(regexp = "^(PO_PARENT|PO_CHILD)$", message = "invalid code")
     @Column(name = "poParent_Child", nullable = true)
     private String poParent_Child;
@@ -63,7 +61,6 @@ public class ProductOffering extends Product {
     @JoinColumn(name = "physicalResource", nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private PhysicalResource physicalResource;
-
 
     @ElementCollection
     @CollectionTable(name = "product_offering_CFSS", joinColumns = @JoinColumn(name = "Product_id"))
@@ -81,15 +78,7 @@ public class ProductOffering extends Product {
     private List<String> submarkets;
 
     public enum poParent_Child {
-
         PO_Parent,
         PO_Child
     }
-
-//    public void setPoParent_Child(String poParent_Child) {
-////        if (!"PO-Parent".equals(poParent_Child) && !"PO-Child".equals(poParent_Child)) {
-////            throw new IllegalArgumentException("Invalid value for poParent_Child. Allowed values are 'PO-Parent' or 'PO-Child'.");
-////        }
-//        this.poParent_Child = poParent_Child;
-//    }
 }

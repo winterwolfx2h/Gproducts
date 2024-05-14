@@ -25,17 +25,4 @@ public interface POPlanRepository extends JpaRepository<POPlan, Integer> {
 
     @Query("SELECT p FROM POPlan p WHERE p.detailedDescription LIKE %:detailedDescription% ")
     List<POPlan> searchByKeyword(String detailedDescription);
-
-    @Query("SELECT po FROM POPlan po JOIN po.market c WHERE  c.name = :name ")
-    List<POPlan> findAllWithMarket(String name);
-
-    @Query("SELECT p FROM POPlan p WHERE p.market.po_MarketCode = :po_MarketCode")
-    List<POPlan> findByMarket_po_MarketCode(int po_MarketCode);
-
-    @Query("SELECT po FROM POPlan po JOIN po.subMarket c WHERE  c.name = :name ")
-    List<POPlan> findAllWithSubMarket(String name);
-
-    @Query("SELECT p FROM POPlan p WHERE p.subMarket.po_SubMarketCode = :po_SubMarketCode")
-    List<POPlan> findBySubMarket_po_SubMarketCode(int po_SubMarketCode);
-
 }

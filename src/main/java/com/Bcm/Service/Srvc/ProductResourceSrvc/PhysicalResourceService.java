@@ -12,17 +12,18 @@ public interface PhysicalResourceService {
 
     List<PhysicalResource> read();
 
-    PhysicalResource update(int phyResourceId, PhysicalResource PhysicalResource);
+    PhysicalResource update(int PR_id, PhysicalResource PhysicalResource);
 
-    String delete(int phyResourceId);
+    String delete(int PR_id);
 
-    PhysicalResource findById(int phyResourceId);
+    PhysicalResource findById(int PR_id);
 
     List<PhysicalResource> searchByKeyword(String physicalResourceType);
 
     PhysicalResource findByPhysicalResourceType(String physicalResourceType);
 
-    boolean existsById(int phyResourceId);
+    boolean existsById(int PR_id);
 
 
+    PhysicalResource changeServiceStatus(int PR_id);
 }

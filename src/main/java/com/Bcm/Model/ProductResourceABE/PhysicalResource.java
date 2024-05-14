@@ -17,8 +17,8 @@ public class PhysicalResource {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "phyResourceId", nullable = false)
-    private int phyResourceId;
+    @Column(name = "PR_id ", nullable = false)
+    private int PR_id ;
 
     @Column(name = "physicalResourceType", nullable = false)
     private String physicalResourceType;
@@ -26,7 +26,10 @@ public class PhysicalResource {
     @Column(name = "physicalResourceFormat", nullable = false)
     private String physicalResourceFormat;
 
-    @Column(name = "serviceId", nullable = false)
-    private String serviceId;
+    @Column(name = "length", nullable = false)
+    private String length;
+
+    @Column(name = "status", nullable = false)
+    private String status;
 }
 

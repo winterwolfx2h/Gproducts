@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PhysicalResourceRepository extends JpaRepository<PhysicalResource, Integer> {
-    Optional<PhysicalResource> findById(int phyResourceId);
+    Optional<PhysicalResource> findById(int PR_id);
 
     Optional<PhysicalResource> findByPhysicalResourceType(String physicalResourceType);
 

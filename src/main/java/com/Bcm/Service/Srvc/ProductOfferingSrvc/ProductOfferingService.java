@@ -40,6 +40,9 @@ public interface ProductOfferingService {
 
     ProductOffering createProductOfferingDTO(ProductOfferingDTO dto);
 
+    List<ProductOfferingDTO> getAllProductOfferingDTOs();
+
+    ProductOfferingDTO updateProductOfferingDTO(int po_code, ProductOfferingDTO updatedDTO);
 }
 
 

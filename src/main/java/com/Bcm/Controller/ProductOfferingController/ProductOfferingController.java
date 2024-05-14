@@ -483,4 +483,59 @@ public class ProductOfferingController {
         }
     }
 
+    @GetMapping("/GetDTOs")
+    public ResponseEntity<List<ProductOfferingDTO>> getAllProductOfferingDTOs() {
+        List<ProductOfferingDTO> dtos = productOfferingService.getAllProductOfferingDTOs();
+        return ResponseEntity.ok(dtos);
+    }
+
+    @PutMapping("/update-dto/{po_code}")
+    public ResponseEntity<?> updateProductOfferingDTO(@PathVariable int po_code, @RequestBody ProductOfferingDTO updatedDTO) {
+        try {
+            // Retrieve the existing product offering
+            ProductOffering existingProductOffering = productOfferingService.findById(po_code);
+            if (existingProductOffering == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Offering with ID " + po_code + " not found.");
+            }
+
+            // Ensure the new name doesn't conflict with an existing product offering
+            String newName = updatedDTO.getName();
+            if (!existingProductOffering.getName().equals(newName)) {
+                if (productOfferingService.existsByName(newName)) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("Product Offering with the name '" + newName + "' already exists.");
+                }
+            }
+            // Validate family name
+            String newFamilyName = updatedDTO.getFamilyName();
+            if (newFamilyName != null && !familyService.findByNameexist(newFamilyName)) {
+                return ResponseEntity.badRequest().body("Family with name '" + newFamilyName + "' does not exist.");
+            }
+
+            // Validate market
+            String marketName = updatedDTO.getMarkets();
+            if (marketName == null || !marketService.findByNameexist(marketName)) {
+                return ResponseEntity.badRequest().body("Market with name '" + marketName + "' does not exist.");
+            }
+
+            // Validate submarket
+            String submarketName = updatedDTO.getSubmarkets();
+            if (submarketName == null || !subMarketService.findByNameexist(submarketName)) {
+                return ResponseEntity.badRequest().body("Submarket with name '" + submarketName + "' does not exist.");
+            }
+
+            existingProductOffering.setFamilyName(newFamilyName);
+
+            // Update the product offering DTO
+            ProductOfferingDTO updatedProductOfferingDTO = productOfferingService.updateProductOfferingDTO(po_code, updatedDTO);
+            return ResponseEntity.ok(updatedProductOfferingDTO);
+
+        } catch (ProductOfferingAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("A Product Offering with the same name already exists.");
+        } catch (InvalidInputException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while updating the Product Offering.");
+        }
+    }
+
 }

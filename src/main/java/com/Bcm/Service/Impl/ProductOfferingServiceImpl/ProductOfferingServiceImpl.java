@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ConcurrentModificationException;
 import java.util.*;
 
@@ -279,5 +280,97 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
     public boolean existsByName(String name) {
         return productOfferingRepository.findByName(name).isPresent();
     }
+
+    @Override
+    public List<ProductOfferingDTO> getAllProductOfferingDTOs() {
+        List<ProductOffering> productOfferings = productOfferingRepository.findAll();
+        List<ProductOfferingDTO> dtos = new ArrayList<>();
+
+        for (ProductOffering productOffering : productOfferings) {
+            ProductOfferingDTO dto = new ProductOfferingDTO();
+            dto.setName(productOffering.getName());
+            dto.setEffectiveFrom(productOffering.getEffectiveFrom());
+            dto.setEffectiveTo(productOffering.getEffectiveTo());
+            dto.setDescription(productOffering.getDescription());
+            dto.setDetailedDescription(productOffering.getDetailedDescription());
+            dto.setFamilyName(productOffering.getFamilyName());
+            dto.setSubFamily(productOffering.getSubFamily());
+            dto.setStatus(productOffering.getStatus());
+            dto.setPoType(productOffering.getPoType());
+            dto.setExternalId(productOffering.getExternalId());
+            productOffering.setMarkets(productOffering.getMarkets());
+            productOffering.setSubmarkets(productOffering.getSubmarkets());
+
+            String marketsString = String.join(",", productOffering.getMarkets());
+            dto.setMarkets(marketsString);
+
+            // Convert submarkets list to string
+            String submarketsString = String.join(",", productOffering.getSubmarkets());
+            dto.setSubmarkets(submarketsString);
+
+
+            dtos.add(dto);
+        }
+
+        return dtos;
+    }
+
+    @Override
+    public ProductOfferingDTO updateProductOfferingDTO(int po_code, ProductOfferingDTO updatedDTO) {
+        // Retrieve the existing ProductOffering entity from the database
+        Optional<ProductOffering> optionalProductOffering = productOfferingRepository.findById(po_code);
+        if (optionalProductOffering.isPresent()) {
+            ProductOffering existingProductOffering = optionalProductOffering.get();
+
+            // Update fields in existingProductOffering with data from updatedDTO
+            existingProductOffering.setName(updatedDTO.getName());
+            existingProductOffering.setEffectiveFrom(updatedDTO.getEffectiveFrom());
+            existingProductOffering.setEffectiveTo(updatedDTO.getEffectiveTo());
+            existingProductOffering.setDescription(updatedDTO.getDescription());
+            existingProductOffering.setDetailedDescription(updatedDTO.getDetailedDescription());
+            existingProductOffering.setFamilyName(updatedDTO.getFamilyName());
+            existingProductOffering.setSubFamily(updatedDTO.getSubFamily());
+            //existingProductOffering.setStatus(updatedDTO.getStatus());
+            existingProductOffering.setPoType(updatedDTO.getPoType());
+            existingProductOffering.setExternalId(updatedDTO.getExternalId());
+            // Set other fields accordingly
+
+            // Save the updated ProductOffering entity back to the database
+            ProductOffering updatedProductOffering = productOfferingRepository.save(existingProductOffering);
+
+            // Convert the updated entity back to DTO and return
+            return convertToDTO(updatedProductOffering);
+        } else {
+            throw new EntityNotFoundException("ProductOffering with ID " + po_code + " not found");
+        }
+    }
+
+    // Utility method to convert ProductOffering entity to DTO
+    private ProductOfferingDTO convertToDTO(ProductOffering productOffering) {
+        ProductOfferingDTO dto = new ProductOfferingDTO();
+        // Map fields from productOffering to dto
+        dto.setName(productOffering.getName());
+        dto.setEffectiveFrom(productOffering.getEffectiveFrom());
+        dto.setEffectiveTo(productOffering.getEffectiveTo());
+        dto.setDescription(productOffering.getDescription());
+        dto.setDetailedDescription(productOffering.getDetailedDescription());
+        dto.setFamilyName(productOffering.getFamilyName());
+        dto.setSubFamily(productOffering.getSubFamily());
+        dto.setStatus(productOffering.getStatus());
+        dto.setPoType(productOffering.getPoType());
+        dto.setExternalId(productOffering.getExternalId());
+        productOffering.setMarkets(productOffering.getMarkets());
+        productOffering.setSubmarkets(productOffering.getSubmarkets());
+
+        String marketsString = String.join(",", productOffering.getMarkets());
+        dto.setMarkets(marketsString);
+
+        // Convert submarkets list to string
+        String submarketsString = String.join(",", productOffering.getSubmarkets());
+        dto.setSubmarkets(submarketsString);
+        // Map other fields accordingly
+        return dto;
+    }
+
 
 }

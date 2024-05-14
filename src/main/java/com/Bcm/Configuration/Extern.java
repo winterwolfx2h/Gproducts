@@ -11,14 +11,11 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 public class Extern implements InitializingBean {
 
-
-    // SWAGGER CONFIG
     public static String SWAGGER_VERSION;
     public static String SWAGGER_TITLE;
     public static String SWAGGER_DESCRIPTION;
     public static String SWAGGER_LICENSE;
     public static String SWAGGER_LICENSE_URL;
-    //
     @Value("${swagger.version}")
     String GET_SWAGGER_VERSION;
     @Value("${swagger.title}")
@@ -29,7 +26,6 @@ public class Extern implements InitializingBean {
     String GET_SWAGGER_LICENSE;
     @Value("${swagger.licenseurl}")
     String GET_SWAGGER_LICENSE_URL;
-    // END SWAGGER
 
     @Bean
     public static String getAllConfig() {
@@ -39,15 +35,11 @@ public class Extern implements InitializingBean {
     @Override
     public synchronized void afterPropertiesSet() {
 
-
-        // SWAGGER
         SWAGGER_VERSION = GET_SWAGGER_VERSION;
         SWAGGER_TITLE = GET_SWAGGER_TITLE;
         SWAGGER_DESCRIPTION = GET_SWAGGER_DESCRIPTION;
         SWAGGER_LICENSE = GET_SWAGGER_LICENSE;
         SWAGGER_LICENSE_URL = GET_SWAGGER_LICENSE_URL;
-        //
 
     }
-
 }

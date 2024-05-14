@@ -34,12 +34,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             productOffering.setPoParent_Child("PO-Parent");
         }
 
-//        try {
-//            productOffering.setPoParent_Child(productOffering.getPoParent_Child());
-//        } catch (IllegalArgumentException e) {
-//            throw new InvalidInputException("Invalid value for poParent_Child: " + e.getMessage());
-//        }
-
         if (existingProduct.isPresent()) {
             throw new ProductOfferingAlreadyExistsException("A product offering with the same name already exists.");
         }
@@ -105,19 +99,12 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             ProductOffering existingProduct = existingProductOptional.get();
             existingProduct.setName(updatedProductOffering.getName());
             existingProduct.setParent(updatedProductOffering.getParent());
-            //existingProduct.setExternalLinkId(updatedProductOffering.getExternalLinkId());
-            // existingProduct.setProductSpecification(updatedProductOffering.getProductSpecification());
             existingProduct.setPoAttributes(updatedProductOffering.getPoAttributes());
             existingProduct.setProductRelation(updatedProductOffering.getProductRelation());
-            //existingProduct.setProductOfferRelation(updatedProductOffering.getProductOfferRelation());
-            //existingProduct.setLogicalResource(updatedProductOffering.getLogicalResource());
             existingProduct.setPhysicalResource(updatedProductOffering.getPhysicalResource());
             existingProduct.setBusinessProcess(updatedProductOffering.getBusinessProcess());
-            //existingProduct.setEligibilityChannels(updatedProductOffering.getEligibilityChannels());
             existingProduct.setPoParent_Child(updatedProductOffering.getPoParent_Child());
             existingProduct.setChannels(updatedProductOffering.getChannels());
-
-            //existingProduct.getEligibilityChannels();
 
             try {
                 if (updatedProductOffering.getName() == null || updatedProductOffering.getDescription() == null) {
@@ -185,15 +172,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
     }
 
     @Override
-    public List<ProductOffering> findByParentName(String parentName) {
-        try {
-            return productOfferingRepository.findByParent(parentName);
-        } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while searching for product offerings by parent name: " + parentName, e);
-        }
-    }
-
-    @Override
     public List<ProductOffering> findByPoType(String poType) {
         try {
             return productOfferingRepository.findByPoType(poType);
@@ -215,7 +193,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new RuntimeException("An unexpected error occurred while searching for product offerings by family name: " + familyName, e);
         }
     }
-
 
     @Override
     public ProductOffering changeProductOfferingStatus(int po_code) {
@@ -303,8 +280,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
 
             String marketsString = String.join(",", productOffering.getMarkets());
             dto.setMarkets(marketsString);
-
-            // Convert submarkets list to string
             String submarketsString = String.join(",", productOffering.getSubmarkets());
             dto.setSubmarkets(submarketsString);
 
@@ -317,12 +292,9 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
 
     @Override
     public ProductOfferingDTO updateProductOfferingDTO(int po_code, ProductOfferingDTO updatedDTO) {
-        // Retrieve the existing ProductOffering entity from the database
         Optional<ProductOffering> optionalProductOffering = productOfferingRepository.findById(po_code);
         if (optionalProductOffering.isPresent()) {
             ProductOffering existingProductOffering = optionalProductOffering.get();
-
-            // Update fields in existingProductOffering with data from updatedDTO
             existingProductOffering.setName(updatedDTO.getName());
             existingProductOffering.setEffectiveFrom(updatedDTO.getEffectiveFrom());
             existingProductOffering.setEffectiveTo(updatedDTO.getEffectiveTo());
@@ -330,25 +302,17 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             existingProductOffering.setDetailedDescription(updatedDTO.getDetailedDescription());
             existingProductOffering.setFamilyName(updatedDTO.getFamilyName());
             existingProductOffering.setSubFamily(updatedDTO.getSubFamily());
-            //existingProductOffering.setStatus(updatedDTO.getStatus());
             existingProductOffering.setPoType(updatedDTO.getPoType());
             existingProductOffering.setExternalId(updatedDTO.getExternalId());
-            // Set other fields accordingly
-
-            // Save the updated ProductOffering entity back to the database
             ProductOffering updatedProductOffering = productOfferingRepository.save(existingProductOffering);
-
-            // Convert the updated entity back to DTO and return
             return convertToDTO(updatedProductOffering);
         } else {
             throw new EntityNotFoundException("ProductOffering with ID " + po_code + " not found");
         }
     }
 
-    // Utility method to convert ProductOffering entity to DTO
     private ProductOfferingDTO convertToDTO(ProductOffering productOffering) {
         ProductOfferingDTO dto = new ProductOfferingDTO();
-        // Map fields from productOffering to dto
         dto.setName(productOffering.getName());
         dto.setEffectiveFrom(productOffering.getEffectiveFrom());
         dto.setEffectiveTo(productOffering.getEffectiveTo());
@@ -365,10 +329,8 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         String marketsString = String.join(",", productOffering.getMarkets());
         dto.setMarkets(marketsString);
 
-        // Convert submarkets list to string
         String submarketsString = String.join(",", productOffering.getSubmarkets());
         dto.setSubmarkets(submarketsString);
-        // Map other fields accordingly
         return dto;
     }
 

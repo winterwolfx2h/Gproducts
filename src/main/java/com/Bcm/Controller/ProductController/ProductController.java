@@ -65,10 +65,9 @@ public class ProductController {
                         productOfferingDTO.setCategory(productOffering.getCategory());
                         productOfferingDTO.setChannels(productOffering.getChannels());
                         productOfferingDTO.setPoParent_Child(productOffering.getPoParent_Child());
-                        //productOfferingDTO.setExternalLinkId(productOffering.getExternalLinkId());
                         productOfferingDTO.setCustomerFacingServiceSpec(productOffering.getCustomerFacingServiceSpec());
-                        //productOfferingDTO.setMarkets(productOffering.getMarkets());
-                        //productOfferingDTO.setSubmarkets(productOffering.getSubmarkets());
+                        productOfferingDTO.setMarkets(productOffering.getMarkets());
+                        productOfferingDTO.setSubmarkets(productOffering.getSubmarkets());
                         productOfferingDTO.setBS_externalId(productOffering.getBS_externalId());
                         productOfferingDTO.setCS_externalId(productOffering.getCS_externalId());
                         productOfferingDTO.setPoAttributes(productOffering.getPoAttributes());
@@ -102,14 +101,9 @@ public class ProductController {
             for (Product product : products) {
                 if (product instanceof ProductOffering) {
                     ProductOffering productOffering = (ProductOffering) product;
-                    //ProductSpecification productSpecification = productOffering.getProductSpecification();
                     ProductSpecificationDTO dto = new ProductSpecificationDTO();
                     dto.setFamilyName(productOffering.getFamilyName());
                     dto.setSubFamily(productOffering.getSubFamily());
-                    //dto.setCategory(productOffering.getProductSpecification().getCategory());
-                    //dto.setPoPlanName(productSpecification.getPoPlanName());
-                    //dto.setBS_externalId(productSpecification.getBS_externalId());
-                    //dto.setCS_externalId(productSpecification.getCS_externalId());
                     dtos.add(dto);
                 }
             }
@@ -146,19 +140,8 @@ public class ProductController {
                         productOfferingDTO.setSubFamily(product.getSubFamily());
                         productOfferingDTO.setParent(productOffering.getParent());
                         productOfferingDTO.setStatus(productOffering.getStatus());
-                        //productOfferingDTO.setCategory(productOffering.getCategory());
-                        //productOfferingDTO.setChannels(productOffering.getChannels());
-                        //productOfferingDTO.setPoParent_Child(productOffering.getPoParent_Child());
-                        //productOfferingDTO.setExternalLinkId(productOffering.getExternalLinkId());
-                        //productOfferingDTO.setCustomerFacingServiceSpec(productOffering.getCustomerFacingServiceSpec());
                         productOfferingDTO.setMarkets(productOffering.getMarkets());
                         productOfferingDTO.setSubmarkets(productOffering.getSubmarkets());
-                        //productOfferingDTO.setBS_externalId(productOffering.getBS_externalId());
-                        //productOfferingDTO.setCS_externalId(productOffering.getCS_externalId());
-                        //productOfferingDTO.setPoAttributes(productOffering.getPoAttributes());
-                        //productOfferingDTO.setProductRelation(productOffering.getProductRelation());
-                        //productOfferingDTO.setPhysicalResource(productOffering.getPhysicalResource());
-                        //productOfferingDTO.setBusinessProcess(productOffering.getBusinessProcess());
                         productOfferingDTO.setExternalId(productOffering.getExternalId());
                         return productOfferingDTO;
                     })

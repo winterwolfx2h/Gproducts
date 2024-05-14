@@ -6,11 +6,13 @@ import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
 import com.Bcm.Exception.ProductOfferingLogicException;
 import com.Bcm.Model.Product.ProductOfferingDTO;
-import com.Bcm.Model.ProductOfferingABE.*;
+import com.Bcm.Model.ProductOfferingABE.Eligibility;
+import com.Bcm.Model.ProductOfferingABE.POAttributes;
+import com.Bcm.Model.ProductOfferingABE.ProductOffering;
+import com.Bcm.Model.ProductOfferingABE.ProductRelation;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
-import com.Bcm.Model.ProductResourceABE.PhysicalResource;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Repository.ProductOfferingRepo.ProductSpecificationRepository;
 import com.Bcm.Service.Srvc.POPlanService;
@@ -64,7 +66,6 @@ public class ProductOfferingController {
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
         try {
-            // Validate market names and convert to Market objects
             List<Market> validMarkets = marketService.read();
             List<String> marketNames = productOffering.getMarkets();
 
@@ -84,9 +85,7 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Some provided market names are invalid.");
             }
 
-            productOffering.setMarkets(marketNames); // Setting the correct field
-
-            // Validate and convert submarket names to valid SubMarket objects
+            productOffering.setMarkets(marketNames);
             List<SubMarket> validSubMarkets = subMarketService.read();
             List<String> submarketNames = productOffering.getSubmarkets();
 
@@ -106,15 +105,12 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Some provided submarket names are invalid.");
             }
 
-            productOffering.setSubmarkets(submarketNames); // Setting the correct field
-
-            // Validate family name
+            productOffering.setSubmarkets(submarketNames);
             String familyName = productOffering.getFamilyName();
             if (familyName == null || !familyService.findByNameexist(familyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
             }
 
-            // Validate channels
             List<String> validChannels = eligibilityService.read()
                     .stream()
                     .map(Eligibility::getChannel)
@@ -124,7 +120,6 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Invalid channel(s) in the Product Offering.");
             }
 
-            // Validate customer-facing service specs
             List<String> serviceSpecConfigs = productOffering.getCustomerFacingServiceSpec();
             List<String> missingServices = serviceSpecConfigs.stream()
                     .filter(serviceType -> !customerFacingServiceSpecService.findByNameexist(serviceType))
@@ -138,7 +133,6 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("A product offering with the same name already exists.");
             }
 
-            // Ensure other related entities exist
             ensureRelatedEntitiesExist(productOffering);
 
             ProductOffering createdProductOffering = productOfferingService.create(productOffering);
@@ -162,24 +156,20 @@ public class ProductOfferingController {
     public void invalidateProductOfferingsCache() {
     }
 
-
     @PostMapping("/AddProdOffDTO")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> createProductOfferingDTO(@Valid @RequestBody ProductOfferingDTO dto) {
         try {
-            // Validate family name
             String familyName = dto.getFamilyName();
             if (familyName == null || !familyService.findByNameexist(familyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
             }
 
-            // Validate market
             String marketName = dto.getMarkets();
             if (marketName == null || !marketService.findByNameexist(marketName)) {
                 return ResponseEntity.badRequest().body("Market with name '" + marketName + "' does not exist.");
             }
 
-            // Validate submarket
             String submarketName = dto.getSubmarkets();
             if (submarketName == null || !subMarketService.findByNameexist(submarketName)) {
                 return ResponseEntity.badRequest().body("Submarket with name '" + submarketName + "' does not exist.");
@@ -196,23 +186,10 @@ public class ProductOfferingController {
     }
 
     private void ensureRelatedEntitiesExist(ProductOffering productOffering) {
-        //ensureProductSpecificationExists(productOffering.getProductSpecification());
         ensurePOAttributesExists((List<POAttributes>) productOffering.getPoAttributes());
         ensureProductRelationExists(productOffering.getProductRelation());
-        //ensureProductOfferRelationExists(productOffering.getProductOfferRelation());
-        //ensureLogicalResourceExists(productOffering.getLogicalResource());
-        //ensurePhysicalResourceExists(productOffering.getPhysicalResource());
-        //ensureBusinessProcessExists(productOffering.getBusinessProcess());
         ensureCustomerFacingServiceSpecExists(productOffering.getCustomerFacingServiceSpec());
         ensureFamilyExists(productOffering.getFamilyName());
-    }
-
-    private void ensureProductSpecificationExists(ProductSpecification productSpec) {
-        if (productSpec != null && productSpec.getPo_SpecCode() != 0) {
-            if (!productSpecificationService.existsById(productSpec.getPo_SpecCode())) {
-                productSpecificationService.create(productSpec);
-            }
-        }
     }
 
     private void ensurePOAttributesExists(List<POAttributes> poAttributesList) {
@@ -229,46 +206,6 @@ public class ProductOfferingController {
         if (productRelation != null && productRelation.getPoRelation_Code() != 0) {
             if (!productRelationService.existsById(productRelation.getPoRelation_Code())) {
                 productRelationService.create(productRelation);
-            }
-        }
-    }
-
-    private void ensureProductOfferRelationExists(ProductOfferRelation productOfferRelation) {
-        if (productOfferRelation != null && productOfferRelation.getPoOfferRelation_Code() != 0) {
-            if (!productOfferRelationService.existsById(productOfferRelation.getPoOfferRelation_Code())) {
-                productOfferRelationService.create(productOfferRelation);
-            }
-        }
-    }
-
-    /*private void ensureLogicalResourceExists(LogicalResource logicalResource) {
-        if (logicalResource != null && logicalResource.getLogResourceId() != 0) {
-            if (!logicalResourceService.existsById(logicalResource.getLogResourceId())) {
-                logicalResourceService.create(logicalResource);
-            }
-        }
-    }*/
-
-    private void ensurePhysicalResourceExists(PhysicalResource physicalResource) {
-        if (physicalResource != null && physicalResource.getPhyResourceId() != 0) {
-            if (!physicalResourceService.existsById(physicalResource.getPhyResourceId())) {
-                physicalResourceService.create(physicalResource);
-            }
-        }
-    }
-
-    private void ensureBusinessProcessExists(BusinessProcess businessProcess) {
-        if (businessProcess != null && businessProcess.getBusinessProcessId() != 0) {
-            if (!businessProcessService.existsById(businessProcess.getBusinessProcessId())) {
-                businessProcessService.create(businessProcess);
-            }
-        }
-    }
-
-    private void ensureEligibilityExists(Eligibility eligibility) {
-        if (eligibility != null && eligibility.getEligibilityId() != 0) {
-            if (!eligibilityService.existsById(eligibility.getEligibilityId())) {
-                eligibilityService.create((List<Eligibility>) eligibility);
             }
         }
     }
@@ -318,13 +255,11 @@ public class ProductOfferingController {
             @RequestBody ProductOffering updatedProductOffering
     ) {
         try {
-            // Retrieve the existing product offering
             ProductOffering existingProductOffering = productOfferingService.findById(po_code);
             if (existingProductOffering == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Offering with ID " + po_code + " not found.");
             }
 
-            // Ensure the new name doesn't conflict with an existing product offering
             String newName = updatedProductOffering.getName();
             if (!existingProductOffering.getName().equals(newName)) {
                 if (productOfferingService.existsByName(newName)) {
@@ -332,7 +267,6 @@ public class ProductOfferingController {
                 }
             }
 
-            // Validate incoming market names
             List<Market> validMarkets = marketService.read();
             List<String> marketNames = updatedProductOffering.getMarkets();
 
@@ -352,9 +286,7 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Some provided market names are invalid.");
             }
 
-            existingProductOffering.setMarkets(marketNames); // Set the field to the list of names
-
-            // Validate incoming submarket names
+            existingProductOffering.setMarkets(marketNames);
             List<SubMarket> validSubMarkets = subMarketService.read();
             List<String> submarketNames = updatedProductOffering.getSubmarkets();
 
@@ -374,9 +306,7 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Some provided submarket names are invalid.");
             }
 
-            existingProductOffering.setSubmarkets(submarketNames); // Set the field to the list of names
-
-            // Validate family name
+            existingProductOffering.setSubmarkets(submarketNames);
             String newFamilyName = updatedProductOffering.getFamilyName();
             if (newFamilyName != null && !familyService.findByNameexist(newFamilyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + newFamilyName + "' does not exist.");
@@ -384,7 +314,6 @@ public class ProductOfferingController {
 
             existingProductOffering.setFamilyName(newFamilyName);
 
-            // Validate channels
             List<String> validChannels = eligibilityService.read()
                     .stream()
                     .map(Eligibility::getChannel)
@@ -396,7 +325,6 @@ public class ProductOfferingController {
 
             existingProductOffering.setChannels(updatedProductOffering.getChannels());
 
-            // Validate customer-facing service specs
             List<String> serviceSpecConfigs = updatedProductOffering.getCustomerFacingServiceSpec();
             List<String> missingServices = serviceSpecConfigs.stream()
                     .filter(serviceType -> !customerFacingServiceSpecService.findByNameexist(serviceType))
@@ -407,18 +335,14 @@ public class ProductOfferingController {
             }
 
             existingProductOffering.setCustomerFacingServiceSpec(serviceSpecConfigs);
-
-            // Update other fields
             existingProductOffering.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
             existingProductOffering.setEffectiveTo(updatedProductOffering.getEffectiveTo());
             existingProductOffering.setDescription(updatedProductOffering.getDescription());
             existingProductOffering.setDetailedDescription(updatedProductOffering.getDetailedDescription());
             existingProductOffering.setPoType(updatedProductOffering.getPoType());
 
-            // Update other relationships and related entities
             ensureRelatedEntitiesExist(existingProductOffering);
 
-            // Save the updated product offering
             ProductOffering updatedResult = productOfferingService.update(po_code, existingProductOffering);
 
             return ResponseEntity.ok(updatedResult);
@@ -431,8 +355,6 @@ public class ProductOfferingController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while updating the Product Offering.");
         }
     }
-
-
 
     @DeleteMapping("/{po_code}")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
@@ -490,42 +412,32 @@ public class ProductOfferingController {
     }
 
     @PutMapping("/update-dto/{po_code}")
+    @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> updateProductOfferingDTO(@PathVariable int po_code, @RequestBody ProductOfferingDTO updatedDTO) {
         try {
-            // Retrieve the existing product offering
             ProductOffering existingProductOffering = productOfferingService.findById(po_code);
             if (existingProductOffering == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Offering with ID " + po_code + " not found.");
             }
-
-            // Ensure the new name doesn't conflict with an existing product offering
             String newName = updatedDTO.getName();
             if (!existingProductOffering.getName().equals(newName)) {
                 if (productOfferingService.existsByName(newName)) {
                     return ResponseEntity.status(HttpStatus.CONFLICT).body("Product Offering with the name '" + newName + "' already exists.");
                 }
             }
-            // Validate family name
             String newFamilyName = updatedDTO.getFamilyName();
             if (newFamilyName != null && !familyService.findByNameexist(newFamilyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + newFamilyName + "' does not exist.");
             }
-
-            // Validate market
             String marketName = updatedDTO.getMarkets();
             if (marketName == null || !marketService.findByNameexist(marketName)) {
                 return ResponseEntity.badRequest().body("Market with name '" + marketName + "' does not exist.");
             }
-
-            // Validate submarket
             String submarketName = updatedDTO.getSubmarkets();
             if (submarketName == null || !subMarketService.findByNameexist(submarketName)) {
                 return ResponseEntity.badRequest().body("Submarket with name '" + submarketName + "' does not exist.");
             }
-
             existingProductOffering.setFamilyName(newFamilyName);
-
-            // Update the product offering DTO
             ProductOfferingDTO updatedProductOfferingDTO = productOfferingService.updateProductOfferingDTO(po_code, updatedDTO);
             return ResponseEntity.ok(updatedProductOfferingDTO);
 

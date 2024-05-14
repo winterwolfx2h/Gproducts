@@ -20,7 +20,6 @@ public class ProductServiceImpl implements ProductService {
         this.productRepository = productRepository;
     }
 
-
     @Override
     public List<Product> read() {
         try {
@@ -39,16 +38,6 @@ public class ProductServiceImpl implements ProductService {
             return Collections.emptyList();
         }
         return products;
-    }
-
-
-    @Override
-    public List<ProductOffering> findByParentName(String parentName) {
-        try {
-            return productRepository.findByParent(parentName);
-        } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while searching for product offerings by parent name: " + parentName, e);
-        }
     }
 
     @Override

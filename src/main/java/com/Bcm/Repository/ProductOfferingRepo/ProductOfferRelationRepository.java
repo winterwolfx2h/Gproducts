@@ -15,17 +15,5 @@ public interface ProductOfferRelationRepository extends JpaRepository<ProductOff
     @Query("SELECT p FROM ProductOfferRelation p WHERE p.type LIKE %:type% ")
     List<ProductOfferRelation> searchByKeyword(String type);
 
-    /*@Query("SELECT po FROM ProductOfferRelation po JOIN po.type c WHERE  c.name = :name ")
-    List<ProductOfferRelation> findAllWithType(String name);
-
-    @Query("SELECT p FROM ProductOfferRelation p WHERE p.type.poRelationType_code = :poRelationType_code")
-    List<ProductOfferRelation> findByType_poRelationType_code(int poRelationType_code);
-
-    @Query("SELECT po FROM ProductOfferRelation po JOIN po.status c WHERE  c.name = :name ")
-    List<ProductOfferRelation> findAllWithStatus(String name);
-
-    @Query("SELECT p FROM ProductOfferRelation p WHERE p.status.pos_code = :pos_code")
-    List<ProductOfferRelation> findByStatus_pos_code(int pos_code);*/
-
 }
 

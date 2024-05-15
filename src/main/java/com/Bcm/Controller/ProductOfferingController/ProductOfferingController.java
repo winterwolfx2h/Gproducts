@@ -25,7 +25,6 @@ import com.Bcm.Service.Srvc.ProductResourceSrvc.PhysicalResourceService;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -235,7 +234,6 @@ public class ProductOfferingController {
     }
 
     @GetMapping("/listProductOfferings")
-    @Cacheable(value = "productOfferingsCache")
     public ResponseEntity<List<ProductOffering>> getAllProductOfferings() {
         List<ProductOffering> productOfferings = productOfferingService.read();
         return ResponseEntity.ok(productOfferings);

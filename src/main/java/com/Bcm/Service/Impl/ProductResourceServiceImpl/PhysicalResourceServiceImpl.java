@@ -39,8 +39,6 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
             throw new RuntimeException("An unexpected error occurred while creating Resource Facing Service Spec", e);
         }
     }
-
-
     @Override
     public List<PhysicalResource> read() {
         return physicalResourceRepository.findAll();

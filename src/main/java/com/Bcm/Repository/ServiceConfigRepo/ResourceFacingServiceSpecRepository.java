@@ -12,10 +12,10 @@ public interface ResourceFacingServiceSpecRepository extends JpaRepository<Resou
 
     Optional<ResourceFacingServiceSpec> findById(int Rfss_code);
 
-    Optional<ResourceFacingServiceSpec> findByName(String name);
+    Optional<ResourceFacingServiceSpec> findByexternalNPCode(String externalNPCode);
 
-    @Query("SELECT r FROM ResourceFacingServiceSpec r WHERE r.name LIKE %:name%")
-    List<ResourceFacingServiceSpec> searchByKeyword(@Param("name") String name);
+    @Query("SELECT r FROM ResourceFacingServiceSpec r WHERE r.externalNPCode LIKE %:externalNPCode%")
+    List<ResourceFacingServiceSpec> searchByKeyword(@Param("externalNPCode") String externalNPCode);
 
-    boolean existsByName(String name);
+    boolean existsByexternalNPCode(String externalNPCode);
 }

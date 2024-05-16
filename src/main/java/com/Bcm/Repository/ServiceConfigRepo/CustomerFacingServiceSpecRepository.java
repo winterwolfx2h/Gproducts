@@ -11,7 +11,7 @@ public interface CustomerFacingServiceSpecRepository extends JpaRepository<Custo
 
     Optional<CustomerFacingServiceSpec> findByServiceSpecType(String serviceSpecType);
 
-    Optional<CustomerFacingServiceSpec> findById(int CFSS_code);
+    Optional<CustomerFacingServiceSpec> findById(int serviceId);
 
     @Query("SELECT p FROM CustomerFacingServiceSpec p WHERE p.description LIKE %:description% ")
     List<CustomerFacingServiceSpec> searchByKeyword(String description);

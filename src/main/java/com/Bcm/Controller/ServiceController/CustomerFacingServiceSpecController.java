@@ -48,22 +48,22 @@ public class CustomerFacingServiceSpecController {
         }
     }
 
-    @GetMapping("/{CFSS_code}")
-    public ResponseEntity<?> getCustomerFacingServiceSpecById(@PathVariable("CFSS_code") int CFSS_code) {
+    @GetMapping("/{serviceId}")
+    public ResponseEntity<?> getCustomerFacingServiceSpecById(@PathVariable("serviceId") int serviceId) {
         try {
-            CustomerFacingServiceSpec customerFacingServiceSpec = customerFacingServiceSpecService.findById(CFSS_code);
+            CustomerFacingServiceSpec customerFacingServiceSpec = customerFacingServiceSpecService.findById(serviceId);
             return ResponseEntity.ok(customerFacingServiceSpec);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
 
-    @PutMapping("/{CFSS_code}")
+    @PutMapping("/{serviceId}")
     public ResponseEntity<?> updateCustomerFacingServiceSpec(
-            @PathVariable("CFSS_code") int CFSS_code,
+            @PathVariable("serviceId") int serviceId,
             @RequestBody CustomerFacingServiceSpec updatedCustomerFacingServiceSpec) {
         try {
-            CustomerFacingServiceSpec updatedProduct = customerFacingServiceSpecService.update(CFSS_code, updatedCustomerFacingServiceSpec);
+            CustomerFacingServiceSpec updatedProduct = customerFacingServiceSpecService.update(serviceId, updatedCustomerFacingServiceSpec);
             return ResponseEntity.ok(updatedProduct);
         } catch (ServiceAlreadyExistsException e) {
             return ResponseEntity.badRequest().body("Service with the same name already exists");
@@ -72,20 +72,20 @@ public class CustomerFacingServiceSpecController {
         }
     }
 
-    @DeleteMapping("/{CFSS_code}")
-    public ResponseEntity<?> deleteCustomerFacingServiceSpec(@PathVariable("CFSS_code") int CFSS_code) {
+    @DeleteMapping("/{serviceId}")
+    public ResponseEntity<?> deleteCustomerFacingServiceSpec(@PathVariable("serviceId") int serviceId) {
         try {
-            String resultMessage = customerFacingServiceSpecService.delete(CFSS_code);
+            String resultMessage = customerFacingServiceSpecService.delete(serviceId);
             return ResponseEntity.ok(resultMessage);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
 
-    @PutMapping("/changeStatus/{CFSS_code}")
-    public ResponseEntity<?> changeCustomerFacingServiceSpecStatus(@PathVariable int CFSS_code) {
+    @PutMapping("/changeStatus/{serviceId}")
+    public ResponseEntity<?> changeCustomerFacingServiceSpecStatus(@PathVariable int serviceId) {
         try {
-            CustomerFacingServiceSpec updatedService = customerFacingServiceSpecService.changeServiceStatus(CFSS_code);
+            CustomerFacingServiceSpec updatedService = customerFacingServiceSpecService.changeServiceStatus(serviceId);
             return ResponseEntity.ok(updatedService);
 
         } catch (ServiceLogicException e) {
@@ -97,10 +97,10 @@ public class CustomerFacingServiceSpecController {
     }
 
 
-    @GetMapping("/dto/{CFSS_code}")
-    public ResponseEntity<?> getCustomerFacingServiceSpecDTO(@PathVariable("CFSS_code") int CFSS_code) {
+    @GetMapping("/dto/{serviceId}")
+    public ResponseEntity<?> getCustomerFacingServiceSpecDTO(@PathVariable("serviceId") int serviceId) {
         try {
-            CustomerFacingServiceSpecDTO customerFacingServiceSpecDTO = customerFacingServiceSpecService.getCustomerFacingServiceSpecDTO(CFSS_code);
+            CustomerFacingServiceSpecDTO customerFacingServiceSpecDTO = customerFacingServiceSpecService.getCustomerFacingServiceSpecDTO(serviceId);
             return ResponseEntity.ok(customerFacingServiceSpecDTO);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

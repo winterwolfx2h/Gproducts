@@ -12,17 +12,17 @@ public interface CustomerFacingServiceSpecService {
 
     List<CustomerFacingServiceSpec> read();
 
-    CustomerFacingServiceSpec update(int CFSS_code, CustomerFacingServiceSpec customerFacingServiceSpec);
+    CustomerFacingServiceSpec update(int serviceId, CustomerFacingServiceSpec customerFacingServiceSpec);
 
-    String delete(int CFSS_code);
+    String delete(int serviceId);
 
-    CustomerFacingServiceSpec findById(int CFSS_code);
+    CustomerFacingServiceSpec findById(int serviceId);
 
     boolean findByNameexist(String serviceSpecType);
 
-    CustomerFacingServiceSpec changeServiceStatus(int CFSS_code);
+    CustomerFacingServiceSpec changeServiceStatus(int serviceId);
 
-    CustomerFacingServiceSpecDTO getCustomerFacingServiceSpecDTO(int CFSS_code);
+    CustomerFacingServiceSpecDTO getCustomerFacingServiceSpecDTO(int serviceId);
 
     List<CustomerFacingServiceSpecDTO> getAllCustomerFacingServiceSpecDTOs();
 }

@@ -3,8 +3,6 @@ package com.Bcm.Service.Impl.ServiceConfigServiceImpl;
 import com.Bcm.Exception.*;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpecDTO;
-import com.Bcm.Model.ServiceABE.ResourceFacingServiceSpec;
-import com.Bcm.Model.ServiceABE.ResourceFacingServiceSpecDTO;
 import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Repository.ServiceConfigRepo.ResourceFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
@@ -37,15 +35,6 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
                         "CustomerFacingServiceSpec with serviceSpecType '" + customerFacingServiceSpec.getServiceSpecType() + "' already exists."
                 );
             }
-
-            if (customerFacingServiceSpec.getResourceFacingServiceSpec() != null) {
-                for (String rfssName : customerFacingServiceSpec.getResourceFacingServiceSpec()) {
-                    if (!resourceFacingServiceSpecRepository.existsByName(rfssName)) {
-                        throw new InvalidInputException("ResourceFacingServiceSpec '" + rfssName + "' does not exist.");
-                    }
-                }
-            }
-
             customerFacingServiceSpec.setStatus("Working state");
             return customerFacingServiceSpecRepository.save(customerFacingServiceSpec);
 
@@ -71,8 +60,8 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
     }
 
     @Override
-    public CustomerFacingServiceSpec update(int CFSS_code, CustomerFacingServiceSpec updatedCustomerFacingServiceSpec) {
-        Optional<CustomerFacingServiceSpec> existingCustomerFacingServiceSpecOptional = customerFacingServiceSpecRepository.findById(CFSS_code);
+    public CustomerFacingServiceSpec update(int serviceId, CustomerFacingServiceSpec updatedCustomerFacingServiceSpec) {
+        Optional<CustomerFacingServiceSpec> existingCustomerFacingServiceSpecOptional = customerFacingServiceSpecRepository.findById(serviceId);
 
         if (existingCustomerFacingServiceSpecOptional.isPresent()) {
             CustomerFacingServiceSpec existingCustomerFacingServiceSpec = existingCustomerFacingServiceSpecOptional.get();
@@ -82,44 +71,43 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
                 }
             }
             existingCustomerFacingServiceSpec.setExternalId(updatedCustomerFacingServiceSpec.getExternalId());
-            existingCustomerFacingServiceSpec.setNumPlanCode(updatedCustomerFacingServiceSpec.getNumPlanCode());
             existingCustomerFacingServiceSpec.setServiceSpecType(updatedCustomerFacingServiceSpec.getServiceSpecType());
             existingCustomerFacingServiceSpec.setStatus(updatedCustomerFacingServiceSpec.getStatus());
             existingCustomerFacingServiceSpec.setDescription(updatedCustomerFacingServiceSpec.getDescription());
             return customerFacingServiceSpecRepository.save(existingCustomerFacingServiceSpec);
         } else {
-            throw new ResourceNotFoundException("Could not find CustomerFacingServiceSpec with ID: " + CFSS_code);
+            throw new ResourceNotFoundException("Could not find CustomerFacingServiceSpec with ID: " + serviceId);
         }
     }
 
 
     @Override
-    public String delete(int CFSS_code) {
-        if (!customerFacingServiceSpecRepository.existsById(CFSS_code)) {
-            throw new ResourceNotFoundException("CustomerFacingServiceSpec with ID " + CFSS_code + " not found");
+    public String delete(int serviceId) {
+        if (!customerFacingServiceSpecRepository.existsById(serviceId)) {
+            throw new ResourceNotFoundException("CustomerFacingServiceSpec with ID " + serviceId + " not found");
         }
 
         try {
-            customerFacingServiceSpecRepository.deleteById(CFSS_code);
-            return "CustomerFacingServiceSpec  with ID " + CFSS_code + " was successfully deleted";
+            customerFacingServiceSpecRepository.deleteById(serviceId);
+            return "CustomerFacingServiceSpec  with ID " + serviceId + " was successfully deleted";
         } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while deleting CustomerFacingServiceSpec with ID: " + CFSS_code, e);
+            throw new RuntimeException("An unexpected error occurred while deleting CustomerFacingServiceSpec with ID: " + serviceId, e);
         }
     }
 
     @Override
-    public CustomerFacingServiceSpec findById(int CFSS_code) {
+    public CustomerFacingServiceSpec findById(int serviceId) {
         try {
-            return customerFacingServiceSpecRepository.findById(CFSS_code)
-                    .orElseThrow(() -> new ResourceNotFoundException("CustomerFacingServiceSpec  with ID " + CFSS_code + " not found"));
+            return customerFacingServiceSpecRepository.findById(serviceId)
+                    .orElseThrow(() -> new ResourceNotFoundException("CustomerFacingServiceSpec  with ID " + serviceId + " not found"));
         } catch (ResourceNotFoundException e) {
-            throw new RuntimeException("CustomerFacingServiceSpec  with ID \"" + CFSS_code + "\" not found", e);
+            throw new RuntimeException("CustomerFacingServiceSpec  with ID \"" + serviceId + "\" not found", e);
         }
     }
 
-    public CustomerFacingServiceSpec changeServiceStatus(int CFSS_code) {
+    public CustomerFacingServiceSpec changeServiceStatus(int serviceId) {
         try {
-            CustomerFacingServiceSpec existingService = findById(CFSS_code);
+            CustomerFacingServiceSpec existingService = findById(serviceId);
 
             switch (existingService.getStatus()) {
                 case "Working state":
@@ -142,7 +130,7 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
         } catch (ServiceLogicException e) {
             throw e;
         } catch (ResourceNotFoundException e) {
-            throw new RuntimeException("CustomerFacingServiceSpec with ID \"" + CFSS_code + "\" not found", e);
+            throw new RuntimeException("CustomerFacingServiceSpec with ID \"" + serviceId + "\" not found", e);
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred while changing CustomerFacingServiceSpec status", e);
         }
@@ -160,36 +148,16 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
     }
 
 
-    public CustomerFacingServiceSpecDTO getCustomerFacingServiceSpecDTO(int CFSS_code) {
-        CustomerFacingServiceSpec customerFacingServiceSpec = customerFacingServiceSpecRepository.findById(CFSS_code)
-                .orElseThrow(() -> new ResourceNotFoundException("CustomerFacingServiceSpec with ID " + CFSS_code + " not found"));
-
-        List<ResourceFacingServiceSpecDTO> resourceSpecs = customerFacingServiceSpec.getResourceFacingServiceSpec().stream()
-                .map(rfssName -> {
-                    Optional<ResourceFacingServiceSpec> resourceSpec = resourceFacingServiceSpecRepository.findByName(rfssName);
-                    if (resourceSpec.isPresent()) {
-                        ResourceFacingServiceSpec spec = resourceSpec.get();
-                        return new ResourceFacingServiceSpecDTO(
-                                spec.getRfss_code(),
-                                spec.getName(),
-                                spec.getDescription(),
-                                spec.getValidFor(),
-                                spec.getStatus()
-                        );
-                    } else {
-                        throw new ResourceNotFoundException("ResourceFacingServiceSpec with name '" + rfssName + "' not found");
-                    }
-                })
-                .collect(Collectors.toList());
+    public CustomerFacingServiceSpecDTO getCustomerFacingServiceSpecDTO(int serviceId) {
+        CustomerFacingServiceSpec customerFacingServiceSpec = customerFacingServiceSpecRepository.findById(serviceId)
+                .orElseThrow(() -> new ResourceNotFoundException("CustomerFacingServiceSpec with ID " + serviceId + " not found"));
 
         return new CustomerFacingServiceSpecDTO(
-                customerFacingServiceSpec.getCFSS_code(),
+                customerFacingServiceSpec.getServiceId(),
                 customerFacingServiceSpec.getExternalId(),
-                customerFacingServiceSpec.getNumPlanCode(),
                 customerFacingServiceSpec.getServiceSpecType(),
                 customerFacingServiceSpec.getStatus(),
-                customerFacingServiceSpec.getDescription(),
-                resourceSpecs
+                customerFacingServiceSpec.getDescription()
         );
     }
 
@@ -198,29 +166,14 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
         List<CustomerFacingServiceSpec> customerFacingServiceSpecs = customerFacingServiceSpecRepository.findAll();
 
         return customerFacingServiceSpecs.stream().map(customerFacingServiceSpec -> {
-            List<ResourceFacingServiceSpecDTO> resourceSpecs = customerFacingServiceSpec.getResourceFacingServiceSpec().stream()
-                    .map(rfssName -> {
-                        ResourceFacingServiceSpec spec = resourceFacingServiceSpecRepository.findByName(rfssName)
-                                .orElseThrow(() -> new ResourceNotFoundException("ResourceFacingServiceSpec with name '" + rfssName + "' not found"));
 
-                        return new ResourceFacingServiceSpecDTO(
-                                spec.getRfss_code(),
-                                spec.getName(),
-                                spec.getDescription(),
-                                spec.getValidFor(),
-                                spec.getStatus()
-                        );
-                    })
-                    .collect(Collectors.toList());
 
             return new CustomerFacingServiceSpecDTO(
-                    customerFacingServiceSpec.getCFSS_code(),
+                    customerFacingServiceSpec.getServiceId(),
                     customerFacingServiceSpec.getExternalId(),
-                    customerFacingServiceSpec.getNumPlanCode(),
                     customerFacingServiceSpec.getServiceSpecType(),
                     customerFacingServiceSpec.getStatus(),
-                    customerFacingServiceSpec.getDescription(),
-                    resourceSpecs
+                    customerFacingServiceSpec.getDescription()
             );
         }).collect(Collectors.toList());
     }

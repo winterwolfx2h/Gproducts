@@ -1,9 +1,14 @@
 package com.Bcm.Controller.ServiceController;
 
+import com.Bcm.Exception.DatabaseOperationException;
+import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Exception.ServiceAlreadyExistsException;
-import com.Bcm.Exception.ServiceLogicException;
+import com.Bcm.Model.ProductResourceABE.LogicalResource;
+import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Model.ServiceABE.ResourceFacingServiceSpec;
+import com.Bcm.Repository.ProductResourceRepository.LogicalResourceRepository;
+import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.ResourceFacingServiceSpecService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,18 +26,40 @@ public class ResourceFacingServiceSpecController {
 
 
     final ResourceFacingServiceSpecService resourceFacingServiceSpecService;
+    final LogicalResourceRepository logicalResourceRepository;
+    final CustomerFacingServiceSpecRepository customerFacingServiceSpecRepository;
 
     @PostMapping("/addResourceFacingServiceSpec")
     public ResponseEntity<?> createResourceFacingServiceSpec(@RequestBody ResourceFacingServiceSpec resourceFacingServiceSpec) {
         try {
+            LogicalResource logicalResource = logicalResourceRepository.findById(resourceFacingServiceSpec.getLogicalResource().getLR_id())
+                    .orElseThrow(() -> new ResourceNotFoundException("LogicalResource with ID " + resourceFacingServiceSpec.getLogicalResource().getLR_id() + " not found"));
+
+            CustomerFacingServiceSpec customerFacingServiceSpec = customerFacingServiceSpecRepository.findById(resourceFacingServiceSpec.getCustomerFacingServiceSpec().getServiceId())
+                    .orElseThrow(() -> new ResourceNotFoundException("CustomerFacingServiceSpec with ID " + resourceFacingServiceSpec.getCustomerFacingServiceSpec().getServiceId() + " not found"));
+
+            boolean externalNPCodeExists = resourceFacingServiceSpecService.findByexternalNPCodeexist(resourceFacingServiceSpec.getExternalNPCode());
+            if (externalNPCodeExists) {
+                return new ResponseEntity<>("ResourceFacingServiceSpec with externalNPCode \"" + resourceFacingServiceSpec.getExternalNPCode() + "\" already exists", HttpStatus.BAD_REQUEST);
+            }
+
+            resourceFacingServiceSpec.setLogicalResource(logicalResource);
+            resourceFacingServiceSpec.setCustomerFacingServiceSpec(customerFacingServiceSpec);
+
             ResourceFacingServiceSpec createdResourceFacingServiceSpec = resourceFacingServiceSpecService.create(resourceFacingServiceSpec);
+
             return new ResponseEntity<>(createdResourceFacingServiceSpec, HttpStatus.CREATED);
-        } catch (ServiceAlreadyExistsException e) {
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (DatabaseOperationException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (InvalidInputException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @GetMapping("/listResourceFacingServiceSpecs")
     public ResponseEntity<?> getAllResourceFacingServiceSpecs() {
@@ -45,9 +72,9 @@ public class ResourceFacingServiceSpecController {
     }
 
     @GetMapping("/{Rfss_code}")
-    public ResponseEntity<?> getResourceFacingServiceSpecById(@PathVariable("Rfss_code") int id) {
+    public ResponseEntity<?> getResourceFacingServiceSpecById(@PathVariable("Rfss_code") int Rfss_code) {
         try {
-            ResourceFacingServiceSpec resourceFacingServiceSpec = resourceFacingServiceSpecService.findById(id);
+            ResourceFacingServiceSpec resourceFacingServiceSpec = resourceFacingServiceSpecService.findById(Rfss_code);
             return ResponseEntity.ok(resourceFacingServiceSpec);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -57,9 +84,9 @@ public class ResourceFacingServiceSpecController {
     }
 
     @PutMapping("/{Rfss_code}")
-    public ResponseEntity<?> updateResourceFacingServiceSpec(@PathVariable("Rfss_code") int id, @RequestBody ResourceFacingServiceSpec resourceFacingServiceSpec) {
+    public ResponseEntity<?> updateResourceFacingServiceSpec(@PathVariable("Rfss_code") int Rfss_code, @RequestBody ResourceFacingServiceSpec resourceFacingServiceSpec) {
         try {
-            ResourceFacingServiceSpec updatedResource = resourceFacingServiceSpecService.update(id, resourceFacingServiceSpec);
+            ResourceFacingServiceSpec updatedResource = resourceFacingServiceSpecService.update(Rfss_code, resourceFacingServiceSpec);
             return ResponseEntity.ok(updatedResource);
         } catch (ServiceAlreadyExistsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -71,28 +98,14 @@ public class ResourceFacingServiceSpecController {
     }
 
     @DeleteMapping("/{Rfss_code}")
-    public ResponseEntity<?> deleteResourceFacingServiceSpec(@PathVariable("Rfss_code") int id) {
+    public ResponseEntity<?> deleteResourceFacingServiceSpec(@PathVariable("Rfss_code") int Rfss_code) {
         try {
-            String resultMessage = resourceFacingServiceSpecService.delete(id);
+            String resultMessage = resourceFacingServiceSpecService.delete(Rfss_code);
             return ResponseEntity.ok(resultMessage);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             return new ResponseEntity<>("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @PutMapping("/changeStatus/{Rfss_code}")
-    public ResponseEntity<?> changeResourceFacingServiceSpecStatus(@PathVariable int Rfss_code) {
-        try {
-            ResourceFacingServiceSpec updatedResource = resourceFacingServiceSpecService.changeServiceStatus(Rfss_code);
-            return ResponseEntity.ok(updatedResource);
-
-        } catch (ServiceLogicException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
 }

@@ -1,7 +1,14 @@
 package com.Bcm.Service.Impl.ServiceConfigServiceImpl;
 
-import com.Bcm.Exception.*;
+import com.Bcm.Exception.DatabaseOperationException;
+import com.Bcm.Exception.InvalidInputException;
+import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Exception.ServiceAlreadyExistsException;
+import com.Bcm.Model.ProductResourceABE.LogicalResource;
+import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Model.ServiceABE.ResourceFacingServiceSpec;
+import com.Bcm.Repository.ProductResourceRepository.LogicalResourceRepository;
+import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Repository.ServiceConfigRepo.ResourceFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.ResourceFacingServiceSpecService;
 import lombok.RequiredArgsConstructor;
@@ -16,17 +23,24 @@ import java.util.Optional;
 public class ResourceFacingServiceSpecServiceImpl implements ResourceFacingServiceSpecService {
 
     final ResourceFacingServiceSpecRepository resourceFacingServiceSpecRepository;
+    final CustomerFacingServiceSpecRepository customerFacingServiceSpecRepository;
+    final LogicalResourceRepository logicalResourceRepository;
 
     @Override
     public ResourceFacingServiceSpec create(ResourceFacingServiceSpec resourceFacingServiceSpec) {
-        resourceFacingServiceSpec.setStatus("Working state");
-
         validateNotNullFields(resourceFacingServiceSpec);
-        Optional<ResourceFacingServiceSpec> existingResource = resourceFacingServiceSpecRepository.findByName(resourceFacingServiceSpec.getName());
 
-        if (existingResource.isPresent()) {
-            throw new ResourceFacingServiceSpecException("Resource with the same name already exists");
-        }
+        // Check if LogicalResource exists
+        LogicalResource logicalResource = logicalResourceRepository.findById(resourceFacingServiceSpec.getLogicalResource().getLR_id())
+                .orElseThrow(() -> new ResourceNotFoundException("LogicalResource with ID " + resourceFacingServiceSpec.getLogicalResource().getLR_id() + " not found"));
+
+        // Check if CustomerFacingServiceSpec exists
+        CustomerFacingServiceSpec customerFacingServiceSpec = customerFacingServiceSpecRepository.findById(resourceFacingServiceSpec.getCustomerFacingServiceSpec().getServiceId())
+                .orElseThrow(() -> new ResourceNotFoundException("CustomerFacingServiceSpec with ID " + resourceFacingServiceSpec.getCustomerFacingServiceSpec().getServiceId() + " not found"));
+
+        // Set the associated entities
+        resourceFacingServiceSpec.setLogicalResource(logicalResource);
+        resourceFacingServiceSpec.setCustomerFacingServiceSpec(customerFacingServiceSpec);
 
         try {
             return resourceFacingServiceSpecRepository.save(resourceFacingServiceSpec);
@@ -36,6 +50,7 @@ public class ResourceFacingServiceSpecServiceImpl implements ResourceFacingServi
             throw new RuntimeException("An unexpected error occurred while creating Resource Facing Service Spec", e);
         }
     }
+
 
 
     @Override
@@ -53,15 +68,14 @@ public class ResourceFacingServiceSpecServiceImpl implements ResourceFacingServi
 
         if (existingResourceFacingServiceSpecOptional.isPresent()) {
             ResourceFacingServiceSpec existingResourceFacingServiceSpec = existingResourceFacingServiceSpecOptional.get();
-            if (!existingResourceFacingServiceSpec.getName().equals(updatedResourceFacingServiceSpec.getName())) {
-                if (resourceFacingServiceSpecRepository.findByName(updatedResourceFacingServiceSpec.getName()).isPresent()) {
+            if (!existingResourceFacingServiceSpec.getExternalNPCode().equals(updatedResourceFacingServiceSpec.getExternalNPCode())) {
+                if (resourceFacingServiceSpecRepository.findByexternalNPCode(updatedResourceFacingServiceSpec.getExternalNPCode()).isPresent()) {
                     throw new ServiceAlreadyExistsException("Resource with the same name already exists");
                 }
             }
-            existingResourceFacingServiceSpec.setName(updatedResourceFacingServiceSpec.getName());
-            existingResourceFacingServiceSpec.setDescription(updatedResourceFacingServiceSpec.getDescription());
-            existingResourceFacingServiceSpec.setValidFor(updatedResourceFacingServiceSpec.getValidFor());
-            existingResourceFacingServiceSpec.setStatus(updatedResourceFacingServiceSpec.getStatus());
+            existingResourceFacingServiceSpec.setExternalNPCode(updatedResourceFacingServiceSpec.getExternalNPCode());
+            existingResourceFacingServiceSpec.setCustomerFacingServiceSpec(updatedResourceFacingServiceSpec.getCustomerFacingServiceSpec());
+            existingResourceFacingServiceSpec.setLogicalResource(updatedResourceFacingServiceSpec.getLogicalResource());
 
             return resourceFacingServiceSpecRepository.save(existingResourceFacingServiceSpec);
         } else {
@@ -95,42 +109,9 @@ public class ResourceFacingServiceSpecServiceImpl implements ResourceFacingServi
     }
 
     @Override
-    public ResourceFacingServiceSpec changeServiceStatus(int Rfss_code) {
+    public boolean findByexternalNPCodeexist(String externalNPCode) {
         try {
-            ResourceFacingServiceSpec existingResource = findById(Rfss_code);
-
-            switch (existingResource.getStatus()) {
-                case "Working state":
-                    existingResource.setStatus("Validated");
-                    break;
-
-                case "Validated":
-                    existingResource.setStatus("Suspended");
-                    break;
-
-                case "Suspended":
-                    throw new ServiceLogicException("ResourceFacingServiceSpec " + existingResource.getName() + " isn't fit to be offered for sale anymore.");
-
-                default:
-                    throw new InvalidInputException("Invalid status transition.");
-            }
-
-            return resourceFacingServiceSpecRepository.save(existingResource);
-
-        } catch (ServiceLogicException e) {
-            throw e;
-        } catch (ResourceNotFoundException e) {
-            throw new RuntimeException("ResourceFacingServiceSpec with ID \"" + Rfss_code + "\" not found", e);
-        } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while changing ResourceFacingServiceSpec status", e);
-        }
-    }
-
-
-    @Override
-    public boolean findByNameexist(String name) {
-        try {
-            Optional<ResourceFacingServiceSpec> optionalResource = resourceFacingServiceSpecRepository.findByName(name);
+            Optional<ResourceFacingServiceSpec> optionalResource = resourceFacingServiceSpecRepository.findByexternalNPCode(externalNPCode);
             return optionalResource.isPresent();
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding the resource");
@@ -138,7 +119,7 @@ public class ResourceFacingServiceSpecServiceImpl implements ResourceFacingServi
     }
 
     private void validateNotNullFields(ResourceFacingServiceSpec resourceFacingServiceSpec) {
-        if (resourceFacingServiceSpec.getName() == null) {
+        if (resourceFacingServiceSpec.getExternalNPCode() == null) {
             throw new InvalidInputException("Name cannot be null");
         }
     }

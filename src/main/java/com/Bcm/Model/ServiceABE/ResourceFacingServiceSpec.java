@@ -1,15 +1,13 @@
 package com.Bcm.Model.ServiceABE;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jdk.jfr.Timestamp;
+import com.Bcm.Model.ProductResourceABE.LogicalResource;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Table(name = "ResourceFacingServiceSpecification")
 @Entity
@@ -19,22 +17,20 @@ import java.util.Date;
 @Getter
 @Setter
 public class ResourceFacingServiceSpec {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Rfss_code", nullable = false)
     private int Rfss_code;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "externalNPCode", nullable = false)
+    private String externalNPCode;
 
-    @Column(name = "description", nullable = true)
-    private String description;
+    @ManyToOne
+    @JoinColumn(name = "serviceId", referencedColumnName = "serviceId", nullable = false)
+    private CustomerFacingServiceSpec customerFacingServiceSpec;
 
-    @Column(name = "validFor", nullable = false)
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    @Timestamp
-    private Date validFor;
-
-    @Column(name = "status", nullable = false)
-    private String status;
+    @ManyToOne
+    @JoinColumn(name = "LR_id", referencedColumnName = "LR_id", nullable = false)
+    private LogicalResource logicalResource;
 }

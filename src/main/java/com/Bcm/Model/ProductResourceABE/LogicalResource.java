@@ -27,6 +27,9 @@ public class LogicalResource {
     @Column(name = "logicalResourceFormat", nullable = false)
     private String logicalResourceFormat;
 
+    @Column(name = "length", nullable = false)
+    private String length;
+
     @Column(name = "status", nullable = false)
     private String status;
 }

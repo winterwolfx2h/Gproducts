@@ -26,9 +26,6 @@ public class PhysicalResource {
     @Column(name = "physicalResourceFormat", nullable = false)
     private String physicalResourceFormat;
 
-    @Column(name = "length", nullable = false)
-    private String length;
-
     @Column(name = "status", nullable = false)
     private String status;
 }

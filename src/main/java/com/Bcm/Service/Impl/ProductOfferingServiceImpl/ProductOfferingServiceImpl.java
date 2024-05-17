@@ -81,7 +81,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         return productOfferingRepository.save(productOffering);
     }
 
-
     @Override
     public List<ProductOffering> read() {
         try {

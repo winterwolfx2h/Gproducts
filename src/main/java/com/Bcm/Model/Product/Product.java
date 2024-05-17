@@ -54,6 +54,9 @@ public class Product {
     @Column(name = "status", nullable = false)
     private String status;
 
+    @Column(name = "quantity_Indicator", nullable = true)
+    private String quantity_Indicator;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "poRelation_Code", nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -75,5 +78,4 @@ public class Product {
 
         return product;
     }
-
 }

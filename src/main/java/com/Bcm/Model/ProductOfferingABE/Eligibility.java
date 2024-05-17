@@ -22,4 +22,7 @@ public class Eligibility {
 
     @Column(name = "channel")
     private String channel;
+
+    @Column(name = "stock_Indicator")
+    private Boolean stock_Indicator;
 }

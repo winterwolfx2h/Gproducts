@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
-
 public interface ProductOfferingRepository extends JpaRepository<ProductOffering, Integer> {
 
     Optional<ProductOffering> findById(int po_code);

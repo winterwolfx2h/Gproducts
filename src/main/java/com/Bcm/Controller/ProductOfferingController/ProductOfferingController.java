@@ -32,9 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -54,6 +52,7 @@ public class ProductOfferingController {
     final EligibilityService eligibilityService;
     final FamilyService familyService;
     final POPlanService poplanService;
+
     final ProductSpecificationRepository productSpecificationRepository;
     final CustomerFacingServiceSpecService customerFacingServiceSpecService;
     final MarketService marketService;
@@ -377,18 +376,179 @@ public class ProductOfferingController {
         return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+
+    List<String> check(ProductOfferingDTO productOfferingDTO) {
+        List<String> errors = new ArrayList<>();
+
+        if (productOfferingDTO.getName() == null || productOfferingDTO.getName().isEmpty()) {
+            errors.add("Name cannot be empty");
+        } else {
+            if (!productOfferingDTO.getName().startsWith("po_plan")) {
+                errors.add("Name must start with 'po_plan'");
+            }
+        }
+
+
+        if (productOfferingDTO.getEffectiveFrom() == null || productOfferingDTO.getName().isEmpty() || productOfferingDTO.getEffectiveTo() == null|| productOfferingDTO.getName().isEmpty()) {
+            errors.add("Effective from and effective to dates cannot be null");
+        } else {
+            if (productOfferingDTO.getEffectiveFrom().compareTo(productOfferingDTO.getEffectiveTo()) >= 0) {
+                errors.add("Effective from date must be before the effective to date");
+            }
+        }
+
+        if (productOfferingDTO.getSubFamily() == null || productOfferingDTO.getSubFamily().isEmpty()) {
+            errors.add("Sub Family cannot be empty");
+        } else {
+
+            List<String> errorSubFamily = Arrays.asList("offer PrePayed", "offer PostPayed");
+            if (!errorSubFamily.contains(productOfferingDTO.getSubFamily())) {
+                errors.add("SubFamily must be one of the following: " + String.join(", ", errorSubFamily));
+            }
+        }
+
+        var validFamilyNames = familyService.read();
+        List<String> familyNames = validFamilyNames.stream().map(e -> e.getName().toLowerCase()).toList();
+        if (productOfferingDTO.getFamilyName() == null || productOfferingDTO.getFamilyName().isEmpty()) {
+            errors.add("FamilyName cannot be empty");
+        } else {
+
+            if (!familyNames.contains(productOfferingDTO.getFamilyName().toLowerCase())) {
+                errors.add("FamilyName must be one of the following: " + String.join(", ", familyNames));
+            }
+        }
+
+
+
+        List<Market> validMarket = marketService.read();
+        List<String> markets = new ArrayList<>();
+        for (Market market : validMarket) {
+            markets.add(market.getName());
+        }
+
+        if (!markets.contains(productOfferingDTO.getMarkets())) {
+            errors.add("markets must be one of the following: " + String.join(", ", markets));
+        }
+
+
+        List<SubMarket> validSubMarket = subMarketService.read();
+        List<String> submarkets = new ArrayList<>();
+
+
+        for (SubMarket subMarket : validSubMarket) {
+            submarkets.add(subMarket.getName());
+        }
+        if (productOfferingDTO.getSubmarkets() == null || productOfferingDTO.getSubmarkets().isEmpty()) {
+            errors.add("submarkets cannot be empty");
+        } else {
+
+            if (!submarkets.contains(productOfferingDTO.getSubmarkets())) {
+                errors.add("sub market must be one of the following: " + String.join(", ", submarkets));
+            }
+        }
+
+        return errors;
+
+    }
+
+    List<String> check(ProductOffering productOfferingDTO) {
+        List<String> errors = new ArrayList<>();
+
+        if (productOfferingDTO.getName() == null || productOfferingDTO.getName().isEmpty()) {
+            errors.add("Name cannot be empty");
+        } else {
+            if (!productOfferingDTO.getName().startsWith("po_plan")) {
+                errors.add("Name must start with 'po_plan'");
+            }
+        }
+
+
+        if (productOfferingDTO.getEffectiveFrom() == null || productOfferingDTO.getName().isEmpty() || productOfferingDTO.getEffectiveTo() == null|| productOfferingDTO.getName().isEmpty()) {
+            errors.add("Effective from and effective to dates cannot be null");
+        } else {
+            if (productOfferingDTO.getEffectiveFrom().compareTo(productOfferingDTO.getEffectiveTo()) >= 0) {
+                errors.add("Effective from date must be before the effective to date");
+            }
+        }
+
+        if (productOfferingDTO.getSubFamily() == null || productOfferingDTO.getSubFamily().isEmpty()) {
+            errors.add("Sub Family cannot be empty");
+        } else {
+
+            List<String> errorSubFamily = Arrays.asList("offer PrePayed", "offer PostPayed");
+            if (!errorSubFamily.contains(productOfferingDTO.getSubFamily())) {
+                errors.add("SubFamily must be one of the following: " + String.join(", ", errorSubFamily));
+            }
+        }
+
+        var validFamilyNames = familyService.read();
+        List<String> familyNames = validFamilyNames.stream().map(e -> e.getName().toLowerCase()).toList();
+        if (productOfferingDTO.getFamilyName() == null || productOfferingDTO.getFamilyName().isEmpty()) {
+            errors.add("FamilyName cannot be empty");
+        } else {
+
+            if (!familyNames.contains(productOfferingDTO.getFamilyName().toLowerCase())) {
+                errors.add("FamilyName must be one of the following: " + String.join(", ", familyNames));
+            }
+        }
+
+
+
+        List<Market> validMarket = marketService.read();
+        List<String> markets = validMarket.stream().map(e -> e.getName().toLowerCase()).toList();
+
+        if (!markets.contains(productOfferingDTO.getMarkets())) {
+            errors.add("markets must be one of the following: " + String.join(", ", markets));
+        }
+
+//IF SUBMARKET IS NULL OR SUBMARKET DOES NOT EXIST
+        List<SubMarket> validSubMarket = subMarketService.read();
+        List<String> submarkets = validSubMarket.stream().map(e -> e.getName().toLowerCase()).toList();
+
+        if (productOfferingDTO.getSubmarkets() == null || productOfferingDTO.getSubmarkets().isEmpty()) {
+            errors.add("submarkets cannot be empty");
+        } else {
+
+            if (!submarkets.contains(productOfferingDTO.getSubmarkets())) {
+                errors.add("sub market must be one of the following: " + String.join(", ", submarkets));
+            }
+        }
+//
+        return errors;
+
+
+    }
+
+    @PostMapping("/checkError")
+    public ResponseEntity<?> checkError(@RequestBody ProductOfferingDTO productOfferingDTO) {
+
+        var errors = check(productOfferingDTO);
+        if (!errors.isEmpty()) {
+            return ResponseEntity.badRequest().body(errors);
+        }
+        return ResponseEntity.ok(errors);
+
+    }
+
     @PutMapping("/changeStatus/{po_code}")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> changeProductStatus(@PathVariable int po_code) {
-        try {
-            ProductOffering updatedProduct = productOfferingService.changeProductOfferingStatus(po_code);
-            return ResponseEntity.ok(updatedProduct);
-        } catch (ProductOfferingLogicException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-        }
+//        try {
+
+            var errors = check(productOfferingService.findById(po_code));
+            if (errors.isEmpty()) {
+                ProductOffering updatedProduct = productOfferingService.changeProductOfferingStatus(po_code);
+                return ResponseEntity.ok(updatedProduct);
+            }
+            return ResponseEntity.badRequest().body(errors);
+//
+//        } catch (ProductOfferingLogicException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+//        }
     }
+
 
     @PutMapping("/changeStatus/multiple")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)

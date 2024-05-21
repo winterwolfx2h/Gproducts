@@ -6,7 +6,6 @@ import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
 import com.Bcm.Exception.ProductOfferingLogicException;
 import com.Bcm.Model.Product.ProductOfferingDTO;
-import com.Bcm.Model.ProductOfferingABE.Eligibility;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.ProductRelation;
@@ -17,6 +16,7 @@ import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Repository.ProductOfferingRepo.ProductSpecificationRepository;
 import com.Bcm.Service.Srvc.POPlanService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.*;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ChannelService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.MarketService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubMarketService;
@@ -51,6 +51,7 @@ public class ProductOfferingController {
     final BusinessProcessService businessProcessService;
     final EligibilityService eligibilityService;
     final FamilyService familyService;
+    final ChannelService channelService;
     final POPlanService poplanService;
 
     final ProductSpecificationRepository productSpecificationRepository;
@@ -104,19 +105,32 @@ public class ProductOfferingController {
             }
 
             productOffering.setSubmarkets(submarketNames);
+
             String familyName = productOffering.getFamilyName();
             if (familyName == null || !familyService.findByNameexist(familyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
             }
 
-            List<String> validChannels = eligibilityService.read()
+            // Validate channels
+            List<String> channels = productOffering.getChannels();
+            if (channels == null || channels.isEmpty()) {
+                return ResponseEntity.badRequest().body("Channel names list cannot be empty.");
+            }
+
+            for (String channel : channels) {
+                if (!channelService.findByNameexist(channel)) {
+                    return ResponseEntity.badRequest().body("Channel with name '" + channels + "' does not exist.");
+                }
+            }
+
+            /*List<String> validChannels = eligibilityService.read()
                     .stream()
                     .map(Eligibility::getChannel)
                     .collect(Collectors.toList());
 
             if (!validChannels.containsAll(productOffering.getChannels())) {
                 return ResponseEntity.badRequest().body("Invalid channel(s) in the Product Offering.");
-            }
+            }*/
 
             List<String> serviceSpecConfigs = productOffering.getCustomerFacingServiceSpec();
             List<String> missingServices = serviceSpecConfigs.stream()
@@ -158,30 +172,41 @@ public class ProductOfferingController {
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> createProductOfferingDTO(@Valid @RequestBody ProductOfferingDTO dto) {
         try {
+            // Validate family name
             String familyName = dto.getFamilyName();
             if (familyName == null || !familyService.findByNameexist(familyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
             }
 
+            // Validate market name
             String marketName = dto.getMarkets();
             if (marketName == null || !marketService.findByNameexist(marketName)) {
                 return ResponseEntity.badRequest().body("Market with name '" + marketName + "' does not exist.");
             }
 
+            // Validate submarket name
             String submarketName = dto.getSubmarkets();
             if (submarketName == null || !subMarketService.findByNameexist(submarketName)) {
                 return ResponseEntity.badRequest().body("Submarket with name '" + submarketName + "' does not exist.");
             }
 
+            // Check for duplicate product offering by name
+            if (productOfferingService.existsByName(dto.getName())) {
+                return ResponseEntity.badRequest().body("A product offering with the same name already exists.");
+            }
+
+            // Convert DTO to entity and save
             ProductOffering createdProductOffering = productOfferingService.createProductOfferingDTO(dto);
             return new ResponseEntity<>(createdProductOffering, HttpStatus.CREATED);
 
         } catch (ProductOfferingAlreadyExistsException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while creating the Product Offering.");
+            e.printStackTrace();  // Print stack trace for debugging
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while creating the Product Offering. Error: " + e.getMessage());
         }
     }
+
 
     private void ensureRelatedEntitiesExist(ProductOffering productOffering) {
         ensurePOAttributesExists((List<POAttributes>) productOffering.getPoAttributes());
@@ -304,23 +329,27 @@ public class ProductOfferingController {
             }
 
             existingProductOffering.setSubmarkets(submarketNames);
+
             String newFamilyName = updatedProductOffering.getFamilyName();
             if (newFamilyName != null && !familyService.findByNameexist(newFamilyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + newFamilyName + "' does not exist.");
             }
-
             existingProductOffering.setFamilyName(newFamilyName);
 
-            List<String> validChannels = eligibilityService.read()
-                    .stream()
-                    .map(Eligibility::getChannel)
-                    .collect(Collectors.toList());
-
-            if (!validChannels.containsAll(updatedProductOffering.getChannels())) {
-                return ResponseEntity.badRequest().body("Invalid channel(s) in the Product Offering.");
+            // Validate and set channel names (assuming channels are handled as a list)
+            List<String> channels = updatedProductOffering.getChannels();
+            if (channels == null || channels.isEmpty()) {
+                return ResponseEntity.badRequest().body("Channel names list cannot be empty.");
             }
 
-            existingProductOffering.setChannels(updatedProductOffering.getChannels());
+            List<String> invalidChannels = channels.stream()
+                    .filter(channel -> !channelService.findByNameexist(channel))
+                    .collect(Collectors.toList());
+
+            if (!invalidChannels.isEmpty()) {
+                return ResponseEntity.badRequest().body("Channels with names '" + String.join(", ", invalidChannels) + "' do not exist.");
+            }
+            existingProductOffering.setChannels(channels);
 
             List<String> serviceSpecConfigs = updatedProductOffering.getCustomerFacingServiceSpec();
             List<String> missingServices = serviceSpecConfigs.stream()
@@ -491,6 +520,7 @@ public class ProductOfferingController {
                 errors.add("FamilyName must be one of the following: " + String.join(", ", familyNames));
             }
         }
+
 
         List<Market> validMarket = marketService.read();
         List<String> markets = validMarket.stream().map(e -> e.getName().toLowerCase()).toList();

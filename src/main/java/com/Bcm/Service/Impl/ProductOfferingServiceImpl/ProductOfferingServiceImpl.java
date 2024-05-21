@@ -29,7 +29,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         if (productOffering.getChannels() == null || productOffering.getChannels().isEmpty()) {
             throw new InvalidInputException("Channels list cannot be empty.");
         }
-
         if (productOffering.getPoParent_Child() == null || productOffering.getPoParent_Child().isEmpty()) {
             productOffering.setPoParent_Child("PO-Parent");
         }
@@ -192,6 +191,15 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             return productOfferingRepository.findByFamilyName(familyName);
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred while searching for product offerings by family name: " + familyName, e);
+        }
+    }
+
+    @Override
+    public List<ProductOffering> findByChannels(String channels) {
+        try {
+            return productOfferingRepository.findByChannels(channels);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while searching for product offerings by Channel name: " + channels, e);
         }
     }
 

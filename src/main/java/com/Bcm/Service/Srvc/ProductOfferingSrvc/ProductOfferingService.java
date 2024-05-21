@@ -30,6 +30,8 @@ public interface ProductOfferingService {
 
     List<ProductOffering> findByFamilyName(String familyName);
 
+    List<ProductOffering> findByChannels(String channels);
+
     ProductOffering changeProductOfferingStatus(int po_code);
 
     boolean existsByName(String name);

@@ -51,10 +51,16 @@ public class ProductOffering extends Product {
     @Column(name = "businessProcess", nullable = true)
     private String businessProcess;
 
-    @ElementCollection
+    /*@ElementCollection
     @CollectionTable(name = "product_offering_channels", joinColumns = @JoinColumn(name = "Product_id"))
     @Column(name = "channel", nullable = true)
+    private List<String> channels;*/
+
+    @ElementCollection
+    @CollectionTable(name = "product_offering_channels", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "channel", nullable = true)
     private List<String> channels;
+
 
     @Pattern(regexp = "^(PO_PARENT|PO_CHILD)$", message = "invalid code")
     @Column(name = "poParent_Child", nullable = true)

@@ -418,7 +418,7 @@ public class ProductOfferingController {
         }
 
 
-        if (productOfferingDTO.getEffectiveFrom() == null || productOfferingDTO.getName().isEmpty() || productOfferingDTO.getEffectiveTo() == null|| productOfferingDTO.getName().isEmpty()) {
+        if (productOfferingDTO.getEffectiveFrom() == null || productOfferingDTO.getName().isEmpty() || productOfferingDTO.getEffectiveTo() == null || productOfferingDTO.getName().isEmpty()) {
             errors.add("Effective from and effective to dates cannot be null");
         } else {
             if (productOfferingDTO.getEffectiveFrom().compareTo(productOfferingDTO.getEffectiveTo()) >= 0) {
@@ -446,7 +446,6 @@ public class ProductOfferingController {
                 errors.add("FamilyName must be one of the following: " + String.join(", ", familyNames));
             }
         }
-
 
 
         List<Market> validMarket = marketService.read();
@@ -492,7 +491,7 @@ public class ProductOfferingController {
         }
 
 
-        if (productOfferingDTO.getEffectiveFrom() == null || productOfferingDTO.getName().isEmpty() || productOfferingDTO.getEffectiveTo() == null|| productOfferingDTO.getName().isEmpty()) {
+        if (productOfferingDTO.getEffectiveFrom() == null || productOfferingDTO.getName().isEmpty() || productOfferingDTO.getEffectiveTo() == null || productOfferingDTO.getName().isEmpty()) {
             errors.add("Effective from and effective to dates cannot be null");
         } else {
             if (productOfferingDTO.getEffectiveFrom().compareTo(productOfferingDTO.getEffectiveTo()) >= 0) {

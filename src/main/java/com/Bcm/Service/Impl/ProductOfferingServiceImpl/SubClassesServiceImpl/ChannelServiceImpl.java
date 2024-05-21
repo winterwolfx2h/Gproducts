@@ -126,7 +126,6 @@ public class ChannelServiceImpl implements ChannelService {
         }
     }
 
-
     @Override
     public boolean existsById(int po_ChannelCode) {
         return channelRepository.existsById(po_ChannelCode);

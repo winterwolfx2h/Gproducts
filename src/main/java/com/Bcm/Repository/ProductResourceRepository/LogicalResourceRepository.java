@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LogicalResourceRepository extends JpaRepository<LogicalResource, Integer> {
-    Optional<LogicalResource> findById(int logResourceId);
+    Optional<LogicalResource> findById(int LR_id);
 
     Optional<LogicalResource> findByLogicalResourceType(String logicalResourceType);
 

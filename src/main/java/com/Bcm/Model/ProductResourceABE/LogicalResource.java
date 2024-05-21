@@ -20,6 +20,9 @@ public class LogicalResource {
     @Column(name = "LR_id", nullable = false)
     private int LR_id;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "logicalResourceType", nullable = false)
     private String logicalResourceType;
 
@@ -28,6 +31,9 @@ public class LogicalResource {
 
     @Column(name = "length", nullable = false)
     private String length;
+
+    @Column(name = "generationType", nullable = false)
+    private String generationType;
 
     @Column(name = "status", nullable = false)
     private String status;

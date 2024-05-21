@@ -52,7 +52,6 @@ public class ResourceFacingServiceSpecServiceImpl implements ResourceFacingServi
     }
 
 
-
     @Override
     public List<ResourceFacingServiceSpec> read() {
         try {

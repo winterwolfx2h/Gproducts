@@ -1,14 +1,18 @@
 package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
 import com.Bcm.Exception.ChannelAlreadyExistsException;
+import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Model.ProductOfferingABE.Eligibility;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ChannelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -19,16 +23,35 @@ public class ChannelController {
 
 
     final ChannelService channelService;
+    final EligibilityService eligibilityService;
 
-    @PostMapping("/addChannel")
-    public ResponseEntity<?> createType(@RequestBody Channel Channel) {
+    @PostMapping("/addChannels")
+    public ResponseEntity<?> createChannels(@RequestBody List<Channel> channels) {
         try {
-            Channel createdChannel = channelService.create(Channel);
-            return ResponseEntity.ok(createdChannel);
+            List<String> createdChannelNames = new ArrayList<>(); // List to hold channel names
+
+            // Create each channel and add its name to the list of created channel names
+            for (Channel channel : channels) {
+                Channel createdChannel = channelService.create(channel);
+                createdChannelNames.add(createdChannel.getName());
+            }
+
+            // Update all existing Eligibility instances to associate them with the created channels
+            List<Eligibility> eligibilities = eligibilityService.read();
+            for (Eligibility eligibility : eligibilities) {
+                eligibility.getChannels().addAll(createdChannelNames);
+                eligibilityService.update(eligibility.getEligibilityId(), eligibility);
+            }
+
+            return ResponseEntity.ok(createdChannelNames);
         } catch (ChannelAlreadyExistsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (InvalidInputException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+            // Log the stack trace for debugging purposes
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
         }
     }
 

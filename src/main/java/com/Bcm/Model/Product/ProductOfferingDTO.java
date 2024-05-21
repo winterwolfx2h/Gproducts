@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import java.util.Date;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @NoArgsConstructor

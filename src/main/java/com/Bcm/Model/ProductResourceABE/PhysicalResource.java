@@ -32,6 +32,9 @@ public class PhysicalResource {
     @Column(name = "generationType", nullable = false)
     private String generationType;
 
+    @Column(name = "externalNPCode", nullable = true)
+    private String externalNPCode;
+
     @Column(name = "status", nullable = false)
     private String status;
 }

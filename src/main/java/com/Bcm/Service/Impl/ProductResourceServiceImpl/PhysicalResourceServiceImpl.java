@@ -18,7 +18,6 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
     final PhysicalResourceRepository physicalResourceRepository;
 
 
-
     @Override
     public PhysicalResource create(PhysicalResource physicalResource) {
 
@@ -39,6 +38,7 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
             throw new RuntimeException("An unexpected error occurred while creating Resource Facing Service Spec", e);
         }
     }
+
     @Override
     public List<PhysicalResource> read() {
         return physicalResourceRepository.findAll();
@@ -97,7 +97,6 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
             throw new InvalidInputException("PhysicalResourceType cannot be null");
         }
     }
-
 
 
     @Override

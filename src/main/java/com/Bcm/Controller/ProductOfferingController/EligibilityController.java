@@ -1,6 +1,6 @@
 package com.Bcm.Controller.ProductOfferingController;
 
-import com.Bcm.Exception.AllChannelsAlreadyExistException;
+import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.ProductOfferingABE.Eligibility;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +23,23 @@ public class EligibilityController {
     @PostMapping("/addEligibility")
     public ResponseEntity<?> createEligibility(@RequestBody List<Eligibility> eligibilityList) {
         try {
+            // Validate channels in each eligibility
+            for (Eligibility eligibility : eligibilityList) {
+                if (eligibility.getChannels() == null || eligibility.getChannels().isEmpty()) {
+                    return ResponseEntity.badRequest().body("Channels list cannot be empty.");
+                }
+            }
+            // Proceed with creating eligibility instances
             List<Eligibility> createdEligibilities = eligibilityService.create(eligibilityList);
             return ResponseEntity.ok(createdEligibilities);
-        } catch (AllChannelsAlreadyExistException e) {
+        } catch (InvalidInputException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+            // Log the stack trace for debugging purposes
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
         }
     }
-
 
     @GetMapping("/listEligibilitys")
     @Cacheable(value = "EligibilityCache")
@@ -73,16 +81,6 @@ public class EligibilityController {
         try {
             String resultMessage = eligibilityService.delete(eligibilityId);
             return ResponseEntity.ok(resultMessage);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-        }
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<?> searchEligibilitiesByKeyword(@RequestParam("channel") String channel) {
-        try {
-            List<Eligibility> searchResults = eligibilityService.searchByKeyword(channel);
-            return ResponseEntity.ok(searchResults);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }

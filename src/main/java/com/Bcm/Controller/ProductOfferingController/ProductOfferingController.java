@@ -492,8 +492,6 @@ public class ProductOfferingController {
             }
         }
 
-
-
         List<Market> validMarket = marketService.read();
         List<String> markets = validMarket.stream().map(e -> e.getName().toLowerCase()).toList();
 
@@ -501,7 +499,7 @@ public class ProductOfferingController {
             errors.add("markets must be one of the following: " + String.join(", ", markets));
         }
 
-//IF SUBMARKET IS NULL OR SUBMARKET DOES NOT EXIST
+        //IF SUBMARKET IS NULL OR SUBMARKET DOES NOT EXIST
         List<SubMarket> validSubMarket = subMarketService.read();
         List<String> submarkets = validSubMarket.stream().map(e -> e.getName().toLowerCase()).toList();
 
@@ -513,7 +511,6 @@ public class ProductOfferingController {
                 errors.add("sub market must be one of the following: " + String.join(", ", submarkets));
             }
         }
-//
         return errors;
 
 
@@ -533,7 +530,7 @@ public class ProductOfferingController {
     @PutMapping("/changeStatus/{po_code}")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> changeProductStatus(@PathVariable int po_code) {
-//        try {
+        try {
 
             var errors = check(productOfferingService.findById(po_code));
             if (errors.isEmpty()) {
@@ -541,14 +538,13 @@ public class ProductOfferingController {
                 return ResponseEntity.ok(updatedProduct);
             }
             return ResponseEntity.badRequest().body(errors);
-//
-//        } catch (ProductOfferingLogicException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-//        }
-    }
 
+        } catch (ProductOfferingLogicException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
 
     @PutMapping("/changeStatus/multiple")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)

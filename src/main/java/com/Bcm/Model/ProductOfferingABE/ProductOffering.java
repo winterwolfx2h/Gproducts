@@ -36,6 +36,9 @@ public class ProductOffering extends Product {
     @Column(name = "sellIndicator", nullable = true)
     private Boolean sellIndicator;
 
+    @Column(name = "quantity_Indicator", nullable = true)
+    private String quantityIndicator;
+
     @Column(name = "category", nullable = true)
     private String category;
 

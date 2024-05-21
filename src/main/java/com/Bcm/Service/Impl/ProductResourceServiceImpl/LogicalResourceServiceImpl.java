@@ -27,32 +27,34 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
     }
 
     @Override
-    public LogicalResource update(int logResourceId, LogicalResource updatedLogicalResource) {
-        Optional<LogicalResource> existingProductOptional = logicalResourceRepository.findById(logResourceId);
+    public LogicalResource update(int LR_id, LogicalResource updatedLogicalResource) {
+        Optional<LogicalResource> existingProductOptional = logicalResourceRepository.findById(LR_id);
 
         if (existingProductOptional.isPresent()) {
             LogicalResource existingProduct = existingProductOptional.get();
+            existingProduct.setName(updatedLogicalResource.getName());
             existingProduct.setLogicalResourceType(updatedLogicalResource.getLogicalResourceType());
             existingProduct.setLogicalResourceFormat(updatedLogicalResource.getLogicalResourceFormat());
             existingProduct.setLength(updatedLogicalResource.getLength());
+            existingProduct.setGenerationType(updatedLogicalResource.getGenerationType());
             existingProduct.setStatus(updatedLogicalResource.getStatus());
 
             return logicalResourceRepository.save(existingProduct);
         } else {
-            throw new RuntimeException("Could not find LogicalResource with ID: " + logResourceId);
+            throw new RuntimeException("Could not find LogicalResource with ID: " + LR_id);
         }
     }
 
     @Override
-    public String delete(int logResourceId) {
-        logicalResourceRepository.deleteById(logResourceId);
+    public String delete(int LR_id) {
+        logicalResourceRepository.deleteById(LR_id);
         return ("LogicalResource was successfully deleted");
     }
 
     @Override
-    public LogicalResource findById(int logResourceId) {
-        Optional<LogicalResource> optionalPlan = logicalResourceRepository.findById(logResourceId);
-        return optionalPlan.orElseThrow(() -> new RuntimeException("LogicalResource with ID " + logResourceId + " not found"));
+    public LogicalResource findById(int LR_id) {
+        Optional<LogicalResource> optionalPlan = logicalResourceRepository.findById(LR_id);
+        return optionalPlan.orElseThrow(() -> new RuntimeException("LogicalResource with ID " + LR_id + " not found"));
     }
 
     @Override
@@ -71,7 +73,7 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
     }
 
     @Override
-    public boolean existsById(int logResourceId) {
-        return logicalResourceRepository.existsById(logResourceId);
+    public boolean existsById(int LR_id) {
+        return logicalResourceRepository.existsById(LR_id);
     }
 }

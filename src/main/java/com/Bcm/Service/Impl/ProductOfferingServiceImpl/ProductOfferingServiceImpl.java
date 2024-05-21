@@ -62,14 +62,16 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
 
         ProductOffering productOffering = new ProductOffering();
         productOffering.setName(dto.getName());
+        productOffering.setPoType(dto.getPoType());
         productOffering.setEffectiveFrom(dto.getEffectiveFrom());
         productOffering.setEffectiveTo(dto.getEffectiveTo());
         productOffering.setDescription(dto.getDescription());
         productOffering.setDetailedDescription(dto.getDetailedDescription());
         productOffering.setFamilyName(dto.getFamilyName());
         productOffering.setSubFamily(dto.getSubFamily());
+        productOffering.setSellIndicator(dto.getSellIndicator());
+        productOffering.setQuantityIndicator(dto.getQuantityIndicator());
         productOffering.setStatus("Working state");
-        productOffering.setPoType(dto.getPoType());
         productOffering.setExternalId(dto.getExternalId());
 
         productOffering.setMarkets(Collections.singletonList(dto.getMarkets()));
@@ -265,14 +267,16 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         for (ProductOffering productOffering : productOfferings) {
             ProductOfferingDTO dto = new ProductOfferingDTO();
             dto.setName(productOffering.getName());
+            dto.setPoType(productOffering.getPoType());
             dto.setEffectiveFrom(productOffering.getEffectiveFrom());
             dto.setEffectiveTo(productOffering.getEffectiveTo());
             dto.setDescription(productOffering.getDescription());
             dto.setDetailedDescription(productOffering.getDetailedDescription());
             dto.setFamilyName(productOffering.getFamilyName());
             dto.setSubFamily(productOffering.getSubFamily());
+            dto.setSellIndicator(productOffering.getSellIndicator());
+            dto.setQuantityIndicator(productOffering.getQuantityIndicator());
             dto.setStatus(productOffering.getStatus());
-            dto.setPoType(productOffering.getPoType());
             dto.setExternalId(productOffering.getExternalId());
             productOffering.setMarkets(productOffering.getMarkets());
             productOffering.setSubmarkets(productOffering.getSubmarkets());
@@ -295,13 +299,15 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         if (optionalProductOffering.isPresent()) {
             ProductOffering existingProductOffering = optionalProductOffering.get();
             existingProductOffering.setName(updatedDTO.getName());
+            existingProductOffering.setPoType(updatedDTO.getPoType());
             existingProductOffering.setEffectiveFrom(updatedDTO.getEffectiveFrom());
             existingProductOffering.setEffectiveTo(updatedDTO.getEffectiveTo());
             existingProductOffering.setDescription(updatedDTO.getDescription());
             existingProductOffering.setDetailedDescription(updatedDTO.getDetailedDescription());
             existingProductOffering.setFamilyName(updatedDTO.getFamilyName());
             existingProductOffering.setSubFamily(updatedDTO.getSubFamily());
-            existingProductOffering.setPoType(updatedDTO.getPoType());
+            existingProductOffering.setSellIndicator(updatedDTO.getSellIndicator());
+            existingProductOffering.setQuantityIndicator(updatedDTO.getQuantityIndicator());
             existingProductOffering.setExternalId(updatedDTO.getExternalId());
             ProductOffering updatedProductOffering = productOfferingRepository.save(existingProductOffering);
             return convertToDTO(updatedProductOffering);
@@ -313,14 +319,16 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
     private ProductOfferingDTO convertToDTO(ProductOffering productOffering) {
         ProductOfferingDTO dto = new ProductOfferingDTO();
         dto.setName(productOffering.getName());
+        dto.setPoType(productOffering.getPoType());
         dto.setEffectiveFrom(productOffering.getEffectiveFrom());
         dto.setEffectiveTo(productOffering.getEffectiveTo());
         dto.setDescription(productOffering.getDescription());
         dto.setDetailedDescription(productOffering.getDetailedDescription());
         dto.setFamilyName(productOffering.getFamilyName());
         dto.setSubFamily(productOffering.getSubFamily());
+        dto.setSellIndicator(productOffering.getSellIndicator());
+        dto.setQuantityIndicator(productOffering.getQuantityIndicator());
         dto.setStatus(productOffering.getStatus());
-        dto.setPoType(productOffering.getPoType());
         dto.setExternalId(productOffering.getExternalId());
         productOffering.setMarkets(productOffering.getMarkets());
         productOffering.setSubmarkets(productOffering.getSubmarkets());

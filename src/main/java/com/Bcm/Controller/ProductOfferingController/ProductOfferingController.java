@@ -492,8 +492,6 @@ public class ProductOfferingController {
             }
         }
 
-
-
         List<Market> validMarket = marketService.read();
         List<String> markets = validMarket.stream().map(e -> e.getName().toLowerCase()).toList();
 
@@ -513,7 +511,6 @@ public class ProductOfferingController {
                 errors.add("sub market must be one of the following: " + String.join(", ", submarkets));
             }
         }
-//
         return errors;
 
 
@@ -548,7 +545,6 @@ public class ProductOfferingController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
-
 
     @PutMapping("/changeStatus/multiple")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)

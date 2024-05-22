@@ -2,12 +2,12 @@ package com.Bcm.Model.Product;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -15,7 +15,13 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
+@Data
 public class ProductOfferingDTO {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Product_id", nullable = false)
+    private int Product_id;
 
     @Column(name = "name", nullable = false)
     private String name;

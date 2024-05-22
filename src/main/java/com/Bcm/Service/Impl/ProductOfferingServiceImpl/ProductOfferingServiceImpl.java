@@ -267,34 +267,12 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         return productOfferingRepository.findByName(name).isPresent();
     }
 
-    @Override
     public List<ProductOfferingDTO> getAllProductOfferingDTOs() {
         List<ProductOffering> productOfferings = productOfferingRepository.findAll();
         List<ProductOfferingDTO> dtos = new ArrayList<>();
 
         for (ProductOffering productOffering : productOfferings) {
-            ProductOfferingDTO dto = new ProductOfferingDTO();
-            dto.setName(productOffering.getName());
-            dto.setPoType(productOffering.getPoType());
-            dto.setEffectiveFrom(productOffering.getEffectiveFrom());
-            dto.setEffectiveTo(productOffering.getEffectiveTo());
-            dto.setDescription(productOffering.getDescription());
-            dto.setDetailedDescription(productOffering.getDetailedDescription());
-            dto.setFamilyName(productOffering.getFamilyName());
-            dto.setSubFamily(productOffering.getSubFamily());
-            dto.setSellIndicator(productOffering.getSellIndicator());
-            dto.setQuantityIndicator(productOffering.getQuantityIndicator());
-            dto.setStatus(productOffering.getStatus());
-            dto.setExternalId(productOffering.getExternalId());
-            productOffering.setMarkets(productOffering.getMarkets());
-            productOffering.setSubmarkets(productOffering.getSubmarkets());
-
-            String marketsString = String.join(",", productOffering.getMarkets());
-            dto.setMarkets(marketsString);
-            String submarketsString = String.join(",", productOffering.getSubmarkets());
-            dto.setSubmarkets(submarketsString);
-
-
+            ProductOfferingDTO dto = convertToDTO(productOffering);
             dtos.add(dto);
         }
 
@@ -326,6 +304,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
 
     private ProductOfferingDTO convertToDTO(ProductOffering productOffering) {
         ProductOfferingDTO dto = new ProductOfferingDTO();
+        dto.setProduct_id(productOffering.getProduct_id()); // Ensure the ID is set
         dto.setName(productOffering.getName());
         dto.setPoType(productOffering.getPoType());
         dto.setEffectiveFrom(productOffering.getEffectiveFrom());
@@ -338,14 +317,13 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         dto.setQuantityIndicator(productOffering.getQuantityIndicator());
         dto.setStatus(productOffering.getStatus());
         dto.setExternalId(productOffering.getExternalId());
-        productOffering.setMarkets(productOffering.getMarkets());
-        productOffering.setSubmarkets(productOffering.getSubmarkets());
 
         String marketsString = String.join(",", productOffering.getMarkets());
         dto.setMarkets(marketsString);
 
         String submarketsString = String.join(",", productOffering.getSubmarkets());
         dto.setSubmarkets(submarketsString);
+
         return dto;
     }
 

@@ -81,4 +81,14 @@ public class EligibilityServiceImpl implements EligibilityService {
     public boolean existsById(int eligibilityId) {
         return eligibilityRepository.existsById(eligibilityId);
     }
+
+    @Override
+    public boolean findByIdExists(int eligibilityId) {
+        try {
+            Optional<Eligibility> optionalEligibility = eligibilityRepository.findById(eligibilityId);
+            return optionalEligibility.isPresent();
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding Eligibility", e);
+        }
+    }
 }

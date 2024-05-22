@@ -5,6 +5,7 @@ import com.Bcm.Model.Product.ProductOfferingDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductRelationRepository;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,14 +22,23 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
 
     final ProductOfferingRepository productOfferingRepository;
     final ProductRelationRepository productRelationRepository;
+    final EligibilityService eligibilityService;
 
     @Override
     public ProductOffering create(ProductOffering productOffering) {
-        Optional<ProductOffering> existingProduct = productOfferingRepository.findByname(productOffering.getName());
+        Optional<ProductOffering> existingProduct = productOfferingRepository.findByName(productOffering.getName());
 
-        if (productOffering.getChannels() == null || productOffering.getChannels().isEmpty()) {
-            throw new InvalidInputException("Channels list cannot be empty.");
+        if (productOffering.getEligibility() == null || productOffering.getEligibility().isEmpty()) {
+            throw new InvalidInputException("Eligibilities list cannot be empty.");
         }
+
+        List<Integer> eligibilities = productOffering.getEligibility();
+        for (Integer eligibilityId : eligibilities) {
+            if (!eligibilityService.findByIdExists(eligibilityId)) {
+                throw new InvalidInputException("Eligibility with ID '" + eligibilityId + "' does not exist.");
+            }
+        }
+
         if (productOffering.getPoParent_Child() == null || productOffering.getPoParent_Child().isEmpty()) {
             productOffering.setPoParent_Child("PO-Parent");
         }
@@ -47,6 +57,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new RuntimeException("An unexpected error occurred while creating product offering", e);
         }
     }
+
 
 
     @Override
@@ -104,7 +115,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             existingProduct.setPhysicalResource(updatedProductOffering.getPhysicalResource());
             existingProduct.setBusinessProcess(updatedProductOffering.getBusinessProcess());
             existingProduct.setPoParent_Child(updatedProductOffering.getPoParent_Child());
-            existingProduct.setChannels(updatedProductOffering.getChannels());
+            existingProduct.setEligibility(updatedProductOffering.getEligibility());
 
             try {
                 if (updatedProductOffering.getName() == null || updatedProductOffering.getDescription() == null) {
@@ -195,11 +206,11 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
     }
 
     @Override
-    public List<ProductOffering> findByChannels(String channels) {
+    public List<ProductOffering> findByEligibility(String eligibilities) {
         try {
-            return productOfferingRepository.findByChannels(channels);
+            return productOfferingRepository.findByEligibility(eligibilities);
         } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while searching for product offerings by Channel name: " + channels, e);
+            throw new RuntimeException("An unexpected error occurred while searching for product offerings by Eligibility name: " + eligibilities, e);
         }
     }
 

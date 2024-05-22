@@ -17,7 +17,7 @@ public interface ProductOfferingRepository extends JpaRepository<ProductOffering
 
     List<ProductOffering> findByFamilyName(String familyName);
 
-    List<ProductOffering> findByChannels(String channels);
+    List<ProductOffering> findByEligibility(String eligibility);
 
     @Query("SELECT p FROM ProductOffering p WHERE p.name = :name")
     List<ProductOffering> searchByKeyword(String name);

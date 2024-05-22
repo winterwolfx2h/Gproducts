@@ -7,7 +7,5 @@ import java.util.Optional;
 
 
 public interface EligibilityRepository extends JpaRepository<Eligibility, Integer> {
-
     Optional<Eligibility> findById(int eligibilityId);
-
 }

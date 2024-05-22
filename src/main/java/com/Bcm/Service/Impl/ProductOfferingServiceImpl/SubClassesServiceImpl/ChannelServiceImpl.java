@@ -3,7 +3,6 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl.SubClassesServiceImpl;
 import com.Bcm.Exception.ChannelAlreadyExistsException;
 import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.ResourceNotFoundException;
-import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.ChannelRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
@@ -71,20 +70,20 @@ public class ChannelServiceImpl implements ChannelService {
         try {
             Channel channel = findById(po_ChannelCode);
             channelRepository.deleteById(po_ChannelCode);
-            updateProductOfferingsWithDeletedChannel(channel.getName());
+            //updateProductOfferingsWithDeletedChannel(channel.getName());
             return ("Channel with ID " + po_ChannelCode + " was successfully deleted");
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for deleting Channel");
         }
     }
 
-    private void updateProductOfferingsWithDeletedChannel(String channels) {
+    /*private void updateProductOfferingsWithDeletedChannel(String channels) {
         List<ProductOffering> productOfferings = productOfferingService.findByChannels(channels);
         for (ProductOffering offering : productOfferings) {
             offering.setChannels(null);
             productOfferingService.update(offering.getProduct_id(), offering);
         }
-    }
+    }*/
 
 
     @Override

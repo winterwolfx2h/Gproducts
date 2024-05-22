@@ -20,5 +20,8 @@ public interface EligibilityService {
 
     boolean existsById(int eligibilityId);
 
+    boolean findByIdExists(int eligibilityId);
+
+
 }
 

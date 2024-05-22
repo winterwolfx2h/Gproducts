@@ -30,7 +30,7 @@ public interface ProductOfferingService {
 
     List<ProductOffering> findByFamilyName(String familyName);
 
-    List<ProductOffering> findByChannels(String channels);
+    List<ProductOffering> findByEligibility(String eligibilities);
 
     ProductOffering changeProductOfferingStatus(int po_code);
 

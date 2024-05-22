@@ -65,6 +65,7 @@ public class ProductOfferingController {
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
         try {
+            // Validate market names
             List<Market> validMarkets = marketService.read();
             List<String> marketNames = productOffering.getMarkets();
 
@@ -85,6 +86,8 @@ public class ProductOfferingController {
             }
 
             productOffering.setMarkets(marketNames);
+
+            // Validate submarket names
             List<SubMarket> validSubMarkets = subMarketService.read();
             List<String> submarketNames = productOffering.getSubmarkets();
 
@@ -106,32 +109,25 @@ public class ProductOfferingController {
 
             productOffering.setSubmarkets(submarketNames);
 
+            // Validate family name
             String familyName = productOffering.getFamilyName();
             if (familyName == null || !familyService.findByNameexist(familyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
             }
 
-            // Validate channels
-            List<String> channels = productOffering.getChannels();
-            if (channels == null || channels.isEmpty()) {
-                return ResponseEntity.badRequest().body("Channel names list cannot be empty.");
+            // Validate eligibilities by ID
+            List<Integer> eligibilities = productOffering.getEligibility();
+            if (eligibilities == null || eligibilities.isEmpty()) {
+                return ResponseEntity.badRequest().body("Eligibility list cannot be empty.");
             }
 
-            for (String channel : channels) {
-                if (!channelService.findByNameexist(channel)) {
-                    return ResponseEntity.badRequest().body("Channel with name '" + channels + "' does not exist.");
+            for (Integer eligibilityId : eligibilities) {
+                if (!eligibilityService.findByIdExists(eligibilityId)) {
+                    return ResponseEntity.badRequest().body("Eligibility with ID '" + eligibilityId + "' does not exist.");
                 }
             }
 
-            /*List<String> validChannels = eligibilityService.read()
-                    .stream()
-                    .map(Eligibility::getChannel)
-                    .collect(Collectors.toList());
-
-            if (!validChannels.containsAll(productOffering.getChannels())) {
-                return ResponseEntity.badRequest().body("Invalid channel(s) in the Product Offering.");
-            }*/
-
+            // Validate customer facing service spec configurations
             List<String> serviceSpecConfigs = productOffering.getCustomerFacingServiceSpec();
             List<String> missingServices = serviceSpecConfigs.stream()
                     .filter(serviceType -> !customerFacingServiceSpecService.findByNameexist(serviceType))
@@ -141,6 +137,7 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Service(s) with Service Spec Type '" + String.join(", ", missingServices) + "' do not exist.");
             }
 
+            // Check if product offering with the same name exists
             if (productOfferingService.existsByName(productOffering.getName())) {
                 return ResponseEntity.badRequest().body("A product offering with the same name already exists.");
             }
@@ -162,6 +159,7 @@ public class ProductOfferingController {
                     .body("An unexpected error occurred while creating the Product Offering: " + e.getMessage());
         }
     }
+
 
 
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
@@ -282,6 +280,7 @@ public class ProductOfferingController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Offering with ID " + po_code + " not found.");
             }
 
+            // Check for name conflict
             String newName = updatedProductOffering.getName();
             if (!existingProductOffering.getName().equals(newName)) {
                 if (productOfferingService.existsByName(newName)) {
@@ -289,6 +288,7 @@ public class ProductOfferingController {
                 }
             }
 
+            // Validate market names
             List<Market> validMarkets = marketService.read();
             List<String> marketNames = updatedProductOffering.getMarkets();
 
@@ -309,6 +309,8 @@ public class ProductOfferingController {
             }
 
             existingProductOffering.setMarkets(marketNames);
+
+            // Validate submarket names
             List<SubMarket> validSubMarkets = subMarketService.read();
             List<String> submarketNames = updatedProductOffering.getSubmarkets();
 
@@ -330,27 +332,28 @@ public class ProductOfferingController {
 
             existingProductOffering.setSubmarkets(submarketNames);
 
+            // Validate family name
             String newFamilyName = updatedProductOffering.getFamilyName();
             if (newFamilyName != null && !familyService.findByNameexist(newFamilyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + newFamilyName + "' does not exist.");
             }
             existingProductOffering.setFamilyName(newFamilyName);
 
-            // Validate and set channel names (assuming channels are handled as a list)
-            List<String> channels = updatedProductOffering.getChannels();
-            if (channels == null || channels.isEmpty()) {
-                return ResponseEntity.badRequest().body("Channel names list cannot be empty.");
+            // Validate eligibilities by ID
+            List<Integer> eligibilities = updatedProductOffering.getEligibility();
+            if (eligibilities == null || eligibilities.isEmpty()) {
+                return ResponseEntity.badRequest().body("Eligibility ID list cannot be empty.");
             }
 
-            List<String> invalidChannels = channels.stream()
-                    .filter(channel -> !channelService.findByNameexist(channel))
-                    .collect(Collectors.toList());
-
-            if (!invalidChannels.isEmpty()) {
-                return ResponseEntity.badRequest().body("Channels with names '" + String.join(", ", invalidChannels) + "' do not exist.");
+            for (Integer eligibilityId : eligibilities) {
+                if (!eligibilityService.findByIdExists(eligibilityId)) {
+                    return ResponseEntity.badRequest().body("Eligibility with ID '" + eligibilityId + "' does not exist.");
+                }
             }
-            existingProductOffering.setChannels(channels);
 
+            existingProductOffering.setEligibility(eligibilities);
+
+            // Validate customer facing service spec configurations
             List<String> serviceSpecConfigs = updatedProductOffering.getCustomerFacingServiceSpec();
             List<String> missingServices = serviceSpecConfigs.stream()
                     .filter(serviceType -> !customerFacingServiceSpecService.findByNameexist(serviceType))
@@ -381,6 +384,7 @@ public class ProductOfferingController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while updating the Product Offering.");
         }
     }
+
 
     @DeleteMapping("/{po_code}")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)

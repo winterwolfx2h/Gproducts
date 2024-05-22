@@ -63,7 +63,7 @@ public class ProductController {
                         productOfferingDTO.setParent(productOffering.getParent());
                         productOfferingDTO.setStatus(productOffering.getStatus());
                         productOfferingDTO.setCategory(productOffering.getCategory());
-                        productOfferingDTO.setChannels(productOffering.getChannels());
+                        productOfferingDTO.setEligibility(productOffering.getEligibility());
                         productOfferingDTO.setPoParent_Child(productOffering.getPoParent_Child());
                         productOfferingDTO.setCustomerFacingServiceSpec(productOffering.getCustomerFacingServiceSpec());
                         productOfferingDTO.setMarkets(productOffering.getMarkets());

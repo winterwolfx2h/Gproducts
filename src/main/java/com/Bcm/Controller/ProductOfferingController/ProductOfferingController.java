@@ -412,8 +412,8 @@ public class ProductOfferingController {
         if (productOfferingDTO.getName() == null || productOfferingDTO.getName().isEmpty()) {
             errors.add("Name cannot be empty");
         } else {
-            if (!productOfferingDTO.getName().startsWith("po_plan")) {
-                errors.add("Name must start with 'po_plan'");
+            if (!productOfferingDTO.getName().startsWith("PO-PLAN_")) {
+                errors.add("Name must start with 'PO-PLAN_'");
             }
         }
 
@@ -485,8 +485,8 @@ public class ProductOfferingController {
         if (productOfferingDTO.getName() == null || productOfferingDTO.getName().isEmpty()) {
             errors.add("Name cannot be empty");
         } else {
-            if (!productOfferingDTO.getName().startsWith("po_plan")) {
-                errors.add("Name must start with 'po_plan'");
+            if (!productOfferingDTO.getName().startsWith("PO-PLAN_")) {
+                errors.add("Name must start with 'PO-PLAN_'");
             }
         }
 
@@ -522,21 +522,21 @@ public class ProductOfferingController {
 
 
         List<Market> validMarket = marketService.read();
-        List<String> markets = validMarket.stream().map(e -> e.getName().toLowerCase()).toList();
+        List<String> markets = validMarket.stream().map(Market::getName).toList();
 
-        if (!markets.contains(productOfferingDTO.getMarkets())) {
+        if (markets.stream().noneMatch(e->productOfferingDTO.getMarkets().contains(e))) {
             errors.add("markets must be one of the following: " + String.join(", ", markets));
         }
 
         //IF SUBMARKET IS NULL OR SUBMARKET DOES NOT EXIST
         List<SubMarket> validSubMarket = subMarketService.read();
-        List<String> submarkets = validSubMarket.stream().map(e -> e.getName().toLowerCase()).toList();
+        List<String> submarkets = validSubMarket.stream().map(SubMarket::getName).toList();
 
         if (productOfferingDTO.getSubmarkets() == null || productOfferingDTO.getSubmarkets().isEmpty()) {
             errors.add("submarkets cannot be empty");
         } else {
 
-            if (!submarkets.contains(productOfferingDTO.getSubmarkets())) {
+            if (submarkets.stream().noneMatch(e->productOfferingDTO.getSubmarkets().contains(e))) {
                 errors.add("sub market must be one of the following: " + String.join(", ", submarkets));
             }
         }

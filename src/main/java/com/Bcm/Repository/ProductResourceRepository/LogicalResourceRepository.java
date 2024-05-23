@@ -15,5 +15,9 @@ public interface LogicalResourceRepository extends JpaRepository<LogicalResource
     @Query("SELECT p FROM LogicalResource p WHERE p.logicalResourceType = :logicalResourceType")
     List<LogicalResource> searchByKeyword(String logicalResourceType);
 
+    Optional<LogicalResource> findByName(String name);
+
+    boolean existsByName(String name);
+
 }
 

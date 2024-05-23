@@ -26,6 +26,9 @@ public class ProductOfferingDTO {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "cfssOptional", nullable = false)
+    private String cfssOptional;
+
     @Column(name = "poType", nullable = false)
     private String poType;
 

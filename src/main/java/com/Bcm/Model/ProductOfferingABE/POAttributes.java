@@ -20,6 +20,9 @@ public class POAttributes {
     @Column(name = "poAttribute_code", nullable = false)
     private int poAttribute_code;
 
+    @Column(name = "name", nullable = true)
+    private String name;
+
     @Column(name = "category", nullable = true)
     private String category;
 

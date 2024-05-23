@@ -21,15 +21,22 @@ public class CustomerFacingServiceSpec {
     @Column(name = "serviceId", nullable = false)
     private int serviceId;
 
-    @Column(name = "externalId", nullable = false)
-    private String externalId;
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "description", nullable = false)
+    private String description;
 
     @Column(name = "serviceSpecType", nullable = false)
     private String serviceSpecType;
 
+    @Column(name = "externalId", nullable = false)
+    private String externalId;
+
+    @Column(name = "logicalResource", nullable = true)
+    private String logicalResource;
+
     @Column(name = "status", nullable = false)
     private String status;
 
-    @Column(name = "description", nullable = false)
-    private String description;
 }

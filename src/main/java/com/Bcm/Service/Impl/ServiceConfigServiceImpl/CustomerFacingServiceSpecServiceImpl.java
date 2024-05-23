@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 @RequiredArgsConstructor
 @Service
 public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServiceSpecService {
@@ -32,7 +33,7 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
 
             if (existingServiceSpec.isPresent()) {
                 throw new ServiceAlreadyExistsException(
-                        "CustomerFacingServiceSpec with serviceSpecType '" + customerFacingServiceSpec.getServiceSpecType() + "' already exists."
+                        "CustomerFacingServiceSpec with name '" + customerFacingServiceSpec.getName() + "' already exists."
                 );
             }
             customerFacingServiceSpec.setStatus("Working state");
@@ -70,10 +71,12 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
                     throw new ServiceAlreadyExistsException("Service with the same name already exists");
                 }
             }
-            existingCustomerFacingServiceSpec.setExternalId(updatedCustomerFacingServiceSpec.getExternalId());
-            existingCustomerFacingServiceSpec.setServiceSpecType(updatedCustomerFacingServiceSpec.getServiceSpecType());
-            existingCustomerFacingServiceSpec.setStatus(updatedCustomerFacingServiceSpec.getStatus());
+            existingCustomerFacingServiceSpec.setName(updatedCustomerFacingServiceSpec.getName());
             existingCustomerFacingServiceSpec.setDescription(updatedCustomerFacingServiceSpec.getDescription());
+            existingCustomerFacingServiceSpec.setServiceSpecType(updatedCustomerFacingServiceSpec.getServiceSpecType());
+            existingCustomerFacingServiceSpec.setExternalId(updatedCustomerFacingServiceSpec.getExternalId());
+            existingCustomerFacingServiceSpec.setLogicalResource(updatedCustomerFacingServiceSpec.getLogicalResource());
+            existingCustomerFacingServiceSpec.setStatus(updatedCustomerFacingServiceSpec.getStatus());
             return customerFacingServiceSpecRepository.save(existingCustomerFacingServiceSpec);
         } else {
             throw new ResourceNotFoundException("Could not find CustomerFacingServiceSpec with ID: " + serviceId);
@@ -154,10 +157,12 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
 
         return new CustomerFacingServiceSpecDTO(
                 customerFacingServiceSpec.getServiceId(),
-                customerFacingServiceSpec.getExternalId(),
+                customerFacingServiceSpec.getName(),
+                customerFacingServiceSpec.getDescription(),
                 customerFacingServiceSpec.getServiceSpecType(),
-                customerFacingServiceSpec.getStatus(),
-                customerFacingServiceSpec.getDescription()
+                customerFacingServiceSpec.getExternalId(),
+                customerFacingServiceSpec.getLogicalResource(),
+                customerFacingServiceSpec.getStatus()
         );
     }
 
@@ -170,10 +175,12 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
 
             return new CustomerFacingServiceSpecDTO(
                     customerFacingServiceSpec.getServiceId(),
-                    customerFacingServiceSpec.getExternalId(),
+                    customerFacingServiceSpec.getName(),
+                    customerFacingServiceSpec.getDescription(),
                     customerFacingServiceSpec.getServiceSpecType(),
-                    customerFacingServiceSpec.getStatus(),
-                    customerFacingServiceSpec.getDescription()
+                    customerFacingServiceSpec.getExternalId(),
+                    customerFacingServiceSpec.getLogicalResource(),
+                    customerFacingServiceSpec.getStatus()
             );
         }).collect(Collectors.toList());
     }
@@ -182,5 +189,10 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
         if (customerFacingServiceSpec.getServiceSpecType() == null) {
             throw new InvalidInputException("ServiceSpecType cannot be null");
         }
+    }
+
+    @Override
+    public boolean existsByName(String name) {
+        return customerFacingServiceSpecRepository.findByName(name).isPresent();
     }
 }

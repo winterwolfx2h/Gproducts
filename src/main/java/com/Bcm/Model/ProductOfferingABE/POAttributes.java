@@ -26,8 +26,11 @@ public class POAttributes {
     @Column(name = "category", nullable = true)
     private String category;
 
-    @Column(name = "externalId", nullable = true)
-    private String externalId;
+    @Column(name = "bsexternalId", nullable = true)
+    private String bsexternalId;
+
+    @Column(name = "csexternalId", nullable = true)
+    private String csexternalId;
 
     @Column(name = "charType", nullable = false)
     private String charType;

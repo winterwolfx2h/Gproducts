@@ -40,8 +40,10 @@ public class POAttributesServiceImpl implements POAttributesService {
         if (existingPOAttributesOptional.isPresent()) {
             POAttributes existingPOAttributes = existingPOAttributesOptional.get();
 
+            existingPOAttributes.setName(updatedPOAttributes.getName());
             existingPOAttributes.setCategory(updatedPOAttributes.getCategory());
-            existingPOAttributes.setExternalId(updatedPOAttributes.getExternalId());
+            existingPOAttributes.setBsexternalId(updatedPOAttributes.getBsexternalId());
+            existingPOAttributes.setCsexternalId(updatedPOAttributes.getCsexternalId());
             existingPOAttributes.setCharType(updatedPOAttributes.getCharType());
             existingPOAttributes.setCharValue(updatedPOAttributes.getCharValue());
 

@@ -1,11 +1,11 @@
-package com.Bcm.BCMDrools;
+package com.Bcm.BCMDrools
 
-import com.Bcm.Model.Product.ProductOfferingDTO;
-import com.Bcm.Exception.ProductOfferingValidationException;
+import com.Bcm.Model.Product.ProductOfferingDTO
+import com.Bcm.Exception.ProductOfferingValidationException
 
 rule "Validate Effective Dates"
     when
-        $dto: ProductOfferingDTO(effectiveFrom > effectiveTo)
+        $dto: ProductOfferingDTO(effectiveFrom != null, effectiveTo != null, effectiveFrom > effectiveTo)
     then
         throw new ProductOfferingValidationException("Invalid effective dates: 'effectiveTo' is earlier than 'effectiveFrom'.");
 end

@@ -15,5 +15,8 @@ public interface CustomerFacingServiceSpecRepository extends JpaRepository<Custo
 
     @Query("SELECT p FROM CustomerFacingServiceSpec p WHERE p.description LIKE %:description% ")
     List<CustomerFacingServiceSpec> searchByKeyword(String description);
+
+    Optional<CustomerFacingServiceSpec> findByName(String name);
+
 }
 

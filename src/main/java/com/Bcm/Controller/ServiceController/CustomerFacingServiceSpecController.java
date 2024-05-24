@@ -6,6 +6,7 @@ import com.Bcm.Exception.ServiceAlreadyExistsException;
 import com.Bcm.Exception.ServiceLogicException;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpecDTO;
+import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,10 +23,23 @@ public class CustomerFacingServiceSpecController {
 
 
     final CustomerFacingServiceSpecService customerFacingServiceSpecService;
+    final LogicalResourceService logicalResourceService;
 
     @PostMapping("/addCustomerFacingServiceSpec")
     public ResponseEntity<?> createCustomerFacingServiceSpec(@RequestBody CustomerFacingServiceSpec customerFacingServiceSpec) {
         try {
+
+            // Validate logicalResource
+            String logicalResource = customerFacingServiceSpec.getLogicalResource();
+            if (logicalResource == null || !logicalResourceService.findByNameexist(logicalResource)) {
+                return ResponseEntity.badRequest().body("Logical Resource with name '" + logicalResource + "' does not exist.");
+            }
+
+            // Check if customerFacingServiceSpec with the same name exists
+            if (customerFacingServiceSpecService.existsByName(customerFacingServiceSpec.getName())) {
+                return ResponseEntity.badRequest().body("A product CustomerFacingServiceSpec with the same name already exists.");
+            }
+
             CustomerFacingServiceSpec createdCustomerFacingServiceSpec = customerFacingServiceSpecService.create(customerFacingServiceSpec);
             return ResponseEntity.ok(createdCustomerFacingServiceSpec);
 

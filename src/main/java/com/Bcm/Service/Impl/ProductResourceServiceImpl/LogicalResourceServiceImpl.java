@@ -76,4 +76,26 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
     public boolean existsById(int LR_id) {
         return logicalResourceRepository.existsById(LR_id);
     }
+
+
+    @Override
+    public boolean findByNameexist(String name) {
+        try {
+            Optional<LogicalResource> optionalFamily = logicalResourceRepository.findByName(name);
+            return optionalFamily.isPresent(); // Return true if LogicalResource exists, false otherwise
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding LogicalResource");
+        }
+    }
+
+    @Override
+    public LogicalResource findByName(String name) {
+        try {
+            Optional<LogicalResource> optionalLogicalResource = logicalResourceRepository.findByName(name);
+            return optionalLogicalResource.orElseThrow(() -> new RuntimeException("LogicalResource with ID " + name + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding LogicalResource");
+        }
+    }
+
 }

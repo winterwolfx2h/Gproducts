@@ -20,11 +20,17 @@ public class POAttributes {
     @Column(name = "poAttribute_code", nullable = false)
     private int poAttribute_code;
 
+    @Column(name = "name", nullable = true)
+    private String name;
+
     @Column(name = "category", nullable = true)
     private String category;
 
-    @Column(name = "externalId", nullable = true)
-    private String externalId;
+    @Column(name = "bsexternalId", nullable = true)
+    private String bsexternalId;
+
+    @Column(name = "csexternalId", nullable = true)
+    private String csexternalId;
 
     @Column(name = "charType", nullable = false)
     private String charType;
@@ -32,11 +38,30 @@ public class POAttributes {
     @Column(name = "charValue", nullable = false)
     private String charValue;
 
+    @Column(name = "mandatory", nullable = true)
+    private Boolean mandatory;
+
+    @Column(name = "displayFormat", nullable = true)
+    private String displayFormat;
+
+    @Column(name = "externalcfs", nullable = true)
+    private Boolean externalcfs;
+
+    @Column(name = "maxSize", nullable = true)
+    private String maxSize;
+
+    @Column(name = "service", nullable = true)
+    private String service;
+
     @ElementCollection
     @CollectionTable(name = "ValueDescription", joinColumns = @JoinColumn(name = "poAttribute_code"))
     private List<ValueDescription> valueDescription;
 
+    @Getter
+    @Setter
     @Embeddable
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class ValueDescription {
         @Column(name = "value", nullable = false)
         public String value;

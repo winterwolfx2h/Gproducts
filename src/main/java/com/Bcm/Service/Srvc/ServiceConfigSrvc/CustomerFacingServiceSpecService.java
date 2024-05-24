@@ -25,4 +25,8 @@ public interface CustomerFacingServiceSpecService {
     CustomerFacingServiceSpecDTO getCustomerFacingServiceSpecDTO(int serviceId);
 
     List<CustomerFacingServiceSpecDTO> getAllCustomerFacingServiceSpecDTOs();
+
+    boolean existsByName(String name);
+
 }
+

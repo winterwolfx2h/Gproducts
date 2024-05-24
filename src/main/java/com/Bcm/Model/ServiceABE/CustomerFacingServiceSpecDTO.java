@@ -15,4 +15,8 @@ public class CustomerFacingServiceSpecDTO {
     private String serviceSpecType;
     private String status;
     private String description;
+
+    public CustomerFacingServiceSpecDTO(int serviceId, String name, String description, String serviceSpecType, String externalId, String logicalResource, String status) {
+
+    }
 }

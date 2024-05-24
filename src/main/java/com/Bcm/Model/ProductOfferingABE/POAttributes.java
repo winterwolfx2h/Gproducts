@@ -38,11 +38,30 @@ public class POAttributes {
     @Column(name = "charValue", nullable = false)
     private String charValue;
 
+    @Column(name = "mandatory", nullable = true)
+    private Boolean mandatory;
+
+    @Column(name = "displayFormat", nullable = true)
+    private String displayFormat;
+
+    @Column(name = "externalcfs", nullable = true)
+    private Boolean externalcfs;
+
+    @Column(name = "maxSize", nullable = true)
+    private String maxSize;
+
+    @Column(name = "service", nullable = true)
+    private String service;
+
     @ElementCollection
     @CollectionTable(name = "ValueDescription", joinColumns = @JoinColumn(name = "poAttribute_code"))
     private List<ValueDescription> valueDescription;
 
+    @Getter
+    @Setter
     @Embeddable
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class ValueDescription {
         @Column(name = "value", nullable = false)
         public String value;

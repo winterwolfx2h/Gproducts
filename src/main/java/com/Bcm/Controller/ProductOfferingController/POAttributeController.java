@@ -2,8 +2,10 @@ package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Exception.InvalidInputException;
+import com.Bcm.Exception.ServiceAlreadyExistsException;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.POAttributesService;
+import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,6 +24,7 @@ import java.util.List;
 public class POAttributeController {
 
     final POAttributesService poAttributesService;
+    private final CustomerFacingServiceSpecService customerFacingServiceSpecService;
 
     @GetMapping("/listPOAttributes")
     @Cacheable(value = "AttributesCache")
@@ -32,25 +35,41 @@ public class POAttributeController {
     @PostMapping("/addPOAttributes")
     @CacheEvict(value = "AttributesCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody List<POAttributes> POAttributesList) {
-        List<POAttributes> createdPOAttributesList = new ArrayList<>();
-
-        for (POAttributes poAttribute : POAttributesList) {
-            String attributeCategoryName = poAttribute.getCategory();
-            if (attributeCategoryName != null && !attributeCategoryName.isEmpty()) {
-                for (POAttributes.ValueDescription valueDescription : poAttribute.getValueDescription()) {
-                    if (valueDescription.description == null) {
-                        valueDescription.description = "Default Description";
-                    }
+        try {
+            // Validate service
+            for (POAttributes poAttribute : POAttributesList) {
+                String cfss = poAttribute.getService();
+                if (cfss == null || !customerFacingServiceSpecService.findByNameexist(cfss)) {
+                    return ResponseEntity.badRequest().body("Service with name '" + cfss + "' does not exist.");
                 }
-
-                POAttributes createdPlan = poAttributesService.create(poAttribute);
-                createdPOAttributesList.add(createdPlan);
-            } else {
-                return ResponseEntity.badRequest().body("Attribute category is missing for one or more POAttributes.");
             }
-        }
 
-        return ResponseEntity.ok(createdPOAttributesList);
+            List<POAttributes> createdPOAttributesList = new ArrayList<>();
+
+            for (POAttributes poAttribute : POAttributesList) {
+                String attributeCategoryName = poAttribute.getCategory();
+                if (attributeCategoryName != null && !attributeCategoryName.isEmpty()) {
+                    for (POAttributes.ValueDescription valueDescription : poAttribute.getValueDescription()) {
+                        if (valueDescription.getDescription() == null) {
+                            valueDescription.setDescription("Default Description");
+                        }
+                    }
+
+                    POAttributes createdPlan = poAttributesService.create(poAttribute);
+                    createdPOAttributesList.add(createdPlan);
+                } else {
+                    return ResponseEntity.badRequest().body("Attribute category is missing for one or more POAttributes.");
+                }
+            }
+
+            return ResponseEntity.ok(createdPOAttributesList);
+        } catch (ServiceAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (InvalidInputException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
+        }
     }
 
 

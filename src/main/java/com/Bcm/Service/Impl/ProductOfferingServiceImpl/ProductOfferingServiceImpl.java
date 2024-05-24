@@ -3,6 +3,7 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 import com.Bcm.Exception.*;
 import com.Bcm.Model.Product.ProductOfferingDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
+import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductRelationRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
@@ -23,6 +24,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
     final ProductOfferingRepository productOfferingRepository;
     final ProductRelationRepository productRelationRepository;
     final EligibilityService eligibilityService;
+    final ProductOfferRelationRepository productOfferRelationRepository;
 
     @Override
     public ProductOffering create(ProductOffering productOffering) {
@@ -58,8 +60,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         }
     }
 
-
-
     @Override
     public ProductOffering createProductOfferingDTO(ProductOfferingDTO dto) {
         Optional<ProductOffering> existingProduct = productOfferingRepository.findByName(dto.getName());
@@ -83,15 +83,20 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         productOffering.setQuantityIndicator(dto.getQuantityIndicator());
         productOffering.setStatus("Working state");
         productOffering.setExternalId(dto.getExternalId());
-
         productOffering.setMarkets(Collections.singletonList(dto.getMarkets()));
         productOffering.setSubmarkets(Collections.singletonList(dto.getSubmarkets()));
 
-        productOffering.setPoParent_Child(null);
-        productOffering.setSellIndicator(null);
+        ProductOffering savedProductOffering = productOfferingRepository.save(productOffering);
 
-        return productOfferingRepository.save(productOffering);
+        /*// Create ProductOfferRelation
+        ProductOfferRelation relation = new ProductOfferRelation();
+        relation.setType("SomeType"); // or set this based on some logic or additional DTO field if needed
+        relation.setProductOffering(savedProductOffering);
+        productOfferRelationRepository.save(relation);*/
+
+        return savedProductOffering;
     }
+
 
     @Override
     public List<ProductOffering> read() {

@@ -1,13 +1,11 @@
 package com.Bcm.Model.ProductOfferingABE;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Table(name = "ProductOfferRelation")
 @Entity
@@ -22,12 +20,11 @@ public class ProductOfferRelation {
     @Column(name = "PoOfferRelation_Code", nullable = false)
     private int PoOfferRelation_Code;
 
-    @Column(name = "type", nullable = false)
+    @Column(name = "type", nullable = true)
     private String type;
 
-    @Column(name = "validFor", nullable = false)
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    private Date validFor;
-
+    /*@ManyToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "Product_id")
+    private ProductOffering productOffering;*/
 }
 

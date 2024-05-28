@@ -28,11 +28,14 @@ public class CustomerFacingServiceSpecController {
     @PostMapping("/addCustomerFacingServiceSpec")
     public ResponseEntity<?> createCustomerFacingServiceSpec(@RequestBody CustomerFacingServiceSpec customerFacingServiceSpec) {
         try {
-
             // Validate logicalResource
             String logicalResource = customerFacingServiceSpec.getLogicalResource();
-            if (logicalResource == null || !logicalResourceService.findByNameexist(logicalResource)) {
-                return ResponseEntity.badRequest().body("Logical Resource with name '" + logicalResource + "' does not exist.");
+            if (logicalResource != null) {
+                if (!logicalResourceService.findByNameExist(logicalResource)) {
+                    return ResponseEntity.badRequest().body("Logical Resource with name '" + logicalResource + "' does not exist.");
+                }
+            } else {
+                customerFacingServiceSpec.setLogicalResource(null);
             }
 
             // Check if customerFacingServiceSpec with the same name exists
@@ -48,6 +51,8 @@ public class CustomerFacingServiceSpecController {
         } catch (InvalidInputException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
+            // Log the exception message for debugging
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
         }
     }

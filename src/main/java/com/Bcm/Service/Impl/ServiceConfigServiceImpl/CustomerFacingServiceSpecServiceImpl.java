@@ -27,8 +27,8 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
         try {
             validateNotNullFields(customerFacingServiceSpec);
 
-            Optional<CustomerFacingServiceSpec> existingServiceSpec = customerFacingServiceSpecRepository.findByServiceSpecType(
-                    customerFacingServiceSpec.getServiceSpecType()
+            Optional<CustomerFacingServiceSpec> existingServiceSpec = customerFacingServiceSpecRepository.findByName(
+                    customerFacingServiceSpec.getName()
             );
 
             if (existingServiceSpec.isPresent()) {
@@ -46,6 +46,8 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
         } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("Database error: " + e.getRootCause().getMessage(), e);
         } catch (Exception e) {
+            // Log the exception for debugging
+            e.printStackTrace();
             throw new RuntimeException("An unexpected error occurred: " + e.getMessage(), e);
         }
     }
@@ -141,9 +143,9 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
 
 
     @Override
-    public boolean findByNameexist(String serviceSpecType) {
+    public boolean findByNameexist(String name) {
         try {
-            Optional<CustomerFacingServiceSpec> optionalService = customerFacingServiceSpecRepository.findByServiceSpecType(serviceSpecType);
+            Optional<CustomerFacingServiceSpec> optionalService = customerFacingServiceSpecRepository.findByServiceSpecType(name);
             return optionalService.isPresent();
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding the service");

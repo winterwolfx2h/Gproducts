@@ -18,7 +18,7 @@ public interface CustomerFacingServiceSpecService {
 
     CustomerFacingServiceSpec findById(int serviceId);
 
-    boolean findByNameexist(String serviceSpecType);
+    boolean findByNameexist(String name);
 
     CustomerFacingServiceSpec changeServiceStatus(int serviceId);
 

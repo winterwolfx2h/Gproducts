@@ -27,7 +27,7 @@ public interface LogicalResourceService {
 
     LogicalResource findByName(String name);
 
-    boolean findByNameexist(String name);
+    boolean findByNameExist(String name);
 
 
 }

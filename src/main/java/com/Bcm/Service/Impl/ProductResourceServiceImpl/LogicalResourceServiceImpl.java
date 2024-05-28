@@ -79,10 +79,10 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
 
 
     @Override
-    public boolean findByNameexist(String name) {
+    public boolean findByNameExist(String name) {
         try {
-            Optional<LogicalResource> optionalFamily = logicalResourceRepository.findByName(name);
-            return optionalFamily.isPresent(); // Return true if LogicalResource exists, false otherwise
+            Optional<LogicalResource> optionalLogicalResource = logicalResourceRepository.findByName(name);
+            return optionalLogicalResource.isPresent(); // Return true if LogicalResource exists, false otherwise
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding LogicalResource");
         }

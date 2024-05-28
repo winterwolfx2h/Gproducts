@@ -21,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomerFacingServiceSpecController {
 
-
     final CustomerFacingServiceSpecService customerFacingServiceSpecService;
     final LogicalResourceService logicalResourceService;
 
@@ -115,7 +114,6 @@ public class CustomerFacingServiceSpecController {
         }
     }
 
-
     @GetMapping("/dto/{serviceId}")
     public ResponseEntity<?> getCustomerFacingServiceSpecDTO(@PathVariable("serviceId") int serviceId) {
         try {
@@ -127,7 +125,6 @@ public class CustomerFacingServiceSpecController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
         }
     }
-
 
     @GetMapping("/dto")
     public ResponseEntity<?> getAllCustomerFacingServiceSpecsDTO() {

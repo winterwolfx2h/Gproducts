@@ -25,6 +25,4 @@ public interface FamilyService {
     boolean findByNameexist(String name);
 
     boolean existsById(int po_FamilyCode);
-
-
 }

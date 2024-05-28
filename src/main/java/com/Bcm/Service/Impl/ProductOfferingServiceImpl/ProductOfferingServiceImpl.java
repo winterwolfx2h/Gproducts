@@ -2,6 +2,7 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
 import com.Bcm.Exception.*;
 import com.Bcm.Model.Product.ProductOfferingDTO;
+import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
@@ -61,15 +62,16 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
     }
 
     @Override
-    public ProductOffering createProductOfferingDTO(ProductOfferingDTO dto) {
+    public ProductOffering createProductOfferingDTO(ProductOfferingDTO dto, String existingProductName) {
+        // Check if an existing product offering with the same name already exists
         Optional<ProductOffering> existingProduct = productOfferingRepository.findByName(dto.getName());
-
         if (existingProduct.isPresent()) {
             throw new ProductOfferingAlreadyExistsException(
                     "A product offering with the name '" + dto.getName() + "' already exists."
             );
         }
 
+        // Create new ProductOffering entity from DTO
         ProductOffering productOffering = new ProductOffering();
         productOffering.setName(dto.getName());
         productOffering.setPoType(dto.getPoType());
@@ -86,13 +88,22 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         productOffering.setMarkets(Collections.singletonList(dto.getMarkets()));
         productOffering.setSubmarkets(Collections.singletonList(dto.getSubmarkets()));
 
+        // Save the new ProductOffering
         ProductOffering savedProductOffering = productOfferingRepository.save(productOffering);
 
-        /*// Create ProductOfferRelation
-        ProductOfferRelation relation = new ProductOfferRelation();
-        relation.setType("SomeType"); // or set this based on some logic or additional DTO field if needed
-        relation.setProductOffering(savedProductOffering);
-        productOfferRelationRepository.save(relation);*/
+        // Check if an existing product offering name was provided and establish a relationship
+        if (existingProductName != null) {
+            Optional<ProductOffering> existingProductOfferingOpt = productOfferingRepository.findByName(existingProductName);
+            if (existingProductOfferingOpt.isPresent()) {
+                ProductOffering existingProductOffering = existingProductOfferingOpt.get();
+                // Create ProductOfferRelation
+                ProductOfferRelation relation = new ProductOfferRelation();
+                relation.setType(dto.getType()); // Use type from DTO
+                relation.setProduct(savedProductOffering);
+                relation.setRelatedProduct(existingProductOffering);
+                productOfferRelationRepository.save(relation);
+            }
+        }
 
         return savedProductOffering;
     }

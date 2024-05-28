@@ -39,34 +39,34 @@ public class ProductOfferRelationController {
         }
     }
 
-    @GetMapping("/{PoOfferRelation_Code}")
-    public ResponseEntity<?> getProductOfferRelationById(@PathVariable("PoOfferRelation_Code") int PoOfferRelation_Code) {
+    @GetMapping("/{pOfferRelationCode}")
+    public ResponseEntity<?> getProductOfferRelationById(@PathVariable("pOfferRelationCode") int pOfferRelationCode) {
         try {
-            ProductOfferRelation productOfferRelation = productOfferRelationService.findById(PoOfferRelation_Code);
+            ProductOfferRelation productOfferRelation = productOfferRelationService.findById(pOfferRelationCode);
             return ResponseEntity.ok(productOfferRelation);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
 
-    @PutMapping("/{PoOfferRelation_Code}")
+    @PutMapping("/{pOfferRelationCode}")
     @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
     public ResponseEntity<?> updateProductOfferRelation(
-            @PathVariable("PoOfferRelation_Code") int PoOfferRelation_Code,
+            @PathVariable("pOfferRelationCode") int pOfferRelationCode,
             @RequestBody ProductOfferRelation updatedProductOfferRelation) {
         try {
-            ProductOfferRelation updatedGroup = productOfferRelationService.update(PoOfferRelation_Code, updatedProductOfferRelation);
+            ProductOfferRelation updatedGroup = productOfferRelationService.update(pOfferRelationCode, updatedProductOfferRelation);
             return ResponseEntity.ok(updatedGroup);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
 
-    @DeleteMapping("/{PoOfferRelation_Code}")
+    @DeleteMapping("/{pOfferRelationCode}")
     @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
-    public ResponseEntity<?> deleteProductOfferRelation(@PathVariable("PoOfferRelation_Code") int PoOfferRelation_Code) {
+    public ResponseEntity<?> deleteProductOfferRelation(@PathVariable("pOfferRelationCode") int pOfferRelationCode) {
         try {
-            String resultMessage = productOfferRelationService.delete(PoOfferRelation_Code);
+            String resultMessage = productOfferRelationService.delete(pOfferRelationCode);
             return ResponseEntity.ok(resultMessage);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");

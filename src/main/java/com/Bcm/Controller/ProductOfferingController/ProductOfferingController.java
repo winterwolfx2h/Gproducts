@@ -13,6 +13,8 @@ import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
+import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
+import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.*;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ChannelService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
@@ -53,6 +55,8 @@ public class ProductOfferingController {
     final MarketService marketService;
     final SubMarketService subMarketService;
     final ProductOfferingValidationService validationService;
+    private final ProductOfferingRepository productOfferingRepository;
+    private final ProductOfferRelationRepository productOfferRelationRepository;
 
 
     @PostMapping("/addProdOff")
@@ -162,7 +166,8 @@ public class ProductOfferingController {
 
     @PostMapping("/AddProdOffDTO")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
-    public ResponseEntity<?> createProductOfferingDTO(@Valid @RequestBody ProductOfferingDTO dto) {
+    public ResponseEntity<?> createProductOfferingDTO(@Valid @RequestBody ProductOfferingDTO dto,
+                                                      @RequestParam(name = "existingProductName", required = false) String existingProductName) {
         try {
             // Validate family name
             String familyName = dto.getFamilyName();
@@ -188,14 +193,16 @@ public class ProductOfferingController {
             }
 
             // Convert DTO to entity and save
-            ProductOffering createdProductOffering = productOfferingService.createProductOfferingDTO(dto);
+            ProductOffering createdProductOffering = productOfferingService.createProductOfferingDTO(dto, existingProductName);
+
             return new ResponseEntity<>(createdProductOffering, HttpStatus.CREATED);
 
         } catch (ProductOfferingAlreadyExistsException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
         } catch (Exception e) {
             e.printStackTrace();  // Print stack trace for debugging
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while creating the Product Offering. Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred while creating the Product Offering. Error: " + e.getMessage());
         }
     }
 

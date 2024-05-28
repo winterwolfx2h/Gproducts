@@ -12,6 +12,8 @@ public interface ProductOfferingService {
 
     ProductOffering create(ProductOffering productOffering);
 
+    ProductOffering createProductOfferingDTO(ProductOfferingDTO dto, String existingProductName);
+
     List<ProductOffering> read();
 
     ProductOffering update(int po_code, ProductOffering productOffering);
@@ -38,7 +40,7 @@ public interface ProductOfferingService {
 
     List<ProductOffering> changeMultipleProductStatuses(List<Integer> poCodes);
 
-    ProductOffering createProductOfferingDTO(ProductOfferingDTO dto);
+    //ProductOffering createProductOfferingDTO(ProductOfferingDTO dto);
 
     List<ProductOfferingDTO> getAllProductOfferingDTOs();
 

@@ -66,4 +66,8 @@ public class ProductOfferingDTO {
 
     @Column(name = "submarket", nullable = true)
     private String submarkets;
+
+    // New field for relation type
+    @Column(name = "type", nullable = true)
+    private String type;
 }

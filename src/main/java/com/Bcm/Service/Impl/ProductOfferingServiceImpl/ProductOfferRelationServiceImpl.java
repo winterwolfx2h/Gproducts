@@ -26,28 +26,28 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
     }
 
     @Override
-    public ProductOfferRelation update(int PoOfferRelation_Code, ProductOfferRelation updatedProductOfferRelation) {
-        Optional<ProductOfferRelation> existingProductOptional = ProductOfferRelationRepository.findById(PoOfferRelation_Code);
+    public ProductOfferRelation update(int pOfferRelationCode, ProductOfferRelation updatedProductOfferRelation) {
+        Optional<ProductOfferRelation> existingProductOptional = ProductOfferRelationRepository.findById(pOfferRelationCode);
 
         if (existingProductOptional.isPresent()) {
             ProductOfferRelation existingProduct = existingProductOptional.get();
             existingProduct.setType(updatedProductOfferRelation.getType());
             return ProductOfferRelationRepository.save(existingProduct);
         } else {
-            throw new RuntimeException("Could not find ProductOfferRelation with ID: " + PoOfferRelation_Code);
+            throw new RuntimeException("Could not find ProductOfferRelation with ID: " + pOfferRelationCode);
         }
     }
 
     @Override
-    public String delete(int PoOfferRelation_Code) {
-        ProductOfferRelationRepository.deleteById(PoOfferRelation_Code);
+    public String delete(int pOfferRelationCode) {
+        ProductOfferRelationRepository.deleteById(pOfferRelationCode);
         return ("ProductOfferRelation was successfully deleted");
     }
 
     @Override
-    public ProductOfferRelation findById(int PoOfferRelation_Code) {
-        Optional<ProductOfferRelation> optionalPlan = ProductOfferRelationRepository.findById(PoOfferRelation_Code);
-        return optionalPlan.orElseThrow(() -> new RuntimeException("ProductOfferRelation with ID " + PoOfferRelation_Code + " not found"));
+    public ProductOfferRelation findById(int pOfferRelationCode) {
+        Optional<ProductOfferRelation> optionalPlan = ProductOfferRelationRepository.findById(pOfferRelationCode);
+        return optionalPlan.orElseThrow(() -> new RuntimeException("ProductOfferRelation with ID " + pOfferRelationCode + " not found"));
     }
 
     @Override
@@ -66,8 +66,8 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
     }
 
     @Override
-    public boolean existsById(int PoOfferRelation_Code) {
-        return ProductOfferRelationRepository.existsById(PoOfferRelation_Code);
+    public boolean existsById(int pOfferRelationCode) {
+        return ProductOfferRelationRepository.existsById(pOfferRelationCode);
     }
 
 }

@@ -35,9 +35,9 @@ public class MethodsServiceImpl implements MethodsService {
     @Override
     public List<Methods> read() {
         try {
-            return methodsRepository.findAll();
+            return methodsRepository.findAllOrderedByMethodId();
         } catch (Exception e) {
-            throw new RuntimeException("Error occurred while retrieving Families");
+            throw new RuntimeException("Error occurred while retrieving Methods");
         }
     }
 

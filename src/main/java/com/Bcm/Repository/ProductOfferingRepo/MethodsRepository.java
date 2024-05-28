@@ -17,4 +17,7 @@ public interface MethodsRepository extends JpaRepository<Methods, Integer> {
     List<Methods> searchByKeyword(String name);
 
     boolean existsByName(String name);
+
+    @Query("SELECT m FROM Methods m ORDER BY m.method_Id")
+    List<Methods> findAllOrderedByMethodId();
 }

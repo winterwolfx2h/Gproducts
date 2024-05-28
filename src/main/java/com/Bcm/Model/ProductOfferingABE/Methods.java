@@ -20,6 +20,6 @@ public class Methods {
     @Column(name = "method_Id", nullable = false)
     private int method_Id;
 
-    @Column(name = "methodName  ", nullable = true)
-    private String methodName;
+    @Column(name = "name", nullable = true)
+    private String name;
 }

@@ -13,8 +13,6 @@ import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
-import com.Bcm.Repository.ProductOfferingRepo.ProductSpecificationRepository;
-import com.Bcm.Service.Srvc.POPlanService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.*;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ChannelService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
@@ -42,7 +40,6 @@ import java.util.stream.Collectors;
 public class ProductOfferingController {
 
     final ProductOfferingService productOfferingService;
-    final ProductSpecificationService productSpecificationService;
     final POAttributesService poAttributesService;
     final ProductOfferRelationService productOfferRelationService;
     final ProductRelationService productRelationService;
@@ -52,9 +49,6 @@ public class ProductOfferingController {
     final EligibilityService eligibilityService;
     final FamilyService familyService;
     final ChannelService channelService;
-    final POPlanService poplanService;
-
-    final ProductSpecificationRepository productSpecificationRepository;
     final CustomerFacingServiceSpecService customerFacingServiceSpecService;
     final MarketService marketService;
     final SubMarketService subMarketService;

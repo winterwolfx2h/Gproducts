@@ -13,15 +13,15 @@ public interface ProductOfferRelationService {
 
     List<ProductOfferRelation> read();
 
-    ProductOfferRelation update(int PoOfferRelation_Code, ProductOfferRelation ProductOfferRelation);
+    ProductOfferRelation update(int pOfferRelationCode, ProductOfferRelation ProductOfferRelation);
 
-    String delete(int PoOfferRelation_Code);
+    String delete(int pOfferRelationCode);
 
-    ProductOfferRelation findById(int PoOfferRelation_Code);
+    ProductOfferRelation findById(int pOfferRelationCode);
 
     List<ProductOfferRelation> searchByKeyword(String type);
 
     ProductOfferRelation findByType(String type);
 
-    boolean existsById(int PoOfferRelation_Code);
+    boolean existsById(int pOfferRelationCode);
 }

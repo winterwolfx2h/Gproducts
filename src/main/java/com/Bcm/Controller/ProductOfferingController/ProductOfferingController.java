@@ -159,7 +159,6 @@ public class ProductOfferingController {
     }
 
 
-
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public void invalidateProductOfferingsCache() {
     }
@@ -529,7 +528,7 @@ public class ProductOfferingController {
         List<Market> validMarket = marketService.read();
         List<String> markets = validMarket.stream().map(Market::getName).toList();
 
-        if (markets.stream().noneMatch(e->productOfferingDTO.getMarkets().contains(e))) {
+        if (markets.stream().noneMatch(e -> productOfferingDTO.getMarkets().contains(e))) {
             errors.add("markets must be one of the following: " + String.join(", ", markets));
         }
 
@@ -541,7 +540,7 @@ public class ProductOfferingController {
             errors.add("submarkets cannot be empty");
         } else {
 
-            if (submarkets.stream().noneMatch(e->productOfferingDTO.getSubmarkets().contains(e))) {
+            if (submarkets.stream().noneMatch(e -> productOfferingDTO.getSubmarkets().contains(e))) {
                 errors.add("sub market must be one of the following: " + String.join(", ", submarkets));
             }
         }

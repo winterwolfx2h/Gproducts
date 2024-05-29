@@ -84,7 +84,7 @@ public class CustomerFacingServiceSpecController {
             CustomerFacingServiceSpec updatedProduct = customerFacingServiceSpecService.update(serviceId, updatedCustomerFacingServiceSpec);
             return ResponseEntity.ok(updatedProduct);
         } catch (ServiceAlreadyExistsException e) {
-            return ResponseEntity.badRequest().body("Service with the same name already exists");
+            return ResponseEntity.badRequest().body("Service with the same type already exists");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }

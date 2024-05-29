@@ -1,5 +1,6 @@
 package com.Bcm.Controller.ProductResourceController;
 
+import com.Bcm.Exception.DuplicateResourceException;
 import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Model.ProductResourceABE.LogicalResource;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
@@ -21,13 +22,16 @@ public class LogicalResourceController {
     final LogicalResourceService logicalResourceService;
 
     @PostMapping("/addLogicalResource")
-    public ResponseEntity<LogicalResource> createLogicalResource(@RequestBody LogicalResource logicalResource) {
-        if (logicalResource.getStatus() == null || logicalResource.getStatus().isEmpty()) {
-            logicalResource.setStatus("Working state");
+    public ResponseEntity<?> createLogicalResource(@RequestBody LogicalResource logicalResource) {
+        try {
+            if (logicalResource.getStatus() == null || logicalResource.getStatus().isEmpty()) {
+                logicalResource.setStatus("Working state");
+            }
+            LogicalResource createdLogicalResource = logicalResourceService.create(logicalResource);
+            return ResponseEntity.ok(createdLogicalResource);
+        } catch (DuplicateResourceException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
-
-        LogicalResource createdLogicalResource = logicalResourceService.create(logicalResource);
-        return ResponseEntity.ok(createdLogicalResource);
     }
 
     @GetMapping("/listLogicalResources")

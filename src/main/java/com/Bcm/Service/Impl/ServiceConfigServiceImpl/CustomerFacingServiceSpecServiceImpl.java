@@ -27,11 +27,8 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
         try {
             validateNotNullFields(customerFacingServiceSpec);
 
-            Optional<CustomerFacingServiceSpec> existingServiceSpec = customerFacingServiceSpecRepository.findByName(
-                    customerFacingServiceSpec.getName()
-            );
-
-            if (existingServiceSpec.isPresent()) {
+            List<CustomerFacingServiceSpec> existingServiceSpecs = customerFacingServiceSpecRepository.findByName(customerFacingServiceSpec.getName());
+            if (!existingServiceSpecs.isEmpty()) {
                 throw new ServiceAlreadyExistsException(
                         "CustomerFacingServiceSpec with name '" + customerFacingServiceSpec.getName() + "' already exists."
                 );
@@ -53,6 +50,7 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
     }
 
 
+
     @Override
     public List<CustomerFacingServiceSpec> read() {
         try {
@@ -69,8 +67,9 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
         if (existingCustomerFacingServiceSpecOptional.isPresent()) {
             CustomerFacingServiceSpec existingCustomerFacingServiceSpec = existingCustomerFacingServiceSpecOptional.get();
             if (!existingCustomerFacingServiceSpec.getServiceSpecType().equals(updatedCustomerFacingServiceSpec.getServiceSpecType())) {
-                if (customerFacingServiceSpecRepository.findByServiceSpecType(updatedCustomerFacingServiceSpec.getServiceSpecType()).isPresent()) {
-                    throw new ServiceAlreadyExistsException("Service with the same name already exists");
+                List<CustomerFacingServiceSpec> existingServiceSpecs = customerFacingServiceSpecRepository.findByServiceSpecType(updatedCustomerFacingServiceSpec.getServiceSpecType());
+                if (!existingServiceSpecs.isEmpty()) {
+                    throw new ServiceAlreadyExistsException("Service with the same type already exists");
                 }
             }
             existingCustomerFacingServiceSpec.setName(updatedCustomerFacingServiceSpec.getName());
@@ -84,7 +83,6 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
             throw new ResourceNotFoundException("Could not find CustomerFacingServiceSpec with ID: " + serviceId);
         }
     }
-
 
     @Override
     public String delete(int serviceId) {
@@ -110,6 +108,7 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
         }
     }
 
+    @Override
     public CustomerFacingServiceSpec changeServiceStatus(int serviceId) {
         try {
             CustomerFacingServiceSpec existingService = findById(serviceId);
@@ -141,18 +140,17 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
         }
     }
 
-
     @Override
     public boolean findByNameexist(String name) {
         try {
-            Optional<CustomerFacingServiceSpec> optionalService = customerFacingServiceSpecRepository.findByServiceSpecType(name);
-            return optionalService.isPresent();
+            List<CustomerFacingServiceSpec> services = customerFacingServiceSpecRepository.findByServiceSpecType(name);
+            return !services.isEmpty();
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding the service");
         }
     }
 
-
+    @Override
     public CustomerFacingServiceSpecDTO getCustomerFacingServiceSpecDTO(int serviceId) {
         CustomerFacingServiceSpec customerFacingServiceSpec = customerFacingServiceSpecRepository.findById(serviceId)
                 .orElseThrow(() -> new ResourceNotFoundException("CustomerFacingServiceSpec with ID " + serviceId + " not found"));
@@ -168,23 +166,19 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
         );
     }
 
-
+    @Override
     public List<CustomerFacingServiceSpecDTO> getAllCustomerFacingServiceSpecDTOs() {
         List<CustomerFacingServiceSpec> customerFacingServiceSpecs = customerFacingServiceSpecRepository.findAll();
 
-        return customerFacingServiceSpecs.stream().map(customerFacingServiceSpec -> {
-
-
-            return new CustomerFacingServiceSpecDTO(
-                    customerFacingServiceSpec.getServiceId(),
-                    customerFacingServiceSpec.getName(),
-                    customerFacingServiceSpec.getDescription(),
-                    customerFacingServiceSpec.getServiceSpecType(),
-                    customerFacingServiceSpec.getExternalId(),
-                    customerFacingServiceSpec.getLogicalResource(),
-                    customerFacingServiceSpec.getStatus()
-            );
-        }).collect(Collectors.toList());
+        return customerFacingServiceSpecs.stream().map(customerFacingServiceSpec -> new CustomerFacingServiceSpecDTO(
+                customerFacingServiceSpec.getServiceId(),
+                customerFacingServiceSpec.getName(),
+                customerFacingServiceSpec.getDescription(),
+                customerFacingServiceSpec.getServiceSpecType(),
+                customerFacingServiceSpec.getExternalId(),
+                customerFacingServiceSpec.getLogicalResource(),
+                customerFacingServiceSpec.getStatus()
+        )).collect(Collectors.toList());
     }
 
     private void validateNotNullFields(CustomerFacingServiceSpec customerFacingServiceSpec) {
@@ -195,6 +189,6 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
 
     @Override
     public boolean existsByName(String name) {
-        return customerFacingServiceSpecRepository.findByName(name).isPresent();
+        return !customerFacingServiceSpecRepository.findByName(name).isEmpty();
     }
 }

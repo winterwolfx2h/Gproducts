@@ -1,6 +1,7 @@
 package com.Bcm.Model.ProductOfferingABE;
 
 import com.Bcm.Model.Product.Product;
+import com.Bcm.Model.ProductResourceABE.LogicalResource;
 import com.Bcm.Model.ProductResourceABE.PhysicalResource;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.util.List;
@@ -31,6 +33,9 @@ public class ProductOffering extends Product {
 
     @Column(name = "parent", nullable = true)
     private String parent;
+
+    @Column(name = "workingStep", nullable = true)
+    private String workingStep;
 
     @Column(name = "sellIndicator", nullable = true)
     private Boolean sellIndicator;
@@ -58,6 +63,11 @@ public class ProductOffering extends Product {
     @Pattern(regexp = "^(PO_PARENT|PO_CHILD)$", message = "invalid code")
     @Column(name = "poParent_Child", nullable = true)
     private String poParent_Child;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "logicalResource", nullable = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private LogicalResource logicalResource;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "physicalResource", nullable = true)

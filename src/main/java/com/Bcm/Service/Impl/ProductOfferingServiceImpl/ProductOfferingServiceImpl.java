@@ -132,6 +132,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             existingProduct.setBusinessProcess(updatedProductOffering.getBusinessProcess());
             existingProduct.setPoParent_Child(updatedProductOffering.getPoParent_Child());
             existingProduct.setEligibility(updatedProductOffering.getEligibility());
+            existingProduct.setWorkingStep(updatedProductOffering.getWorkingStep());
 
             try {
                 if (updatedProductOffering.getName() == null || updatedProductOffering.getDescription() == null) {
@@ -353,6 +354,4 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
 
         return dto;
     }
-
-
 }

@@ -9,14 +9,15 @@ import java.util.Optional;
 
 public interface CustomerFacingServiceSpecRepository extends JpaRepository<CustomerFacingServiceSpec, Integer> {
 
-    Optional<CustomerFacingServiceSpec> findByServiceSpecType(String serviceSpecType);
+    List<CustomerFacingServiceSpec> findByServiceSpecType(String serviceSpecType);
 
     Optional<CustomerFacingServiceSpec> findById(int serviceId);
 
     @Query("SELECT p FROM CustomerFacingServiceSpec p WHERE p.description LIKE %:description% ")
     List<CustomerFacingServiceSpec> searchByKeyword(String description);
 
-    Optional<CustomerFacingServiceSpec> findByName(String name);
+    List<CustomerFacingServiceSpec> findByName(String name);
+
 
 }
 

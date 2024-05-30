@@ -32,8 +32,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -63,55 +65,15 @@ public class ProductOfferingController {
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
         try {
-            // Validate market names
-            List<Market> validMarkets = marketService.read();
-            List<String> marketNames = productOffering.getMarkets();
 
-            if (marketNames == null || marketNames.isEmpty()) {
-                return ResponseEntity.badRequest().body("Market names list cannot be empty.");
-            }
-
-            List<Market> validIncomingMarkets = marketNames.stream()
-                    .map(name -> validMarkets.stream()
-                            .filter(validMarket -> validMarket.getName().equals(name))
-                            .findFirst())
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-
-            if (validIncomingMarkets.size() != marketNames.size()) {
-                return ResponseEntity.badRequest().body("Some provided market names are invalid.");
-            }
-
-            productOffering.setMarkets(marketNames);
-
-            // Validate submarket names
-            List<SubMarket> validSubMarkets = subMarketService.read();
-            List<String> submarketNames = productOffering.getSubmarkets();
-
-            if (submarketNames == null || submarketNames.isEmpty()) {
-                return ResponseEntity.badRequest().body("Submarket names list cannot be empty.");
-            }
-
-            List<SubMarket> validIncomingSubMarkets = submarketNames.stream()
-                    .map(name -> validSubMarkets.stream()
-                            .filter(validSubMarket -> validSubMarket.getName().equals(name))
-                            .findFirst())
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-
-            if (validIncomingSubMarkets.size() != submarketNames.size()) {
-                return ResponseEntity.badRequest().body("Some provided submarket names are invalid.");
-            }
-
-            productOffering.setSubmarkets(submarketNames);
 
             // Validate family name
             String familyName = productOffering.getFamilyName();
             if (familyName == null || !familyService.findByNameexist(familyName)) {
                 return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
             }
+
+            /*
 
             // Validate eligibilities by ID
             List<Integer> eligibilities = productOffering.getEligibility();
@@ -125,6 +87,9 @@ public class ProductOfferingController {
                 }
             }
 
+             */
+            /*
+
             // Validate customer facing service spec configurations
             List<String> serviceSpecConfigs = productOffering.getCustomerFacingServiceSpec();
             List<String> missingServices = serviceSpecConfigs.stream()
@@ -134,6 +99,8 @@ public class ProductOfferingController {
             if (!missingServices.isEmpty()) {
                 return ResponseEntity.badRequest().body("Service(s) with Service Spec Type '" + String.join(", ", missingServices) + "' do not exist.");
             }
+
+             */
 
             // Check if product offering with the same name exists
             if (productOfferingService.existsByName(productOffering.getName())) {
@@ -207,9 +174,12 @@ public class ProductOfferingController {
 
 
     private void ensureRelatedEntitiesExist(ProductOffering productOffering) {
+        /*
         ensurePOAttributesExists((List<POAttributes>) productOffering.getPoAttributes());
         ensureProductRelationExists(productOffering.getProductRelation());
         ensureCustomerFacingServiceSpecExists(productOffering.getCustomerFacingServiceSpec());
+
+         */
         ensureFamilyExists(productOffering.getFamilyName());
     }
 
@@ -288,49 +258,6 @@ public class ProductOfferingController {
                 }
             }
 
-            // Validate market names
-            List<Market> validMarkets = marketService.read();
-            List<String> marketNames = updatedProductOffering.getMarkets();
-
-            if (marketNames == null || marketNames.isEmpty()) {
-                return ResponseEntity.badRequest().body("Market names list cannot be empty.");
-            }
-
-            List<Market> validIncomingMarkets = marketNames.stream()
-                    .map(name -> validMarkets.stream()
-                            .filter(market -> market.getName().equals(name))
-                            .findFirst())
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-
-            if (validIncomingMarkets.size() != marketNames.size()) {
-                return ResponseEntity.badRequest().body("Some provided market names are invalid.");
-            }
-
-            existingProductOffering.setMarkets(marketNames);
-
-            // Validate submarket names
-            List<SubMarket> validSubMarkets = subMarketService.read();
-            List<String> submarketNames = updatedProductOffering.getSubmarkets();
-
-            if (submarketNames == null || submarketNames.isEmpty()) {
-                return ResponseEntity.badRequest().body("Submarket names list cannot be empty.");
-            }
-
-            List<SubMarket> validIncomingSubMarkets = submarketNames.stream()
-                    .map(name -> validSubMarkets.stream()
-                            .filter(submarket -> submarket.getName().equals(name))
-                            .findFirst())
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-
-            if (validIncomingSubMarkets.size() != submarketNames.size()) {
-                return ResponseEntity.badRequest().body("Some provided submarket names are invalid.");
-            }
-
-            existingProductOffering.setSubmarkets(submarketNames);
 
             // Validate family name
             String newFamilyName = updatedProductOffering.getFamilyName();
@@ -338,6 +265,7 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Family with name '" + newFamilyName + "' does not exist.");
             }
             existingProductOffering.setFamilyName(newFamilyName);
+            /*
 
             // Validate eligibilities by ID
             List<Integer> eligibilities = updatedProductOffering.getEligibility();
@@ -363,7 +291,10 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Service(s) with Service Spec Type '" + String.join(", ", missingServices) + "' do not exist.");
             }
 
+
+
             existingProductOffering.setCustomerFacingServiceSpec(serviceSpecConfigs);
+             */
             existingProductOffering.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
             existingProductOffering.setEffectiveTo(updatedProductOffering.getEffectiveTo());
             existingProductOffering.setDescription(updatedProductOffering.getDescription());

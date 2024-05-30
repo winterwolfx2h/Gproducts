@@ -1,18 +1,16 @@
 package com.Bcm.Model.Product;
 
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
-import com.Bcm.Model.ProductOfferingABE.ProductRelation;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Table(name = "Product")
 @Entity
@@ -39,20 +37,28 @@ public class Product {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date effectiveTo;
 
-    @Column(name = "description", nullable = true)
+    @Column(name = "description")
     private String description;
 
-    @Column(name = "detailedDescription", nullable = true)
+    @Column(name = "detailedDescription")
     private String detailedDescription;
 
-    @Column(name = "family_name", nullable = false)
+    @Column(name = "family_name")
     private String familyName;
 
-    @Column(name = "subFamily", nullable = false)
+    @Column(name = "subFamily")
     private String subFamily;
 
     @Column(name = "status", nullable = false)
     private String status;
+
+
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(inverseJoinColumns=@JoinColumn(name="product_id"))
+    private Set<POAttributes> poAttributes = new HashSet<>();
+
+    /*
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "poRelation_Code", nullable = true)
@@ -61,6 +67,8 @@ public class Product {
 
     @OneToMany(fetch = FetchType.EAGER)
     private List<POAttributes> poAttributes;
+
+     */
 
     public Product convertToProduct() {
         Product product = new Product();

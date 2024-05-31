@@ -76,5 +76,4 @@ public class GeneralInfoDTO {
     private String poParent_Child;
 
 
-
 }

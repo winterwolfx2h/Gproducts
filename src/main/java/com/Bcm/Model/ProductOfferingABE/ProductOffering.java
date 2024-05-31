@@ -1,16 +1,16 @@
 package com.Bcm.Model.ProductOfferingABE;
 
 import com.Bcm.Model.Product.Product;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "ProductOffering")
@@ -45,56 +45,29 @@ public class ProductOffering extends Product {
 
     @Column(name = "CS_externalId")
     private String CS_externalId;
-/*
-    @Column(name = "businessProcess", nullable = true)
-    private String businessProcess;
-
-
-
-    @ElementCollection
-    @CollectionTable(name = "product_offering_eligibility", joinColumns = @JoinColumn(name = "product_id"))
-    @Column(name = "eligibilities", nullable = true)
-    private List<Integer> eligibility;
-
- */
-
-
-
-
-
 
     @Pattern(regexp = "^(PO_PARENT|PO_CHILD)$", message = "invalid code")
     @Column(name = "poParent_Child")
     private String poParent_Child;
 
-    /*
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "logicalResource", nullable = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private LogicalResource logicalResource;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "physicalResource", nullable = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private PhysicalResource physicalResource;
-
-    @ElementCollection
-    @CollectionTable(name = "product_offering_CFSS", joinColumns = @JoinColumn(name = "Product_id"))
-    @Column(name = "serviceSpecType", nullable = true)
-    private List<String> customerFacingServiceSpec;
-
-     */
-
-
-
     @Column(name = "markets", nullable = true)
     private String markets;
-
 
     @Column(name = "submarkets", nullable = true)
     private String submarkets;
 
+
+    @Column(name = "PR_id", insertable = false, updatable = false)
+    private int PR_id;
+
+    @Column(name = "serviceId", insertable = false, updatable = false)
+    private int serviceId;
+
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOfferRelation.class)
+    @JoinColumn(name = "Product_id")
+    @JsonIgnore
+    private List<ProductOfferRelation> productOfferRelations;
 
 
     public enum poParent_Child {

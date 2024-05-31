@@ -32,10 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -64,7 +61,7 @@ public class ProductOfferingController {
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
         try {
-
+/*  
             // Validate market names
             List<ProductOfferingDTO> validPoplans = productOfferingService.getAllProductOfferingDTOs();
             List<String> poplanNames = productOffering.getPoplans();
@@ -86,10 +83,10 @@ public class ProductOfferingController {
             }
 
             productOffering.setPoplans(poplanNames);
-
+*/
             // Validate market names
             List<Market> validMarkets = marketService.read();
-            List<String> marketNames = productOffering.getMarkets();
+            List<String> marketNames = Collections.singletonList(productOffering.getMarkets());
 
 
             // Validate family name

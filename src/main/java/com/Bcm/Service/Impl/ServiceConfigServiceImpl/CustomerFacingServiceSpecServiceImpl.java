@@ -2,7 +2,6 @@ package com.Bcm.Service.Impl.ServiceConfigServiceImpl;
 
 import com.Bcm.Exception.*;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
-import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpecDTO;
 import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Repository.ServiceConfigRepo.ResourceFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -75,7 +73,6 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
             existingCustomerFacingServiceSpec.setDescription(updatedCustomerFacingServiceSpec.getDescription());
             existingCustomerFacingServiceSpec.setServiceSpecType(updatedCustomerFacingServiceSpec.getServiceSpecType());
             existingCustomerFacingServiceSpec.setExternalId(updatedCustomerFacingServiceSpec.getExternalId());
-            existingCustomerFacingServiceSpec.setLogicalResource(updatedCustomerFacingServiceSpec.getLogicalResource());
             existingCustomerFacingServiceSpec.setStatus(updatedCustomerFacingServiceSpec.getStatus());
             return customerFacingServiceSpecRepository.save(existingCustomerFacingServiceSpec);
         } else {
@@ -139,6 +136,7 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
         }
     }
 
+
     @Override
     public boolean findByNameexist(String name) {
         try {
@@ -149,36 +147,6 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
         }
     }
 
-    @Override
-    public CustomerFacingServiceSpecDTO getCustomerFacingServiceSpecDTO(int serviceId) {
-        CustomerFacingServiceSpec customerFacingServiceSpec = customerFacingServiceSpecRepository.findById(serviceId)
-                .orElseThrow(() -> new ResourceNotFoundException("CustomerFacingServiceSpec with ID " + serviceId + " not found"));
-
-        return new CustomerFacingServiceSpecDTO(
-                customerFacingServiceSpec.getServiceId(),
-                customerFacingServiceSpec.getName(),
-                customerFacingServiceSpec.getDescription(),
-                customerFacingServiceSpec.getServiceSpecType(),
-                customerFacingServiceSpec.getExternalId(),
-                customerFacingServiceSpec.getLogicalResource(),
-                customerFacingServiceSpec.getStatus()
-        );
-    }
-
-    @Override
-    public List<CustomerFacingServiceSpecDTO> getAllCustomerFacingServiceSpecDTOs() {
-        List<CustomerFacingServiceSpec> customerFacingServiceSpecs = customerFacingServiceSpecRepository.findAll();
-
-        return customerFacingServiceSpecs.stream().map(customerFacingServiceSpec -> new CustomerFacingServiceSpecDTO(
-                customerFacingServiceSpec.getServiceId(),
-                customerFacingServiceSpec.getName(),
-                customerFacingServiceSpec.getDescription(),
-                customerFacingServiceSpec.getServiceSpecType(),
-                customerFacingServiceSpec.getExternalId(),
-                customerFacingServiceSpec.getLogicalResource(),
-                customerFacingServiceSpec.getStatus()
-        )).collect(Collectors.toList());
-    }
 
     private void validateNotNullFields(CustomerFacingServiceSpec customerFacingServiceSpec) {
         if (customerFacingServiceSpec.getServiceSpecType() == null) {

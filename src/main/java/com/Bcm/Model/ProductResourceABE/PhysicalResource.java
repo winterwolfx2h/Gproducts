@@ -1,11 +1,14 @@
 package com.Bcm.Model.ProductResourceABE;
 
+import com.Bcm.Model.ProductOfferingABE.ProductOffering;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "PhysicalResource")
@@ -37,5 +40,13 @@ public class PhysicalResource {
 
     @Column(name = "status", nullable = false)
     private String status;
+
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOffering.class)
+    @JoinColumn(name = "PR_id")
+    @JsonIgnore
+    private List<ProductOffering> productOfferings;
+
+
 }
 

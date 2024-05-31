@@ -38,10 +38,6 @@ public class ResourceFacingServiceSpecController {
             CustomerFacingServiceSpec customerFacingServiceSpec = customerFacingServiceSpecRepository.findById(resourceFacingServiceSpec.getCustomerFacingServiceSpec().getServiceId())
                     .orElseThrow(() -> new ResourceNotFoundException("CustomerFacingServiceSpec with ID " + resourceFacingServiceSpec.getCustomerFacingServiceSpec().getServiceId() + " not found"));
 
-            boolean externalNPCodeExists = resourceFacingServiceSpecService.findByexternalNPCodeexist(resourceFacingServiceSpec.getExternalNPCode());
-            if (externalNPCodeExists) {
-                return new ResponseEntity<>("ResourceFacingServiceSpec with externalNPCode \"" + resourceFacingServiceSpec.getExternalNPCode() + "\" already exists", HttpStatus.BAD_REQUEST);
-            }
 
             resourceFacingServiceSpec.setLogicalResource(logicalResource);
             resourceFacingServiceSpec.setCustomerFacingServiceSpec(customerFacingServiceSpec);

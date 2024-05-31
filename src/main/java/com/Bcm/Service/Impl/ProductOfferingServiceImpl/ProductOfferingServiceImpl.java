@@ -149,7 +149,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         productOffering.setSellIndicator(dto.getSellIndicator());
         productOffering.setQuantityIndicator(dto.getQuantityIndicator());
         productOffering.setStatus("Working state");
-        productOffering.setExternalId(dto.getExternalId());
 
         // Save the new ProductOffering
         ProductOffering savedProductOffering = productOfferingRepository.save(productOffering);
@@ -162,7 +161,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
                 // Create ProductOfferRelation
                 ProductOfferRelation relation = new ProductOfferRelation();
                 relation.setType(dto.getType()); // Use type from DTO
-                relation.setProduct(savedProductOffering);
+
                 relation.setRelatedProduct(existingProductOffering);
                 productOfferRelationRepository.save(relation);
             }

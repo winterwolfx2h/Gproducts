@@ -1,6 +1,5 @@
 package com.Bcm.Repository.ProductOfferingRepo;
 
-import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +15,7 @@ public interface ProductOfferRelationRepository extends JpaRepository<ProductOff
     @Query("SELECT p FROM ProductOfferRelation p WHERE p.type LIKE %:type% ")
     List<ProductOfferRelation> searchByKeyword(String type);
 
-    Optional<ProductOfferRelation> findByProductAndRelatedProduct(Product product, Product relatedProduct);
+
 
 
 }

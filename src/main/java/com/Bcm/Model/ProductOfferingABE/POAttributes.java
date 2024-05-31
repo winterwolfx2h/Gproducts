@@ -72,7 +72,7 @@ public class POAttributes  {
 
 
     @Column(name = "Product_id", nullable = false)
-    private int productId;
+    private int Product_id;
 
 
 

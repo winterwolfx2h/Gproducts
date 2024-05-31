@@ -1,11 +1,14 @@
 package com.Bcm.Model.ProductResourceABE;
 
+import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "LogicalResource")
@@ -40,4 +43,9 @@ public class LogicalResource {
 
     @Column(name = "status", nullable = false)
     private String status;
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = CustomerFacingServiceSpec.class)
+    @JoinColumn(name = "LR_id")
+    @JsonIgnore
+    private List<CustomerFacingServiceSpec> customerFacingServiceSpecs;
 }

@@ -30,4 +30,10 @@ public class Eligibility {
     @CollectionTable(name = "eligibility_channel", joinColumns = @JoinColumn(name = "eligibilityId"))
     @Column(name = "channelName", nullable = true)
     private List<String> channels;
+
+    @Column(name = "Product_id", nullable = false)
+    private int productId;
+
+
+
 }

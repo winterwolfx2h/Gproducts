@@ -162,7 +162,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
                 // Create ProductOfferRelation
                 ProductOfferRelation relation = new ProductOfferRelation();
                 relation.setType(dto.getType()); // Use type from DTO
-                relation.setProduct(savedProductOffering);
+
                 relation.setRelatedProduct(existingProductOffering);
                 productOfferRelationRepository.save(relation);
             }

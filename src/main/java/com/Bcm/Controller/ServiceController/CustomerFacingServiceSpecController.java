@@ -1,11 +1,9 @@
 package com.Bcm.Controller.ServiceController;
 
 import com.Bcm.Exception.InvalidInputException;
-import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Exception.ServiceAlreadyExistsException;
 import com.Bcm.Exception.ServiceLogicException;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
-import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpecDTO;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
 import lombok.RequiredArgsConstructor;
@@ -27,15 +25,7 @@ public class CustomerFacingServiceSpecController {
     @PostMapping("/addCustomerFacingServiceSpec")
     public ResponseEntity<?> createCustomerFacingServiceSpec(@RequestBody CustomerFacingServiceSpec customerFacingServiceSpec) {
         try {
-            // Validate logicalResource
-            String logicalResource = customerFacingServiceSpec.getLogicalResource();
-            if (logicalResource != null) {
-                if (!logicalResourceService.findByNameExist(logicalResource)) {
-                    return ResponseEntity.badRequest().body("Logical Resource with name '" + logicalResource + "' does not exist.");
-                }
-            } else {
-                customerFacingServiceSpec.setLogicalResource(null);
-            }
+
 
             // Check if customerFacingServiceSpec with the same name exists
             if (customerFacingServiceSpecService.existsByName(customerFacingServiceSpec.getName())) {
@@ -114,26 +104,8 @@ public class CustomerFacingServiceSpecController {
         }
     }
 
-    @GetMapping("/dto/{serviceId}")
-    public ResponseEntity<?> getCustomerFacingServiceSpecDTO(@PathVariable("serviceId") int serviceId) {
-        try {
-            CustomerFacingServiceSpecDTO customerFacingServiceSpecDTO = customerFacingServiceSpecService.getCustomerFacingServiceSpecDTO(serviceId);
-            return ResponseEntity.ok(customerFacingServiceSpecDTO);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
-        }
-    }
 
-    @GetMapping("/dto")
-    public ResponseEntity<?> getAllCustomerFacingServiceSpecsDTO() {
-        try {
-            List<CustomerFacingServiceSpecDTO> customerFacingServiceSpecDTOs = customerFacingServiceSpecService.getAllCustomerFacingServiceSpecDTOs();
-            return ResponseEntity.ok(customerFacingServiceSpecDTOs);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
-        }
-    }
+
+
 
 }

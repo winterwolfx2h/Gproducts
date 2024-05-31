@@ -37,12 +37,7 @@ public class POAttributeController {
     public ResponseEntity<?> create(@RequestBody List<POAttributes> POAttributesList) {
         try {
             // Validate service
-            for (POAttributes poAttribute : POAttributesList) {
-                String cfss = poAttribute.getService();
-                if (cfss == null || !customerFacingServiceSpecService.findByNameexist(cfss)) {
-                    return ResponseEntity.badRequest().body("Service with name '" + cfss + "' does not exist.");
-                }
-            }
+
 
             List<POAttributes> createdPOAttributesList = new ArrayList<>();
 

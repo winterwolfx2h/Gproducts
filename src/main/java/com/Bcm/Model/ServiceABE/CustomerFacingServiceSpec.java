@@ -1,11 +1,14 @@
 package com.Bcm.Model.ServiceABE;
 
+import com.Bcm.Model.ProductOfferingABE.ProductOffering;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Table(name = "CustomerFacingServiceSpec")
@@ -33,10 +36,18 @@ public class CustomerFacingServiceSpec {
     @Column(name = "externalId", nullable = false)
     private String externalId;
 
-    @Column(name = "logicalResource", nullable = true)
-    private String logicalResource;
+    @Column(name = "LR_id", nullable = true)
+    private int LR_id;
 
     @Column(name = "status", nullable = false)
     private String status;
+
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOffering.class)
+    @JoinColumn(name = "serviceId")
+    @JsonIgnore
+    private List<ProductOffering> productOfferings;
+
+
 
 }

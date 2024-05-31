@@ -60,11 +60,36 @@ public class ProductOfferingController {
     private final ProductOfferingRepository productOfferingRepository;
     private final ProductOfferRelationRepository productOfferRelationRepository;
 
-
     @PostMapping("/addProdOff")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
         try {
+
+            // Validate market names
+            List<ProductOfferingDTO> validPoplans = productOfferingService.getAllProductOfferingDTOs();
+            List<String> poplanNames = productOffering.getPoplans();
+
+            if (poplanNames == null || poplanNames.isEmpty()) {
+                return ResponseEntity.badRequest().body("Poplan names list cannot be empty.");
+            }
+
+            List<ProductOfferingDTO> validIncomingPoplans = poplanNames.stream()
+                    .map(name -> validPoplans.stream()
+                            .filter(validPoplan -> validPoplan.getName().equals(name))
+                            .findFirst())
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+
+            if (validIncomingPoplans.size() != poplanNames.size()) {
+                return ResponseEntity.badRequest().body("Some provided Poplan names are invalid.");
+            }
+
+            productOffering.setPoplans(poplanNames);
+
+            // Validate market names
+            List<Market> validMarkets = marketService.read();
+            List<String> marketNames = productOffering.getMarkets();
 
 
             // Validate family name
@@ -126,6 +151,36 @@ public class ProductOfferingController {
     }
 
 
+    /*@PostMapping("/reAddProdOff")
+    @PutMapping("/reAddProdOff/{Product_id}")
+    @CacheEvict(value = "productOfferingsCache", allEntries = true)
+    public ResponseEntity<?> createOrUpdateProductOffering(@PathVariable(required = false) Integer Product_id, @RequestBody ProductOffering productOffering) {
+        try {
+            // Attempt to retrieve the existing ProductOffering by ID if provided
+            if (Product_id != null) {
+                ProductOffering existingProductOffering = productOfferingService.findById(Product_id);
+                if (existingProductOffering != null) {
+                    productOffering.setProduct_id(Product_id); // Ensure the ID is set for update
+                }
+            }
+
+            // Use the recreate method to handle both creation and update
+            ProductOffering resultProductOffering = productOfferingService.recreate(Product_id,productOffering);
+            return ResponseEntity.ok(resultProductOffering);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Data integrity violation: " + e.getRootCause().getMessage());
+        } catch (InvalidInputException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (DatabaseOperationException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Database operation error: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred while processing the request: " + e.getMessage());
+        }
+    }*/
+
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public void invalidateProductOfferingsCache() {
     }
@@ -171,7 +226,6 @@ public class ProductOfferingController {
                     .body("An unexpected error occurred while creating the Product Offering. Error: " + e.getMessage());
         }
     }
-
 
     private void ensureRelatedEntitiesExist(ProductOffering productOffering) {
         /*
@@ -236,7 +290,6 @@ public class ProductOfferingController {
         ProductOffering productOffering = productOfferingService.findById(po_code);
         return ResponseEntity.ok(productOffering);
     }
-
 
     @PutMapping("/{po_code}")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
@@ -340,7 +393,6 @@ public class ProductOfferingController {
         return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-
     List<String> check(ProductOfferingDTO productOfferingDTO) {
         List<String> errors = new ArrayList<>();
 
@@ -351,7 +403,6 @@ public class ProductOfferingController {
                 errors.add("Name must start with 'PO-PLAN_'");
             }
         }
-
 
         if (productOfferingDTO.getEffectiveFrom() == null || productOfferingDTO.getName().isEmpty() || productOfferingDTO.getEffectiveTo() == null || productOfferingDTO.getName().isEmpty()) {
             errors.add("Effective from and effective to dates cannot be null");
@@ -382,7 +433,6 @@ public class ProductOfferingController {
             }
         }
 
-
         List<Market> validMarket = marketService.read();
         List<String> markets = new ArrayList<>();
         for (Market market : validMarket) {
@@ -393,10 +443,8 @@ public class ProductOfferingController {
             errors.add("markets must be one of the following: " + String.join(", ", markets));
         }
 
-
         List<SubMarket> validSubMarket = subMarketService.read();
         List<String> submarkets = new ArrayList<>();
-
 
         for (SubMarket subMarket : validSubMarket) {
             submarkets.add(subMarket.getName());
@@ -409,9 +457,7 @@ public class ProductOfferingController {
                 errors.add("sub market must be one of the following: " + String.join(", ", submarkets));
             }
         }
-
         return errors;
-
     }
 
     List<String> check(ProductOffering productOfferingDTO) {
@@ -425,7 +471,6 @@ public class ProductOfferingController {
             }
         }
 
-
         if (productOfferingDTO.getEffectiveFrom() == null || productOfferingDTO.getName().isEmpty() || productOfferingDTO.getEffectiveTo() == null || productOfferingDTO.getName().isEmpty()) {
             errors.add("Effective from and effective to dates cannot be null");
         } else {
@@ -454,7 +499,6 @@ public class ProductOfferingController {
                 errors.add("FamilyName must be one of the following: " + String.join(", ", familyNames));
             }
         }
-
 
         List<Market> validMarket = marketService.read();
         List<String> markets = validMarket.stream().map(Market::getName).toList();
@@ -476,8 +520,6 @@ public class ProductOfferingController {
             }
         }
         return errors;
-
-
     }
 
     @PostMapping("/checkError")
@@ -488,7 +530,6 @@ public class ProductOfferingController {
             return ResponseEntity.badRequest().body(errors);
         }
         return ResponseEntity.ok(errors);
-
     }
 
     @PutMapping("/changeStatus/{po_code}")
@@ -528,7 +569,6 @@ public class ProductOfferingController {
         List<ProductOfferingDTO> dtos = productOfferingService.getAllProductOfferingDTOs();
         return ResponseEntity.ok(dtos);
     }
-
 
     @PutMapping("/update-dto/{po_code}")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)

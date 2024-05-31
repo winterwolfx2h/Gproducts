@@ -32,6 +32,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
     @Override
     public ProductOffering create(ProductOffering productOffering) {
         Optional<ProductOffering> existingProduct = productOfferingRepository.findByName(productOffering.getName());
+        /*
 
         if (productOffering.getEligibility() == null || productOffering.getEligibility().isEmpty()) {
             throw new InvalidInputException("Eligibilities list cannot be empty.");
@@ -43,6 +44,8 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
                 throw new InvalidInputException("Eligibility with ID '" + eligibilityId + "' does not exist.");
             }
         }
+
+         */
 
         if (productOffering.getPoParent_Child() == null || productOffering.getPoParent_Child().isEmpty()) {
             productOffering.setPoParent_Child("PO-Parent");
@@ -186,12 +189,18 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             ProductOffering existingProduct = existingProductOptional.get();
             existingProduct.setName(updatedProductOffering.getName());
             existingProduct.setParent(updatedProductOffering.getParent());
+            /*
             existingProduct.setPoAttributes(updatedProductOffering.getPoAttributes());
             existingProduct.setProductRelation(updatedProductOffering.getProductRelation());
             existingProduct.setPhysicalResource(updatedProductOffering.getPhysicalResource());
             existingProduct.setBusinessProcess(updatedProductOffering.getBusinessProcess());
+
+             */
             existingProduct.setPoParent_Child(updatedProductOffering.getPoParent_Child());
+            /*
             existingProduct.setEligibility(updatedProductOffering.getEligibility());
+
+             */
             existingProduct.setWorkingStep(updatedProductOffering.getWorkingStep());
 
             try {
@@ -281,7 +290,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new RuntimeException("An unexpected error occurred while searching for product offerings by family name: " + familyName, e);
         }
     }
-
+/*
     @Override
     public List<ProductOffering> findByEligibility(String eligibilities) {
         try {
@@ -290,6 +299,8 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new RuntimeException("An unexpected error occurred while searching for product offerings by Eligibility name: " + eligibilities, e);
         }
     }
+
+ */
 
     @Override
     public ProductOffering changeProductOfferingStatus(int po_code) {
@@ -383,7 +394,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             existingProductOffering.setSubFamily(updatedDTO.getSubFamily());
             existingProductOffering.setSellIndicator(updatedDTO.getSellIndicator());
             existingProductOffering.setQuantityIndicator(updatedDTO.getQuantityIndicator());
-            existingProductOffering.setExternalId(updatedDTO.getExternalId());
+
             ProductOffering updatedProductOffering = productOfferingRepository.save(existingProductOffering);
             return convertToDTO(updatedProductOffering);
         } else {

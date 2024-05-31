@@ -53,6 +53,7 @@ public class MethodsServiceImpl implements MethodsService {
                 throw new MethodsAlreadyExistsException("Methods with name '" + newName + "' already exists.");
             }
             existingMethods.setName(updatedMethods.getName());
+            existingMethods.setUrl(updatedMethods.getUrl());
             return methodsRepository.save(existingMethods);
         } else {
             throw new ResourceNotFoundException("Methods with ID " + method_Id + " not found.");

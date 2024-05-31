@@ -62,6 +62,11 @@ public class Product {
     @OneToMany(fetch = FetchType.EAGER)
     private List<POAttributes> poAttributes;
 
+    @ElementCollection
+    @CollectionTable(name = "product_offering_poplan", joinColumns = @JoinColumn(name = "Product_id"))
+    @Column(name = "PoplanName")
+    private List<String> poplans;
+
     public Product convertToProduct() {
         Product product = new Product();
         product.setProduct_id(this.getProduct_id());

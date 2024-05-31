@@ -23,6 +23,9 @@ public class Eligibility {
     @Column(name = "stock_Indicator")
     private Boolean stock_Indicator;
 
+    @Column(name = "entity", nullable = true)
+    private String entity;
+
     @ElementCollection
     @CollectionTable(name = "eligibility_channel", joinColumns = @JoinColumn(name = "eligibilityId"))
     @Column(name = "channelName", nullable = true)

@@ -22,4 +22,7 @@ public class Methods {
 
     @Column(name = "name", nullable = true)
     private String name;
+
+    @Column(name = "url", nullable = true)
+    private String url;
 }

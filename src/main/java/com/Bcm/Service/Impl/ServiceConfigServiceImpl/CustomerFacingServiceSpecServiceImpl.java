@@ -50,7 +50,6 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
     }
 
 
-
     @Override
     public List<CustomerFacingServiceSpec> read() {
         try {

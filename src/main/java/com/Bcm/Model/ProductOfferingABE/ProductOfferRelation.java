@@ -25,7 +25,7 @@ public class ProductOfferRelation {
     private int pOfferRelationCode;
 
 
-    @Column(name = "Product_id",nullable = false)
+    @Column(name = "Product_id", nullable = false)
     private int Product_id;
     @ManyToOne
     @JoinColumn(name = "related_product_id", referencedColumnName = "Product_id")

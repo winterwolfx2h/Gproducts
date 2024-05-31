@@ -22,9 +22,6 @@ public interface CustomerFacingServiceSpecService {
     CustomerFacingServiceSpec changeServiceStatus(int serviceId);
 
 
-
-
-
     boolean existsByName(String name);
 
 }

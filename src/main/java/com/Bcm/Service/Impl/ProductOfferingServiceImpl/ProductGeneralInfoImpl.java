@@ -12,16 +12,13 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 
-public class ProductGeneralInfoImpl implements GeneralInfoService
-
-{
+public class ProductGeneralInfoImpl implements GeneralInfoService {
     final GeneralInfoRepository generalInfoRepository;
     final ProductOfferingRepository productOfferingRepository;
-
-
 
 
     @Override
@@ -55,7 +52,6 @@ public class ProductGeneralInfoImpl implements GeneralInfoService
 
         // Save the new ProductOffering
         ProductOffering savedProductOffering = productOfferingRepository.save(productOffering);
-
 
 
         return savedProductOffering;

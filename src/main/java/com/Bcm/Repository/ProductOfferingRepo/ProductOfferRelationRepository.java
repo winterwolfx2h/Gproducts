@@ -16,7 +16,5 @@ public interface ProductOfferRelationRepository extends JpaRepository<ProductOff
     List<ProductOfferRelation> searchByKeyword(String type);
 
 
-
-
 }
 

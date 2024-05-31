@@ -34,6 +34,7 @@ public interface ProductOfferingService {
     List<ProductOffering> findByPoType(String poType);
 
     List<ProductOffering> findByFamilyName(String familyName);
+
     /*
 
     List<ProductOffering> findByEligibility(String eligibilities);

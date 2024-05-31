@@ -137,7 +137,6 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
     }
 
 
-
     @Override
     public boolean findByNameexist(String name) {
         try {

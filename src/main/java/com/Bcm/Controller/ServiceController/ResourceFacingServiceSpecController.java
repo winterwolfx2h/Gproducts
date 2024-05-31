@@ -39,7 +39,6 @@ public class ResourceFacingServiceSpecController {
                     .orElseThrow(() -> new ResourceNotFoundException("CustomerFacingServiceSpec with ID " + resourceFacingServiceSpec.getCustomerFacingServiceSpec().getServiceId() + " not found"));
 
 
-
             resourceFacingServiceSpec.setLogicalResource(logicalResource);
             resourceFacingServiceSpec.setCustomerFacingServiceSpec(customerFacingServiceSpec);
 

@@ -49,5 +49,4 @@ public class CustomerFacingServiceSpec {
     private List<ProductOffering> productOfferings;
 
 
-
 }

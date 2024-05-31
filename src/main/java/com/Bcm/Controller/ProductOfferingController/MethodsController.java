@@ -17,7 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MethodsController {
 
-
     final MethodsService methodsService;
 
     @PostMapping("/addMethods")

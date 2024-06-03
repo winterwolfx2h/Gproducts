@@ -57,7 +57,7 @@ public class GeneralInfoDTO {
     private Boolean sellIndicator;
 
     @Column(name = "quantity_Indicator", nullable = true)
-    private String quantityIndicator;
+    private Boolean quantityIndicator;
 
     @Column(name = "category", nullable = true)
     private String category;

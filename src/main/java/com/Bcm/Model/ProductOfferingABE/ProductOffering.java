@@ -35,7 +35,7 @@ public class ProductOffering extends Product {
     private Boolean sellIndicator;
 
     @Column(name = "quantity_Indicator")
-    private String quantityIndicator;
+    private Boolean quantityIndicator;
 
     @Column(name = "category")
     private String category;

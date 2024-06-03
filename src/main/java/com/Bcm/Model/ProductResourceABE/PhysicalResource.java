@@ -48,7 +48,5 @@ public class PhysicalResource {
     private List<ProductOffering> productOfferings;
 
 
-
-
 }
 

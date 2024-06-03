@@ -12,9 +12,6 @@ import java.util.List;
 public interface GeneralInfoService {
 
 
-
-
-
     ProductOffering createGeneralInfoDTO(GeneralInfoDTO generalInfoDTO);
 
     List<GeneralInfoDTO> getAllGeneralInfoDTOs();

@@ -34,8 +34,6 @@ public class GeneralInfoController {
         try {
 
 
-
-
             // Convert DTO to entity and save
             ProductOffering createdProductOffering = generalInfoService.createGeneralInfoDTO(dto);
 

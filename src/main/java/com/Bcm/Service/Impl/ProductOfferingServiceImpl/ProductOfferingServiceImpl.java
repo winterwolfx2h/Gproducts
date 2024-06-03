@@ -15,8 +15,10 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -64,6 +66,66 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         }
     }
 
+    /*@Override
+    public ProductOffering recreate(int Product_id,ProductOffering productOffering) {
+        Optional<ProductOffering> existingProduct = productOfferingRepository.findByName(productOffering.getName());
+
+        if (productOffering.getEligibility() == null || productOffering.getEligibility().isEmpty()) {
+            throw new InvalidInputException("Eligibilities list cannot be empty.");
+        }
+
+        List<Integer> eligibilities = productOffering.getEligibility();
+        for (Integer eligibilityId : eligibilities) {
+            if (!eligibilityService.findByIdExists(eligibilityId)) {
+                throw new InvalidInputException("Eligibility with ID '" + eligibilityId + "' does not exist.");
+            }
+        }
+
+        if (productOffering.getPoParent_Child() == null || productOffering.getPoParent_Child().isEmpty()) {
+            productOffering.setPoParent_Child("PO-Parent");
+        }
+
+        ProductOffering productToSave;
+        if (existingProduct.isPresent()) {
+            productToSave = existingProduct.get();
+            // Update fields with new values
+            updateProductOfferingFields(productToSave, productOffering);
+        } else {
+            // Product does not exist, set status for new creation
+            productOffering.setStatus("Working state");
+            productToSave = productOffering;
+        }
+
+        try {
+            return productOfferingRepository.save(productToSave);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseOperationException("Error creating or updating product offering", e);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while processing the request", e);
+        }
+    }
+
+    private void updateProductOfferingFields(ProductOffering target, ProductOffering source) {
+        target.setPoType(source.getPoType());
+        target.setExternalId(source.getExternalId());
+        target.setParent(source.getParent());
+        target.setWorkingStep(source.getWorkingStep());
+        target.setSellIndicator(source.getSellIndicator());
+        target.setQuantityIndicator(source.getQuantityIndicator());
+        target.setCategory(source.getCategory());
+        target.setBS_externalId(source.getBS_externalId());
+        target.setCS_externalId(source.getCS_externalId());
+        target.setBusinessProcess(source.getBusinessProcess());
+        target.setEligibility(source.getEligibility());
+        target.setPoParent_Child(source.getPoParent_Child());
+        target.setLogicalResource(source.getLogicalResource());
+        target.setPhysicalResource(source.getPhysicalResource());
+        target.setCustomerFacingServiceSpec(source.getCustomerFacingServiceSpec());
+        target.setMarkets(source.getMarkets());
+        target.setSubmarkets(source.getSubmarkets());
+    }*/
+
+
     @Override
     public ProductOffering createProductOfferingDTO(ProductOfferingDTO dto, String existingProductName) {
         // Check if an existing product offering with the same name already exists
@@ -87,8 +149,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         productOffering.setSellIndicator(dto.getSellIndicator());
         productOffering.setQuantityIndicator(dto.getQuantityIndicator());
         productOffering.setStatus("Working state");
-        productOffering.setMarkets(dto.getMarkets());
-        productOffering.setSubmarkets(dto.getSubmarkets());
 
         // Save the new ProductOffering
         ProductOffering savedProductOffering = productOfferingRepository.save(productOffering);
@@ -305,8 +365,9 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         return productOfferingRepository.findByName(name).isPresent();
     }
 
+    @Override
     public List<ProductOfferingDTO> getAllProductOfferingDTOs() {
-        List<ProductOffering> productOfferings = productOfferingRepository.findAll();
+        List<ProductOffering> productOfferings = productOfferingRepository.findByPoType("PO-PLAN");
         List<ProductOfferingDTO> dtos = new ArrayList<>();
 
         for (ProductOffering productOffering : productOfferings) {
@@ -363,5 +424,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         dto.setSubmarkets(submarketsString);
 
         return dto;
+
     }
 }

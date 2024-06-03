@@ -59,12 +59,6 @@ public class Product {
     private List<POAttributes> poAttributes;
 
 
-
-
-
-
-
-
     public Product convertToProduct() {
         Product product = new Product();
         product.setProduct_id(this.getProduct_id());

@@ -12,6 +12,9 @@ public interface ProductOfferingService {
 
     ProductOffering create(ProductOffering productOffering);
 
+
+//    ProductOffering recreate(int Product_id ,ProductOffering productOffering);
+
     ProductOffering createProductOfferingDTO(ProductOfferingDTO dto, String existingProductName);
 
     List<ProductOffering> read();
@@ -31,6 +34,7 @@ public interface ProductOfferingService {
     List<ProductOffering> findByPoType(String poType);
 
     List<ProductOffering> findByFamilyName(String familyName);
+
     /*
 
     List<ProductOffering> findByEligibility(String eligibilities);

@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class POAttributes  {
+public class POAttributes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "poAttribute_code", nullable = false)
@@ -56,6 +56,8 @@ public class POAttributes  {
     @ElementCollection
     @CollectionTable(name = "ValueDescription", joinColumns = @JoinColumn(name = "poAttribute_code"))
     private List<ValueDescription> valueDescription;
+    @Column(name = "Product_id", nullable = false)
+    private int Product_id;
 
     @Getter
     @Setter
@@ -69,15 +71,6 @@ public class POAttributes  {
         @Column(name = "description", nullable = false)
         public String description;
     }
-
-
-    @Column(name = "Product_id", nullable = false)
-    private int Product_id;
-
-
-
-
-
 
 
 }

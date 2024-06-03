@@ -57,10 +57,10 @@ public class ProductOffering extends Product {
     private String submarkets;
 
 
-    @Column(name = "PR_id",insertable = false, updatable = false)
+    @Column(name = "PR_id", insertable = false, updatable = false)
     private int PR_id;
 
-    @Column(name = "serviceId",insertable = false, updatable = false)
+    @Column(name = "serviceId", insertable = false, updatable = false)
     private int serviceId;
 
 
@@ -68,8 +68,6 @@ public class ProductOffering extends Product {
     @JoinColumn(name = "Product_id")
     @JsonIgnore
     private List<ProductOfferRelation> productOfferRelations;
-
-
 
 
     public enum poParent_Child {

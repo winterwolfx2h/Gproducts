@@ -48,7 +48,6 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
     }
 
 
-
     @Override
     public List<CustomerFacingServiceSpec> read() {
         try {
@@ -136,7 +135,6 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
             throw new RuntimeException("An unexpected error occurred while changing CustomerFacingServiceSpec status", e);
         }
     }
-
 
 
     @Override

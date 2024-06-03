@@ -9,10 +9,7 @@ import java.util.Optional;
 public interface GeneralInfoRepository extends JpaRepository<ProductOffering, Integer> {
 
 
-
-
     Optional<GeneralInfoDTO> findByName(String name);
-
 
 
 }

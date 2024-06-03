@@ -2,7 +2,6 @@ package com.Bcm.Controller.ProductController;
 
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.Product.Product;
-import com.Bcm.Model.Product.ProductSpecificationDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,29 +98,6 @@ public class ProductController {
         List<Product> searchResults = productService.searchByFamilyName(familyName);
         return ResponseEntity.ok(searchResults);
     }
-
-    @GetMapping("/searchSpec")
-    public ResponseEntity<?> searchSpec(@RequestParam String name) {
-        try {
-            List<Product> products = productService.searchByKeyword(name);
-            List<ProductSpecificationDTO> dtos = new ArrayList<>();
-
-            for (Product product : products) {
-                if (product instanceof ProductOffering) {
-                    ProductOffering productOffering = (ProductOffering) product;
-                    ProductSpecificationDTO dto = new ProductSpecificationDTO();
-                    dto.setFamilyName(productOffering.getFamilyName());
-                    dto.setSubFamily(productOffering.getSubFamily());
-                    dtos.add(dto);
-                }
-            }
-
-            return ResponseEntity.ok(dtos);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-        }
-    }
-
 
     @GetMapping("/productsWithPOPLANPoType")
     public ResponseEntity<?> getProductsByPOPlanPoType() {

@@ -18,8 +18,6 @@ import java.util.Date;
 @Getter
 @Setter
 @Data
-//@Table(name = "ProductOffering")
-//@Entity
 
 public class GeneralInfoDTO {
     @Id
@@ -57,7 +55,7 @@ public class GeneralInfoDTO {
     private Boolean sellIndicator;
 
     @Column(name = "quantity_Indicator", nullable = true)
-    private String quantityIndicator;
+    private Boolean quantityIndicator;
 
     @Column(name = "category", nullable = true)
     private String category;
@@ -74,6 +72,5 @@ public class GeneralInfoDTO {
     @Pattern(regexp = "^(PO_PARENT|PO_CHILD)$", message = "invalid code")
     @Column(name = "poParent_Child", nullable = true)
     private String poParent_Child;
-
 
 }

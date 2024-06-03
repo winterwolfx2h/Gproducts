@@ -1,5 +1,6 @@
 package com.Bcm.Controller.ProductOfferingController;
 
+import com.Bcm.Model.ProductOfferingABE.PrimeryKeyProductRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -17,15 +20,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductOfferRelationController {
 
-
     final ProductOfferRelationService productOfferRelationService;
 
-
-    @PostMapping("/addProdOffRelation")
+    @PostMapping("/addProdOffRelations")
     @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
-    public ResponseEntity<ProductOfferRelation> createProductOfferRelation(@RequestBody ProductOfferRelation productOfferRelation) {
-        ProductOfferRelation createdProductOfferRelation = productOfferRelationService.create(productOfferRelation);
-        return ResponseEntity.ok(createdProductOfferRelation);
+    public ResponseEntity<List<ProductOfferRelation>> createProductOfferRelations(@RequestBody List<ProductOfferRelation> productOfferRelations) {
+        List<ProductOfferRelation> createdProductOfferRelations = new ArrayList<>();
+        for (ProductOfferRelation productOfferRelation : productOfferRelations) {
+            ProductOfferRelation newProductOfferRelation = new ProductOfferRelation();
+            newProductOfferRelation.setId(new PrimeryKeyProductRelation(productOfferRelation.getId().getRelatedProductId()));
+            newProductOfferRelation.setType(productOfferRelation.getType());
+            newProductOfferRelation.setProduct_id(productOfferRelation.getProduct_id());
+            createdProductOfferRelations.addAll(productOfferRelationService.create(Collections.singletonList(newProductOfferRelation)));
+        }
+        return ResponseEntity.ok(createdProductOfferRelations);
     }
 
     @GetMapping("/listProdOffrelations")
@@ -39,40 +47,6 @@ public class ProductOfferRelationController {
         }
     }
 
-    @GetMapping("/{pOfferRelationCode}")
-    public ResponseEntity<?> getProductOfferRelationById(@PathVariable("pOfferRelationCode") int pOfferRelationCode) {
-        try {
-            ProductOfferRelation productOfferRelation = productOfferRelationService.findById(pOfferRelationCode);
-            return ResponseEntity.ok(productOfferRelation);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-        }
-    }
-
-    @PutMapping("/{pOfferRelationCode}")
-    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
-    public ResponseEntity<?> updateProductOfferRelation(
-            @PathVariable("pOfferRelationCode") int pOfferRelationCode,
-            @RequestBody ProductOfferRelation updatedProductOfferRelation) {
-        try {
-            ProductOfferRelation updatedGroup = productOfferRelationService.update(pOfferRelationCode, updatedProductOfferRelation);
-            return ResponseEntity.ok(updatedGroup);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-        }
-    }
-
-    @DeleteMapping("/{pOfferRelationCode}")
-    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
-    public ResponseEntity<?> deleteProductOfferRelation(@PathVariable("pOfferRelationCode") int pOfferRelationCode) {
-        try {
-            String resultMessage = productOfferRelationService.delete(pOfferRelationCode);
-            return ResponseEntity.ok(resultMessage);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-        }
-    }
-
     @GetMapping("/search")
     public ResponseEntity<?> searchProductOfferRelationsByKeyword(@RequestParam("type") String type) {
         try {
@@ -80,6 +54,38 @@ public class ProductOfferRelationController {
             return ResponseEntity.ok(searchResults);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @GetMapping("/findById")
+    public ResponseEntity<?> findProductOfferRelationById(@RequestParam("id") PrimeryKeyProductRelation id) {
+        try {
+            ProductOfferRelation productOfferRelation = productOfferRelationService.findById(id);
+            return ResponseEntity.ok(productOfferRelation);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @DeleteMapping("/deleteById")
+    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
+    public ResponseEntity<?> deleteProductOfferRelationById(@RequestParam("id") PrimeryKeyProductRelation id) {
+        try {
+            productOfferRelationService.deleteById(id);
+            return ResponseEntity.ok("ProductOfferRelation deleted successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @PutMapping("/update")
+    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
+    public ResponseEntity<?> updateProductOfferRelation(@RequestBody ProductOfferRelation productOfferRelation) {
+        try {
+            ProductOfferRelation updatedProductOfferRelation = productOfferRelationService.update(productOfferRelation);
+            return ResponseEntity.ok(updatedProductOfferRelation);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

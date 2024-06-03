@@ -42,11 +42,8 @@ public class CustomerFacingServiceSpec {
     @Column(name = "status", nullable = false)
     private String status;
 
-
     @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOffering.class)
     @JoinColumn(name = "serviceId")
     @JsonIgnore
     private List<ProductOffering> productOfferings;
-
-
 }

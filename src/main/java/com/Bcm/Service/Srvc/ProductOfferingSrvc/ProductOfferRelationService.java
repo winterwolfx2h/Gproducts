@@ -1,5 +1,6 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 
+import com.Bcm.Model.ProductOfferingABE.PrimeryKeyProductRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import org.springframework.stereotype.Service;
 
@@ -8,20 +9,15 @@ import java.util.List;
 @Service
 public interface ProductOfferRelationService {
 
-
-    ProductOfferRelation create(ProductOfferRelation ProductOfferRelation);
+    List<ProductOfferRelation> create(List<ProductOfferRelation> productOfferRelations);
 
     List<ProductOfferRelation> read();
 
-    ProductOfferRelation update(int pOfferRelationCode, ProductOfferRelation ProductOfferRelation);
-
-    String delete(int pOfferRelationCode);
-
-    ProductOfferRelation findById(int pOfferRelationCode);
-
     List<ProductOfferRelation> searchByKeyword(String type);
 
-    ProductOfferRelation findByType(String type);
+    ProductOfferRelation findById(PrimeryKeyProductRelation id);
 
-    boolean existsById(int pOfferRelationCode);
+    void deleteById(PrimeryKeyProductRelation id);
+
+    ProductOfferRelation update(ProductOfferRelation productOfferRelation);
 }

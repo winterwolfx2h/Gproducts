@@ -57,11 +57,11 @@ public class ProductOffering extends Product {
     private String submarkets;
 
 
-    @Column(name = "PR_id", insertable = false, updatable = false)
-    private int PR_id;
+    @Column(name = "PR_id", insertable = false, updatable = true)
+    private Integer PR_id;
 
-    @Column(name = "serviceId", insertable = false, updatable = false)
-    private int serviceId;
+    @Column(name = "serviceId", insertable = false, updatable = true)
+    private Integer serviceId;
 
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOfferRelation.class)

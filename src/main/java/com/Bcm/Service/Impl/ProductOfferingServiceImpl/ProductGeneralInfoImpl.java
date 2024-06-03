@@ -1,13 +1,17 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
 import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
+import com.Bcm.Exception.ProductOfferingNotFoundException;
 import com.Bcm.Model.Product.GeneralInfoDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.GeneralInfoRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
+import com.Bcm.Repository.ProductResourceRepository.PhysicalResourceRepository;
+import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.GeneralInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +19,12 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-
+@Transactional
 public class ProductGeneralInfoImpl implements GeneralInfoService {
     final GeneralInfoRepository generalInfoRepository;
     final ProductOfferingRepository productOfferingRepository;
-
+    final PhysicalResourceRepository physicalResourceRepository;
+    final CustomerFacingServiceSpecRepository customerFacingServiceSpecRepository;
 
     @Override
     public ProductOffering createGeneralInfoDTO(GeneralInfoDTO generalInfoDTO) {
@@ -49,10 +54,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         productOffering.setQuantityIndicator(generalInfoDTO.getQuantityIndicator());
         productOffering.setStatus("Working state");
 
-
         // Save the new ProductOffering
         ProductOffering savedProductOffering = productOfferingRepository.save(productOffering);
-
 
         return savedProductOffering;
     }
@@ -70,28 +73,57 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         return dtos;
     }
 
+    @Override
+    public ProductOffering getProductOfferingById(int Product_id) throws ProductOfferingNotFoundException {
+        return productOfferingRepository.findById(Product_id)
+                .orElseThrow(() -> new ProductOfferingNotFoundException("Product Offering not found with id: " + Product_id));
+    }
+
+    private void convertToEntity(GeneralInfoDTO generalInfoDTO, ProductOffering productOffering) {
+        productOffering.setName(generalInfoDTO.getName());
+        productOffering.setPoType(generalInfoDTO.getPoType());
+        productOffering.setEffectiveFrom(generalInfoDTO.getEffectiveFrom());
+        productOffering.setEffectiveTo(generalInfoDTO.getEffectiveTo());
+        productOffering.setDescription(generalInfoDTO.getDescription());
+        productOffering.setDetailedDescription(generalInfoDTO.getDetailedDescription());
+        productOffering.setParent(generalInfoDTO.getParent());
+        productOffering.setWorkingStep(generalInfoDTO.getWorkingStep());
+        productOffering.setCategory(generalInfoDTO.getCategory());
+        productOffering.setBS_externalId(generalInfoDTO.getBS_externalId());
+        productOffering.setCS_externalId(generalInfoDTO.getCS_externalId());
+        productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
+        productOffering.setSellIndicator(generalInfoDTO.getSellIndicator());
+        productOffering.setQuantityIndicator(generalInfoDTO.getQuantityIndicator());
+        productOffering.setStatus(generalInfoDTO.getStatus());
+    }
 
     private GeneralInfoDTO convertToDTO(ProductOffering productOffering) {
-        GeneralInfoDTO dto = new GeneralInfoDTO();
-        dto.setProduct_id(productOffering.getProduct_id()); // Ensure the ID is set
-        dto.setName(productOffering.getName());
-        dto.setPoType(productOffering.getPoType());
-        dto.setEffectiveFrom(productOffering.getEffectiveFrom());
-        dto.setEffectiveTo(productOffering.getEffectiveTo());
-        dto.setDescription(productOffering.getDescription());
-        dto.setDetailedDescription(productOffering.getDetailedDescription());
-        dto.setParent(productOffering.getParent());
-        dto.setCategory(productOffering.getCategory());
-        dto.setWorkingStep(productOffering.getWorkingStep());
-        dto.setBS_externalId(productOffering.getBS_externalId());
-        dto.setCS_externalId(productOffering.getCS_externalId());
-        dto.setPoParent_Child(productOffering.getPoParent_Child());
-        dto.setSellIndicator(productOffering.getSellIndicator());
-        dto.setQuantityIndicator(productOffering.getQuantityIndicator());
-        dto.setStatus(productOffering.getStatus());
+        GeneralInfoDTO generalInfoDTO = new GeneralInfoDTO();
+        generalInfoDTO.setProduct_id(productOffering.getProduct_id());
+        generalInfoDTO.setName(productOffering.getName());
+        generalInfoDTO.setPoType(productOffering.getPoType());
+        generalInfoDTO.setEffectiveFrom(productOffering.getEffectiveFrom());
+        generalInfoDTO.setEffectiveTo(productOffering.getEffectiveTo());
+        generalInfoDTO.setDescription(productOffering.getDescription());
+        generalInfoDTO.setDetailedDescription(productOffering.getDetailedDescription());
+        generalInfoDTO.setParent(productOffering.getParent());
+        generalInfoDTO.setWorkingStep(productOffering.getWorkingStep());
+        generalInfoDTO.setCategory(productOffering.getCategory());
+        generalInfoDTO.setBS_externalId(productOffering.getBS_externalId());
+        generalInfoDTO.setCS_externalId(productOffering.getCS_externalId());
+        generalInfoDTO.setPoParent_Child(productOffering.getPoParent_Child());
+        generalInfoDTO.setSellIndicator(productOffering.getSellIndicator());
+        return generalInfoDTO;
+    }
 
 
-        return dto;
+    @Override
+    public ProductOffering updateProductOffering(GeneralInfoDTO generalInfoDTO, int Product_id, int pr_id, int serviceId) throws ProductOfferingNotFoundException {
+        ProductOffering productOffering = getProductOfferingById(Product_id);
+        convertToEntity(generalInfoDTO, productOffering);
+        productOffering.setPR_id(pr_id);
+        productOffering.setServiceId(serviceId);
+        return productOfferingRepository.save(productOffering);
     }
 
 

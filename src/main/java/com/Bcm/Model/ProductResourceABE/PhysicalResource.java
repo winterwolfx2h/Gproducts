@@ -41,12 +41,9 @@ public class PhysicalResource {
     @Column(name = "status", nullable = false)
     private String status;
 
-
     @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOffering.class)
     @JoinColumn(name = "PR_id")
     @JsonIgnore
     private List<ProductOffering> productOfferings;
-
-
 }
 

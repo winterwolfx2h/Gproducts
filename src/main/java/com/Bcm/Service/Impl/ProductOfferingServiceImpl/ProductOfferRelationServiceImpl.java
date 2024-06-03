@@ -1,11 +1,13 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
+import com.Bcm.Model.ProductOfferingABE.PrimeryKeyProductRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,10 +16,19 @@ import java.util.Optional;
 public class ProductOfferRelationServiceImpl implements ProductOfferRelationService {
 
     final ProductOfferRelationRepository ProductOfferRelationRepository;
+    private final ProductOfferRelationRepository productOfferRelationRepository;
 
     @Override
-    public ProductOfferRelation create(ProductOfferRelation ProductOfferRelation) {
-        return ProductOfferRelationRepository.save(ProductOfferRelation);
+    public List<ProductOfferRelation> create(List<ProductOfferRelation> productOfferRelations) {
+        List<ProductOfferRelation> createdProductOfferRelations = new ArrayList<>();
+        for (ProductOfferRelation productOfferRelation : productOfferRelations) {
+            ProductOfferRelation newProductOfferRelation = new ProductOfferRelation();
+            newProductOfferRelation.setId(new PrimeryKeyProductRelation(productOfferRelation.getId().getRelatedProductId()));
+            newProductOfferRelation.setType(productOfferRelation.getType());
+            newProductOfferRelation.setProduct_id(productOfferRelation.getProduct_id());
+            createdProductOfferRelations.add(productOfferRelationRepository.save(newProductOfferRelation));
+        }
+        return createdProductOfferRelations;
     }
 
     @Override
@@ -26,48 +37,44 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
     }
 
     @Override
-    public ProductOfferRelation update(int pOfferRelationCode, ProductOfferRelation updatedProductOfferRelation) {
-        Optional<ProductOfferRelation> existingProductOptional = ProductOfferRelationRepository.findById(pOfferRelationCode);
-
-        if (existingProductOptional.isPresent()) {
-            ProductOfferRelation existingProduct = existingProductOptional.get();
-
-            return ProductOfferRelationRepository.save(existingProduct);
-        } else {
-            throw new RuntimeException("Could not find ProductOfferRelation with ID: " + pOfferRelationCode);
-        }
-    }
-
-    @Override
-    public String delete(int pOfferRelationCode) {
-        ProductOfferRelationRepository.deleteById(pOfferRelationCode);
-        return ("ProductOfferRelation was successfully deleted");
-    }
-
-    @Override
-    public ProductOfferRelation findById(int pOfferRelationCode) {
-        Optional<ProductOfferRelation> optionalPlan = ProductOfferRelationRepository.findById(pOfferRelationCode);
-        return optionalPlan.orElseThrow(() -> new RuntimeException("ProductOfferRelation with ID " + pOfferRelationCode + " not found"));
-    }
-
-    @Override
     public List<ProductOfferRelation> searchByKeyword(String name) {
         return ProductOfferRelationRepository.searchByKeyword(name);
     }
 
     @Override
-    public ProductOfferRelation findByType(String type) {
+    public ProductOfferRelation findById(PrimeryKeyProductRelation id) {
         try {
-            Optional<ProductOfferRelation> optionalProductOfferRelation = ProductOfferRelationRepository.findByType(type);
-            return optionalProductOfferRelation.orElseThrow(() -> new RuntimeException("ProductOfferRelation with Type " + type + " not found"));
+            Optional<ProductOfferRelation> optionalProductOfferRelation = ProductOfferRelationRepository.findById(id);
+            return optionalProductOfferRelation.orElseThrow(() -> new RuntimeException("ProductOfferRelation with ID " + id + " not found"));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding ProductOfferRelation");
         }
     }
 
     @Override
-    public boolean existsById(int pOfferRelationCode) {
-        return ProductOfferRelationRepository.existsById(pOfferRelationCode);
+    public void deleteById(PrimeryKeyProductRelation id) {
+        ProductOfferRelationRepository.deleteById(id);
     }
+
+    @Override
+    public ProductOfferRelation update(ProductOfferRelation productOfferRelation) {
+        PrimeryKeyProductRelation id = productOfferRelation.getId();
+        Optional<ProductOfferRelation> existingProductOfferRelation = productOfferRelationRepository.findById(id);
+        if (existingProductOfferRelation.isPresent()) {
+            ProductOfferRelation updatedProductOfferRelation = existingProductOfferRelation.get();
+            if (updatedProductOfferRelation.getProduct_id() == productOfferRelation.getProduct_id() &&
+                    updatedProductOfferRelation.getId().getRelatedProductId() == productOfferRelation.getId().getRelatedProductId()) {
+                updatedProductOfferRelation.setType(productOfferRelation.getType());
+                return productOfferRelationRepository.save(updatedProductOfferRelation);
+            } else {
+                throw new RuntimeException("Product with ID " + productOfferRelation.getProduct_id() +
+                        " is not related to the product with ID " + productOfferRelation.getId().getRelatedProductId());
+
+            }
+        } else {
+            throw new RuntimeException("ProductOfferRelation with ID " + id + " not found");
+        }
+    }
+
 
 }

@@ -1,9 +1,12 @@
 package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
+import com.Bcm.Exception.ProductOfferingNotFoundException;
 import com.Bcm.Model.Product.GeneralInfoDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
+import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.GeneralInfoService;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
@@ -18,9 +21,10 @@ import java.util.List;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/GeneralInfo")
 @RequiredArgsConstructor
-
 public class GeneralInfoController {
     final GeneralInfoService generalInfoService;
+    final ProductOfferingService productOfferingService;
+    final ProductOfferingRepository productOfferingRepository;
 
     @GetMapping("/GetDTOs")
     public ResponseEntity<List<GeneralInfoDTO>> getAllGeneralInfoDTOs() {
@@ -32,8 +36,6 @@ public class GeneralInfoController {
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
     public ResponseEntity<?> createProductOfferingDTO(@Valid @RequestBody GeneralInfoDTO dto) {
         try {
-
-
             // Convert DTO to entity and save
             ProductOffering createdProductOffering = generalInfoService.createGeneralInfoDTO(dto);
 
@@ -49,48 +51,34 @@ public class GeneralInfoController {
     }
 
 
-
-
-/*
-    @PutMapping("/update-dto/{po_code}")
-    @CacheEvict(value = "productOfferingsCache", allEntries = true)
-    public ResponseEntity<?> updateProductOfferingDTO(@PathVariable int po_code, @RequestBody ProductOfferingDTO updatedDTO) {
-        try {
-            ProductOffering existingProductOffering = generalInfoService.ge(po_code);
-            if (existingProductOffering == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Offering with ID " + po_code + " not found.");
-            }
-            String newName = updatedDTO.getName();
-            if (!existingProductOffering.getName().equals(newName)) {
-                if (productOfferingService.existsByName(newName)) {
-                    return ResponseEntity.status(HttpStatus.CONFLICT).body("Product Offering with the name '" + newName + "' already exists.");
-                }
-            }
-            String newFamilyName = updatedDTO.getFamilyName();
-            if (newFamilyName != null && !familyService.findByNameexist(newFamilyName)) {
-                return ResponseEntity.badRequest().body("Family with name '" + newFamilyName + "' does not exist.");
-            }
-            String marketName = updatedDTO.getMarkets();
-            if (marketName == null || !marketService.findByNameexist(marketName)) {
-                return ResponseEntity.badRequest().body("Market with name '" + marketName + "' does not exist.");
-            }
-            String submarketName = updatedDTO.getSubmarkets();
-            if (submarketName == null || !subMarketService.findByNameexist(submarketName)) {
-                return ResponseEntity.badRequest().body("Submarket with name '" + submarketName + "' does not exist.");
-            }
-            existingProductOffering.setFamilyName(newFamilyName);
-            ProductOfferingDTO updatedProductOfferingDTO = productOfferingService.updateProductOfferingDTO(po_code, updatedDTO);
-            return ResponseEntity.ok(updatedProductOfferingDTO);
-
-        } catch (ProductOfferingAlreadyExistsException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("A Product Offering with the same name already exists.");
-        } catch (InvalidInputException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while updating the Product Offering.");
-        }
+    @PutMapping("/{Product_id}")
+    public ProductOffering updateProductOffering(@RequestBody GeneralInfoDTO generalInfoDTO, @PathVariable int Product_id, @RequestParam int prId, @RequestParam int serviceId) throws ProductOfferingNotFoundException {
+        return generalInfoService.updateProductOffering(generalInfoDTO, Product_id, prId, serviceId);
     }
 
- */
+    private GeneralInfoDTO convertToDTO(ProductOffering productOffering) {
+        GeneralInfoDTO dto = new GeneralInfoDTO();
+        dto.setProduct_id(productOffering.getProduct_id());
+        dto.setName(productOffering.getName());
+        dto.setEffectiveFrom(productOffering.getEffectiveFrom());
+        dto.setEffectiveTo(productOffering.getEffectiveTo());
+        dto.setDescription(productOffering.getDescription());
+        dto.setDetailedDescription(productOffering.getDetailedDescription());
+        dto.setPoType(productOffering.getPoType());
+        dto.setParent(productOffering.getParent());
+        dto.setWorkingStep(productOffering.getWorkingStep());
+        dto.setSellIndicator(productOffering.getSellIndicator());
+        dto.setQuantityIndicator(productOffering.getQuantityIndicator());
+        dto.setCategory(productOffering.getCategory());
+        dto.setStatus(productOffering.getStatus());
+        dto.setPoParent_Child(productOffering.getPoParent_Child());
+        dto.setBS_externalId(productOffering.getBS_externalId());
+        dto.setCS_externalId(productOffering.getCS_externalId());
+        productOffering.setPR_id(productOffering.getPR_id());
+        productOffering.setServiceId(productOffering.getServiceId());
+        return dto;
+    }
+
+
 }
 

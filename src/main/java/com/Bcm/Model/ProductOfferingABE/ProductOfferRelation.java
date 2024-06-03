@@ -5,7 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 
 @Entity
@@ -19,18 +22,9 @@ public class ProductOfferRelation {
     @EmbeddedId
     private PrimeryKeyProductRelation id;
 
-    @Column(name = "type", insertable = false, updatable = false)
+    @Column(name = "type")
     private String type;
-
 
     @Column(name = "related_product_id", nullable = false)
     private int Product_id;
-
-
-
-
-
-
-
-
 }

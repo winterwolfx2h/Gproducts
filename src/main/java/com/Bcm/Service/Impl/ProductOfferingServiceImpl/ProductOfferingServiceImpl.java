@@ -162,7 +162,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
                 ProductOfferRelation relation = new ProductOfferRelation();
 
 
-
                 productOfferRelationRepository.save(relation);
             }
         }
@@ -427,3 +426,4 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
 
     }
 }
+

@@ -18,8 +18,6 @@ import java.util.Date;
 @Getter
 @Setter
 @Data
-//@Table(name = "ProductOffering")
-//@Entity
 
 public class GeneralInfoDTO {
     @Id
@@ -74,6 +72,5 @@ public class GeneralInfoDTO {
     @Pattern(regexp = "^(PO_PARENT|PO_CHILD)$", message = "invalid code")
     @Column(name = "poParent_Child", nullable = true)
     private String poParent_Child;
-
 
 }

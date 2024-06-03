@@ -16,10 +16,6 @@ import java.io.Serializable;
 @Setter
 public class PrimeryKeyProductRelation implements Serializable {
 
-
-    @Column(name = "type", insertable = false, updatable = false)
-    private String type;
-
-    @Column(name = "Product_id", nullable = false)
-    private int Product_id;
+ @Column(name = "relatedProductId", nullable = false)
+    private int relatedProductId;
 }

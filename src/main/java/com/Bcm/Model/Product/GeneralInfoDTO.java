@@ -48,8 +48,8 @@ public class GeneralInfoDTO {
     @Column(name = "parent", nullable = true)
     private String parent;
 
-    @Column(name = "workingStep", nullable = true)
-    private String workingStep;
+    @Column(name = "workingStep", nullable = false)
+    private String workingStep = "GeneralInfo";
 
     @Column(name = "sellIndicator", nullable = true)
     private Boolean sellIndicator;

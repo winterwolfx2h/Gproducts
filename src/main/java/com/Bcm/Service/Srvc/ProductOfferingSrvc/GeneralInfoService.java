@@ -15,8 +15,6 @@ public interface GeneralInfoService {
 
     List<GeneralInfoDTO> getAllGeneralInfoDTOs();
 
-    //ProductOffering updateGeneralInfoDTO(GeneralInfoDTO generalInfoDTO) throws ProductOfferingNotFoundException;
-
     ProductOffering getProductOfferingById(int Product_id) throws ProductOfferingNotFoundException;
 
     ProductOffering updateProductOffering(GeneralInfoDTO generalInfoDTO, int Product_id, int pr_id, int serviceId) throws ProductOfferingNotFoundException;

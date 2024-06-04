@@ -12,6 +12,9 @@ public interface PhysicalResourceRepository extends JpaRepository<PhysicalResour
 
     Optional<PhysicalResource> findByPhysicalResourceType(String physicalResourceType);
 
+    List<PhysicalResource> findByName(String name);
+
+
     @Query("SELECT p FROM PhysicalResource p WHERE p.physicalResourceType = :physicalResourceType")
     List<PhysicalResource> searchByKeyword(String physicalResourceType);
 

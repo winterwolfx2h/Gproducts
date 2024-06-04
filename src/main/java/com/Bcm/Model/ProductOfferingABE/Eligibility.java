@@ -23,8 +23,10 @@ public class Eligibility {
     @Column(name = "stock_Indicator")
     private Boolean stock_Indicator;
 
-    @Column(name = "entity", nullable = true)
-    private String entity;
+    @ElementCollection
+    @CollectionTable(name = "eligibility_entity", joinColumns = @JoinColumn(name = "eligibilityId"))
+    @Column(name = "entityName", nullable = true)
+    private List<String> entities;
 
     @ElementCollection
     @CollectionTable(name = "eligibility_channel", joinColumns = @JoinColumn(name = "eligibilityId"))
@@ -32,7 +34,7 @@ public class Eligibility {
     private List<String> channels;
 
     @Column(name = "Product_id", nullable = false)
-    private int productId;
+    private int Product_id;
 
 
 }

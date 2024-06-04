@@ -32,5 +32,7 @@ public class ProductRelation {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date validFor;
 
+    @Column(name = "Product_id", nullable = false)
+    private int productId;
 }
 

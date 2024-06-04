@@ -22,5 +22,9 @@ public class BusinessProcess {
 
     @Column(name = "bussinessProcType", nullable = false)
     private String bussinessProcType;
+
+    @Column(name = "Product_id", nullable = false)
+    private int productId;
+
 }
 

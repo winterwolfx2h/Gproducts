@@ -57,7 +57,6 @@ public class POAttributes {
     @CollectionTable(name = "ValueDescription", joinColumns = @JoinColumn(name = "poAttribute_code"))
     private List<ValueDescription> valueDescription;
 
-
     @Column(name = "Product_id", nullable = false)
     private int Product_id;
 
@@ -73,6 +72,4 @@ public class POAttributes {
         @Column(name = "description", nullable = false)
         public String description;
     }
-
-
 }

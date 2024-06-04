@@ -52,12 +52,10 @@ public class Product {
     @Column(name = "status", nullable = false)
     private String status;
 
-
     @OneToMany(cascade = CascadeType.ALL, targetEntity = POAttributes.class)
     @JoinColumn(name = "Product_id")
     @JsonIgnore
     private List<POAttributes> poAttributes;
-
 
     public Product convertToProduct() {
         Product product = new Product();

@@ -35,6 +35,7 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
                     "A product offering with the name '" + generalInfoDTO.getName() + "' already exists."
             );
         }
+        generalInfoDTO.setStatus("Working state");
 
         // Create new ProductOffering entity from DTO
         ProductOffering productOffering = new ProductOffering();
@@ -56,22 +57,9 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
 
         // Save the new ProductOffering
         ProductOffering savedProductOffering = productOfferingRepository.save(productOffering);
-
         return savedProductOffering;
     }
 
-    @Override
-    public List<GeneralInfoDTO> getAllGeneralInfoDTOs() {
-        List<ProductOffering> productOfferings = productOfferingRepository.findAll();
-        List<GeneralInfoDTO> dtos = new ArrayList<>();
-
-        for (ProductOffering productOffering : productOfferings) {
-            GeneralInfoDTO dto = convertToDTO(productOffering);
-            dtos.add(dto);
-        }
-
-        return dtos;
-    }
 
     @Override
     public ProductOffering getProductOfferingById(int Product_id) throws ProductOfferingNotFoundException {
@@ -113,12 +101,14 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         generalInfoDTO.setCS_externalId(productOffering.getCS_externalId());
         generalInfoDTO.setPoParent_Child(productOffering.getPoParent_Child());
         generalInfoDTO.setSellIndicator(productOffering.getSellIndicator());
+        generalInfoDTO.setQuantityIndicator(productOffering.getQuantityIndicator());
+        generalInfoDTO.setStatus(productOffering.getStatus());
         return generalInfoDTO;
     }
 
-
     @Override
-    public ProductOffering updateProductOffering(GeneralInfoDTO generalInfoDTO, int Product_id, int pr_id, int serviceId) throws ProductOfferingNotFoundException {
+    public ProductOffering updateProductOffering(GeneralInfoDTO generalInfoDTO, int Product_id,
+                                                 int pr_id, int serviceId) throws ProductOfferingNotFoundException {
         ProductOffering productOffering = getProductOfferingById(Product_id);
         convertToEntity(generalInfoDTO, productOffering);
         productOffering.setPR_id(pr_id);
@@ -126,5 +116,17 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         return productOfferingRepository.save(productOffering);
     }
 
+
+    @Override
+    public List<GeneralInfoDTO> getAllGeneralInfoDTOs() {
+        List<ProductOffering> productOfferings = generalInfoRepository.findAll();
+        List<GeneralInfoDTO> dtos = new ArrayList<>();
+
+        for (ProductOffering productOffering : productOfferings) {
+            GeneralInfoDTO dto = convertToDTO(productOffering);
+            dtos.add(dto);
+        }
+        return dtos;
+    }
 
 }

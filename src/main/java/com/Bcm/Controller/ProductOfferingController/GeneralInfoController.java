@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/GeneralInfo")
@@ -25,12 +24,6 @@ public class GeneralInfoController {
     final GeneralInfoService generalInfoService;
     final ProductOfferingService productOfferingService;
     final ProductOfferingRepository productOfferingRepository;
-
-    @GetMapping("/GetDTOs")
-    public ResponseEntity<List<GeneralInfoDTO>> getAllGeneralInfoDTOs() {
-        List<GeneralInfoDTO> dtos = generalInfoService.getAllGeneralInfoDTOs();
-        return ResponseEntity.ok(dtos);
-    }
 
     @PostMapping("/AddProdOffDTO")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
@@ -50,10 +43,15 @@ public class GeneralInfoController {
         }
     }
 
-
     @PutMapping("/{Product_id}")
     public ProductOffering updateProductOffering(@RequestBody GeneralInfoDTO generalInfoDTO, @PathVariable int Product_id, @RequestParam int prId, @RequestParam int serviceId) throws ProductOfferingNotFoundException {
         return generalInfoService.updateProductOffering(generalInfoDTO, Product_id, prId, serviceId);
+    }
+
+    @GetMapping("/GetDTOs")
+    public ResponseEntity<List<GeneralInfoDTO>> getAllProductOfferingDTOs() {
+        List<GeneralInfoDTO> dtos = generalInfoService.getAllGeneralInfoDTOs();
+        return ResponseEntity.ok(dtos);
     }
 
     private GeneralInfoDTO convertToDTO(ProductOffering productOffering) {
@@ -78,7 +76,4 @@ public class GeneralInfoController {
         productOffering.setServiceId(productOffering.getServiceId());
         return dto;
     }
-
-
 }
-

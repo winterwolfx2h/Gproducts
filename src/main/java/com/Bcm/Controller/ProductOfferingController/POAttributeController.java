@@ -24,7 +24,7 @@ import java.util.List;
 public class POAttributeController {
 
     final POAttributesService poAttributesService;
-    private final CustomerFacingServiceSpecService customerFacingServiceSpecService;
+    final CustomerFacingServiceSpecService customerFacingServiceSpecService;
 
     @GetMapping("/listPOAttributes")
     @Cacheable(value = "AttributesCache")
@@ -36,12 +36,16 @@ public class POAttributeController {
     @CacheEvict(value = "AttributesCache", allEntries = true)
     public ResponseEntity<?> create(@RequestBody List<POAttributes> POAttributesList) {
         try {
-            // Validate service
-
-
             List<POAttributes> createdPOAttributesList = new ArrayList<>();
 
             for (POAttributes poAttribute : POAttributesList) {
+                // Validate service
+                String service = poAttribute.getService();
+                if (service == null || !customerFacingServiceSpecService.findByNameexist(service)) {
+                    return ResponseEntity.badRequest().body("Service with name '" + service + "' does not exist.");
+                }
+
+                // Rest of the validation and creation logic
                 String attributeCategoryName = poAttribute.getCategory();
                 if (attributeCategoryName != null && !attributeCategoryName.isEmpty()) {
                     for (POAttributes.ValueDescription valueDescription : poAttribute.getValueDescription()) {
@@ -66,7 +70,6 @@ public class POAttributeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
         }
     }
-
 
     @PutMapping("/updatePOAttributes/{poAttribute_code}")
     @CacheEvict(value = "AttributesCache", allEntries = true)

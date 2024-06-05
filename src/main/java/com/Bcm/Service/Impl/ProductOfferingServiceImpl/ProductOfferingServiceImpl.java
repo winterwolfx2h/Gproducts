@@ -366,7 +366,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
 
     @Override
     public List<ProductOfferingDTO> getAllProductOfferingDTOs() {
-        List<ProductOffering> productOfferings = productOfferingRepository.findByPoType("PO-PLAN");
+        List<ProductOffering> productOfferings = productOfferingRepository.findByPoType("PO-Plan");
         List<ProductOfferingDTO> dtos = new ArrayList<>();
 
         for (ProductOffering productOffering : productOfferings) {

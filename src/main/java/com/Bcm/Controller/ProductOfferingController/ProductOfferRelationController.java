@@ -2,12 +2,19 @@ package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Model.ProductOfferingABE.PrimeryKeyProductRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
+import com.Bcm.Model.ProductOfferingABE.RelationResponse;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -20,7 +27,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductOfferRelationController {
 
+    final JdbcTemplate base;
+
+    String sqlRelation = "SELECT * FROM public.product_offer_relation por " +
+            "JOIN public.product po ON po.product_id = por.related_product_id " +
+            "WHERE por.product_id = ?";
+
+
+
     final ProductOfferRelationService productOfferRelationService;
+
+
+    @GetMapping("/searchRelationName")
+    Object yes(@RequestParam Integer poId) {
+        return base.query(sqlRelation, new Object[]{poId}, new BeanPropertyRowMapper<>(RelationResponse.class));
+    }
 
     @PostMapping("/addProdOffRelations")
     @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)

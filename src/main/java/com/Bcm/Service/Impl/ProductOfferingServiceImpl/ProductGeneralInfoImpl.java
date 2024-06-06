@@ -116,6 +116,15 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         return productOfferingRepository.save(productOffering);
     }
 
+    @Override
+    public ProductOffering updateProductOfferingEligibility(GeneralInfoDTO generalInfoDTO, int Product_id, int eligibility_id) throws ProductOfferingNotFoundException {
+        ProductOffering productOffering = getProductOfferingById(Product_id);
+        convertToEntity(generalInfoDTO, productOffering);
+        productOffering.setEligibility_id(eligibility_id);
+
+        return productOfferingRepository.save(productOffering);
+    }
+
 
     @Override
     public List<GeneralInfoDTO> getAllGeneralInfoDTOs() {

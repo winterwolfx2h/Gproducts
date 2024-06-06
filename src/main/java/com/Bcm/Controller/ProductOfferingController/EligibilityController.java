@@ -2,12 +2,15 @@ package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.ProductOfferingABE.Eligibility;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,20 +21,31 @@ import java.util.List;
 @RequestMapping("/api/Eligibility")
 public class EligibilityController {
 
+    final JdbcTemplate base;
+
     final EligibilityService eligibilityService;
 
+    @Transactional
     @PostMapping("/addEligibility")
-    public ResponseEntity<?> createEligibility(@RequestBody List<Eligibility> eligibilityList) {
+    public ResponseEntity<?> createEligibility(@RequestBody Eligibility eligibility, @RequestParam Integer channel, @RequestParam Integer entity) {
+
         try {
-            // Validate channels in each eligibility
-            for (Eligibility eligibility : eligibilityList) {
-                if (eligibility.getChannels() == null || eligibility.getChannels().isEmpty()) {
-                    return ResponseEntity.badRequest().body("Channels list cannot be empty.");
-                }
-            }
-            // Proceed with creating eligibility instances
-            List<Eligibility> createdEligibilities = eligibilityService.create(eligibilityList);
-            return ResponseEntity.ok(createdEligibilities);
+
+            Eligibility createdEligibility = eligibilityService.create(eligibility);
+
+            base.update("INSERT INTO public.eligibility_channel(" +
+                    " eligibility_id, po_channel_code) " +
+                    " VALUES (?, ?);", new Object[]{createdEligibility.getEligibility_id(),channel});
+
+            int x = base.update("INSERT INTO public.eligibility_entity(" +
+                    " eligibility_id, entity_code) " +
+                    " VALUES (?, ?);", new Object[]{createdEligibility.getEligibility_id(),entity});
+
+
+            return ResponseEntity.ok(x);
+
+
+
         } catch (InvalidInputException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
@@ -40,6 +54,26 @@ public class EligibilityController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
         }
     }
+//    public ResponseEntity<?> createEligibility(@RequestBody List<Eligibility> eligibilityList) {
+//
+//        try {
+//            // Validate channels in each eligibility
+//            for (Eligibility eligibility : eligibilityList) {
+//                if (eligibility.getChannels() == null || eligibility.getChannels().isEmpty()) {
+//                    return ResponseEntity.badRequest().body("Channels list cannot be empty.");
+//                }
+//            }
+//            // Proceed with creating eligibility instances
+//            List<Eligibility> createdEligibilities = eligibilityService.create(eligibilityList);
+//            return ResponseEntity.ok(createdEligibilities);
+//        } catch (InvalidInputException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        } catch (RuntimeException e) {
+//            // Log the stack trace for debugging purposes
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
+//        }
+//    }
 
     @GetMapping("/listEligibilitys")
     @Cacheable(value = "EligibilityCache")

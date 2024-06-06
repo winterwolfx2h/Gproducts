@@ -3,7 +3,8 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl.SubClassesServiceImpl;
 import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.EntityAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Entity;
+
+import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.EntityRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.EntityService;
@@ -23,7 +24,7 @@ public class EntityServiceImpl implements EntityService {
     final ProductOfferingService productOfferingService;
 
     @Override
-    public Entity create(Entity Entity) {
+    public EligibilityEntity create(EligibilityEntity Entity) {
         try {
             if (findByNameexist(Entity.getName())) {
                 throw new EntityAlreadyExistsException("Entity with the same name already exists");
@@ -36,7 +37,7 @@ public class EntityServiceImpl implements EntityService {
 
 
     @Override
-    public List<Entity> read() {
+    public List<EligibilityEntity> read() {
         try {
             return entityRepository.findAll();
         } catch (Exception e) {
@@ -45,10 +46,10 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public Entity update(int entityCode, Entity updatedEntity) {
-        Optional<Entity> existingEntityOptional = entityRepository.findById(entityCode);
+    public EligibilityEntity update(int entityCode, EligibilityEntity updatedEntity) {
+        Optional<EligibilityEntity> existingEntityOptional = entityRepository.findById(entityCode);
         if (existingEntityOptional.isPresent()) {
-            Entity existingEntity = existingEntityOptional.get();
+            EligibilityEntity existingEntity = existingEntityOptional.get();
 
             String newName = updatedEntity.getName();
             // Check if there's another Entity with the same name
@@ -68,7 +69,7 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public String delete(int entityCode) {
         try {
-            Entity Entity = findById(entityCode);
+            EligibilityEntity Entity = findById(entityCode);
             entityRepository.deleteById(entityCode);
             //updateProductOfferingsWithDeletedEntity(Entity.getName());
             return ("Entity with ID " + entityCode + " was successfully deleted");
@@ -87,9 +88,9 @@ public class EntityServiceImpl implements EntityService {
 
 
     @Override
-    public Entity findById(int entityCode) {
+    public EligibilityEntity findById(int entityCode) {
         try {
-            Optional<Entity> optionalEntity = entityRepository.findById(entityCode);
+            Optional<EligibilityEntity> optionalEntity = entityRepository.findById(entityCode);
             return optionalEntity.orElseThrow(() -> new RuntimeException("Entity with ID " + entityCode + " not found"));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding Entity");
@@ -97,7 +98,7 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public List<Entity> searchByKeyword(String name) {
+    public List<EligibilityEntity> searchByKeyword(String name) {
         try {
             return entityRepository.searchByKeyword(name);
         } catch (IllegalArgumentException e) {
@@ -106,9 +107,9 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public Entity findByName(String name) {
+    public EligibilityEntity findByName(String name) {
         try {
-            Optional<Entity> optionalEntity = entityRepository.findByName(name);
+            Optional<EligibilityEntity> optionalEntity = entityRepository.findByName(name);
             return optionalEntity.orElseThrow(() -> new RuntimeException("Entity with ID " + name + " not found"));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding Entity");
@@ -118,7 +119,7 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public boolean findByNameexist(String name) {
         try {
-            Optional<Entity> optionalEntity = entityRepository.findByName(name);
+            Optional<EligibilityEntity> optionalEntity = entityRepository.findByName(name);
             return optionalEntity.isPresent(); // Return true if Entity exists, false otherwise
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding Entity");

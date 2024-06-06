@@ -24,18 +24,8 @@ public class EligibilityServiceImpl implements EligibilityService {
     private final EntityRepository entityRepository;
 
     @Override
-    public List<Eligibility> create(List<Eligibility> eligibilityList) {
-        List<Eligibility> nonDuplicateEligibilities = new ArrayList<>();
-
-        for (Eligibility eligibility : eligibilityList) {
-            if (eligibility.getChannels() == null || eligibility.getChannels().isEmpty()) {
-                throw new InvalidInputException("Channels list cannot be empty.");
-            }
-
-            nonDuplicateEligibilities.add(eligibility);
-        }
-
-        return eligibilityRepository.saveAll(nonDuplicateEligibilities);
+    public Eligibility create(Eligibility eligibility) {
+        return eligibilityRepository.save(eligibility);
     }
 
 
@@ -52,7 +42,7 @@ public class EligibilityServiceImpl implements EligibilityService {
             Eligibility existingEligibility = existingEligibilityOptional.get();
             existingEligibility.setStock_Indicator(updatedEligibility.getStock_Indicator());
             existingEligibility.setChannels(updatedEligibility.getChannels());
-            existingEligibility.setEntities(updatedEligibility.getEntities());
+            //existingEligibility.setEntities(updatedEligibility.getEntities());
 
             return eligibilityRepository.save(existingEligibility);
         } else {

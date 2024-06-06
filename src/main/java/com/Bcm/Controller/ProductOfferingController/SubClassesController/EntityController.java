@@ -1,10 +1,11 @@
 package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
 import com.Bcm.Exception.EntityAlreadyExistsException;
+import com.Bcm.Exception.FamilyAlreadyExistsException;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ResourceNotFoundException;
-import com.Bcm.Model.ProductOfferingABE.Eligibility;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Entity;
+
+import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.EntityService;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -25,41 +26,55 @@ public class EntityController {
     final EntityService entityService;
     final EligibilityService eligibilityService;
 
+
+
+
     @PostMapping("/addEntitys")
-    public ResponseEntity<?> createEntities(@RequestBody List<Entity> entities) {
+
+    public ResponseEntity<?> createChannels(@RequestBody EligibilityEntity entity) {
         try {
-            List<String> createdEntityNames = new ArrayList<>(); // List to hold Entity names
-
-            // Create each Entity and add its name to the list of created Entity names
-            for (Entity entity : entities) {
-                Entity createdEntity = entityService.create(entity);
-                createdEntityNames.add(createdEntity.getName());
-            }
-
-            // Update all existing Eligibility instances to associate them with the created Entitys
-            List<Eligibility> eligibilities = eligibilityService.read();
-            for (Eligibility eligibility : eligibilities) {
-                eligibility.getEntities().addAll(createdEntityNames);
-                eligibilityService.update(eligibility.getEligibility_id(), eligibility);
-            }
-
-            return ResponseEntity.ok(createdEntityNames);
-        } catch (EntityAlreadyExistsException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (InvalidInputException e) {
+            EligibilityEntity createdEntity = entityService.create(entity);
+            return ResponseEntity.ok(createdEntity);
+        } catch (FamilyAlreadyExistsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
-            // Log the stack trace for debugging purposes
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
+//    public ResponseEntity<?> createEntities(@RequestBody List<Entity> entities) {
+//        try {
+//            List<String> createdEntityNames = new ArrayList<>(); // List to hold Entity names
+//
+//            // Create each Entity and add its name to the list of created Entity names
+//            for (Entity entity : entities) {
+//                Entity createdEntity = entityService.create(entity);
+//                createdEntityNames.add(createdEntity.getName());
+//            }
+//
+//            // Update all existing Eligibility instances to associate them with the created Entitys
+//            List<Eligibility> eligibilities = eligibilityService.read();
+//            for (Eligibility eligibility : eligibilities) {
+//                eligibility.getEntities().addAll(createdEntityNames);
+//                eligibilityService.update(eligibility.getEligibility_id(), eligibility);
+//            }
+//
+//            return ResponseEntity.ok(createdEntityNames);
+//        } catch (EntityAlreadyExistsException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        } catch (InvalidInputException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        } catch (RuntimeException e) {
+//            // Log the stack trace for debugging purposes
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
+//        }
+//    }
 
 
     @GetMapping("/listEntity")
-    public ResponseEntity<List<Entity>> getAllFamilies() {
+    public ResponseEntity<List<EligibilityEntity>> getAllFamilies() {
         try {
-            List<Entity> entities = entityService.read();
+            List<EligibilityEntity> entities = entityService.read();
             return ResponseEntity.ok(entities);
         } catch (RuntimeException e) {
             return ResponseEntity.status(500).body(null);
@@ -67,9 +82,9 @@ public class EntityController {
     }
 
     @GetMapping("/{entityCode}")
-    public ResponseEntity<Entity> getEntityById(@PathVariable("entityCode") int entityCode) {
+    public ResponseEntity<EligibilityEntity> getEntityById(@PathVariable("entityCode") int entityCode) {
         try {
-            Entity Entity = entityService.findById(entityCode);
+            EligibilityEntity Entity = entityService.findById(entityCode);
             return ResponseEntity.ok(Entity);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(null);
@@ -79,9 +94,9 @@ public class EntityController {
     @PutMapping("/{entityCode}")
     public ResponseEntity<?> updateEntity(
             @PathVariable("entityCode") int entityCode,
-            @RequestBody Entity updatedEntity) {
+            @RequestBody EligibilityEntity updatedEntity) {
         try {
-            Entity updatedGroup = entityService.update(entityCode, updatedEntity);
+            EligibilityEntity updatedGroup = entityService.update(entityCode, updatedEntity);
             return ResponseEntity.ok(updatedGroup);
         } catch (EntityAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
@@ -103,9 +118,9 @@ public class EntityController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Entity>> searchFamiliesByKeyword(@RequestParam("name") String name) {
+    public ResponseEntity<List<EligibilityEntity>> searchFamiliesByKeyword(@RequestParam("name") String name) {
         try {
-            List<Entity> searchResults = entityService.searchByKeyword(name);
+            List<EligibilityEntity> searchResults = entityService.searchByKeyword(name);
             return ResponseEntity.ok(searchResults);
         } catch (RuntimeException e) {
             return ResponseEntity.status(500).body(null);

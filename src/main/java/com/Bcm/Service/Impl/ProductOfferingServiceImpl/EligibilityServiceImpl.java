@@ -30,14 +30,6 @@ public class EligibilityServiceImpl implements EligibilityService {
                 throw new InvalidInputException("Channels list cannot be empty.");
             }
 
-            List<String> missingChannels = eligibility.getChannels().stream()
-                    .filter(channelName -> !channelRepository.existsByName(channelName))
-                    .collect(Collectors.toList());
-
-            if (!missingChannels.isEmpty()) {
-                throw new InvalidInputException("Channel(s) with name '" + String.join(", ", missingChannels) + "' do not exist.");
-            }
-
             nonDuplicateEligibilities.add(eligibility);
         }
 

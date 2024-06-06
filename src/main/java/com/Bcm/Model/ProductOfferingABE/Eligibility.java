@@ -1,5 +1,7 @@
 package com.Bcm.Model.ProductOfferingABE;
 
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Eligibility")
@@ -17,8 +20,8 @@ import java.util.List;
 public class Eligibility {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "eligibilityId", nullable = false)
-    private int eligibilityId;
+    @Column(name = "eligibility_id", nullable = false)
+    private int eligibility_id;
 
     @Column(name = "stock_Indicator")
     private Boolean stock_Indicator;
@@ -26,13 +29,20 @@ public class Eligibility {
     @Column(name = "entity", nullable = true)
     private String entity;
 
-    @ElementCollection
-    @CollectionTable(name = "eligibility_channel", joinColumns = @JoinColumn(name = "eligibilityId"))
-    @Column(name = "channelName", nullable = true)
-    private List<String> channels;
 
-    @Column(name = "Product_id", nullable = false)
-    private int productId;
+    @ManyToMany
+    @JoinTable(
+            name = "eligibility_channel",
+            joinColumns = @JoinColumn(name = "eligibility_id"),
+            inverseJoinColumns = @JoinColumn(name = "po_ChannelCode"))
+    Set<Channel> channels;
+
+
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOffering.class)
+    @JoinColumn(name = "eligibility_id")
+    @JsonIgnore
+    private List<ProductOffering> productOfferings;
 
 
 }

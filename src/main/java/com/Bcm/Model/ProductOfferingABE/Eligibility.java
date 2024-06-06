@@ -1,6 +1,7 @@
 package com.Bcm.Model.ProductOfferingABE;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,13 +27,19 @@ public class Eligibility {
     @Column(name = "stock_Indicator")
     private Boolean stock_Indicator;
 
-    @ElementCollection
-    @CollectionTable(name = "eligibility_entity", joinColumns = @JoinColumn(name = "eligibilityId"))
-    @Column(name = "entityName", nullable = true)
-    private List<String> entities;
+
+    @ManyToMany
+    @JsonIgnore
+    @JoinTable(
+            name = "eligibility_entity",
+            joinColumns = @JoinColumn(name = "eligibility_id"),
+            inverseJoinColumns = @JoinColumn(name = "entityCode"))
+       Set<EligibilityEntity> entities;
+
 
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
             name = "eligibility_channel",
             joinColumns = @JoinColumn(name = "eligibility_id"),

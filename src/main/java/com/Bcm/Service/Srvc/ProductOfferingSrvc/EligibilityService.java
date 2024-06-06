@@ -8,7 +8,7 @@ import java.util.List;
 @Service
 public interface EligibilityService {
 
-    List<Eligibility> create(List<Eligibility> eligibilityList);
+   Eligibility create(Eligibility eligibility);
 
     List<Eligibility> read();
 

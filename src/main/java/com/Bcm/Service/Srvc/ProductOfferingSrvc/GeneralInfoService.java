@@ -18,4 +18,6 @@ public interface GeneralInfoService {
     ProductOffering getProductOfferingById(int Product_id) throws ProductOfferingNotFoundException;
 
     ProductOffering updateProductOffering(GeneralInfoDTO generalInfoDTO, int Product_id, int pr_id, int serviceId) throws ProductOfferingNotFoundException;
+
+    ProductOffering updateProductOfferingEligibility(GeneralInfoDTO generalInfoDTO, int Product_id, int eligibility_id) throws ProductOfferingNotFoundException;
 }

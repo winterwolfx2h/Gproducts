@@ -1,6 +1,7 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc;
 
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Entity;
+
+import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -8,19 +9,19 @@ import java.util.List;
 @Service
 public interface EntityService {
 
-    Entity create(Entity entity);
+    EligibilityEntity create(EligibilityEntity entity);
 
-    List<Entity> read();
+    List<EligibilityEntity> read();
 
-    Entity update(int entityCode, Entity entity);
+    EligibilityEntity update(int entityCode, EligibilityEntity entity);
 
     String delete(int entityCode);
 
-    Entity findById(int entityCode);
+    EligibilityEntity findById(int entityCode);
 
-    List<Entity> searchByKeyword(String name);
+    List<EligibilityEntity> searchByKeyword(String name);
 
-    Entity findByName(String name);
+    EligibilityEntity findByName(String name);
 
     boolean findByNameexist(String name);
 

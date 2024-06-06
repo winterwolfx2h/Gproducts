@@ -1,6 +1,4 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses;
-
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,12 +7,12 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Table(name = "Entity")
-@javax.persistence.Entity
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Entity {
+public class EligibilityEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "entity_seq_generator")
     @SequenceGenerator(name = "entity_seq_generator", sequenceName = "entity_sequence", allocationSize = 1)

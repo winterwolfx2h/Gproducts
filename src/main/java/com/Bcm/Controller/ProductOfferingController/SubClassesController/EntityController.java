@@ -40,7 +40,7 @@ public class EntityController {
             List<Eligibility> eligibilities = eligibilityService.read();
             for (Eligibility eligibility : eligibilities) {
                 eligibility.getEntities().addAll(createdEntityNames);
-                eligibilityService.update(eligibility.getEligibilityId(), eligibility);
+                eligibilityService.update(eligibility.getEligibility_id(), eligibility);
             }
 
             return ResponseEntity.ok(createdEntityNames);

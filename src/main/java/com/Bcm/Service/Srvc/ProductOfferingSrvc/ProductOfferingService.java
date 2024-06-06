@@ -15,7 +15,7 @@ public interface ProductOfferingService {
 
 //    ProductOffering recreate(int Product_id ,ProductOffering productOffering);
 
-    ProductOffering createProductOfferingDTO(ProductOfferingDTO dto, String existingProductName);
+    ProductOffering createProductOfferingDTO(ProductOfferingDTO dto);
 
     List<ProductOffering> read();
 

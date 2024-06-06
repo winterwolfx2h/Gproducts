@@ -184,8 +184,7 @@ public class ProductOfferingController {
 
     @PostMapping("/AddProdOffDTO")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
-    public ResponseEntity<?> createProductOfferingDTO(@Valid @RequestBody ProductOfferingDTO dto,
-                                                      @RequestParam(name = "existingProductName", required = false) String existingProductName) {
+    public ResponseEntity<?> createProductOfferingDTO(@Valid @RequestBody ProductOfferingDTO dto) {
         try {
             // Validate family name
             String familyName = dto.getFamilyName();
@@ -211,7 +210,7 @@ public class ProductOfferingController {
             }
 
             // Convert DTO to entity and save
-            ProductOffering createdProductOffering = productOfferingService.createProductOfferingDTO(dto, existingProductName);
+            ProductOffering createdProductOffering = productOfferingService.createProductOfferingDTO(dto);
 
             return new ResponseEntity<>(createdProductOffering, HttpStatus.CREATED);
 

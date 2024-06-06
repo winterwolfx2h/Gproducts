@@ -70,6 +70,20 @@ public class ProductOffering extends Product {
     @JsonIgnore
     private List<ProductOfferRelation> productOfferRelations;
 
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = Eligibility.class)
+    @JoinColumn(name = "Product_id")
+    @JsonIgnore
+    private List<Eligibility> eligibilities;
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = BusinessProcess.class)
+    @JoinColumn(name = "Product_id")
+    @JsonIgnore
+    private List<BusinessProcess> businessProcesses;
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductRelation.class)
+    @JoinColumn(name = "Product_id")
+    @JsonIgnore
+    private List<ProductRelation> productRelations;
 
     @ManyToMany
     @JoinTable(

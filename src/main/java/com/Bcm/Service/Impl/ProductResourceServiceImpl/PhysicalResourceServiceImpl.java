@@ -24,18 +24,20 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
         physicalResource.setStatus("Working state");
 
         validateNotNullFields(physicalResource);
-        Optional<PhysicalResource> existingResource = physicalResourceRepository.findByPhysicalResourceType(physicalResource.getPhysicalResourceType());
+        List<PhysicalResource> existingResource = physicalResourceRepository.findByName(physicalResource.getName());
 
-        if (existingResource.isPresent()) {
-            throw new ResourceFacingServiceSpecException("Resource with the same name already exists");
+        if (!existingResource.isEmpty()) {
+            throw new ServiceAlreadyExistsException(
+                    "Physical resource with name '" + physicalResource.getName() + "' already exists."
+            );
         }
 
         try {
             return physicalResourceRepository.save(physicalResource);
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseOperationException("Error creating Resource Facing Service Spec", e);
+            throw new DatabaseOperationException("Error creating Physical resource", e);
         } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while creating Resource Facing Service Spec", e);
+            throw new RuntimeException("An unexpected error occurred while creating Physical resource", e);
         }
     }
 

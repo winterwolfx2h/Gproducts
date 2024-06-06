@@ -2,7 +2,6 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
 import com.Bcm.Exception.*;
 import com.Bcm.Model.Product.ProductOfferingDTO;
-import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
@@ -127,7 +126,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
 
 
     @Override
-    public ProductOffering createProductOfferingDTO(ProductOfferingDTO dto, String existingProductName) {
+    public ProductOffering createProductOfferingDTO(ProductOfferingDTO dto) {
         // Check if an existing product offering with the same name already exists
         Optional<ProductOffering> existingProduct = productOfferingRepository.findByName(dto.getName());
         if (existingProduct.isPresent()) {
@@ -148,23 +147,12 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         productOffering.setSubFamily(dto.getSubFamily());
         productOffering.setSellIndicator(dto.getSellIndicator());
         productOffering.setQuantityIndicator(dto.getQuantityIndicator());
+        productOffering.setMarkets(dto.getMarkets());
+        productOffering.setSubmarkets(dto.getSubmarkets());
         productOffering.setStatus("Working state");
 
         // Save the new ProductOffering
         ProductOffering savedProductOffering = productOfferingRepository.save(productOffering);
-
-        // Check if an existing product offering name was provided and establish a relationship
-        if (existingProductName != null) {
-            Optional<ProductOffering> existingProductOfferingOpt = productOfferingRepository.findByName(existingProductName);
-            if (existingProductOfferingOpt.isPresent()) {
-                ProductOffering existingProductOffering = existingProductOfferingOpt.get();
-                // Create ProductOfferRelation
-                ProductOfferRelation relation = new ProductOfferRelation();
-
-
-                productOfferRelationRepository.save(relation);
-            }
-        }
 
         return savedProductOffering;
     }
@@ -288,17 +276,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             throw new RuntimeException("An unexpected error occurred while searching for product offerings by family name: " + familyName, e);
         }
     }
-/*
-    @Override
-    public List<ProductOffering> findByEligibility(String eligibilities) {
-        try {
-            return productOfferingRepository.findByEligibility(eligibilities);
-        } catch (Exception e) {
-            throw new RuntimeException("An unexpected error occurred while searching for product offerings by Eligibility name: " + eligibilities, e);
-        }
-    }
-
- */
 
     @Override
     public ProductOffering changeProductOfferingStatus(int po_code) {
@@ -373,7 +350,6 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             ProductOfferingDTO dto = convertToDTO(productOffering);
             dtos.add(dto);
         }
-
         return dtos;
     }
 

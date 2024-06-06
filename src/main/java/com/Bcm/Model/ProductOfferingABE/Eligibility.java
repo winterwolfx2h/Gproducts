@@ -26,8 +26,10 @@ public class Eligibility {
     @Column(name = "stock_Indicator")
     private Boolean stock_Indicator;
 
-    @Column(name = "entity", nullable = true)
-    private String entity;
+    @ElementCollection
+    @CollectionTable(name = "eligibility_entity", joinColumns = @JoinColumn(name = "eligibilityId"))
+    @Column(name = "entityName", nullable = true)
+    private List<String> entities;
 
 
     @ManyToMany

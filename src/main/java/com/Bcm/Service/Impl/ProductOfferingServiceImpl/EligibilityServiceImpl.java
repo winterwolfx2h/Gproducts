@@ -4,6 +4,7 @@ import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.ProductOfferingABE.Eligibility;
 import com.Bcm.Repository.ProductOfferingRepo.EligibilityRepository;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.ChannelRepository;
+import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.EntityRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class EligibilityServiceImpl implements EligibilityService {
 
     private final EligibilityRepository eligibilityRepository;
     private final ChannelRepository channelRepository;
+    private final EntityRepository entityRepository;
 
     @Override
     public List<Eligibility> create(List<Eligibility> eligibilityList) {
@@ -50,6 +52,7 @@ public class EligibilityServiceImpl implements EligibilityService {
             Eligibility existingEligibility = existingEligibilityOptional.get();
             existingEligibility.setStock_Indicator(updatedEligibility.getStock_Indicator());
             existingEligibility.setChannels(updatedEligibility.getChannels());
+            existingEligibility.setEntities(updatedEligibility.getEntities());
 
             return eligibilityRepository.save(existingEligibility);
         } else {

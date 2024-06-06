@@ -1,10 +1,12 @@
 package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
 import com.Bcm.Exception.ChannelAlreadyExistsException;
+import com.Bcm.Exception.FamilyAlreadyExistsException;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.Eligibility;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ChannelService;
 import lombok.RequiredArgsConstructor;
@@ -26,34 +28,46 @@ public class ChannelController {
     final EligibilityService eligibilityService;
 
     @PostMapping("/addChannels")
-    public ResponseEntity<?> createChannels(@RequestBody List<Channel> channels) {
+
+    public ResponseEntity<?> createChannels(@RequestBody Channel channel) {
         try {
-            List<String> createdChannelNames = new ArrayList<>(); // List to hold channel names
-
-            // Create each channel and add its name to the list of created channel names
-            for (Channel channel : channels) {
-                Channel createdChannel = channelService.create(channel);
-                createdChannelNames.add(createdChannel.getName());
-            }
-
-            // Update all existing Eligibility instances to associate them with the created channels
-            List<Eligibility> eligibilities = eligibilityService.read();
-            for (Eligibility eligibility : eligibilities) {
-                eligibility.getChannels().addAll(createdChannelNames);
-                eligibilityService.update(eligibility.getEligibilityId(), eligibility);
-            }
-
-            return ResponseEntity.ok(createdChannelNames);
-        } catch (ChannelAlreadyExistsException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (InvalidInputException e) {
+            Channel createdChannel = channelService.create(channel);
+            return ResponseEntity.ok(createdChannel);
+        } catch (FamilyAlreadyExistsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
-            // Log the stack trace for debugging purposes
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
+
+//    public ResponseEntity<?> createChannels(@RequestBody List<Channel> channels) {
+//        try {
+//            List<String> createdChannelNames = new ArrayList<>(); // List to hold channel names
+//
+//            // Create each channel and add its name to the list of created channel names
+//            for (Channel channel : channels) {
+//                Channel createdChannel = channelService.create(channel);
+//                createdChannelNames.add(createdChannel.getName());
+//            }
+//
+//            // Update all existing Eligibility instances to associate them with the created channels
+//            List<Eligibility> eligibilities = eligibilityService.read();
+//            for (Eligibility eligibility : eligibilities) {
+//                eligibility.getChannels().addAll(createdChannelNames);
+//                eligibilityService.update(eligibility.getEligibilityId(), eligibility);
+//            }
+//
+//            return ResponseEntity.ok(createdChannelNames);
+//        } catch (ChannelAlreadyExistsException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        } catch (InvalidInputException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        } catch (RuntimeException e) {
+//            // Log the stack trace for debugging purposes
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
+//        }
+//    }
 
 
     @GetMapping("/listChannel")

@@ -39,7 +39,7 @@ public class ProductOfferRelationController {
 
 
     @GetMapping("/searchRelationName")
-    Object yes(@RequestParam Integer poId) {
+    Object searchRelationName(@RequestParam Integer poId) {
         return base.query(sqlRelation, new Object[]{poId}, new BeanPropertyRowMapper<>(RelationResponse.class));
     }
 

@@ -11,6 +11,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.util.List;
+import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "ProductOffering")
@@ -83,6 +84,18 @@ public class ProductOffering extends Product {
     @JoinColumn(name = "Product_id")
     @JsonIgnore
     private List<ProductRelation> productRelations;
+
+    @ManyToMany
+    @JoinTable(
+            name = "po_businessProcess",
+            joinColumns = @JoinColumn(name = "Product_id"),
+            inverseJoinColumns = @JoinColumn(name = "businessProcess_id"))
+    Set<BusinessProcess> businessProcess;
+
+
+    @Column(name = "eligibility_id", insertable = false, updatable = true)
+    private Integer eligibility_id;
+
 
     public enum poParent_Child {
         PO_Parent,

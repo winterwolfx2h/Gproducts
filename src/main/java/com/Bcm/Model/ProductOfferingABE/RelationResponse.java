@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 
 public class RelationResponse {
 
-
+       Integer product_id;
         String name;
 
 

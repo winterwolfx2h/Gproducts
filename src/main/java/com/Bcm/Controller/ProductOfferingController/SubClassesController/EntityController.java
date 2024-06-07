@@ -2,9 +2,7 @@ package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
 import com.Bcm.Exception.EntityAlreadyExistsException;
 import com.Bcm.Exception.FamilyAlreadyExistsException;
-import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ResourceNotFoundException;
-
 import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.EntityService;
@@ -25,8 +23,6 @@ public class EntityController {
 
     final EntityService entityService;
     final EligibilityService eligibilityService;
-
-
 
 
     @PostMapping("/addEntitys")

@@ -22,11 +22,7 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
     public List<ProductOfferRelation> create(List<ProductOfferRelation> productOfferRelations) {
         List<ProductOfferRelation> createdProductOfferRelations = new ArrayList<>();
         for (ProductOfferRelation productOfferRelation : productOfferRelations) {
-            ProductOfferRelation newProductOfferRelation = new ProductOfferRelation();
-            newProductOfferRelation.setId(new PrimeryKeyProductRelation(productOfferRelation.getId().getRelatedProductId()));
-            newProductOfferRelation.setType(productOfferRelation.getType());
-            newProductOfferRelation.setProduct_id(productOfferRelation.getProduct_id());
-            createdProductOfferRelations.add(productOfferRelationRepository.save(newProductOfferRelation));
+            createdProductOfferRelations.add(productOfferRelationRepository.save(productOfferRelation));
         }
         return createdProductOfferRelations;
     }
@@ -56,25 +52,25 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
         ProductOfferRelationRepository.deleteById(id);
     }
 
-    @Override
-    public ProductOfferRelation update(ProductOfferRelation productOfferRelation) {
-        PrimeryKeyProductRelation id = productOfferRelation.getId();
-        Optional<ProductOfferRelation> existingProductOfferRelation = productOfferRelationRepository.findById(id);
-        if (existingProductOfferRelation.isPresent()) {
-            ProductOfferRelation updatedProductOfferRelation = existingProductOfferRelation.get();
-            if (updatedProductOfferRelation.getProduct_id() == productOfferRelation.getProduct_id() &&
-                    updatedProductOfferRelation.getId().getRelatedProductId() == productOfferRelation.getId().getRelatedProductId()) {
-                updatedProductOfferRelation.setType(productOfferRelation.getType());
-                return productOfferRelationRepository.save(updatedProductOfferRelation);
-            } else {
-                throw new RuntimeException("Product with ID " + productOfferRelation.getProduct_id() +
-                        " is not related to the product with ID " + productOfferRelation.getId().getRelatedProductId());
-
-            }
-        } else {
-            throw new RuntimeException("ProductOfferRelation with ID " + id + " not found");
-        }
-    }
+//    @Override
+//    public ProductOfferRelation update(ProductOfferRelation productOfferRelation) {
+//        PrimeryKeyProductRelation id = productOfferRelation.getId();
+//        Optional<ProductOfferRelation> existingProductOfferRelation = productOfferRelationRepository.findById(id);
+//        if (existingProductOfferRelation.isPresent()) {
+//            ProductOfferRelation updatedProductOfferRelation = existingProductOfferRelation.get();
+//            if (updatedProductOfferRelation.getProduct_id() == productOfferRelation.getProduct_id() &&
+//                    updatedProductOfferRelation.getId().getRelatedProductId() == productOfferRelation.getId().getRelatedProductId()) {
+//                updatedProductOfferRelation.setType(productOfferRelation.getType());
+//                return productOfferRelationRepository.save(updatedProductOfferRelation);
+//            } else {
+//                throw new RuntimeException("Product with ID " + productOfferRelation.getProduct_id() +
+//                        " is not related to the product with ID " + productOfferRelation.getId().getRelatedProductId());
+//
+//            }
+//        } else {
+//            throw new RuntimeException("ProductOfferRelation with ID " + id + " not found");
+//        }
+//    }
 
 
 }

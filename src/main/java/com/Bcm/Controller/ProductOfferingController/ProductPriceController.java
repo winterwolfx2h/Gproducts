@@ -2,6 +2,7 @@ package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.ProductPrice;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceGroupService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ public class ProductPriceController {
 
 
     final ProductPriceService productPriceService;
+    private final ProductPriceGroupService productPriceGroupService;
 
     @PostMapping("/addProductPrice")
     public ResponseEntity<?> createType(@RequestBody ProductPrice productPrice) {
@@ -69,6 +71,16 @@ public class ProductPriceController {
         try {
             String resultMessage = productPriceService.delete(productPriceCode);
             return ResponseEntity.ok(resultMessage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductPrice>> searchProductPriceGroupsByKeyword(@RequestParam("price") float price) {
+        try {
+            List<ProductPrice> searchResults = productPriceService.searchByPrice(price);
+            return ResponseEntity.ok(searchResults);
         } catch (RuntimeException e) {
             return ResponseEntity.status(500).body(null);
         }

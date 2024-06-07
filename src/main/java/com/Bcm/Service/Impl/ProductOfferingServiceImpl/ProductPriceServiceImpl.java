@@ -80,4 +80,25 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     public boolean existsById(int productPriceCode) {
         return productPriceRepository.existsById(productPriceCode);
     }
+
+    @Override
+    public List<ProductPrice> searchByPrice(float price) {
+        try {
+            return productPriceRepository.searchByPrice(price);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for searching ProductPrice by keyword");
+        }
+    }
+
+    @Override
+    public ProductPrice findByPrice(float price) {
+        try {
+            Optional<ProductPrice> optionalProductPrice = productPriceRepository.findByprice(price);
+            return optionalProductPrice.orElseThrow(() -> new RuntimeException("ProductPrice with price " + price + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding ProductPriceGroup");
+        }
+    }
+
+
 }

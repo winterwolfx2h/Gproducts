@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -27,20 +28,28 @@ public class ProductOfferRelationController {
     final ProductOfferRelationService productOfferRelationService;
 
 
-    String sqlRelation = "SELECT por.product_id, por.related_product_id, po.name, poff.po_type " +
-            "FROM public.product_offer_relation por " +
-            "JOIN public.product po ON po.product_id = por.product_id " +
-            "JOIN public.product_offering poff ON poff.product_id = por.product_id " +
-            "WHERE poff.po_type = 'PO-Optional' " +
-            "AND por.related_product_id IN " +
-            "(SELECT por2.related_product_id " +
-            "FROM public.product_offer_relation por2 " +
-            "WHERE por2.related_product_id = ?)";
-
-
     @GetMapping("/searchRelationName")
-    Object searchRelationName(@RequestParam Integer relatedProductId) {
-        return base.query(sqlRelation, new Object[]{relatedProductId}, new BeanPropertyRowMapper<>(RelationResponse.class));
+    public List<RelationResponse> searchRelationName(@RequestParam List<Integer> relatedProductIds) {
+        if (relatedProductIds.isEmpty()) {
+            throw new IllegalArgumentException("At least one relatedProductId must be provided");
+        }
+
+        // Construct placeholders for the IN clause
+        String placeholders = relatedProductIds.stream()
+                .map(id -> "?")
+                .collect(Collectors.joining(", "));
+
+        String sqlRelation = "SELECT por.product_id, por.related_product_id, po.name, poff.po_type " +
+                "FROM public.product_offer_relation por " +
+                "JOIN public.product po ON po.product_id = por.product_id " +
+                "JOIN public.product_offering poff ON poff.product_id = por.product_id " +
+                "WHERE poff.po_type = 'PO-Optional' " +
+                "AND por.related_product_id IN (" + placeholders + ")";
+
+        // Convert List<Integer> to Object[] for query parameters
+        Object[] params = relatedProductIds.toArray();
+
+        return base.query(sqlRelation, params, new BeanPropertyRowMapper<>(RelationResponse.class));
     }
 
     @PostMapping("/addProdOffRelations")

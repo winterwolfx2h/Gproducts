@@ -43,7 +43,7 @@ public class ProductOfferRelationController {
                 "FROM public.product_offer_relation por " +
                 "JOIN public.product po ON po.product_id = por.product_id " +
                 "JOIN public.product_offering poff ON poff.product_id = por.product_id " +
-                "WHERE poff.po_type = 'PO-Optional' " +
+                //"WHERE poff.po_type = 'PO-Optional' " + //Might delete later
                 "AND por.related_product_id IN (" + placeholders + ")";
 
         // Convert List<Integer> to Object[] for query parameters

@@ -54,7 +54,7 @@ public class ProductRelationController {
     @CacheEvict(value = "ProdRelationCache", allEntries = true)
     public ResponseEntity<?> updateproductRelation(
             @PathVariable("poRelation_Code") int poRelation_Code,
-            @RequestBody   ProductRelation updatedproductRelation) {
+            @RequestBody ProductRelation updatedproductRelation) {
         try {
             ProductRelation updatedGroup = productRelationService.update(poRelation_Code, updatedproductRelation);
             return ResponseEntity.ok(updatedGroup);

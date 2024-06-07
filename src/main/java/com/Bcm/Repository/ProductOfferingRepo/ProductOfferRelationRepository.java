@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductOfferRelationRepository extends JpaRepository<ProductOfferRelation, Integer> {
+public interface ProductOfferRelationRepository extends JpaRepository<ProductOfferRelation, PrimeryKeyProductRelation> {
 
     Optional<ProductOfferRelation> findByType(String type);
 

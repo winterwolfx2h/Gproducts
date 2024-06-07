@@ -2,7 +2,6 @@ package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.ProductOfferingABE.Eligibility;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -35,15 +34,14 @@ public class EligibilityController {
 
             base.update("INSERT INTO public.eligibility_channel(" +
                     " eligibility_id, po_channel_code) " +
-                    " VALUES (?, ?);", new Object[]{createdEligibility.getEligibility_id(),channel});
+                    " VALUES (?, ?);", new Object[]{createdEligibility.getEligibility_id(), channel});
 
             int x = base.update("INSERT INTO public.eligibility_entity(" +
                     " eligibility_id, entity_code) " +
-                    " VALUES (?, ?);", new Object[]{createdEligibility.getEligibility_id(),entity});
+                    " VALUES (?, ?);", new Object[]{createdEligibility.getEligibility_id(), entity});
 
 
             return ResponseEntity.ok(x);
-
 
 
         } catch (InvalidInputException e) {

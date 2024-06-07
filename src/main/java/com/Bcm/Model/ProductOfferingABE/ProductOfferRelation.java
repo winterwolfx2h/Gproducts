@@ -24,7 +24,4 @@ public class ProductOfferRelation {
 
     @Column(name = "type")
     private String type;
-
-    @Column(name = "Product_id", nullable = false)
-    private int Product_id;
 }

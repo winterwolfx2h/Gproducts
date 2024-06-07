@@ -1,6 +1,5 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
-import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.ProductOfferingABE.Eligibility;
 import com.Bcm.Repository.ProductOfferingRepo.EligibilityRepository;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.ChannelRepository;
@@ -9,10 +8,8 @@ import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Service

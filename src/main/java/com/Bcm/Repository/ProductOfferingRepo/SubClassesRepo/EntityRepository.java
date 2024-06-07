@@ -1,7 +1,6 @@
 package com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

@@ -2,11 +2,8 @@ package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
 import com.Bcm.Exception.ChannelAlreadyExistsException;
 import com.Bcm.Exception.FamilyAlreadyExistsException;
-import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ResourceNotFoundException;
-import com.Bcm.Model.ProductOfferingABE.Eligibility;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ChannelService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController

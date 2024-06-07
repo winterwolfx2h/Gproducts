@@ -1,13 +1,7 @@
 package com.Bcm.Controller.ProductOfferingController.Relation;
-import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
-import com.Bcm.Model.ProductOfferingABE.RelationResponse;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +18,7 @@ public class PoBusinessProcessController {
     final JdbcTemplate base;
 
     @Value("${insertRelation}")
-    String sqlInsertPOBusiness ;
+    String sqlInsertPOBusiness;
 //    String sqlInsertPOBusiness = "INSERT INTO public.po_business_process(" +
 //            "product_id, business_process_id)" +
 //            "VALUES (?, ?)";

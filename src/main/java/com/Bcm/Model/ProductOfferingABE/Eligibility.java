@@ -19,25 +19,13 @@ import java.util.Set;
 @Getter
 @Setter
 public class Eligibility {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "eligibility_id", nullable = false)
-    private int eligibility_id;
-
-    @Column(name = "stock_Indicator")
-    private Boolean stock_Indicator;
-
-
     @ManyToMany
     @JsonIgnore
     @JoinTable(
             name = "eligibility_entity",
             joinColumns = @JoinColumn(name = "eligibility_id"),
             inverseJoinColumns = @JoinColumn(name = "entityCode"))
-       Set<EligibilityEntity> entities;
-
-
-
+    Set<EligibilityEntity> entities;
     @ManyToMany
     @JsonIgnore
     @JoinTable(
@@ -45,9 +33,12 @@ public class Eligibility {
             joinColumns = @JoinColumn(name = "eligibility_id"),
             inverseJoinColumns = @JoinColumn(name = "po_ChannelCode"))
     Set<Channel> channels;
-
-
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "eligibility_id", nullable = false)
+    private int eligibility_id;
+    @Column(name = "stock_Indicator")
+    private Boolean stock_Indicator;
     @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOffering.class)
     @JoinColumn(name = "eligibility_id")
     @JsonIgnore

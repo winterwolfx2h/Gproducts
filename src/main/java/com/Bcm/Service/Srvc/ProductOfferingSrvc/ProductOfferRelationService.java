@@ -19,5 +19,5 @@ public interface ProductOfferRelationService {
 
     void deleteById(PrimeryKeyProductRelation id);
 
-    ProductOfferRelation update(ProductOfferRelation productOfferRelation);
+//    ProductOfferRelation update(ProductOfferRelation productOfferRelation);
 }

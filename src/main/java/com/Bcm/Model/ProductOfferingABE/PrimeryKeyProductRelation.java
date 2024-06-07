@@ -18,4 +18,7 @@ public class PrimeryKeyProductRelation implements Serializable {
 
     @Column(name = "relatedProductId", nullable = false)
     private int relatedProductId;
+
+    @Column(name = "product_id", nullable = false)
+    private int productId;
 }

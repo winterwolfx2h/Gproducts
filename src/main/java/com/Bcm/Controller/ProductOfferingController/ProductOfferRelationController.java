@@ -4,10 +4,6 @@ import com.Bcm.Model.ProductOfferingABE.PrimeryKeyProductRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Model.ProductOfferingABE.RelationResponse;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,19 +24,23 @@ import java.util.List;
 public class ProductOfferRelationController {
 
     final JdbcTemplate base;
-
-    String sqlRelation = "SELECT * FROM public.product_offer_relation por " +
-            "JOIN public.product po ON po.product_id = por.related_product_id " +
-            "WHERE por.product_id = ?";
-
-
-
     final ProductOfferRelationService productOfferRelationService;
 
 
+    String sqlRelation = "SELECT por.product_id, por.related_product_id, po.name, poff.po_type " +
+            "FROM public.product_offer_relation por " +
+            "JOIN public.product po ON po.product_id = por.product_id " +
+            "JOIN public.product_offering poff ON poff.product_id = por.product_id " +
+            "WHERE poff.po_type = 'PO-Optional' " +
+            "AND por.related_product_id IN " +
+            "(SELECT por2.related_product_id " +
+            "FROM public.product_offer_relation por2 " +
+            "WHERE por2.related_product_id = ?)";
+
+
     @GetMapping("/searchRelationName")
-    Object searchRelationName(@RequestParam Integer poId) {
-        return base.query(sqlRelation, new Object[]{poId}, new BeanPropertyRowMapper<>(RelationResponse.class));
+    Object searchRelationName(@RequestParam Integer relatedProductId) {
+        return base.query(sqlRelation, new Object[]{relatedProductId}, new BeanPropertyRowMapper<>(RelationResponse.class));
     }
 
     @PostMapping("/addProdOffRelations")
@@ -48,11 +48,7 @@ public class ProductOfferRelationController {
     public ResponseEntity<List<ProductOfferRelation>> createProductOfferRelations(@RequestBody List<ProductOfferRelation> productOfferRelations) {
         List<ProductOfferRelation> createdProductOfferRelations = new ArrayList<>();
         for (ProductOfferRelation productOfferRelation : productOfferRelations) {
-            ProductOfferRelation newProductOfferRelation = new ProductOfferRelation();
-            newProductOfferRelation.setId(new PrimeryKeyProductRelation(productOfferRelation.getId().getRelatedProductId()));
-            newProductOfferRelation.setType(productOfferRelation.getType());
-            newProductOfferRelation.setProduct_id(productOfferRelation.getProduct_id());
-            createdProductOfferRelations.addAll(productOfferRelationService.create(Collections.singletonList(newProductOfferRelation)));
+            createdProductOfferRelations.addAll(productOfferRelationService.create(Collections.singletonList(productOfferRelation)));
         }
         return ResponseEntity.ok(createdProductOfferRelations);
     }
@@ -99,16 +95,16 @@ public class ProductOfferRelationController {
         }
     }
 
-    @PutMapping("/updateOfferRelation")
-    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
-    public ResponseEntity<?> updateProductOfferRelation(@RequestBody List<ProductOfferRelation>  productOfferRelation) {
-        try {
-            ProductOfferRelation updatedProductOfferRelation = productOfferRelationService.update((ProductOfferRelation) productOfferRelation);
-            return ResponseEntity.ok(updatedProductOfferRelation);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
+//    @PutMapping("/updateOfferRelation")
+//    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
+//    public ResponseEntity<?> updateProductOfferRelation(@RequestBody List<ProductOfferRelation>  productOfferRelation) {
+//        try {
+//            ProductOfferRelation updatedProductOfferRelation = productOfferRelationService.update((ProductOfferRelation) productOfferRelation);
+//            return ResponseEntity.ok(updatedProductOfferRelation);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+//        }
+//    }
 
     @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
     public void invalidateProdOfferRelationCache() {

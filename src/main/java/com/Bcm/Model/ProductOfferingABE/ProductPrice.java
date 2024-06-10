@@ -30,4 +30,7 @@ public class ProductPrice {
     @Column(name = "recuringPrice", nullable = true)
     private float recuringPrice;
 
+    @Column(name = "Product_id", nullable = false)
+    private int Product_id;
+
 }

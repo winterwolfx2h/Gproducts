@@ -25,8 +25,12 @@ public class Eligibility {
             joinColumns = @JoinColumn(name = "eligibility_id"),
             inverseJoinColumns = @JoinColumn(name = "productPriceGroupCode"))
     Set<ProductPriceGroup> productPriceGroups;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "eligibility_id", nullable = false)
+    private int eligibility_id;
 
-//    @ManyToMany
+    //    @ManyToMany
 //    @JsonIgnore
 //    @JoinTable(
 //            name = "eligibility_entity",
@@ -41,16 +45,14 @@ public class Eligibility {
 //            joinColumns = @JoinColumn(name = "eligibility_id"),
 //            inverseJoinColumns = @JoinColumn(name = "po_ChannelCode"))
 //    Set<Channel> channels;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "eligibility_id", nullable = false)
-    private int eligibility_id;
     @Column(name = "stock_Indicator")
     private Boolean stock_Indicator;
+
     @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOffering.class)
     @JoinColumn(name = "eligibility_id")
     @JsonIgnore
     private List<ProductOffering> productOfferings;
+
     @Column(name = "Product_id", nullable = false)
     private int Product_id;
 

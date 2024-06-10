@@ -1,5 +1,6 @@
 package com.Bcm.Controller.ProductOfferingController;
 
+import com.Bcm.Exception.NoRelationFoundException;
 import com.Bcm.Model.ProductOfferingABE.PrimeryKeyProductRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Model.ProductOfferingABE.RelationResponse;
@@ -13,6 +14,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,14 +45,34 @@ public class ProductOfferRelationController {
                 "FROM public.product_offer_relation por " +
                 "JOIN public.product po ON po.product_id = por.product_id " +
                 "JOIN public.product_offering poff ON poff.product_id = por.product_id " +
-                //"WHERE poff.po_type = 'PO-Optional' " + //Might delete later
-                "AND por.related_product_id IN (" + placeholders + ")";
+                "AND por.related_product_id IN (" + placeholders + ")" +
+                "ORDER BY por.product_id";
 
         // Convert List<Integer> to Object[] for query parameters
         Object[] params = relatedProductIds.toArray();
 
-        return base.query(sqlRelation, params, new BeanPropertyRowMapper<>(RelationResponse.class));
+        List<RelationResponse> relationResponses = base.query(sqlRelation, params, new BeanPropertyRowMapper<>(RelationResponse.class));
+
+        if (relationResponses.isEmpty()) {
+            // Check if the provided IDs exist in the product table
+            String sqlProductCheck = "SELECT product_id FROM public.product WHERE product_id IN (" + placeholders + ")";
+            List<Integer> existingProductIds = base.queryForList(sqlProductCheck, params, Integer.class);
+
+            // Determine missing product IDs
+            List<Integer> missingProductIds = relatedProductIds.stream()
+                    .filter(id -> !existingProductIds.contains(id))
+                    .collect(Collectors.toList());
+
+            if (!missingProductIds.isEmpty()) {
+                throw new EntityNotFoundException("Product IDs not found: " + missingProductIds);
+            } else {
+                throw new NoRelationFoundException("No relations found for the provided Product IDs");
+            }
+        }
+
+        return relationResponses;
     }
+
 
     @PostMapping("/addProdOffRelations")
     @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)

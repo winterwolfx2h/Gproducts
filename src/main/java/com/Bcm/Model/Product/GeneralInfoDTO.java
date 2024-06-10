@@ -69,7 +69,7 @@ public class GeneralInfoDTO {
     @Column(name = "status", nullable = false)
     private String status;
 
-    @Pattern(regexp = "^(PO_PARENT|PO_CHILD)$", message = "invalid code")
+    @Pattern(regexp = "^(PO-PARENT|PO-CHILD)$", message = "invalid code")
     @Column(name = "poParent_Child", nullable = true)
     private String poParent_Child;
 

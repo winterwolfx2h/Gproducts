@@ -1,7 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE;
 
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,20 +17,30 @@ import java.util.Set;
 @Getter
 @Setter
 public class Eligibility {
+
     @ManyToMany
     @JsonIgnore
     @JoinTable(
-            name = "eligibility_entity",
+            name = "eligibility_pricegroup",
             joinColumns = @JoinColumn(name = "eligibility_id"),
-            inverseJoinColumns = @JoinColumn(name = "entityCode"))
-    Set<EligibilityEntity> entities;
-    @ManyToMany
-    @JsonIgnore
-    @JoinTable(
-            name = "eligibility_channel",
-            joinColumns = @JoinColumn(name = "eligibility_id"),
-            inverseJoinColumns = @JoinColumn(name = "po_ChannelCode"))
-    Set<Channel> channels;
+            inverseJoinColumns = @JoinColumn(name = "productPriceGroupCode"))
+    Set<ProductPriceGroup> productPriceGroups;
+
+//    @ManyToMany
+//    @JsonIgnore
+//    @JoinTable(
+//            name = "eligibility_entity",
+//            joinColumns = @JoinColumn(name = "eligibility_id"),
+//            inverseJoinColumns = @JoinColumn(name = "entityCode"))
+//    Set<EligibilityEntity> entities;
+//
+//    @ManyToMany
+//    @JsonIgnore
+//    @JoinTable(
+//            name = "eligibility_channel",
+//            joinColumns = @JoinColumn(name = "eligibility_id"),
+//            inverseJoinColumns = @JoinColumn(name = "po_ChannelCode"))
+//    Set<Channel> channels;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "eligibility_id", nullable = false)
@@ -43,6 +51,7 @@ public class Eligibility {
     @JoinColumn(name = "eligibility_id")
     @JsonIgnore
     private List<ProductOffering> productOfferings;
-
+    @Column(name = "Product_id", nullable = false)
+    private int Product_id;
 
 }

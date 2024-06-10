@@ -18,8 +18,18 @@ public class BusinessProcessServiceImpl implements BusinessProcessService {
     final BusinessProcessRepository businessProcessRepository;
 
     @Override
-    public BusinessProcess create(BusinessProcess BusinessProcess) {
-        return businessProcessRepository.save(BusinessProcess);
+    public List<BusinessProcess> create(List<BusinessProcess> businessProcesses) {
+        for (BusinessProcess businessProcess : businessProcesses) {
+            if (businessProcessRepository.findByBussinessProcType(businessProcess.getBussinessProcType()).isPresent()) {
+                throw new RuntimeException("BusinessProcess with type " + businessProcess.getBussinessProcType() + " already exists");
+            }
+
+            if (businessProcess.getBusinessProcess_id() != 0 && !businessProcessRepository.existsById(businessProcess.getBusinessProcess_id())) {
+                throw new RuntimeException("BusinessProcess ID " + businessProcess.getBusinessProcess_id() + " does not exist");
+            }
+        }
+
+        return businessProcessRepository.saveAll(businessProcesses);
     }
 
     @Override

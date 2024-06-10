@@ -26,22 +26,23 @@ public class EligibilityController {
 
     @Transactional
     @PostMapping("/addEligibility")
-    public ResponseEntity<?> createEligibility(@RequestBody Eligibility eligibility, @RequestParam Integer channel, @RequestParam Integer entity) {
+    public ResponseEntity<?> createEligibility(@RequestBody Eligibility eligibility, @RequestParam Integer productPriceGroups/*, @RequestParam Integer entity*/) {
 
         try {
 
             Eligibility createdEligibility = eligibilityService.create(eligibility);
 
-            base.update("INSERT INTO public.eligibility_channel(" +
-                    " eligibility_id, po_channel_code) " +
-                    " VALUES (?, ?);", new Object[]{createdEligibility.getEligibility_id(), channel});
-
-            int x = base.update("INSERT INTO public.eligibility_entity(" +
-                    " eligibility_id, entity_code) " +
-                    " VALUES (?, ?);", new Object[]{createdEligibility.getEligibility_id(), entity});
+            base.update("INSERT INTO public.eligibility_pricegroup(" +
+                    " eligibility_id, product_price_group_code) " +
+                    " VALUES (?, ?);", new Object[]{createdEligibility.getEligibility_id(), productPriceGroups});
 
 
-            return ResponseEntity.ok(x);
+//            base.update("INSERT INTO public.eligibility_entity(" +
+//                    " eligibility_id, entity_code) " +
+//                    " VALUES (?, ?);", new Object[]{createdEligibility.getEligibility_id(), entity});
+
+
+            return ResponseEntity.ok("Eligibility was added successfully");
 
 
         } catch (InvalidInputException e) {

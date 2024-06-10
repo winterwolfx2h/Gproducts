@@ -73,4 +73,20 @@ public class GeneralInfoDTO {
     @Column(name = "poParent_Child", nullable = true)
     private String poParent_Child;
 
+//    @ManyToMany
+//    @JsonIgnore
+//    @JoinTable(
+//            name = "productoffering_entity",
+//            joinColumns = @JoinColumn(name = "Product_id"),
+//            inverseJoinColumns = @JoinColumn(name = "entityCode"))
+//    Set<EligibilityEntity> entities;
+//
+//    @ManyToMany
+//    @JsonIgnore
+//    @JoinTable(
+//            name = "productoffering_channel",
+//            joinColumns = @JoinColumn(name = "Product_id"),
+//            inverseJoinColumns = @JoinColumn(name = "po_ChannelCode"))
+//    Set<Channel> channels;
+
 }

@@ -1,6 +1,8 @@
 package com.Bcm.Model.ProductOfferingABE;
 
 import com.Bcm.Model.Product.Product;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -29,6 +31,20 @@ public class ProductOffering extends Product {
             joinColumns = @JoinColumn(name = "Product_id"),
             inverseJoinColumns = @JoinColumn(name = "businessProcess_id"))
     Set<BusinessProcess> businessProcess;
+    @ManyToMany
+    @JsonIgnore
+    @JoinTable(
+            name = "productoffering_entity",
+            joinColumns = @JoinColumn(name = "Product_id"),
+            inverseJoinColumns = @JoinColumn(name = "entityCode"))
+    Set<EligibilityEntity> entities;
+    @ManyToMany
+    @JsonIgnore
+    @JoinTable(
+            name = "productoffering_channel",
+            joinColumns = @JoinColumn(name = "Product_id"),
+            inverseJoinColumns = @JoinColumn(name = "po_ChannelCode"))
+    Set<Channel> channels;
     @Column(name = "poType", nullable = false)
     private String poType;
     @Column(name = "parent")
@@ -74,7 +90,6 @@ public class ProductOffering extends Product {
     private List<ProductRelation> productRelations;
     @Column(name = "eligibility_id", insertable = false, updatable = true)
     private Integer eligibility_id;
-
 
     public enum poParent_Child {
         PO_Parent,

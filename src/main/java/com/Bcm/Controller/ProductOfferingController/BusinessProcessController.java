@@ -19,16 +19,17 @@ public class BusinessProcessController {
 
     final BusinessProcessService businessProcessService;
 
-    @PostMapping("/addBusinessProcess")
+    @PostMapping("/addBusinessProcesses")
     @CacheEvict(value = "BusinessProcesssCache", allEntries = true)
-    public ResponseEntity<?> createcreateResource(@RequestBody BusinessProcess BusinessProcess) {
+    public ResponseEntity<?> create(@RequestBody List<BusinessProcess> businessProcesses) {
         try {
-            BusinessProcess createdBusinessProcess = businessProcessService.create(BusinessProcess);
-            return ResponseEntity.ok(createdBusinessProcess);
+            List<BusinessProcess> createdBusinessProcesses = businessProcessService.create(businessProcesses);
+            return ResponseEntity.ok(createdBusinessProcesses);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
+
 
     @GetMapping("/listBusinessProcesss")
     @Cacheable(value = "BusinessProcesssCache")

@@ -18,9 +18,9 @@ public class POAttributesServiceImpl implements POAttributesService {
     final POAttributesRepository poAttributesRepository;
 
     @Override
-    public POAttributes create(POAttributes productOffering) {
+    public POAttributes create(POAttributes poAttributes) {
         try {
-            return poAttributesRepository.save(productOffering);
+            return poAttributesRepository.save(poAttributes);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseOperationException("Error creating product offering Attribute", e);
         } catch (Exception e) {

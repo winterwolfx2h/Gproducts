@@ -26,6 +26,7 @@ public class BusinessProcess {
     @Column(name = "description", nullable = false)
     private String description;
 
-
+    @Column(name = "Product_id", nullable = false)
+    private int Product_id;
 }
 

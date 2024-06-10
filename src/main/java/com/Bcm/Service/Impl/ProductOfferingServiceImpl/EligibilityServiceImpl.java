@@ -38,7 +38,7 @@ public class EligibilityServiceImpl implements EligibilityService {
         if (existingEligibilityOptional.isPresent()) {
             Eligibility existingEligibility = existingEligibilityOptional.get();
             existingEligibility.setStock_Indicator(updatedEligibility.getStock_Indicator());
-            existingEligibility.setChannels(updatedEligibility.getChannels());
+            //existingEligibility.setChannels(updatedEligibility.getChannels());
             //existingEligibility.setEntities(updatedEligibility.getEntities());
 
             return eligibilityRepository.save(existingEligibility);

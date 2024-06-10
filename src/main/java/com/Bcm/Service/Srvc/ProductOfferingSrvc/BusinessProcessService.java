@@ -8,7 +8,7 @@ import java.util.List;
 @Service
 public interface BusinessProcessService {
 
-    BusinessProcess create(BusinessProcess BusinessProcess);
+    List<BusinessProcess> create(List<BusinessProcess> businessProcesses);
 
     List<BusinessProcess> read();
 
@@ -23,6 +23,4 @@ public interface BusinessProcessService {
     BusinessProcess findByBussinessProcType(String bussinessProcType);
 
     boolean existsById(int businessProcessId);
-
-
 }

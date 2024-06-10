@@ -1,6 +1,7 @@
 package com.Bcm.Model.Product;
 
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
+import com.Bcm.Model.ProductOfferingABE.ProductPrice;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -56,6 +57,11 @@ public class Product {
     @JoinColumn(name = "Product_id")
     @JsonIgnore
     private List<POAttributes> poAttributes;
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductPrice.class)
+    @JoinColumn(name = "Product_id")
+    @JsonIgnore
+    private List<ProductPrice> productPrices;
 
     public Product convertToProduct() {
         Product product = new Product();

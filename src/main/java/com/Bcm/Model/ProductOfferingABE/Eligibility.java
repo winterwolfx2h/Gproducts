@@ -25,12 +25,10 @@ public class Eligibility {
             joinColumns = @JoinColumn(name = "eligibility_id"),
             inverseJoinColumns = @JoinColumn(name = "productPriceGroupCode"))
     Set<ProductPriceGroup> productPriceGroups;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "eligibility_id", nullable = false)
     private int eligibility_id;
-
     @Column(name = "stock_Indicator")
     private Boolean stock_Indicator;
 

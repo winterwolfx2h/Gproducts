@@ -18,19 +18,18 @@ public class TypeServiceImpl implements TypeService {
     final TypeRepository typeRepository;
 
     @Override
-    public List<Type> create(List<Type> types) {
-        for (Type type : types) {
-            if (typeRepository.findByTypeName(type.getTypeName()).isPresent()) {
-                throw new RuntimeException("Type with name " + type.getTypeName() + " already exists");
-            }
-
-            if (type.getType_id() != 0 && !typeRepository.existsById(type.getType_id())) {
-                throw new RuntimeException("Type ID " + type.getType_id() + " does not exist");
-            }
+    public Type create(Type type) {
+        if (typeRepository.findByTypeName(type.getTypeName()).isPresent()) {
+            throw new RuntimeException("Type with name " + type.getTypeName() + " already exists");
         }
 
-        return typeRepository.saveAll(types);
+        if (type.getType_id() != 0 && !typeRepository.existsById(type.getType_id())) {
+            throw new RuntimeException("Type ID " + type.getType_id() + " does not exist");
+        }
+
+        return typeRepository.save(type);
     }
+
 
     @Override
     public List<Type> read() {

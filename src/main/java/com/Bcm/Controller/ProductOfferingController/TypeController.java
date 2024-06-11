@@ -20,17 +20,16 @@ public class TypeController {
 
     final TypeService typeService;
 
-    @PostMapping("/addTypes")
+    @PostMapping("/addType")
     @CacheEvict(value = "TypesCache", allEntries = true)
-    public ResponseEntity<?> create(@RequestBody List<Type> types) {
+    public ResponseEntity<?> create(@RequestBody Type type) {
         try {
-            List<Type> createdTypes = typeService.create(types);
-            return ResponseEntity.ok(createdTypes);
+            Type createdType = typeService.create(type);
+            return ResponseEntity.ok(createdType);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-
 
     @GetMapping("/listTypes")
     @Cacheable(value = "TypesCache")

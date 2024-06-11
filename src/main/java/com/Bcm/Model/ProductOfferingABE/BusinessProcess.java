@@ -19,10 +19,10 @@ public class BusinessProcess {
     @Column(name = "businessProcess_id", nullable = false)
     private int businessProcess_id;
 
-    @Column(name = "bussinessProcType", nullable = false)
-    private String bussinessProcType;
+    @Column(name = "type_id", nullable = false)
+    private Integer type_id;
 
-    @Column(name = "description", nullable = false)
-    private String description;
+    @Column(name = "Product_id", nullable = true)
+    private Integer Product_id;
 }
 

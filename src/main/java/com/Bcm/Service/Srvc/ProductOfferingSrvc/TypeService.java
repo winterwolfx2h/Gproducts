@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public interface TypeService {
 
-    List<Type> create(List<Type> types);
+    Type create(Type type);
 
     List<Type> read();
 

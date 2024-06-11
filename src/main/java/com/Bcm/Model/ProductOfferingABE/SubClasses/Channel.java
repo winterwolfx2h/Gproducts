@@ -1,12 +1,15 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses;
 
 
+import com.Bcm.Model.ProductOfferingABE.ProductOffering;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Table(name = "Channel")
 @Entity
@@ -26,4 +29,9 @@ public class Channel {
 
     @Column(name = "description", nullable = true)
     private String description;
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOffering.class)
+    @JoinColumn(name = "po_ChannelCode")
+    @JsonIgnore
+    private List<ProductOffering> productOfferings;
 }

@@ -6,6 +6,8 @@ import com.Bcm.Model.Product.GeneralInfoDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.GeneralInfoRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
+import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.ChannelRepository;
+import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.EntityRepository;
 import com.Bcm.Repository.ProductResourceRepository.PhysicalResourceRepository;
 import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.GeneralInfoService;
@@ -15,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -25,17 +26,20 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     final ProductOfferingRepository productOfferingRepository;
     final PhysicalResourceRepository physicalResourceRepository;
     final CustomerFacingServiceSpecRepository customerFacingServiceSpecRepository;
+    final EntityRepository entityRepository;
+    final ChannelRepository channelRepository;
 
     @Override
     public ProductOffering createGeneralInfoDTO(GeneralInfoDTO generalInfoDTO) {
         // Check if an existing product offering with the same name already exists
-        Optional<GeneralInfoDTO> existingProduct = generalInfoRepository.findByName(generalInfoDTO.getName());
-        if (existingProduct.isPresent()) {
+        generalInfoRepository.findByName(generalInfoDTO.getName()).ifPresent(existingProduct -> {
             throw new ProductOfferingAlreadyExistsException(
                     "A product offering with the name '" + generalInfoDTO.getName() + "' already exists."
             );
-        }
+        });
+
         generalInfoDTO.setStatus("Working state");
+
 
         // Create new ProductOffering entity from DTO
         ProductOffering productOffering = new ProductOffering();
@@ -55,11 +59,10 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         productOffering.setQuantityIndicator(generalInfoDTO.getQuantityIndicator());
         productOffering.setStatus("Working state");
 
-        // Save the new ProductOffering
-        ProductOffering savedProductOffering = productOfferingRepository.save(productOffering);
-        return savedProductOffering;
-    }
 
+        // Save the new ProductOffering
+        return productOfferingRepository.save(productOffering);
+    }
 
     @Override
     public ProductOffering getProductOfferingById(int Product_id) throws ProductOfferingNotFoundException {
@@ -83,6 +86,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         productOffering.setSellIndicator(generalInfoDTO.getSellIndicator());
         productOffering.setQuantityIndicator(generalInfoDTO.getQuantityIndicator());
         productOffering.setStatus(generalInfoDTO.getStatus());
+        productOffering.setEligibility_id(productOffering.getEligibility_id());
+
     }
 
     private GeneralInfoDTO convertToDTO(ProductOffering productOffering) {
@@ -117,11 +122,12 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     }
 
     @Override
-    public ProductOffering updateProductOfferingEligibility(GeneralInfoDTO generalInfoDTO, int Product_id, int eligibility_id) throws ProductOfferingNotFoundException {
+    public ProductOffering updateProductOfferingEligibility(GeneralInfoDTO generalInfoDTO, int Product_id, int po_ChannelCode, int entityCode) throws ProductOfferingNotFoundException {
         ProductOffering productOffering = getProductOfferingById(Product_id);
         convertToEntity(generalInfoDTO, productOffering);
-        productOffering.setEligibility_id(eligibility_id);
-
+        productOffering.setEntityCode(entityCode);
+        productOffering.setPo_ChannelCode(po_ChannelCode);
+        productOffering.setEligibility_id(productOffering.getEligibility_id());
         return productOfferingRepository.save(productOffering);
     }
 

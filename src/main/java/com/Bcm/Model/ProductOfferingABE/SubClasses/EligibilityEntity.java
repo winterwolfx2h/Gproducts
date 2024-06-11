@@ -1,11 +1,14 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses;
 
+import com.Bcm.Model.ProductOfferingABE.ProductOffering;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Table(name = "Entity")
 @Entity
@@ -25,4 +28,10 @@ public class EligibilityEntity {
 
     @Column(name = "description", nullable = true)
     private String description;
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOffering.class)
+    @JoinColumn(name = "entityCode")
+    @JsonIgnore
+    private List<ProductOffering> productOfferings;
 }
+

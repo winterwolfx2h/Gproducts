@@ -14,7 +14,6 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class BusinessProcess {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "businessProcess_id", nullable = false)
@@ -25,8 +24,5 @@ public class BusinessProcess {
 
     @Column(name = "description", nullable = false)
     private String description;
-
-    @Column(name = "Product_id", nullable = false)
-    private int Product_id;
 }
 

@@ -25,26 +25,12 @@ public class Eligibility {
             joinColumns = @JoinColumn(name = "eligibility_id"),
             inverseJoinColumns = @JoinColumn(name = "productPriceGroupCode"))
     Set<ProductPriceGroup> productPriceGroups;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "eligibility_id", nullable = false)
     private int eligibility_id;
 
-    //    @ManyToMany
-//    @JsonIgnore
-//    @JoinTable(
-//            name = "eligibility_entity",
-//            joinColumns = @JoinColumn(name = "eligibility_id"),
-//            inverseJoinColumns = @JoinColumn(name = "entityCode"))
-//    Set<EligibilityEntity> entities;
-//
-//    @ManyToMany
-//    @JsonIgnore
-//    @JoinTable(
-//            name = "eligibility_channel",
-//            joinColumns = @JoinColumn(name = "eligibility_id"),
-//            inverseJoinColumns = @JoinColumn(name = "po_ChannelCode"))
-//    Set<Channel> channels;
     @Column(name = "stock_Indicator")
     private Boolean stock_Indicator;
 

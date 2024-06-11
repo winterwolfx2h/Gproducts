@@ -37,12 +37,7 @@ public class EligibilityController {
                     " VALUES (?, ?);", new Object[]{createdEligibility.getEligibility_id(), productPriceGroups});
 
 
-//            base.update("INSERT INTO public.eligibility_entity(" +
-//                    " eligibility_id, entity_code) " +
-//                    " VALUES (?, ?);", new Object[]{createdEligibility.getEligibility_id(), entity});
-
-
-            return ResponseEntity.ok("Eligibility was added successfully");
+            return ResponseEntity.ok(eligibility);
 
 
         } catch (InvalidInputException e) {

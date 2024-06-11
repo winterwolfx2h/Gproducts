@@ -9,12 +9,14 @@ import com.Bcm.Service.Srvc.ProductOfferingSrvc.GeneralInfoService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -32,24 +34,17 @@ public class GeneralInfoController {
     @Transactional
     @PostMapping("/AddProdOffDTO")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
-    public ResponseEntity<?> createProductOfferingDTO(@Valid @RequestBody GeneralInfoDTO dto, @RequestParam Integer channel, @RequestParam Integer entity) {
+    public ResponseEntity<?> createProductOfferingDTO(@Valid @RequestBody GeneralInfoDTO dto) {
         try {
             // Convert DTO to entity and save
             ProductOffering createdProductOffering = generalInfoService.createGeneralInfoDTO(dto);
-
-            base.update("INSERT INTO public.productoffering_channel(" +
-                    " Product_id, po_channel_code) " +
-                    " VALUES (?, ?);", new Object[]{createdProductOffering.getProduct_id(), channel});
-
-
-            base.update("INSERT INTO public.productoffering_entity(" +
-                    " Product_id, entity_code) " +
-                    " VALUES (?, ?);", new Object[]{createdProductOffering.getProduct_id(), entity});
-
-
             return new ResponseEntity<>(createdProductOffering, HttpStatus.CREATED);
 
         } catch (ProductOfferingAlreadyExistsException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        } catch (DuplicateKeyException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
         } catch (Exception e) {
             e.printStackTrace();  // Print stack trace for debugging
@@ -58,15 +53,20 @@ public class GeneralInfoController {
         }
     }
 
+
     @PutMapping("/{Product_id}")
     public ProductOffering updateProductOffering(@RequestBody GeneralInfoDTO generalInfoDTO, @PathVariable int Product_id, @RequestParam int prId, @RequestParam int serviceId) throws ProductOfferingNotFoundException {
         return generalInfoService.updateProductOffering(generalInfoDTO, Product_id, prId, serviceId);
     }
 
     @PutMapping("/eligibility/{Product_id}")
-    public ProductOffering updateProductOfferingEligibility(@RequestBody GeneralInfoDTO generalInfoDTO, @PathVariable int Product_id, @RequestParam int eligibility_id) throws ProductOfferingNotFoundException {
-        return generalInfoService.updateProductOfferingEligibility(generalInfoDTO, Product_id, eligibility_id);
+    public ProductOffering updateProductOfferingEligibility(@RequestBody GeneralInfoDTO generalInfoDTO,
+                                                            @PathVariable int Product_id,
+                                                            @RequestParam int po_ChannelCode,
+                                                            @RequestParam int entityCode) throws ProductOfferingNotFoundException {
+        return generalInfoService.updateProductOfferingEligibility(generalInfoDTO, Product_id, po_ChannelCode, entityCode);
     }
+
 
     @GetMapping("/GetDTOs")
     public ResponseEntity<List<GeneralInfoDTO>> getAllProductOfferingDTOs() {

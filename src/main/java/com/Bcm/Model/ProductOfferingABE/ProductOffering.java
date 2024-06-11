@@ -1,8 +1,6 @@
 package com.Bcm.Model.ProductOfferingABE;
 
 import com.Bcm.Model.Product.Product;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -31,22 +29,6 @@ public class ProductOffering extends Product {
             joinColumns = @JoinColumn(name = "Product_id"),
             inverseJoinColumns = @JoinColumn(name = "businessProcess_id"))
     Set<BusinessProcess> businessProcess;
-
-    @ManyToMany
-    @JsonIgnore
-    @JoinTable(
-            name = "productoffering_entity",
-            joinColumns = @JoinColumn(name = "Product_id"),
-            inverseJoinColumns = @JoinColumn(name = "entityCode"))
-    Set<EligibilityEntity> entities;
-
-    @ManyToMany
-    @JsonIgnore
-    @JoinTable(
-            name = "productoffering_channel",
-            joinColumns = @JoinColumn(name = "Product_id"),
-            inverseJoinColumns = @JoinColumn(name = "po_ChannelCode"))
-    Set<Channel> channels;
 
     @Column(name = "poType", nullable = false)
     private String poType;
@@ -87,6 +69,12 @@ public class ProductOffering extends Product {
 
     @Column(name = "serviceId", insertable = false, updatable = true)
     private Integer serviceId;
+
+    @Column(name = "entityCode", insertable = false, updatable = true)
+    private Integer entityCode;
+
+    @Column(name = "po_ChannelCode", insertable = false, updatable = true)
+    private Integer po_ChannelCode;
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOfferRelation.class)
     @JoinColumn(name = "Product_id")

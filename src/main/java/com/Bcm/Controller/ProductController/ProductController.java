@@ -5,14 +5,13 @@ import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,122 +19,125 @@ import java.util.stream.Collectors;
 @RequestMapping("/Product")
 public class ProductController {
 
+  final ProductService productService;
+  final ProductOfferingService productOfferingService;
 
-    final ProductService productService;
-    final ProductOfferingService productOfferingService;
-
-    @GetMapping("/ProductList")
-    @Cacheable(value = "productCache")
-    public ResponseEntity<?> getAllProduct() {
-        try {
-            List<Product> product = productService.read();
-            return ResponseEntity.ok(product);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-        }
+  @GetMapping("/ProductList")
+  @Cacheable(value = "productCache")
+  public ResponseEntity<?> getAllProduct() {
+    try {
+      List<Product> product = productService.read();
+      return ResponseEntity.ok(product);
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
     }
+  }
 
-    @GetMapping("/productsWithPOBasicPoType")
-    public ResponseEntity<?> getProductsByPOBasicPoType() {
-        try {
-            String poType = "PO-Basic";
-            List<ProductOffering> productOfferings = productOfferingService.findByPoType(poType);
+  @GetMapping("/productsWithPOBasicPoType")
+  public ResponseEntity<?> getProductsByPOBasicPoType() {
+    try {
+      String poType = "PO-Basic";
+      List<ProductOffering> productOfferings = productOfferingService.findByPoType(poType);
 
-            if (productOfferings.isEmpty()) {
-                throw new ResourceNotFoundException("No products found for poType: " + poType);
-            }
+      if (productOfferings.isEmpty()) {
+        throw new ResourceNotFoundException("No products found for poType: " + poType);
+      }
 
-            List<Object> products = productOfferings.stream()
-                    .map(productOffering -> {
-                        Product product = productOffering.convertToProduct();
-                        ProductOffering productOfferingDTO = new ProductOffering();
-                        productOfferingDTO.setProduct_id(product.getProduct_id());
-                        productOfferingDTO.setName(product.getName());
-                        productOfferingDTO.setEffectiveFrom(product.getEffectiveFrom());
-                        productOfferingDTO.setEffectiveTo(product.getEffectiveTo());
-                        productOfferingDTO.setDescription(product.getDescription());
-                        productOfferingDTO.setDetailedDescription(product.getDetailedDescription());
-                        productOfferingDTO.setPoType(productOffering.getPoType());
-                        productOfferingDTO.setFamilyName(product.getFamilyName());
-                        productOfferingDTO.setSubFamily(product.getSubFamily());
-                        productOfferingDTO.setParent(productOffering.getParent());
-                        productOfferingDTO.setStatus(productOffering.getStatus());
-                        productOfferingDTO.setCategory(productOffering.getCategory());
-                        /*
-                        productOfferingDTO.setEligibility(productOffering.getEligibility());
+      List<Object> products =
+          productOfferings.stream()
+              .map(
+                  productOffering -> {
+                    Product product = productOffering.convertToProduct();
+                    ProductOffering productOfferingDTO = new ProductOffering();
+                    productOfferingDTO.setProduct_id(product.getProduct_id());
+                    productOfferingDTO.setName(product.getName());
+                    productOfferingDTO.setEffectiveFrom(product.getEffectiveFrom());
+                    productOfferingDTO.setEffectiveTo(product.getEffectiveTo());
+                    productOfferingDTO.setDescription(product.getDescription());
+                    productOfferingDTO.setDetailedDescription(product.getDetailedDescription());
+                    productOfferingDTO.setPoType(productOffering.getPoType());
+                    productOfferingDTO.setFamilyName(product.getFamilyName());
+                    productOfferingDTO.setSubFamily(product.getSubFamily());
+                    productOfferingDTO.setParent(productOffering.getParent());
+                    productOfferingDTO.setStatus(productOffering.getStatus());
+                    productOfferingDTO.setCategory(productOffering.getCategory());
+                    /*
+                    productOfferingDTO.setEligibility(productOffering.getEligibility());
 
-                         */
-                        productOfferingDTO.setPoParent_Child(productOffering.getPoParent_Child());
-                        /*
-                        productOfferingDTO.setCustomerFacingServiceSpec(productOffering.getCustomerFacingServiceSpec());
+                     */
+                    productOfferingDTO.setPoParent_Child(productOffering.getPoParent_Child());
+                    /*
+                    productOfferingDTO.setCustomerFacingServiceSpec(productOffering.getCustomerFacingServiceSpec());
 
-                         */
-                        productOfferingDTO.setMarkets(productOffering.getMarkets());
-                        productOfferingDTO.setSubmarkets(productOffering.getSubmarkets());
-                        productOfferingDTO.setBS_externalId(productOffering.getBS_externalId());
-                        productOfferingDTO.setCS_externalId(productOffering.getCS_externalId());
-                        /*
-                        productOfferingDTO.setPoAttributes(productOffering.getPoAttributes());
-                        productOfferingDTO.setProductRelation(productOffering.getProductRelation());
-                        productOfferingDTO.setPhysicalResource(productOffering.getPhysicalResource());
-                        productOfferingDTO.setBusinessProcess(productOffering.getBusinessProcess());
+                     */
+                    productOfferingDTO.setMarkets(productOffering.getMarkets());
+                    productOfferingDTO.setSubmarkets(productOffering.getSubmarkets());
+                    productOfferingDTO.setBS_externalId(productOffering.getBS_externalId());
+                    productOfferingDTO.setCS_externalId(productOffering.getCS_externalId());
+                    /*
+                    productOfferingDTO.setPoAttributes(productOffering.getPoAttributes());
+                    productOfferingDTO.setProductRelation(productOffering.getProductRelation());
+                    productOfferingDTO.setPhysicalResource(productOffering.getPhysicalResource());
+                    productOfferingDTO.setBusinessProcess(productOffering.getBusinessProcess());
 
-                         */
-                        return productOfferingDTO;
-                    })
-                    .collect(Collectors.toList());
+                     */
+                    return productOfferingDTO;
+                  })
+              .collect(Collectors.toList());
 
-            return ResponseEntity.ok(products);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-        }
+      return ResponseEntity.ok(products);
+    } catch (ResourceNotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
     }
+  }
 
-    @GetMapping("/searchByFamilyName")
-    public ResponseEntity<?> searchProductsByFamilyName(@RequestParam("familyName") String familyName) {
-        List<Product> searchResults = productService.searchByFamilyName(familyName);
-        return ResponseEntity.ok(searchResults);
+  @GetMapping("/searchByFamilyName")
+  public ResponseEntity<?> searchProductsByFamilyName(@RequestParam("familyName") String familyName) {
+    List<Product> searchResults = productService.searchByFamilyName(familyName);
+    return ResponseEntity.ok(searchResults);
+  }
+
+  @GetMapping("/productsWithPOPLANPoType")
+  public ResponseEntity<?> getProductsByPOPlanPoType() {
+    try {
+      String poType = "PO-PLAN";
+      List<ProductOffering> productOfferings = productOfferingService.findByPoType(poType);
+
+      if (productOfferings.isEmpty()) {
+        throw new ResourceNotFoundException("No products found for poType: " + poType);
+      }
+
+      List<Object> products =
+          productOfferings.stream()
+              .map(
+                  productOffering -> {
+                    Product product = productOffering.convertToProduct();
+                    ProductOffering productOfferingDTO = new ProductOffering();
+                    productOfferingDTO.setProduct_id(product.getProduct_id());
+                    productOfferingDTO.setName(product.getName());
+                    productOfferingDTO.setEffectiveFrom(product.getEffectiveFrom());
+                    productOfferingDTO.setEffectiveTo(product.getEffectiveTo());
+                    productOfferingDTO.setDescription(product.getDescription());
+                    productOfferingDTO.setDetailedDescription(product.getDetailedDescription());
+                    productOfferingDTO.setPoType(productOffering.getPoType());
+                    productOfferingDTO.setFamilyName(product.getFamilyName());
+                    productOfferingDTO.setSubFamily(product.getSubFamily());
+                    productOfferingDTO.setParent(productOffering.getParent());
+                    productOfferingDTO.setStatus(productOffering.getStatus());
+                    productOfferingDTO.setMarkets(productOffering.getMarkets());
+                    productOfferingDTO.setSubmarkets(productOffering.getSubmarkets());
+
+                    return productOfferingDTO;
+                  })
+              .collect(Collectors.toList());
+
+      return ResponseEntity.ok(products);
+    } catch (ResourceNotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
     }
-
-    @GetMapping("/productsWithPOPLANPoType")
-    public ResponseEntity<?> getProductsByPOPlanPoType() {
-        try {
-            String poType = "PO-PLAN";
-            List<ProductOffering> productOfferings = productOfferingService.findByPoType(poType);
-
-            if (productOfferings.isEmpty()) {
-                throw new ResourceNotFoundException("No products found for poType: " + poType);
-            }
-
-            List<Object> products = productOfferings.stream()
-                    .map(productOffering -> {
-                        Product product = productOffering.convertToProduct();
-                        ProductOffering productOfferingDTO = new ProductOffering();
-                        productOfferingDTO.setProduct_id(product.getProduct_id());
-                        productOfferingDTO.setName(product.getName());
-                        productOfferingDTO.setEffectiveFrom(product.getEffectiveFrom());
-                        productOfferingDTO.setEffectiveTo(product.getEffectiveTo());
-                        productOfferingDTO.setDescription(product.getDescription());
-                        productOfferingDTO.setDetailedDescription(product.getDetailedDescription());
-                        productOfferingDTO.setPoType(productOffering.getPoType());
-                        productOfferingDTO.setFamilyName(product.getFamilyName());
-                        productOfferingDTO.setSubFamily(product.getSubFamily());
-                        productOfferingDTO.setParent(productOffering.getParent());
-                        productOfferingDTO.setStatus(productOffering.getStatus());
-                        productOfferingDTO.setMarkets(productOffering.getMarkets());
-                        productOfferingDTO.setSubmarkets(productOffering.getSubmarkets());
-
-                        return productOfferingDTO;
-                    })
-                    .collect(Collectors.toList());
-
-            return ResponseEntity.ok(products);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-        }
-    }
+  }
 }

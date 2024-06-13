@@ -1,26 +1,23 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 
 import com.Bcm.Model.ProductOfferingABE.Methods;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public interface MethodsService {
 
-    Methods create(Methods methods);
+  Methods create(Methods methods);
 
-    List<Methods> read();
+  List<Methods> read();
 
-    Methods update(int method_Id, Methods methods);
+  Methods update(int method_Id, Methods methods);
 
-    String delete(int method_Id);
+  String delete(int method_Id);
 
-    Methods findById(int method_Id);
+  Methods findById(int method_Id);
 
-    List<Methods> searchByKeyword(String name);
+  List<Methods> searchByKeyword(String name);
 
-    Methods findByName(String name);
-
+  Methods findByName(String name);
 }
-

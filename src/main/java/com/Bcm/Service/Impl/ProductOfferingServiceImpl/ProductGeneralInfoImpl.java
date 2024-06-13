@@ -231,7 +231,7 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
 
   @Override
   public List<GeneralInfoDTO> getAllGeneralInfoDTOs() {
-    List<ProductOffering> productOfferings = generalInfoRepository.findAll();
+    List<ProductOffering> productOfferings = generalInfoRepository.findByNameNotLike("PO-PLAN%");
     List<GeneralInfoDTO> dtos = new ArrayList<>();
 
     for (ProductOffering productOffering : productOfferings) {

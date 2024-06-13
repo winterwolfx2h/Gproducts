@@ -4,7 +4,6 @@ import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.ProductPrice;
 import com.Bcm.Repository.ProductOfferingRepo.ProductPriceRepository;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceService;
 import java.util.List;
 import java.util.Optional;
@@ -17,12 +16,10 @@ import org.springframework.stereotype.Service;
 public class ProductPriceServiceImpl implements ProductPriceService {
 
   final ProductPriceRepository productPriceRepository;
-  final ProductOfferingService productOfferingService;
 
   @Override
   public ProductPrice create(ProductPrice productPrice) {
     try {
-
       return productPriceRepository.save(productPrice);
     } catch (DataIntegrityViolationException e) {
       throw new DatabaseOperationException("Error creating ProductPrice", e);

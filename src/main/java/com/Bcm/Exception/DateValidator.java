@@ -5,17 +5,16 @@ import java.text.SimpleDateFormat;
 
 public class DateValidator {
 
+  public static boolean isValidDate(String dateStr) {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
+    dateFormat.setLenient(false);
 
-    public static boolean isValidDate(String dateStr) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
-        dateFormat.setLenient(false);
+    try {
 
-        try {
-
-            dateFormat.parse(dateStr);
-            return true;
-        } catch (ParseException e) {
-            return false;
-        }
+      dateFormat.parse(dateStr);
+      return true;
+    } catch (ParseException e) {
+      return false;
     }
+  }
 }

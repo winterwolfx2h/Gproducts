@@ -1,31 +1,27 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc;
 
-
 import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public interface EntityService {
 
-    EligibilityEntity create(EligibilityEntity entity);
+  EligibilityEntity create(EligibilityEntity entity);
 
-    List<EligibilityEntity> read();
+  List<EligibilityEntity> read();
 
-    EligibilityEntity update(int entityCode, EligibilityEntity entity);
+  EligibilityEntity update(int entityCode, EligibilityEntity entity);
 
-    String delete(int entityCode);
+  String delete(int entityCode);
 
-    EligibilityEntity findById(int entityCode);
+  EligibilityEntity findById(int entityCode);
 
-    List<EligibilityEntity> searchByKeyword(String name);
+  List<EligibilityEntity> searchByKeyword(String name);
 
-    EligibilityEntity findByName(String name);
+  EligibilityEntity findByName(String name);
 
-    boolean findByNameexist(String name);
+  boolean findByNameexist(String name);
 
-    boolean existsById(int entityCode);
-
-
+  boolean existsById(int entityCode);
 }

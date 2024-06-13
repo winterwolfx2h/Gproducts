@@ -1,15 +1,13 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses;
 
-
-import com.Bcm.Model.ProductOfferingABE.ProductOffering;
+import com.Bcm.Model.Product.Product;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.*;
-import java.util.List;
 
 @Table(name = "Channel")
 @Entity
@@ -18,20 +16,21 @@ import java.util.List;
 @Getter
 @Setter
 public class Channel {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "channel_seq_generator")
-    @SequenceGenerator(name = "channel_seq_generator", sequenceName = "channel_sequence", allocationSize = 1)
-    @Column(name = "po_ChannelCode", nullable = false)
-    private int po_ChannelCode;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "channel_seq_generator")
+  @SequenceGenerator(name = "channel_seq_generator", sequenceName = "channel_sequence", allocationSize = 1)
+  @Column(name = "channelCode", nullable = false)
+  private int channelCode;
 
-    @Column(name = "description", nullable = true)
-    private String description;
+  @Column(name = "name", nullable = false)
+  private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOffering.class)
-    @JoinColumn(name = "po_ChannelCode")
-    @JsonIgnore
-    private List<ProductOffering> productOfferings;
+  @Column(name = "description", nullable = true)
+  private String description;
+
+  @OneToMany(cascade = CascadeType.ALL, targetEntity = Product.class)
+  @JoinColumn(name = "channelCode")
+  @JsonIgnore
+  private List<Product> products;
 }

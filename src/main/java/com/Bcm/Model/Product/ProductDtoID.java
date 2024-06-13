@@ -1,10 +1,8 @@
 package com.Bcm.Model.Product;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
-
 import javax.persistence.Id;
+import lombok.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
@@ -12,10 +10,7 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @Data
-
 public class ProductDtoID {
 
-    @Id
-    private String Product_id;
-
+  @Id private String Product_id;
 }

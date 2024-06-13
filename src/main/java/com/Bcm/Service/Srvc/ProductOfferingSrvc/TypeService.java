@@ -1,28 +1,25 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 
-
 import com.Bcm.Model.ProductOfferingABE.Type;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
-
+import org.springframework.stereotype.Service;
 
 @Service
 public interface TypeService {
 
-    Type create(Type type);
+  Type create(Type type);
 
-    List<Type> read();
+  List<Type> read();
 
-    Type update(int type_id, Type type);
+  Type update(int type_id, Type type);
 
-    String delete(int type_id);
+  String delete(int type_id);
 
-    Type findById(int type_id);
+  Type findById(int type_id);
 
-    List<Type> searchByKeyword(String typeName);
+  List<Type> searchByKeyword(String typeName);
 
-    Type findByTypeName(String typeName);
+  Type findByTypeName(String typeName);
 
-    boolean existsById(int type_id);
+  boolean existsById(int type_id);
 }

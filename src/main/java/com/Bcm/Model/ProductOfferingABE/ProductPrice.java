@@ -1,6 +1,7 @@
 package com.Bcm.Model.ProductOfferingABE;
 
 import com.Bcm.Model.Product.Product;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Date;
 import java.util.List;
@@ -25,25 +26,26 @@ public class ProductPrice {
   private int productPriceCode;
 
   @Column(name = "oneTimeAmount", nullable = true)
-  private int oneTimeAmount;
+  private Integer oneTimeAmount;
 
   @Column(name = "cashPrice", nullable = true)
-  private float cashPrice;
+  private Float cashPrice;
 
   @Column(name = "recuringAmount", nullable = true)
-  private float recuringAmount;
+  private Float recuringAmount;
 
   @Column(name = "validFrom", nullable = true)
+  @JsonFormat(pattern = "dd/MM/yyyy")
   private Date validFrom;
 
   @Column(name = "priceVersion", nullable = true)
-  private int priceVersion;
+  private Integer priceVersion;
 
   @Column(name = "Product_id", nullable = false)
   private int Product_id;
 
   @OneToMany(cascade = CascadeType.ALL, targetEntity = Product.class)
-  @JoinColumn(name = "entityCode")
+  @JoinColumn(name = "productPriceCode")
   @JsonIgnore
   private List<Product> products;
 }

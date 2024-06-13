@@ -34,8 +34,8 @@ public class CustomerFacingServiceSpec {
   @Column(name = "externalId", nullable = false)
   private String externalId;
 
-  @Column(name = "LR_id", nullable = true)
-  private int LR_id;
+  @Column(name = "LR_id", nullable = true, insertable = true, updatable = true)
+  private Integer LR_id;
 
   @Column(name = "status", nullable = false)
   private String status;

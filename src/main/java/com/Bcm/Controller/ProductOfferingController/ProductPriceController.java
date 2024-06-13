@@ -1,5 +1,6 @@
 package com.Bcm.Controller.ProductOfferingController;
 
+import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.ProductPrice;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceService;
@@ -21,29 +22,29 @@ public class ProductPriceController {
   public ResponseEntity<?> createType(@RequestBody ProductPrice productPrice) {
     try {
       ProductPrice createdProductPrice = productPriceService.create(productPrice);
-      return ResponseEntity.ok(createdProductPrice);
-    } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.CREATED).body(createdProductPrice);
+    } catch (DatabaseOperationException e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
   }
 
   @GetMapping("/listProductPrice")
   public ResponseEntity<List<ProductPrice>> getAllProductPrices() {
     try {
-      List<ProductPrice> ProductPrices = productPriceService.read();
-      return ResponseEntity.ok(ProductPrices);
+      List<ProductPrice> productPrices = productPriceService.read();
+      return ResponseEntity.ok(productPrices);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(500).body(null);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
   }
 
   @GetMapping("/{productPriceCode}")
   public ResponseEntity<ProductPrice> getProductPriceById(@PathVariable("productPriceCode") int productPriceCode) {
     try {
-      ProductPrice ProductPrice = productPriceService.findById(productPriceCode);
-      return ResponseEntity.ok(ProductPrice);
+      ProductPrice productPrice = productPriceService.findById(productPriceCode);
+      return ResponseEntity.ok(productPrice);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(404).body(null);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
   }
 
@@ -66,7 +67,7 @@ public class ProductPriceController {
       String resultMessage = productPriceService.delete(productPriceCode);
       return ResponseEntity.ok(resultMessage);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(500).body(null);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
   }
 
@@ -76,7 +77,7 @@ public class ProductPriceController {
       List<ProductPrice> searchResults = productPriceService.searchByPrice(price);
       return ResponseEntity.ok(searchResults);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(500).body(null);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
   }
 }

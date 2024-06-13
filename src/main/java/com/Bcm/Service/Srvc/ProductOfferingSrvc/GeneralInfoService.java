@@ -15,17 +15,19 @@ public interface GeneralInfoService {
 
   ProductOffering getProductOfferingById(int Product_id) throws ProductOfferingNotFoundException;
 
-  ProductOffering updateProductOffering(
-      GeneralInfoDTO generalInfoDTO,
-      int Product_id,
-      int businessProcess_id,
-      int pr_id,
-      int serviceId,
-      int productPriceCode,
-      int productPriceGroupCode)
+  ProductOffering updatePOPrg(GeneralInfoDTO generalInfoDTO, int Product_id, int productPriceGroupCode)
       throws ProductOfferingNotFoundException;
 
-  ProductOffering updateProductOfferingEligibility(
+  ProductOffering updatePOPrice(GeneralInfoDTO generalInfoDTO, int Product_id, int productPriceCode)
+      throws ProductOfferingNotFoundException;
+
+  ProductOffering updatePOBusinessProc(GeneralInfoDTO generalInfoDTO, int Product_id, int businessProcess_id)
+      throws ProductOfferingNotFoundException;
+
+  ProductOffering updatePOSrvcPr(GeneralInfoDTO generalInfoDTO, int Product_id, int pr_id, int serviceId)
+      throws ProductOfferingNotFoundException;
+
+  ProductOffering updatePOEligibility(
       GeneralInfoDTO generalInfoDTO, int Product_id, int channelCode, int entityCode, int eligibility_id)
       throws ProductOfferingNotFoundException;
 }

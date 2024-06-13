@@ -121,95 +121,114 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
   }
 
   @Override
-  public ProductOffering updateProductOffering(
-      GeneralInfoDTO generalInfoDTO,
-      int product_id,
-      int businessProcess_id,
-      int pr_id,
-      int serviceId,
-      int productPriceCode,
-      int productPriceGroupCode)
+  public ProductOffering updatePOPrg(GeneralInfoDTO generalInfoDTO, int product_id, int productPriceGroupCode)
       throws ProductOfferingNotFoundException {
-    // Fetch the ProductOffering entity by ID
+
     ProductOffering productOffering = getProductOfferingById(product_id);
     if (productOffering == null) {
       throw new ProductOfferingNotFoundException("Product Offering not found");
     }
 
-    // Fetch the ProductPriceGroup entity by code
     ProductPriceGroup productPriceGroup =
         productPriceGroupRepository
             .findById(productPriceGroupCode)
             .orElseThrow(() -> new ProductOfferingNotFoundException("Product Price Group not found"));
 
-    // Fetch the ProductPrice entity by code
+    convertToEntity(generalInfoDTO, productOffering);
+
+    productOffering.getProductPriceGroups().clear();
+    productOffering.getProductPriceGroups().add(productPriceGroup);
+
+    return productOfferingRepository.save(productOffering);
+  }
+
+  @Override
+  public ProductOffering updatePOPrice(GeneralInfoDTO generalInfoDTO, int product_id, int productPriceCode)
+      throws ProductOfferingNotFoundException {
+
+    ProductOffering productOffering = getProductOfferingById(product_id);
+    if (productOffering == null) {
+      throw new ProductOfferingNotFoundException("Product Offering not found");
+    }
+
     ProductPrice productPrice =
         productPriceRepository
             .findById(productPriceCode)
             .orElseThrow(() -> new ProductOfferingNotFoundException("Product Price not found"));
 
-    // Fetch the BusinessProcess entity by code
+    convertToEntity(generalInfoDTO, productOffering);
+
+    productOffering.getProductPriceCode().clear();
+    productOffering.getProductPriceCode().add(productPrice);
+
+    return productOfferingRepository.save(productOffering);
+  }
+
+  @Override
+  public ProductOffering updatePOBusinessProc(GeneralInfoDTO generalInfoDTO, int product_id, int businessProcess_id)
+      throws ProductOfferingNotFoundException {
+
+    ProductOffering productOffering = getProductOfferingById(product_id);
+    if (productOffering == null) {
+      throw new ProductOfferingNotFoundException("Product Offering not found");
+    }
+
     BusinessProcess businessProcess =
         businessProcessRepository
             .findById(businessProcess_id)
             .orElseThrow(() -> new ProductOfferingNotFoundException("Business Process not found"));
 
-    // Fetch the CFS entity by code
+    convertToEntity(generalInfoDTO, productOffering);
+
+    productOffering.getBusinessProcess_id().clear();
+    productOffering.getBusinessProcess_id().add(businessProcess);
+
+    return productOfferingRepository.save(productOffering);
+  }
+
+  @Override
+  public ProductOffering updatePOSrvcPr(GeneralInfoDTO generalInfoDTO, int product_id, int pr_id, int serviceId)
+      throws ProductOfferingNotFoundException {
+    ProductOffering productOffering = getProductOfferingById(product_id);
+    if (productOffering == null) {
+      throw new ProductOfferingNotFoundException("Product Offering not found");
+    }
+
     CustomerFacingServiceSpec cfs =
         customerFacingServiceSpecRepository
             .findById(serviceId)
             .orElseThrow(() -> new ProductOfferingNotFoundException("CFS not found"));
 
-    // Fetch the Physical Resource entity by code
     PhysicalResource physicalResource =
         physicalResourceRepository
             .findById(pr_id)
             .orElseThrow(() -> new ProductOfferingNotFoundException("Physical Resource not found"));
 
-    // Update the ProductOffering fields
     convertToEntity(generalInfoDTO, productOffering);
 
-    // Update the association with ProductPriceGroup
-    productOffering.getProductPriceGroups().clear(); // Clear existing associations
-    productOffering.getProductPriceGroups().add(productPriceGroup); // Add the new association
+    productOffering.getServiceId().clear();
+    productOffering.getServiceId().add(cfs);
 
-    // Update the association with ProductPriceGroup
-    productOffering.getProductPriceCode().clear(); // Clear existing associations
-    productOffering.getProductPriceCode().add(productPrice); // Add the new association
+    productOffering.getPR_id().clear();
+    productOffering.getPR_id().add(physicalResource);
 
-    // Update the association with BusinessProcess
-    productOffering.getBusinessProcess_id().clear(); // Clear existing associations
-    productOffering.getBusinessProcess_id().add(businessProcess); // Add the new association
-
-    // Update the association with CFS
-    productOffering.getServiceId().clear(); // Clear existing associations
-    productOffering.getServiceId().add(cfs); // Add the new association
-
-    // Update the association with PhysicalResources
-    productOffering.getPR_id().clear(); // Clear existing associations
-    productOffering.getPR_id().add(physicalResource); // Add the new association
-
-    // Save the ProductOffering entity to persist changes
     return productOfferingRepository.save(productOffering);
   }
 
   @Override
-  public ProductOffering updateProductOfferingEligibility(
+  public ProductOffering updatePOEligibility(
       GeneralInfoDTO generalInfoDTO, int Product_id, int channelCode, int entityCode, int eligibility_id)
       throws ProductOfferingNotFoundException {
-    // Fetch the ProductOffering entity by ID
     ProductOffering productOffering = getProductOfferingById(Product_id);
     if (productOffering == null) {
       throw new ProductOfferingNotFoundException("Product Offering not found");
     }
 
-    // Fetch the Channel entity by code
     Channel channel =
         channelRepository
             .findById(channelCode)
             .orElseThrow(() -> new ProductOfferingNotFoundException("Channel not found"));
 
-    // Fetch the Channel entity by code
     EligibilityEntity eligibilityEntity =
         entityRepository
             .findById(entityCode)
@@ -218,13 +237,11 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     convertToEntity(generalInfoDTO, productOffering);
     productOffering.setEligibility_id(productOffering.getEligibility_id());
 
-    // Update the association with ProductPriceGroup
-    productOffering.getChannelCode().clear(); // Clear existing associations
-    productOffering.getChannelCode().add(channel); // Add the new association
+    productOffering.getChannelCode().clear();
+    productOffering.getChannelCode().add(channel);
 
-    // Update the association with ProductPriceGroup
-    productOffering.getEntityCode().clear(); // Clear existing associations
-    productOffering.getEntityCode().add(eligibilityEntity); // Add the new association
+    productOffering.getEntityCode().clear();
+    productOffering.getEntityCode().add(eligibilityEntity);
 
     return productOfferingRepository.save(productOffering);
   }

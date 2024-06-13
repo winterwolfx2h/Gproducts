@@ -45,25 +45,45 @@ public class GeneralInfoController {
     } catch (DuplicateKeyException ex) {
       return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     } catch (Exception e) {
-      e.printStackTrace(); // Print stack trace for debugging
+      e.printStackTrace();
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An unexpected error occurred while creating the Product Offering. Error: " + e.getMessage());
     }
   }
 
-  @PutMapping("/{productId}")
-  public ProductOffering updateProductOffering(
-      @RequestBody GeneralInfoDTO generalInfoDTO,
-      @PathVariable int productId,
-      @RequestParam int prId,
-      @RequestParam int serviceId,
-      @RequestParam int productPriceCode,
-      @RequestParam int productPriceGroupCode,
-      @RequestParam int businessProcess_id)
+  @PutMapping("/PriceGroup/{productId}")
+  public ProductOffering updatePOPrg(
+      @RequestBody GeneralInfoDTO generalInfoDTO, @PathVariable int productId, @RequestParam int productPriceGroupCode)
       throws ProductOfferingNotFoundException {
 
-    return generalInfoService.updateProductOffering(
-        generalInfoDTO, productId, prId, serviceId, productPriceCode, productPriceGroupCode, businessProcess_id);
+    return generalInfoService.updatePOPrg(generalInfoDTO, productId, productPriceGroupCode);
+  }
+
+  @PutMapping("/Price/{productId}")
+  public ProductOffering updatePrice(
+      @RequestBody GeneralInfoDTO generalInfoDTO, @PathVariable int productId, @RequestParam int productPriceCode)
+      throws ProductOfferingNotFoundException {
+
+    return generalInfoService.updatePOPrice(generalInfoDTO, productId, productPriceCode);
+  }
+
+  @PutMapping("/BusinessProc/{productId}")
+  public ProductOffering updatePOBusinessProc(
+      @RequestBody GeneralInfoDTO generalInfoDTO, @PathVariable int productId, @RequestParam int businessProcess_id)
+      throws ProductOfferingNotFoundException {
+
+    return generalInfoService.updatePOBusinessProc(generalInfoDTO, productId, businessProcess_id);
+  }
+
+  @PutMapping("/SrvcPr/{productId}")
+  public ProductOffering updatePOBusinessProc(
+      @RequestBody GeneralInfoDTO generalInfoDTO,
+      @PathVariable int productId,
+      @RequestParam int serviceId,
+      @RequestParam int pr_id)
+      throws ProductOfferingNotFoundException {
+
+    return generalInfoService.updatePOSrvcPr(generalInfoDTO, productId, serviceId, pr_id);
   }
 
   @PutMapping("/eligibility/{Product_id}")
@@ -74,8 +94,7 @@ public class GeneralInfoController {
       @RequestParam int entityCode,
       @RequestParam int eligibility_id)
       throws ProductOfferingNotFoundException {
-    return generalInfoService.updateProductOfferingEligibility(
-        generalInfoDTO, Product_id, channelCode, entityCode, eligibility_id);
+    return generalInfoService.updatePOEligibility(generalInfoDTO, Product_id, channelCode, entityCode, eligibility_id);
   }
 
   @GetMapping("/GetDTOs")
@@ -84,26 +103,28 @@ public class GeneralInfoController {
     return ResponseEntity.ok(dtos);
   }
 
-  private GeneralInfoDTO convertToDTO(ProductOffering productOffering) {
-    GeneralInfoDTO dto = new GeneralInfoDTO();
-    dto.setProduct_id(productOffering.getProduct_id());
-    dto.setName(productOffering.getName());
-    dto.setEffectiveFrom(productOffering.getEffectiveFrom());
-    dto.setEffectiveTo(productOffering.getEffectiveTo());
-    dto.setDescription(productOffering.getDescription());
-    dto.setDetailedDescription(productOffering.getDetailedDescription());
-    dto.setPoType(productOffering.getPoType());
-    dto.setParent(productOffering.getParent());
-    dto.setWorkingStep(productOffering.getWorkingStep());
-    dto.setSellIndicator(productOffering.getSellIndicator());
-    dto.setQuantityIndicator(productOffering.getQuantityIndicator());
-    dto.setCategory(productOffering.getCategory());
-    dto.setStatus(productOffering.getStatus());
-    dto.setPoParent_Child(productOffering.getPoParent_Child());
-    dto.setBS_externalId(productOffering.getBS_externalId());
-    dto.setCS_externalId(productOffering.getCS_externalId());
-    productOffering.setPR_id(productOffering.getPR_id());
-    productOffering.setServiceId(productOffering.getServiceId());
-    return dto;
-  }
+  //
+  //  private GeneralInfoDTO convertToDTO(ProductOffering productOffering) {
+  //    GeneralInfoDTO dto = new GeneralInfoDTO();
+  //    dto.setProduct_id(productOffering.getProduct_id());
+  //    dto.setName(productOffering.getName());
+  //    dto.setEffectiveFrom(productOffering.getEffectiveFrom());
+  //    dto.setEffectiveTo(productOffering.getEffectiveTo());
+  //    dto.setDescription(productOffering.getDescription());
+  //    dto.setDetailedDescription(productOffering.getDetailedDescription());
+  //    dto.setPoType(productOffering.getPoType());
+  //    dto.setParent(productOffering.getParent());
+  //    dto.setWorkingStep(productOffering.getWorkingStep());
+  //    dto.setSellIndicator(productOffering.getSellIndicator());
+  //    dto.setQuantityIndicator(productOffering.getQuantityIndicator());
+  //    dto.setCategory(productOffering.getCategory());
+  //    dto.setStatus(productOffering.getStatus());
+  //    dto.setPoParent_Child(productOffering.getPoParent_Child());
+  //    dto.setBS_externalId(productOffering.getBS_externalId());
+  //    dto.setCS_externalId(productOffering.getCS_externalId());
+  //    productOffering.setPR_id(productOffering.getPR_id());
+  //    productOffering.setServiceId(productOffering.getServiceId());
+  //    return dto;
+  //  }
+
 }

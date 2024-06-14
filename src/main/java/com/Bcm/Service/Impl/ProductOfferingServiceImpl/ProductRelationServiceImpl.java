@@ -1,22 +1,41 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
+import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.ProductRelation;
+import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductRelationRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductRelationService;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class ProductRelationServiceImpl implements ProductRelationService {
 
   final ProductRelationRepository ProductRelationRepository;
+  final ProductOfferingRepository productOfferingRepository;
 
   @Override
-  public ProductRelation create(ProductRelation ProductRelation) {
-    return ProductRelationRepository.save(ProductRelation);
+  @Transactional
+  public ProductRelation create(ProductRelation productRelation) {
+
+    // Fetch the ProductOffering by its Product_id
+    int productId = productRelation.getProductId();
+    ProductOffering productOffering =
+        productOfferingRepository
+            .findById(productId)
+            .orElseThrow(() -> new EntityNotFoundException("ProductOffering not found for Product_id: " + productId));
+
+    // Update the ProductOffering's working step
+    productOffering.setWorkingStep("Product Relation");
+    productOfferingRepository.save(productOffering);
+
+    // Save the ProductRelation
+    return ProductRelationRepository.save(productRelation);
   }
 
   @Override

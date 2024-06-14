@@ -165,6 +165,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     productOffering.getBusinessProcess_id().clear();
     productOffering.getBusinessProcess_id().add(businessProcess);
 
+    // Update the product's working step
+    productOffering.setWorkingStep("Business Process");
     return productOfferingRepository.save(productOffering);
   }
 

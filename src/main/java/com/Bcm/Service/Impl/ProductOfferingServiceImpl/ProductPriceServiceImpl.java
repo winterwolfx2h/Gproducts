@@ -2,24 +2,38 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
 import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.ProductPrice;
+import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductPriceRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceService;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class ProductPriceServiceImpl implements ProductPriceService {
 
   final ProductPriceRepository productPriceRepository;
+  final ProductOfferingRepository productOfferingRepository;
 
   @Override
   public ProductPrice create(ProductPrice productPrice) {
     try {
+      // Fetch the product by its Product_id
+      ProductOffering productOffering =
+          productOfferingRepository
+              .findById(productPrice.getProduct_id())
+              .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+      // Update the product's working step
+      productOffering.setWorkingStep("Product Price");
+      productOfferingRepository.save(productOffering);
       return productPriceRepository.save(productPrice);
     } catch (DataIntegrityViolationException e) {
       throw new DatabaseOperationException("Error creating ProductPrice", e);

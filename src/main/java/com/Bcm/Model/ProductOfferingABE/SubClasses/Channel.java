@@ -20,7 +20,7 @@ public class Channel {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "channel_seq_generator")
   @SequenceGenerator(name = "channel_seq_generator", sequenceName = "channel_sequence", allocationSize = 1)
-  @Column(name = "channelCode", nullable = false)
+  @Column(name = "channelCode")
   private int channelCode;
 
   @Column(name = "name", nullable = false)

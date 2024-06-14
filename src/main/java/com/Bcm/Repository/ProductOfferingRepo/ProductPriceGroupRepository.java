@@ -16,4 +16,6 @@ public interface ProductPriceGroupRepository extends JpaRepository<ProductPriceG
   List<ProductPriceGroup> searchByKeyword(String name);
 
   boolean existsByName(String name);
+
+  boolean existsById(int productPriceGroupCode);
 }

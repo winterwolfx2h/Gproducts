@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface ChannelRepository extends JpaRepository<Channel, Integer> {
-
   Optional<Channel> findById(int po_ChannelCode);
 
   Optional<Channel> findByName(String name);

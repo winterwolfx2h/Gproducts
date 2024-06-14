@@ -51,14 +51,6 @@ public class GeneralInfoController {
     }
   }
 
-  @PutMapping("/PriceGroup/{productId}")
-  public ProductOffering updatePOPrg(
-      @RequestBody GeneralInfoDTO generalInfoDTO, @PathVariable int productId, @RequestParam int productPriceGroupCode)
-      throws ProductOfferingNotFoundException {
-
-    return generalInfoService.updatePOPrg(generalInfoDTO, productId, productPriceGroupCode);
-  }
-
   @PutMapping("/Price/{productId}")
   public ProductOffering updatePrice(
       @RequestBody GeneralInfoDTO generalInfoDTO, @PathVariable int productId, @RequestParam int productPriceCode)
@@ -92,9 +84,11 @@ public class GeneralInfoController {
       @PathVariable int Product_id,
       @RequestParam int channelCode,
       @RequestParam int entityCode,
-      @RequestParam int eligibility_id)
+      @RequestParam int eligibility_id,
+      @RequestParam int productPriceGroupCode)
       throws ProductOfferingNotFoundException {
-    return generalInfoService.updatePOEligibility(generalInfoDTO, Product_id, channelCode, entityCode, eligibility_id);
+    return generalInfoService.updatePOEligibility(
+        generalInfoDTO, Product_id, channelCode, entityCode, eligibility_id, productPriceGroupCode);
   }
 
   @GetMapping("/GetDTOs")
@@ -102,29 +96,4 @@ public class GeneralInfoController {
     List<GeneralInfoDTO> dtos = generalInfoService.getAllGeneralInfoDTOs();
     return ResponseEntity.ok(dtos);
   }
-
-  //
-  //  private GeneralInfoDTO convertToDTO(ProductOffering productOffering) {
-  //    GeneralInfoDTO dto = new GeneralInfoDTO();
-  //    dto.setProduct_id(productOffering.getProduct_id());
-  //    dto.setName(productOffering.getName());
-  //    dto.setEffectiveFrom(productOffering.getEffectiveFrom());
-  //    dto.setEffectiveTo(productOffering.getEffectiveTo());
-  //    dto.setDescription(productOffering.getDescription());
-  //    dto.setDetailedDescription(productOffering.getDetailedDescription());
-  //    dto.setPoType(productOffering.getPoType());
-  //    dto.setParent(productOffering.getParent());
-  //    dto.setWorkingStep(productOffering.getWorkingStep());
-  //    dto.setSellIndicator(productOffering.getSellIndicator());
-  //    dto.setQuantityIndicator(productOffering.getQuantityIndicator());
-  //    dto.setCategory(productOffering.getCategory());
-  //    dto.setStatus(productOffering.getStatus());
-  //    dto.setPoParent_Child(productOffering.getPoParent_Child());
-  //    dto.setBS_externalId(productOffering.getBS_externalId());
-  //    dto.setCS_externalId(productOffering.getCS_externalId());
-  //    productOffering.setPR_id(productOffering.getPR_id());
-  //    productOffering.setServiceId(productOffering.getServiceId());
-  //    return dto;
-  //  }
-
 }

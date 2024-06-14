@@ -121,28 +121,6 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
   }
 
   @Override
-  public ProductOffering updatePOPrg(GeneralInfoDTO generalInfoDTO, int product_id, int productPriceGroupCode)
-      throws ProductOfferingNotFoundException {
-
-    ProductOffering productOffering = getProductOfferingById(product_id);
-    if (productOffering == null) {
-      throw new ProductOfferingNotFoundException("Product Offering not found");
-    }
-
-    ProductPriceGroup productPriceGroup =
-        productPriceGroupRepository
-            .findById(productPriceGroupCode)
-            .orElseThrow(() -> new ProductOfferingNotFoundException("Product Price Group not found"));
-
-    convertToEntity(generalInfoDTO, productOffering);
-
-    productOffering.getProductPriceGroups().clear();
-    productOffering.getProductPriceGroups().add(productPriceGroup);
-
-    return productOfferingRepository.save(productOffering);
-  }
-
-  @Override
   public ProductOffering updatePOPrice(GeneralInfoDTO generalInfoDTO, int product_id, int productPriceCode)
       throws ProductOfferingNotFoundException {
 
@@ -217,7 +195,12 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
 
   @Override
   public ProductOffering updatePOEligibility(
-      GeneralInfoDTO generalInfoDTO, int Product_id, int channelCode, int entityCode, int eligibility_id)
+      GeneralInfoDTO generalInfoDTO,
+      int Product_id,
+      int channelCode,
+      int entityCode,
+      int eligibility_id,
+      int productPriceCode)
       throws ProductOfferingNotFoundException {
     ProductOffering productOffering = getProductOfferingById(Product_id);
     if (productOffering == null) {
@@ -234,6 +217,11 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
             .findById(entityCode)
             .orElseThrow(() -> new ProductOfferingNotFoundException("Entity not found"));
 
+    ProductPriceGroup productPriceGroup =
+        productPriceGroupRepository
+            .findById(productPriceCode)
+            .orElseThrow(() -> new ProductOfferingNotFoundException("Product Price Group not found"));
+
     convertToEntity(generalInfoDTO, productOffering);
     productOffering.setEligibility_id(productOffering.getEligibility_id());
 
@@ -242,6 +230,9 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
 
     productOffering.getEntityCode().clear();
     productOffering.getEntityCode().add(eligibilityEntity);
+
+    productOffering.getProductPriceGroups().clear();
+    productOffering.getProductPriceGroups().add(productPriceGroup);
 
     return productOfferingRepository.save(productOffering);
   }

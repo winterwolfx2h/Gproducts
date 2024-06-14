@@ -16,4 +16,6 @@ public interface EntityRepository extends JpaRepository<EligibilityEntity, Integ
   List<EligibilityEntity> searchByKeyword(String name);
 
   boolean existsByName(String name);
+
+  boolean existsById(int entityCode);
 }

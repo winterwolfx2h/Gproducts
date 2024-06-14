@@ -16,10 +16,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EligibilityEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "entity_seq_generator")
   @SequenceGenerator(name = "entity_seq_generator", sequenceName = "entity_sequence", allocationSize = 1)
-  @Column(name = "entityCode", nullable = false)
+  @Column(name = "entityCode")
   private int entityCode;
 
   @Column(name = "name", nullable = false)

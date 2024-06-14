@@ -24,7 +24,7 @@ public class ProductPriceGroup {
       name = "productPriceGroup_seq_generator",
       sequenceName = "productPriceGroup_sequence",
       allocationSize = 1)
-  @Column(name = "productPriceGroupCode", nullable = false)
+  @Column(name = "productPriceGroupCode")
   private int productPriceGroupCode;
 
   @Column(name = "name", nullable = false)
@@ -32,14 +32,6 @@ public class ProductPriceGroup {
 
   @Column(name = "description", nullable = true)
   private String description;
-
-  //    @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOffering.class)
-  //    @JsonIgnore
-  //    @JoinTable(
-  //            name = "ProductOffering_pricegroup",
-  //            joinColumns = @JoinColumn(name = "productPriceGroupCode"),
-  //            inverseJoinColumns = @JoinColumn(name = "Product_id"))
-  //    Set<ProductOffering> productOfferings;
 
   @JsonIgnore
   @ManyToMany(mappedBy = "productPriceGroups")

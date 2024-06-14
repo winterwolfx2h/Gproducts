@@ -1,30 +1,62 @@
 package com.Bcm.Configuration;
 
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
+import com.Bcm.Repository.ProductOfferingRepo.ProductPriceGroupRepository;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.ChannelRepository;
+import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.EntityRepository;
+import javax.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-@Configuration
-public class DataInitializer {
+@RequiredArgsConstructor
+@Component
+public class DataInitializer implements ApplicationRunner {
 
-  private final ChannelRepository channelRepository;
+  final ChannelRepository channelRepository;
+  final EntityManager entityManager;
+  final EntityRepository entityRepository;
+  final ProductPriceGroupRepository productPriceGroupRepository;
 
-  public DataInitializer(ChannelRepository channelRepository) {
-    this.channelRepository = channelRepository;
+  @Override
+  @Transactional
+  public void run(ApplicationArguments args) {
+    initialize();
   }
 
-  @Bean
-  public ApplicationRunner initializer() {
-    return args -> {
-      if (!channelRepository.existsById(0)) {
-        Channel channel = new Channel();
-        channel.setChannelCode(0);
-        channel.setName("ALL");
-        channel.setDescription("ALL OF THE ABOVE");
-        channelRepository.save(channel);
-      }
-    };
+  private void initialize() {
+    if (!channelRepository.existsById(0)) {
+      // Insert initial channel with channelCode 0 using a native query
+      entityManager
+          .createNativeQuery(
+              "INSERT INTO Channel (channel_code, name, description) VALUES (0, 'ALL', 'ALL OF THE ABOVE')")
+          .executeUpdate();
+
+      // Adjust the sequence to start from 1
+      entityManager.createNativeQuery("ALTER SEQUENCE channel_sequence RESTART WITH 1").executeUpdate();
+    }
+    if (!entityRepository.existsById(0)) {
+      // Insert initial channel with channelCode 0 using a native query
+      entityManager
+          .createNativeQuery(
+              "INSERT INTO Entity (entity_code, name, description) VALUES (0, 'ALL', 'ALL OF THE ABOVE')")
+          .executeUpdate();
+
+      // Adjust the sequence to start from 1
+      entityManager.createNativeQuery("ALTER SEQUENCE entity_sequence RESTART WITH 1").executeUpdate();
+    }
+
+    if (!productPriceGroupRepository.existsById(0)) {
+      // Insert initial channel with channelCode 0 using a native query
+      entityManager
+          .createNativeQuery(
+              "INSERT INTO Product_Price_Group (product_price_group_code, name, description) VALUES (0, 'ALL', 'ALL OF"
+                  + " THE ABOVE')")
+          .executeUpdate();
+
+      // Adjust the sequence to start from 1
+      entityManager.createNativeQuery("ALTER SEQUENCE product_price_group_sequence RESTART WITH 1").executeUpdate();
+    }
   }
 }

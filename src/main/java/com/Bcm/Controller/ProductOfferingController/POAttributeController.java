@@ -31,7 +31,7 @@ public class POAttributeController {
     return poAttributesService.read();
   }
 
-  @PostMapping("/addPOAttributes")
+  @PostMapping("/add")
   @CacheEvict(value = "AttributesCache", allEntries = true)
   public ResponseEntity<?> create(@RequestBody List<POAttributes> POAttributesList) {
     try {

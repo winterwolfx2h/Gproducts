@@ -49,6 +49,7 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
             });
 
     generalInfoDTO.setStatus("Working state");
+    generalInfoDTO.setWorkingStep("General Info");
 
     // Create new ProductOffering entity from DTO
     ProductOffering productOffering = new ProductOffering();
@@ -67,6 +68,7 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     productOffering.setSellIndicator(generalInfoDTO.getSellIndicator());
     productOffering.setQuantityIndicator(generalInfoDTO.getQuantityIndicator());
     productOffering.setStatus("Working state");
+    productOffering.setWorkingStep("GeneralInfo");
 
     // Save the new ProductOffering
     return productOfferingRepository.save(productOffering);
@@ -95,6 +97,7 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     productOffering.setSellIndicator(generalInfoDTO.getSellIndicator());
     productOffering.setQuantityIndicator(generalInfoDTO.getQuantityIndicator());
     productOffering.setStatus(generalInfoDTO.getStatus());
+    productOffering.setWorkingStep(generalInfoDTO.getWorkingStep());
     productOffering.setEligibility_id(productOffering.getEligibility_id());
   }
 
@@ -116,6 +119,7 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     generalInfoDTO.setSellIndicator(productOffering.getSellIndicator());
     generalInfoDTO.setQuantityIndicator(productOffering.getQuantityIndicator());
     generalInfoDTO.setStatus(productOffering.getStatus());
+    generalInfoDTO.setWorkingStep(productOffering.getWorkingStep());
     productOffering.setEligibility_id(productOffering.getEligibility_id());
     return generalInfoDTO;
   }

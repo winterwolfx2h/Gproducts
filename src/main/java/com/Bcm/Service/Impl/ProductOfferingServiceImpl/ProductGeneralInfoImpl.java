@@ -17,12 +17,11 @@ import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.EntityRepository;
 import com.Bcm.Repository.ProductResourceRepository.PhysicalResourceRepository;
 import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.GeneralInfoService;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -213,7 +212,7 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
       throws ProductOfferingNotFoundException {
     ProductOffering productOffering = getProductOfferingById(Product_id);
     if (productOffering == null) {
-      throw new ProductOfferingNotFoundException("Product Offering not found");
+      throw new ProductOfferingNotFoundException("Product Offering not found.");
     }
 
     Channel channel =
@@ -243,6 +242,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     productOffering.getProductPriceGroups().clear();
     productOffering.getProductPriceGroups().add(productPriceGroup);
 
+    // Update the product's working step
+    productOffering.setWorkingStep("Eligibility");
     return productOfferingRepository.save(productOffering);
   }
 

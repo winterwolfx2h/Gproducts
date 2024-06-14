@@ -17,11 +17,12 @@ import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.EntityRepository;
 import com.Bcm.Repository.ProductResourceRepository.PhysicalResourceRepository;
 import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.GeneralInfoService;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -165,6 +166,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     productOffering.getBusinessProcess_id().clear();
     productOffering.getBusinessProcess_id().add(businessProcess);
 
+    // Update the product's working step
+    productOffering.setWorkingStep("Business Process");
     return productOfferingRepository.save(productOffering);
   }
 

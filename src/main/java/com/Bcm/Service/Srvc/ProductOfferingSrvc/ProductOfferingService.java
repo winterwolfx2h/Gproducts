@@ -1,5 +1,6 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 
+import com.Bcm.Exception.ProductOfferingNotFoundException;
 import com.Bcm.Model.Product.ProductOfferingDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import java.util.List;
@@ -47,4 +48,8 @@ public interface ProductOfferingService {
   List<ProductOfferingDTO> getAllProductOfferingDTOs();
 
   ProductOfferingDTO updateProductOfferingDTO(int po_code, ProductOfferingDTO updatedDTO);
+
+  ProductOffering updatePODTORelations(
+      ProductOfferingDTO productOfferingDTO, int Product_id, int channelCode, int entityCode, int productPriceGroupCode)
+      throws ProductOfferingNotFoundException;
 }

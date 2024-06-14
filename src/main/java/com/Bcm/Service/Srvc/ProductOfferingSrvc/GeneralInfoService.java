@@ -3,9 +3,8 @@ package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 import com.Bcm.Exception.ProductOfferingNotFoundException;
 import com.Bcm.Model.Product.GeneralInfoDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public interface GeneralInfoService {

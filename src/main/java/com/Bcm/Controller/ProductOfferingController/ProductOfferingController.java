@@ -1,10 +1,7 @@
 package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.BCMDrools.ProductOfferingDrools.ProductOfferingValidationService;
-import com.Bcm.Exception.ErrorMessage;
-import com.Bcm.Exception.InvalidInputException;
-import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
-import com.Bcm.Exception.ProductOfferingLogicException;
+import com.Bcm.Exception.*;
 import com.Bcm.Model.Product.ProductOfferingDTO;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
@@ -605,5 +602,17 @@ public class ProductOfferingController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An unexpected error occurred while updating the Product Offering.");
     }
+  }
+
+  @PutMapping("/DTORelations/{Product_id}")
+  public ProductOffering updateProductOfferingEligibility(
+      @RequestBody ProductOfferingDTO productOfferingDTO,
+      @PathVariable int Product_id,
+      @RequestParam int channelCode,
+      @RequestParam int entityCode,
+      @RequestParam int productPriceGroupCode)
+      throws ProductOfferingNotFoundException {
+    return productOfferingService.updatePODTORelations(
+        productOfferingDTO, Product_id, channelCode, entityCode, productPriceGroupCode);
   }
 }

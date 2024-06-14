@@ -194,6 +194,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     productOffering.getServiceId().clear();
     productOffering.getServiceId().add(cfs);
 
+    // Update the product's working step
+    productOffering.setWorkingStep("Product Resource");
     return productOfferingRepository.save(productOffering);
   }
 

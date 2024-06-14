@@ -2,44 +2,65 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
 import com.Bcm.Model.ProductOfferingABE.PrimeryKeyProductRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
+import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
+import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class ProductOfferRelationServiceImpl implements ProductOfferRelationService {
 
-  final ProductOfferRelationRepository ProductOfferRelationRepository;
-  private final ProductOfferRelationRepository productOfferRelationRepository;
+  final ProductOfferRelationRepository productOfferRelationRepository;
+  final ProductOfferingRepository productOfferingRepository;
+  final ProductOfferingService productOfferingService;
 
   @Override
+  @Transactional
   public List<ProductOfferRelation> create(List<ProductOfferRelation> productOfferRelations) {
     List<ProductOfferRelation> createdProductOfferRelations = new ArrayList<>();
+
     for (ProductOfferRelation productOfferRelation : productOfferRelations) {
       createdProductOfferRelations.add(productOfferRelationRepository.save(productOfferRelation));
+
+      // Fetch the ProductOffering by its Product_id
+      int productId = productOfferRelation.getId().getProductId();
+      ProductOffering productOffering =
+          productOfferingRepository
+              .findById(productId)
+              .orElseThrow(() -> new EntityNotFoundException("ProductOffering not found for Product_id: " + productId));
+
+      // Update the ProductOffering's working step
+      productOffering.setWorkingStep("Product Offer Relation");
+      productOfferingRepository.save(productOffering);
     }
+
     return createdProductOfferRelations;
   }
 
   @Override
   public List<ProductOfferRelation> read() {
-    return ProductOfferRelationRepository.findAll();
+    return productOfferRelationRepository.findAll();
   }
 
   @Override
   public List<ProductOfferRelation> searchByKeyword(String name) {
-    return ProductOfferRelationRepository.searchByKeyword(name);
+    return productOfferRelationRepository.searchByKeyword(name);
   }
 
   @Override
   public ProductOfferRelation findById(PrimeryKeyProductRelation id) {
     try {
-      Optional<ProductOfferRelation> optionalProductOfferRelation = ProductOfferRelationRepository.findById(id);
+      Optional<ProductOfferRelation> optionalProductOfferRelation = productOfferRelationRepository.findById(id);
       return optionalProductOfferRelation.orElseThrow(
           () -> new RuntimeException("ProductOfferRelation with ID " + id + " not found"));
     } catch (IllegalArgumentException e) {
@@ -49,7 +70,7 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
 
   @Override
   public void deleteById(PrimeryKeyProductRelation id) {
-    ProductOfferRelationRepository.deleteById(id);
+    productOfferRelationRepository.deleteById(id);
   }
 
   //    @Override

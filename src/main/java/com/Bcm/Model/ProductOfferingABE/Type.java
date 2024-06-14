@@ -1,7 +1,5 @@
 package com.Bcm.Model.ProductOfferingABE;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.List;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,8 +24,8 @@ public class Type {
   @Column(name = "description", nullable = false)
   private String description;
 
-  @OneToMany(cascade = CascadeType.ALL, targetEntity = BusinessProcess.class)
-  @JoinColumn(name = "type_id")
-  @JsonIgnore
-  private List<BusinessProcess> businessProcesses;
+  //  @OneToMany(cascade = CascadeType.ALL, targetEntity = BusinessProcess.class)
+  //  @JoinColumn(name = "type_id")
+  //  @JsonIgnore
+  //  private List<BusinessProcess> businessProcesses;
 }

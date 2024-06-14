@@ -19,9 +19,9 @@ public class BusinessProcessController {
 
   @PostMapping
   public ResponseEntity<BusinessProcess> createBusinessProcess(
-      @RequestParam Integer type_id, @RequestBody BusinessProcess businessProcess) {
+      /*@RequestParam Integer type_id,*/ @RequestBody BusinessProcess businessProcess) {
 
-    businessProcess.setType_id(type_id);
+    //    businessProcess.setType_id(type_id);
 
     try {
       BusinessProcess createdBusinessProcess = businessProcessService.createBusinessProcess(businessProcess);

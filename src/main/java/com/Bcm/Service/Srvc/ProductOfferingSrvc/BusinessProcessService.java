@@ -8,7 +8,8 @@ public interface BusinessProcessService {
   //
   //    List<BusinessProcess> create(List<BusinessProcess> businessProcesses);
   //
-  //    List<BusinessProcess> read();
+  //  List<BusinessProcess> read();
+
   //
   //    BusinessProcess update(int businessProcessId, BusinessProcess BusinessProcess);
   //
@@ -18,7 +19,8 @@ public interface BusinessProcessService {
   //
   //    List<BusinessProcess> searchByKeyword(String bussinessProcType);
   //
-  //    BusinessProcess findByBussinessProcType(String bussinessProcType);
+  //  BusinessProcess findByBussinessProcName(String name);
+
   //
   //    boolean existsById(int businessProcessId);
 

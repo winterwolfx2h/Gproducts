@@ -2,12 +2,10 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
-import com.Bcm.Model.ProductOfferingABE.Type;
 import com.Bcm.Repository.ProductOfferingRepo.BusinessProcessRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Repository.ProductOfferingRepo.TypeRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.BusinessProcessService;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +19,10 @@ public class BusinessProcessServiceImpl implements BusinessProcessService {
 
   @Override
   public BusinessProcess createBusinessProcess(BusinessProcess businessProcess) throws ResourceNotFoundException {
-    Optional<Type> type = typeRepository.findById(businessProcess.getType_id());
+    /*Optional<Type> type = typeRepository.findById(businessProcess.getType_id());
     if (!type.isPresent()) {
       throw new ResourceNotFoundException("Type ID does not exist");
-    }
+    }*/
 
     return businessProcessRepository.save(businessProcess);
   }

@@ -40,11 +40,11 @@ public class POAttributeController {
       for (POAttributes poAttribute : POAttributesList) {
         // Validate service
         String service = poAttribute.getService();
-        if (service == null || !customerFacingServiceSpecService.findByNameexist(service)) {
+        if (service != null && !customerFacingServiceSpecService.findByNameexist(service)) {
           return ResponseEntity.badRequest().body("Service with name '" + service + "' does not exist.");
         }
 
-        // Rest of the validation and creation logic
+        // Validate and create POAttributes
         String attributeCategoryName = poAttribute.getCategory();
         if (attributeCategoryName != null && !attributeCategoryName.isEmpty()) {
           for (POAttributes.ValueDescription valueDescription : poAttribute.getValueDescription()) {

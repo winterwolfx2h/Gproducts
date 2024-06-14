@@ -172,23 +172,23 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
       throw new ProductOfferingNotFoundException("Product Offering not found");
     }
 
-    CustomerFacingServiceSpec cfs =
-        customerFacingServiceSpecRepository
-            .findById(serviceId)
-            .orElseThrow(() -> new ProductOfferingNotFoundException("CFS not found"));
-
     PhysicalResource physicalResource =
         physicalResourceRepository
             .findById(pr_id)
             .orElseThrow(() -> new ProductOfferingNotFoundException("Physical Resource not found"));
 
-    convertToEntity(generalInfoDTO, productOffering);
+    CustomerFacingServiceSpec cfs =
+        customerFacingServiceSpecRepository
+            .findById(serviceId)
+            .orElseThrow(() -> new ProductOfferingNotFoundException("CFS not found"));
 
-    productOffering.getServiceId().clear();
-    productOffering.getServiceId().add(cfs);
+    convertToEntity(generalInfoDTO, productOffering);
 
     productOffering.getPR_id().clear();
     productOffering.getPR_id().add(physicalResource);
+
+    productOffering.getServiceId().clear();
+    productOffering.getServiceId().add(cfs);
 
     return productOfferingRepository.save(productOffering);
   }

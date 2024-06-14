@@ -243,6 +243,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     productOffering.getProductPriceGroups().clear();
     productOffering.getProductPriceGroups().add(productPriceGroup);
 
+    // Update the product's working step
+    productOffering.setWorkingStep("Eligibility");
     return productOfferingRepository.save(productOffering);
   }
 

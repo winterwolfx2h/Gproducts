@@ -3,9 +3,15 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 import com.Bcm.Exception.*;
 import com.Bcm.Model.Product.ProductOfferingDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
+import com.Bcm.Model.ProductOfferingABE.ProductPriceGroup;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
+import com.Bcm.Repository.ProductOfferingRepo.ProductPriceGroupRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductRelationRepository;
+import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.ChannelRepository;
+import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.EntityRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import java.util.ArrayList;
@@ -26,6 +32,9 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
   final ProductRelationRepository productRelationRepository;
   final EligibilityService eligibilityService;
   final ProductOfferRelationRepository productOfferRelationRepository;
+  private final ChannelRepository channelRepository;
+  private final EntityRepository entityRepository;
+  private final ProductPriceGroupRepository productPriceGroupRepository;
 
   @Override
   public ProductOffering create(ProductOffering productOffering) {
@@ -406,5 +415,43 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
     dto.setSubmarkets(submarketsString);
 
     return dto;
+  }
+
+  @Override
+  public ProductOffering updatePODTORelations(
+      ProductOfferingDTO productOfferingDTO, int Product_id, int channelCode, int entityCode, int productPriceCode)
+      throws ProductOfferingNotFoundException {
+    ProductOffering productOffering = findById(Product_id);
+    if (productOffering == null) {
+      throw new ProductOfferingNotFoundException("Product Offering not found");
+    }
+
+    Channel channel =
+        channelRepository
+            .findById(channelCode)
+            .orElseThrow(() -> new ProductOfferingNotFoundException("Channel not found"));
+
+    EligibilityEntity eligibilityEntity =
+        entityRepository
+            .findById(entityCode)
+            .orElseThrow(() -> new ProductOfferingNotFoundException("Entity not found"));
+
+    ProductPriceGroup productPriceGroup =
+        productPriceGroupRepository
+            .findById(productPriceCode)
+            .orElseThrow(() -> new ProductOfferingNotFoundException("Product Price Group not found"));
+
+    convertToDTO(productOffering);
+
+    productOffering.getChannelCode().clear();
+    productOffering.getChannelCode().add(channel);
+
+    productOffering.getEntityCode().clear();
+    productOffering.getEntityCode().add(eligibilityEntity);
+
+    productOffering.getProductPriceGroups().clear();
+    productOffering.getProductPriceGroups().add(productPriceGroup);
+
+    return productOfferingRepository.save(productOffering);
   }
 }

@@ -2,23 +2,39 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
 import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
+import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.POAttributesRepository;
+import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.POAttributesService;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
 public class POAttributesServiceImpl implements POAttributesService {
 
   final POAttributesRepository poAttributesRepository;
+  private final ProductOfferingRepository productOfferingRepository;
 
-  @Override
+  @Transactional
   public POAttributes create(POAttributes poAttributes) {
     try {
+      // Fetch the product by its Product_id
+      ProductOffering productOffering =
+          productOfferingRepository
+              .findById(poAttributes.getProduct_id())
+              .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+      // Update the product's working step
+      productOffering.setWorkingStep("PO-Attribute");
+      productOfferingRepository.save(productOffering);
+
+      // Save the POAttributes
       return poAttributesRepository.save(poAttributes);
     } catch (DataIntegrityViolationException e) {
       throw new DatabaseOperationException("Error creating product offering Attribute", e);

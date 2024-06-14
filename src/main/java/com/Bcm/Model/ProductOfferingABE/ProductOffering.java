@@ -5,16 +5,15 @@ import com.Bcm.Model.ProductResourceABE.PhysicalResource;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.*;
-import javax.validation.constraints.Pattern;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "ProductOffering")

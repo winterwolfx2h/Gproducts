@@ -5,11 +5,12 @@ import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Repository.ServiceConfigRepo.ResourceFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -147,7 +148,7 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
   @Override
   public boolean findByNameexist(String name) {
     try {
-      List<CustomerFacingServiceSpec> services = customerFacingServiceSpecRepository.findByServiceSpecType(name);
+      List<CustomerFacingServiceSpec> services = customerFacingServiceSpecRepository.findByName(name);
       return !services.isEmpty();
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for finding the service");

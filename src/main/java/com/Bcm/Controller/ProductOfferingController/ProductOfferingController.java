@@ -376,7 +376,12 @@ public class ProductOfferingController {
         new ErrorMessage(
             HttpStatus.INTERNAL_SERVER_ERROR.value(), new Date(), ex.getMessage(), request.getDescription(false));
     return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+
   }
+
+
+
+
 
   List<String> check(ProductOfferingDTO productOfferingDTO) {
     List<String> errors = new ArrayList<>();

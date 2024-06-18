@@ -9,6 +9,8 @@ public interface ProductPriceService {
 
   ProductPrice create(ProductPrice productPrice);
 
+  List<ProductPrice> create(List<ProductPrice> productPrices);
+
   List<ProductPrice> read();
 
   ProductPrice update(int productPriceCode, ProductPrice productPrice);

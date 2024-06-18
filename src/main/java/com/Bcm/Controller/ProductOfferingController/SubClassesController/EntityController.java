@@ -24,7 +24,7 @@ public class EntityController {
   final EligibilityService eligibilityService;
 
   @PostMapping("/addEntitys")
-  public ResponseEntity<?> createChannels(@RequestBody EligibilityEntity entity) {
+  public ResponseEntity<?> createEntity(@RequestBody EligibilityEntity entity) {
     try {
       EligibilityEntity createdEntity = entityService.create(entity);
       return ResponseEntity.ok(createdEntity);
@@ -34,36 +34,6 @@ public class EntityController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
     }
   }
-
-  //    public ResponseEntity<?> createEntities(@RequestBody List<Entity> entities) {
-  //        try {
-  //            List<String> createdEntityNames = new ArrayList<>(); // List to hold Entity names
-  //
-  //            // Create each Entity and add its name to the list of created Entity names
-  //            for (Entity entity : entities) {
-  //                Entity createdEntity = entityService.create(entity);
-  //                createdEntityNames.add(createdEntity.getName());
-  //            }
-  //
-  //            // Update all existing Eligibility instances to associate them with the created Entitys
-  //            List<Eligibility> eligibilities = eligibilityService.read();
-  //            for (Eligibility eligibility : eligibilities) {
-  //                eligibility.getEntities().addAll(createdEntityNames);
-  //                eligibilityService.update(eligibility.getEligibility_id(), eligibility);
-  //            }
-  //
-  //            return ResponseEntity.ok(createdEntityNames);
-  //        } catch (EntityAlreadyExistsException e) {
-  //            return ResponseEntity.badRequest().body(e.getMessage());
-  //        } catch (InvalidInputException e) {
-  //            return ResponseEntity.badRequest().body(e.getMessage());
-  //        } catch (RuntimeException e) {
-  //            // Log the stack trace for debugging purposes
-  //            e.printStackTrace();
-  //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " +
-  // e.getMessage());
-  //        }
-  //    }
 
   @GetMapping("/listEntity")
   public ResponseEntity<List<EligibilityEntity>> getAllFamilies() {
@@ -111,7 +81,7 @@ public class EntityController {
   }
 
   @GetMapping("/search")
-  public ResponseEntity<List<EligibilityEntity>> searchFamiliesByKeyword(@RequestParam("name") String name) {
+  public ResponseEntity<List<EligibilityEntity>> searchEntitiesByKeyword(@RequestParam("name") String name) {
     try {
       List<EligibilityEntity> searchResults = entityService.searchByKeyword(name);
       return ResponseEntity.ok(searchResults);

@@ -21,7 +21,7 @@ public class ProductPriceGroupController {
   final ProductPriceGroupService productPriceGroupService;
 
   @PostMapping("/addProductPriceGroup")
-  public ResponseEntity<?> createType(@RequestBody ProductPriceGroup productPriceGroup) {
+  public ResponseEntity<?> createPriceGroup(@RequestBody ProductPriceGroup productPriceGroup) {
     try {
       ProductPriceGroup createdProductPriceGroup = productPriceGroupService.create(productPriceGroup);
       return ResponseEntity.ok(createdProductPriceGroup);

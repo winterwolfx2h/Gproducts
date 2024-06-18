@@ -96,7 +96,7 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
     productOffering.setSellIndicator(generalInfoDTO.getSellIndicator());
     productOffering.setQuantityIndicator(generalInfoDTO.getQuantityIndicator());
-    productOffering.setStatus(generalInfoDTO.getStatus());
+    // productOffering.setStatus(generalInfoDTO.getStatus());
     productOffering.setWorkingStep(generalInfoDTO.getWorkingStep());
     productOffering.setEligibility_id(productOffering.getEligibility_id());
   }
@@ -127,7 +127,6 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
   @Override
   public ProductOffering updatePOPrice(GeneralInfoDTO generalInfoDTO, int product_id, int productPriceCode)
       throws ProductOfferingNotFoundException {
-
     ProductOffering productOffering = getProductOfferingById(product_id);
     if (productOffering == null) {
       throw new ProductOfferingNotFoundException("Product Offering not found");
@@ -140,8 +139,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
 
     convertToEntity(generalInfoDTO, productOffering);
 
-    //    productOffering.getProductPriceCode().clear();
-    //    productOffering.getProductPriceCode().add(productPrice);
+    // Ensure the status is not modified
+    productOffering.setStatus(productOffering.getStatus());
 
     return productOfferingRepository.save(productOffering);
   }
@@ -149,7 +148,6 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
   @Override
   public ProductOffering updatePOBusinessProc(GeneralInfoDTO generalInfoDTO, int product_id, int businessProcess_id)
       throws ProductOfferingNotFoundException {
-
     ProductOffering productOffering = getProductOfferingById(product_id);
     if (productOffering == null) {
       throw new ProductOfferingNotFoundException("Product Offering not found");
@@ -163,6 +161,9 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     convertToEntity(generalInfoDTO, productOffering);
 
     productOffering.setBusinessProcess_id(businessProcess_id);
+
+    // Ensure the status is not modified
+    productOffering.setStatus(productOffering.getStatus());
 
     // Update the product's working step
     productOffering.setWorkingStep("Business Process");
@@ -191,6 +192,9 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
 
     productOffering.setPr_id(pr_id);
     productOffering.setServiceId(serviceId);
+
+    // Ensure the status is not modified
+    productOffering.setStatus(productOffering.getStatus());
 
     // Update the product's working step
     productOffering.setWorkingStep("Product Resource");
@@ -227,7 +231,7 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
             .orElseThrow(() -> new ProductOfferingNotFoundException("Product Price Group not found"));
 
     convertToEntity(generalInfoDTO, productOffering);
-    // productOffering.setEligibility_id(productOffering.getEligibility_id());
+
     productOffering.setEligibility_id(eligibility_id);
 
     productOffering.getChannelCode().clear();
@@ -238,6 +242,9 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
 
     productOffering.getProductPriceGroups().clear();
     productOffering.getProductPriceGroups().add(productPriceGroup);
+
+    // Ensure the status is not modified
+    productOffering.setStatus(productOffering.getStatus());
 
     // Update the product's working step
     productOffering.setWorkingStep("Eligibility");

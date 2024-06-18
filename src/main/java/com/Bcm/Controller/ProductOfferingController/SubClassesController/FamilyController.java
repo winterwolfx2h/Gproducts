@@ -21,7 +21,7 @@ public class FamilyController {
   final FamilyService familyService;
 
   @PostMapping("/addFamily")
-  public ResponseEntity<?> createType(@RequestBody Family family) {
+  public ResponseEntity<?> createFamily(@RequestBody Family family) {
     try {
       Family createdFamily = familyService.create(family);
       return ResponseEntity.ok(createdFamily);

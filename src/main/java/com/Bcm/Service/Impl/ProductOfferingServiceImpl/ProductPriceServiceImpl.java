@@ -7,13 +7,14 @@ import com.Bcm.Model.ProductOfferingABE.ProductPrice;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductPriceRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -38,6 +39,29 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     } catch (DataIntegrityViolationException e) {
       throw new DatabaseOperationException("Error creating ProductPrice", e);
     }
+  }
+
+  @Override
+  @Transactional
+  public List<ProductPrice> create(List<ProductPrice> productPrices) {
+    List<ProductPrice> createdProductPrices = new ArrayList<>();
+
+    for (ProductPrice productPrice : productPrices) {
+      createdProductPrices.add(productPriceRepository.save(productPrice));
+
+      // Fetch the ProductOffering by its Product_id
+      int productId = productPrice.getProduct_id();
+      ProductOffering productOffering =
+          productOfferingRepository
+              .findById(productId)
+              .orElseThrow(() -> new EntityNotFoundException("ProductOffering not found for Product_id: " + productId));
+
+      // Update the ProductOffering's working step
+      productOffering.setWorkingStep("Product Price");
+      productOfferingRepository.save(productOffering);
+    }
+
+    return createdProductPrices;
   }
 
   @Override

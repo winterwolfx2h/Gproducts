@@ -4,6 +4,8 @@ import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.ProductPrice;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceService;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,13 +21,22 @@ public class ProductPriceController {
   final ProductPriceService productPriceService;
 
   @PostMapping("/addProductPrice")
-  public ResponseEntity<?> createType(@RequestBody ProductPrice productPrice) {
+  public ResponseEntity<?> createProductPrice(@RequestBody ProductPrice productPrice) {
     try {
       ProductPrice createdProductPrice = productPriceService.create(productPrice);
       return ResponseEntity.status(HttpStatus.CREATED).body(createdProductPrice);
     } catch (DatabaseOperationException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
+  }
+
+  @PostMapping("/addProductPrices")
+  public ResponseEntity<List<ProductPrice>> createProductPrices(@RequestBody List<ProductPrice> productPrices) {
+    List<ProductPrice> createdProductPrices = new ArrayList<>();
+    for (ProductPrice productPrice : productPrices) {
+      createdProductPrices.addAll(productPriceService.create(Collections.singletonList(productPrice)));
+    }
+    return ResponseEntity.ok(createdProductPrices);
   }
 
   @GetMapping("/listProductPrice")

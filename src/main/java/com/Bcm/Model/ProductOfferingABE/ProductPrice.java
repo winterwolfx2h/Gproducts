@@ -26,7 +26,7 @@ public class ProductPrice {
   private int productPriceCode;
 
   @Column(name = "oneTimeAmount", nullable = true)
-  private Integer oneTimeAmount;
+  private Float oneTimeAmount;
 
   @Column(name = "cashPrice", nullable = true)
   private Float cashPrice;

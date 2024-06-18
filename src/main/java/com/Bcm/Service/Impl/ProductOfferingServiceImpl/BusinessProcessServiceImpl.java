@@ -1,105 +1,109 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
+import com.Bcm.Exception.DatabaseOperationException;
+import com.Bcm.Exception.MethodsAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
+import com.Bcm.Model.ProductOfferingABE.Methods;
 import com.Bcm.Repository.ProductOfferingRepo.BusinessProcessRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Repository.ProductOfferingRepo.TypeRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.BusinessProcessService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class BusinessProcessServiceImpl implements BusinessProcessService {
 
   final BusinessProcessRepository businessProcessRepository;
-  final TypeRepository typeRepository;
+
   final ProductOfferingRepository productOfferingRepository;
 
   @Override
-  public BusinessProcess createBusinessProcess(BusinessProcess businessProcess) throws ResourceNotFoundException {
-    /*Optional<Type> type = typeRepository.findById(businessProcess.getType_id());
-    if (!type.isPresent()) {
-      throw new ResourceNotFoundException("Type ID does not exist");
-    }*/
-
-    return businessProcessRepository.save(businessProcess);
+  public BusinessProcess create(BusinessProcess businessProcess) {
+    Optional<BusinessProcess> existingBusnissProcess = businessProcessRepository.findByName(businessProcess.getName());
+    if (existingBusnissProcess.isPresent()) {
+      throw new MethodsAlreadyExistsException("busniss with name: " + businessProcess.getName() + " already exists.");
+    }
+    try {
+      return businessProcessRepository.save(businessProcess);
+    } catch (DataIntegrityViolationException e) {
+      throw new DatabaseOperationException("Error creating busniss", e);
+    }
   }
 
-  //
-  //    @Override
-  //    public List<BusinessProcess> create(List<BusinessProcess> businessProcesses) {
-  //        for (BusinessProcess businessProcess : businessProcesses) {
-  //            if
-  // (businessProcessRepository.findByBussinessProcType(businessProcess.getBussinessProcType()).isPresent()) {
-  //                throw new RuntimeException("BusinessProcess with type " + businessProcess.getBussinessProcType() + "
-  // already exists");
-  //            }
-  //
-  //            if (businessProcess.getBusinessProcess_id() != 0 &&
-  // !businessProcessRepository.existsById(businessProcess.getBusinessProcess_id())) {
-  //                throw new RuntimeException("BusinessProcess ID " + businessProcess.getBusinessProcess_id() + " does
-  // not exist");
-  //            }
-  //        }
-  //
-  //        return businessProcessRepository.saveAll(businessProcesses);
-  //    }
-  //
-  //    @Override
-  //    public List<BusinessProcess> read() {
-  //        return businessProcessRepository.findAll();
-  //    }
-  //
-  //    @Override
-  //    public BusinessProcess update(int businessProcessId, BusinessProcess updatedBusinessProcess) {
-  //        Optional<BusinessProcess> existingBusinessProcessOptional =
-  // businessProcessRepository.findById(businessProcessId);
-  //
-  //        if (existingBusinessProcessOptional.isPresent()) {
-  //            BusinessProcess existingBusinessProcess = existingBusinessProcessOptional.get();
-  //            existingBusinessProcess.setBussinessProcType(updatedBusinessProcess.getBussinessProcType());
-  //
-  //            return businessProcessRepository.save(existingBusinessProcess);
-  //        } else {
-  //            throw new RuntimeException("Could not find BusinessProcess with ID: " + businessProcessId);
-  //        }
-  //    }
-  //
-  //    @Override
-  //    public String delete(int businessProcessId) {
-  //        businessProcessRepository.deleteById(businessProcessId);
-  //        return ("BusinessProcess was successfully deleted");
-  //    }
-  //
-  //    @Override
-  //    public BusinessProcess findById(int businessProcessId) {
-  //        Optional<BusinessProcess> optionalPlan = businessProcessRepository.findById(businessProcessId);
-  //        return optionalPlan.orElseThrow(() -> new RuntimeException("BusinessProcess with ID " + businessProcessId +
-  // " not found"));
-  //    }
-  //
-  //    @Override
-  //    public List<BusinessProcess> searchByKeyword(String bussinessProcType) {
-  //        return businessProcessRepository.searchByKeyword(bussinessProcType);
-  //    }
-  //
-  //    @Override
-  //    public BusinessProcess findByBussinessProcType(String bussinessProcType) {
-  //        try {
-  //            Optional<BusinessProcess> optionalBusinessProcess =
-  // businessProcessRepository.findByBussinessProcType(bussinessProcType);
-  //            return optionalBusinessProcess.orElseThrow(() -> new RuntimeException("BusinessProcess with " +
-  // bussinessProcType + " not found"));
-  //        } catch (IllegalArgumentException e) {
-  //            throw new RuntimeException("Invalid argument provided for finding BusinessProcess");
-  //        }
-  //    }
-  //
-  //    @Override
-  //    public boolean existsById(int businessProcessId) {
-  //        return businessProcessRepository.existsById(businessProcessId);
-  //    }
+  @Override
+  public List<BusinessProcess> read() {
+    try {
+      return businessProcessRepository.findAllOrderedByBusnissProcess();
+    } catch (Exception e) {
+      throw new RuntimeException("Error occurred while retrieving busniss");
+    }
+  }
+
+  @Override
+  public BusinessProcess update(int businessProcess_id, BusinessProcess updatedBusnissProcess) {
+    Optional<BusinessProcess> existingBusnissOptional = businessProcessRepository.findById(businessProcess_id);
+    if (existingBusnissOptional.isPresent()) {
+      BusinessProcess existingBusnissProcess = existingBusnissOptional.get();
+
+      String newName = updatedBusnissProcess.getName();
+      // Check if there's another Methods with the same name
+      if (!existingBusnissProcess.getName().equals(newName) && businessProcessRepository.existsByName(newName)) {
+        throw new MethodsAlreadyExistsException("busniss with name '" + newName + "' already exists.");
+      }
+      existingBusnissProcess.setName(updatedBusnissProcess.getName());
+      existingBusnissProcess.setDescription(updatedBusnissProcess.getDescription());
+      return businessProcessRepository.save(existingBusnissProcess);
+    } else {
+      throw new ResourceNotFoundException("BusinessProcess with ID " + businessProcess_id + " not found.");
+    }
+  }
+
+  @Override
+  public String delete(int businessProcess_id) {
+    try {
+      BusinessProcess businessProcess = findById(businessProcess_id);
+      businessProcessRepository.deleteById(businessProcess_id);
+      return ("businessProcess with ID " + businessProcess_id + " was successfully deleted");
+    } catch (IllegalArgumentException e) {
+      throw new RuntimeException("Invalid argument provided for deleting Methods");
+    }
+  }
+
+  @Override
+  public BusinessProcess findById(int businessProcess_id) {
+    try {
+      Optional<BusinessProcess> optionalBusinessProcess = businessProcessRepository.findById(businessProcess_id);
+      return optionalBusinessProcess.orElseThrow(() -> new RuntimeException("BusinessProcess with ID " + businessProcess_id + " not found"));
+    } catch (IllegalArgumentException e) {
+      throw new RuntimeException("Invalid argument provided for finding Methods");
+    }
+  }
+
+  @Override
+  public List<BusinessProcess> searchByKeyword(String name) {
+    try {
+      return businessProcessRepository.searchByKeyword(name);
+    } catch (IllegalArgumentException e) {
+      throw new RuntimeException("Invalid argument provided for searching Methods by keyword");
+    }
+  }
+
+  @Override
+  public BusinessProcess findByName(String name) {
+    try {
+      Optional<BusinessProcess> optionalBusinessProcess = businessProcessRepository.findByName(name);
+      return optionalBusinessProcess.orElseThrow(() -> new RuntimeException("BusinessProcess with name " + name + " not found"));
+    } catch (IllegalArgumentException e) {
+      throw new RuntimeException("Invalid argument provided for finding Methods");
+    }
+  }
+
 
 }

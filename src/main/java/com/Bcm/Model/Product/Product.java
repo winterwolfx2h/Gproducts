@@ -62,13 +62,7 @@ public class Product {
   @JsonIgnore
   private List<POAttributes> poAttributes;
 
-  @JsonIgnore
-  @ManyToMany
-  @JoinTable(
-      name = "ProductJOINprice",
-      joinColumns = @JoinColumn(name = "Product_id"),
-      inverseJoinColumns = @JoinColumn(name = "productPriceCode"))
-  private Set<ProductPrice> productPriceCode = new HashSet<>();
+
 
   @OneToMany(cascade = CascadeType.ALL, targetEntity = Type.class)
   @JoinColumn(name = "Product_id")

@@ -23,9 +23,6 @@ public class Eligibility {
   @Column(name = "stock_Indicator")
   private Boolean stock_Indicator;
 
-  @Column(name = "Product_id", nullable = false)
-  private int Product_id;
-
   @JsonIgnore
   @ManyToOne
   @JoinColumn(name = "Product_id", insertable = false, updatable = false)

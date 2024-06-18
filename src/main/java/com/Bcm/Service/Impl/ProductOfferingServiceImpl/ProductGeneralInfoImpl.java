@@ -140,8 +140,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
 
     convertToEntity(generalInfoDTO, productOffering);
 
-//    productOffering.getProductPriceCode().clear();
-//    productOffering.getProductPriceCode().add(productPrice);
+    //    productOffering.getProductPriceCode().clear();
+    //    productOffering.getProductPriceCode().add(productPrice);
 
     return productOfferingRepository.save(productOffering);
   }
@@ -163,7 +163,6 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     convertToEntity(generalInfoDTO, productOffering);
 
     productOffering.setBusinessProcess_id(businessProcess_id);
-
 
     // Update the product's working step
     productOffering.setWorkingStep("Business Process");
@@ -228,7 +227,7 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
             .orElseThrow(() -> new ProductOfferingNotFoundException("Product Price Group not found"));
 
     convertToEntity(generalInfoDTO, productOffering);
-    //productOffering.setEligibility_id(productOffering.getEligibility_id());
+    // productOffering.setEligibility_id(productOffering.getEligibility_id());
     productOffering.setEligibility_id(eligibility_id);
 
     productOffering.getChannelCode().clear();

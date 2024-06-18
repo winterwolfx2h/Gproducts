@@ -3,16 +3,16 @@ package com.Bcm.Controller.ProductOfferingController;
 import com.Bcm.Exception.MethodsAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
-import com.Bcm.Model.ProductOfferingABE.Methods;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.BusinessProcessService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@Tag(name = "Business Process Controller", description = "All of the Business Process's methods")
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -43,10 +43,9 @@ public class BusinessProcessController {
     }
   }
 
-
   @PutMapping("/{businessProcess_id}")
   public ResponseEntity<?> updateBusnissProcess(
-          @PathVariable("businessProcess_id") int businessProcess_id, @RequestBody BusinessProcess updatedBusnissProcess) {
+      @PathVariable("businessProcess_id") int businessProcess_id, @RequestBody BusinessProcess updatedBusnissProcess) {
     try {
       BusinessProcess updatedGroup = businessProcessService.update(businessProcess_id, updatedBusnissProcess);
       return ResponseEntity.ok(updatedGroup);
@@ -78,6 +77,7 @@ public class BusinessProcessController {
       return ResponseEntity.status(500).body(null);
     }
   }
+
   @CacheEvict(value = "BusinessProcesssCache", allEntries = true)
   public void invalidateBusinessProcesssCache() {}
 }

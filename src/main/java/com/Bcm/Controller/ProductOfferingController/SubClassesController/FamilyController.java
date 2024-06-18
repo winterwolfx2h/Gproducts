@@ -4,12 +4,14 @@ import com.Bcm.Exception.FamilyAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Family Controller", description = "All of the Families methods")
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/family")
@@ -19,7 +21,7 @@ public class FamilyController {
   final FamilyService familyService;
 
   @PostMapping("/addFamily")
-  public ResponseEntity<?> createType(@RequestBody Family family) {
+  public ResponseEntity<?> createFamily(@RequestBody Family family) {
     try {
       Family createdFamily = familyService.create(family);
       return ResponseEntity.ok(createdFamily);

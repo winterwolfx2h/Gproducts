@@ -2,11 +2,10 @@ package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.ProductOfferingABE.Eligibility;
-import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Eligibility Controller", description = "All of the Eligibilities methods")
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -32,13 +32,14 @@ public class EligibilityController {
   public ResponseEntity<?> createEligibility(@RequestBody Eligibility eligibility) {
     try {
       // Find the ProductOffering by the provided productId
-//      Optional<ProductOffering> productOfferingOpt = productOfferingRepository.findById(eligibility.getProduct_id());
-//      if (!productOfferingOpt.isPresent()) {
-//        return ResponseEntity.badRequest().body("Invalid Product ID");
-//      }
+      //      Optional<ProductOffering> productOfferingOpt =
+      // productOfferingRepository.findById(eligibility.getProduct_id());
+      //      if (!productOfferingOpt.isPresent()) {
+      //        return ResponseEntity.badRequest().body("Invalid Product ID");
+      //      }
 
-//      // Set the ProductOffering to the Eligibility
-//      eligibility.setProductOffering(productOfferingOpt.get());
+      //      // Set the ProductOffering to the Eligibility
+      //      eligibility.setProductOffering(productOfferingOpt.get());
 
       // Save the Eligibility entity
       Eligibility createdEligibility = eligibilityService.create(eligibility);

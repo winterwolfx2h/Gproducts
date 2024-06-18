@@ -32,13 +32,13 @@ public class EligibilityController {
   public ResponseEntity<?> createEligibility(@RequestBody Eligibility eligibility) {
     try {
       // Find the ProductOffering by the provided productId
-      Optional<ProductOffering> productOfferingOpt = productOfferingRepository.findById(eligibility.getProduct_id());
-      if (!productOfferingOpt.isPresent()) {
-        return ResponseEntity.badRequest().body("Invalid Product ID");
-      }
+//      Optional<ProductOffering> productOfferingOpt = productOfferingRepository.findById(eligibility.getProduct_id());
+//      if (!productOfferingOpt.isPresent()) {
+//        return ResponseEntity.badRequest().body("Invalid Product ID");
+//      }
 
-      // Set the ProductOffering to the Eligibility
-      eligibility.setProductOffering(productOfferingOpt.get());
+//      // Set the ProductOffering to the Eligibility
+//      eligibility.setProductOffering(productOfferingOpt.get());
 
       // Save the Eligibility entity
       Eligibility createdEligibility = eligibilityService.create(eligibility);

@@ -228,7 +228,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
             .orElseThrow(() -> new ProductOfferingNotFoundException("Product Price Group not found"));
 
     convertToEntity(generalInfoDTO, productOffering);
-    productOffering.setEligibility_id(productOffering.getEligibility_id());
+    //productOffering.setEligibility_id(productOffering.getEligibility_id());
+    productOffering.setEligibility_id(eligibility_id);
 
     productOffering.getChannelCode().clear();
     productOffering.getChannelCode().add(channel);

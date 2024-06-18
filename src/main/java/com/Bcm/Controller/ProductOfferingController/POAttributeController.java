@@ -6,6 +6,7 @@ import com.Bcm.Exception.ServiceAlreadyExistsException;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.POAttributesService;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "PO-Attribute Controller", description = "All of the PO-Attribute's methods")
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")

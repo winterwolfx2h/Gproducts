@@ -3,6 +3,7 @@ package com.Bcm.Controller.ProductOfferingController;
 import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Model.ProductOfferingABE.ProductRelation;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductRelationService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+@Tag(name = "Product Relation Controller", description = "All of the Product Relation's methods")
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")

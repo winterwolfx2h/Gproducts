@@ -4,17 +4,14 @@ import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.MethodsAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
-import com.Bcm.Model.ProductOfferingABE.Methods;
 import com.Bcm.Repository.ProductOfferingRepo.BusinessProcessRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
-import com.Bcm.Repository.ProductOfferingRepo.TypeRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.BusinessProcessService;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -80,7 +77,8 @@ public class BusinessProcessServiceImpl implements BusinessProcessService {
   public BusinessProcess findById(int businessProcess_id) {
     try {
       Optional<BusinessProcess> optionalBusinessProcess = businessProcessRepository.findById(businessProcess_id);
-      return optionalBusinessProcess.orElseThrow(() -> new RuntimeException("BusinessProcess with ID " + businessProcess_id + " not found"));
+      return optionalBusinessProcess.orElseThrow(
+          () -> new RuntimeException("BusinessProcess with ID " + businessProcess_id + " not found"));
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for finding Methods");
     }
@@ -99,11 +97,10 @@ public class BusinessProcessServiceImpl implements BusinessProcessService {
   public BusinessProcess findByName(String name) {
     try {
       Optional<BusinessProcess> optionalBusinessProcess = businessProcessRepository.findByName(name);
-      return optionalBusinessProcess.orElseThrow(() -> new RuntimeException("BusinessProcess with name " + name + " not found"));
+      return optionalBusinessProcess.orElseThrow(
+          () -> new RuntimeException("BusinessProcess with name " + name + " not found"));
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for finding Methods");
     }
   }
-
-
 }

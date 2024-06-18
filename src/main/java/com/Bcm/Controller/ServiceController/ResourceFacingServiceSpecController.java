@@ -10,12 +10,14 @@ import com.Bcm.Model.ServiceABE.ResourceFacingServiceSpec;
 import com.Bcm.Repository.ProductResourceRepository.LogicalResourceRepository;
 import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.ResourceFacingServiceSpecService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Resource Facing Service Controller", description = "All of the Resource Facing Service's methods")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/Resource-facing-Service-Spec")

@@ -1,28 +1,26 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
+import com.Bcm.Model.ProductOfferingABE.Methods;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public interface BusinessProcessService {
-  //
-  //    List<BusinessProcess> create(List<BusinessProcess> businessProcesses);
-  //
-  //  List<BusinessProcess> read();
+    BusinessProcess create(BusinessProcess businessProcess);
 
-  //
-  //    BusinessProcess update(int businessProcessId, BusinessProcess BusinessProcess);
-  //
-  //    String delete(int businessProcessId);
-  //
-  //    BusinessProcess findById(int businessProcessId);
-  //
-  //    List<BusinessProcess> searchByKeyword(String bussinessProcType);
-  //
-  //  BusinessProcess findByBussinessProcName(String name);
+    List<BusinessProcess> read();
 
-  //
-  //    boolean existsById(int businessProcessId);
+    BusinessProcess update(int businessProcess_id, BusinessProcess businessProcess);
 
-  BusinessProcess createBusinessProcess(BusinessProcess businessProcess) throws Exception;
+    String delete(int businessProcess_id);
+
+    BusinessProcess findById(int businessProcess_id);
+
+    List<BusinessProcess> searchByKeyword(String name);
+
+    BusinessProcess findByName(String name);
+
+
 }

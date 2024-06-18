@@ -1,13 +1,17 @@
 package com.Bcm.Controller.ProductOfferingController;
 
+import com.Bcm.Exception.MethodsAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
+import com.Bcm.Model.ProductOfferingABE.Methods;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.BusinessProcessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,91 +21,63 @@ public class BusinessProcessController {
 
   final BusinessProcessService businessProcessService;
 
-  @PostMapping
-  public ResponseEntity<BusinessProcess> createBusinessProcess(
-      /*@RequestParam Integer type_id,*/ @RequestBody BusinessProcess businessProcess) {
-
-    //    businessProcess.setType_id(type_id);
-
+  @PostMapping("/addBusinessProcess")
+  public ResponseEntity<?> createBusinessProcess(@RequestBody BusinessProcess businessProcess) {
     try {
-      BusinessProcess createdBusinessProcess = businessProcessService.createBusinessProcess(businessProcess);
-      return ResponseEntity.status(HttpStatus.CREATED).body(createdBusinessProcess);
-    } catch (ResourceNotFoundException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      BusinessProcess createdBusinessProcess = businessProcessService.create(businessProcess);
+      return ResponseEntity.ok(createdBusinessProcess);
+    } catch (MethodsAlreadyExistsException e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
     }
   }
 
-  //
-  //    @PostMapping("/addBusinessProcesses")
-  //    @CacheEvict(value = "BusinessProcesssCache", allEntries = true)
-  //    public ResponseEntity<?> create(@RequestBody List<BusinessProcess> businessProcesses) {
-  //        try {
-  //            List<BusinessProcess> createdBusinessProcesses = businessProcessService.create(businessProcesses);
-  //            return ResponseEntity.ok(createdBusinessProcesses);
-  //        } catch (RuntimeException e) {
-  //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-  //        }
-  //    }
-  //
-  //
-  //    @GetMapping("/listBusinessProcesss")
-  //    @Cacheable(value = "BusinessProcesssCache")
-  //    public ResponseEntity<?> getAllBusinessProcesss() {
-  //        try {
-  //            List<BusinessProcess> BusinessProcesss = businessProcessService.read();
-  //            return ResponseEntity.ok(BusinessProcesss);
-  //        } catch (RuntimeException e) {
-  //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-  //        }
-  //    }
-  //
-  //    @GetMapping("/{businessProcessId}")
-  //    public ResponseEntity<?> getBusinessProcessById(@PathVariable("businessProcessId") int businessProcessId) {
-  //        try {
-  //            BusinessProcess BusinessProcess = businessProcessService.findById(businessProcessId);
-  //            return ResponseEntity.ok(BusinessProcess);
-  //        } catch (RuntimeException e) {
-  //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-  //        }
-  //    }
-  //
-  //    @PutMapping("/{businessProcessId}")
-  //    @CacheEvict(value = "BusinessProcesssCache", allEntries = true)
-  //    public ResponseEntity<?> updateBusinessProcess(
-  //            @PathVariable("businessProcessId") int businessProcessId,
-  //            @RequestBody BusinessProcess updatedBusinessProcess) {
-  //        try {
-  //            BusinessProcess updatedGroup = businessProcessService.update(businessProcessId, updatedBusinessProcess);
-  //            return ResponseEntity.ok(updatedGroup);
-  //        } catch (RuntimeException e) {
-  //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-  //        }
-  //    }
-  //
-  //    @DeleteMapping("/{businessProcessId}")
-  //    @CacheEvict(value = "BusinessProcesssCache", allEntries = true)
-  //    public ResponseEntity<?> deleteBusinessProcess(@PathVariable("businessProcessId") int businessProcessId) {
-  //        try {
-  //            String resultMessage = businessProcessService.delete(businessProcessId);
-  //            return ResponseEntity.ok(resultMessage);
-  //        } catch (RuntimeException e) {
-  //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-  //        }
-  //    }
-  //
-  //    @GetMapping("/search")
-  //    public ResponseEntity<?> searchBusinessProcesssByKeyword(@RequestParam("bussinessProcType") String
-  // bussinessProcType) {
-  //        try {
-  //            List<BusinessProcess> searchResults = businessProcessService.searchByKeyword(bussinessProcType);
-  //            return ResponseEntity.ok(searchResults);
-  //        } catch (RuntimeException e) {
-  //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-  //        }
-  //    }
-  //
+  @GetMapping("/listbusinessProcess")
+  public ResponseEntity<List<BusinessProcess>> getAllBusnissProcess() {
+    try {
+      List<BusinessProcess> businessProcesses = businessProcessService.read();
+      return ResponseEntity.ok(businessProcesses);
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(500).body(null);
+    }
+  }
+
+
+  @PutMapping("/{businessProcess_id}")
+  public ResponseEntity<?> updateBusnissProcess(
+          @PathVariable("businessProcess_id") int businessProcess_id, @RequestBody BusinessProcess updatedBusnissProcess) {
+    try {
+      BusinessProcess updatedGroup = businessProcessService.update(businessProcess_id, updatedBusnissProcess);
+      return ResponseEntity.ok(updatedGroup);
+    } catch (MethodsAlreadyExistsException e) {
+      return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    } catch (ResourceNotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
+    }
+  }
+
+  @DeleteMapping("/{businessProcess_id}")
+  public ResponseEntity<String> deleteBusnissProcess(@PathVariable("businessProcess_id") int businessProcess_id) {
+    try {
+      String resultMessage = businessProcessService.delete(businessProcess_id);
+      return ResponseEntity.ok(resultMessage);
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(500).body(null);
+    }
+  }
+
+  @GetMapping("/search")
+  public ResponseEntity<List<BusinessProcess>> searchMethodsByKeyword(@RequestParam("name") String name) {
+    try {
+      List<BusinessProcess> searchResults = businessProcessService.searchByKeyword(name);
+      return ResponseEntity.ok(searchResults);
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(500).body(null);
+    }
+  }
   @CacheEvict(value = "BusinessProcesssCache", allEntries = true)
   public void invalidateBusinessProcesssCache() {}
 }

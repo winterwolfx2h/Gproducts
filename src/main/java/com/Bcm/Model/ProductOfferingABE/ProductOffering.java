@@ -58,48 +58,33 @@ public class ProductOffering extends Product {
   @Column(name = "submarkets", nullable = true)
   private String submarkets;
 
-  @JsonIgnore
-  @ManyToMany
-  @JoinTable(
-      name = "ProductOffering_BusinessProcess",
-      joinColumns = @JoinColumn(name = "Product_id"),
-      inverseJoinColumns = @JoinColumn(name = "businessProcess_id"))
-  private Set<BusinessProcess> businessProcess_id = new HashSet<>();
 
-  @JsonIgnore
-  @ManyToMany
-  @JoinTable(
-      name = "ProductOffering_Service",
-      joinColumns = @JoinColumn(name = "Product_id"),
-      inverseJoinColumns = @JoinColumn(name = "serviceId"))
-  private Set<CustomerFacingServiceSpec> serviceId = new HashSet<>();
 
-  @JsonIgnore
-  @ManyToMany
-  @JoinTable(
-      name = "ProductOffering_PhysicalResources",
-      joinColumns = @JoinColumn(name = "Product_id"),
-      inverseJoinColumns = @JoinColumn(name = "PR_id"))
-  private Set<PhysicalResource> PR_id = new HashSet<>();
+  @Column(name = "businessProcess_id")
+  private Integer businessProcess_id;
+
+
+  @Column(name = "serviceId",nullable = true)
+  private Integer serviceId  ;
+
+
+  @Column(name = "pr_id")
+  private Integer pr_id;
+
 
   @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOfferRelation.class)
   @JoinColumn(name = "Product_id")
   @JsonIgnore
   private List<ProductOfferRelation> productOfferRelations;
 
-  //  @OneToMany(cascade = CascadeType.ALL, targetEntity = BusinessProcess.class)
-  //  @JoinColumn(name = "Product_id")
-  //  @JsonIgnore
-  //  private List<BusinessProcess> businessProcesses;
+
 
   @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductRelation.class)
   @JoinColumn(name = "Product_id")
   @JsonIgnore
   private List<ProductRelation> productRelations;
 
-  @JsonIgnore
-  @OneToMany(mappedBy = "productOffering", cascade = CascadeType.ALL)
-  private List<Eligibility> eligibilities;
+
 
   @Column(name = "eligibility_id", insertable = false, updatable = true)
   private Integer eligibility_id;

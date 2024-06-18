@@ -140,8 +140,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
 
     convertToEntity(generalInfoDTO, productOffering);
 
-    productOffering.getProductPriceCode().clear();
-    productOffering.getProductPriceCode().add(productPrice);
+//    productOffering.getProductPriceCode().clear();
+//    productOffering.getProductPriceCode().add(productPrice);
 
     return productOfferingRepository.save(productOffering);
   }
@@ -162,8 +162,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
 
     convertToEntity(generalInfoDTO, productOffering);
 
-    productOffering.getBusinessProcess_id().clear();
-    productOffering.getBusinessProcess_id().add(businessProcess);
+    productOffering.setBusinessProcess_id(businessProcess_id);
+
 
     // Update the product's working step
     productOffering.setWorkingStep("Business Process");
@@ -190,11 +190,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
 
     convertToEntity(generalInfoDTO, productOffering);
 
-    productOffering.getPR_id().clear();
-    productOffering.getPR_id().add(physicalResource);
-
-    productOffering.getServiceId().clear();
-    productOffering.getServiceId().add(cfs);
+    productOffering.setPr_id(pr_id);
+    productOffering.setServiceId(serviceId);
 
     // Update the product's working step
     productOffering.setWorkingStep("Product Resource");

@@ -7,6 +7,8 @@ import com.Bcm.Model.ProductOfferingABE.POAttributes;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.POAttributesService;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +17,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "PO-Attribute Controller", description = "All of the PO-Attribute's methods")
@@ -23,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/POAttribute")
 public class POAttributeController {
+
+  final JdbcTemplate base;
 
   final POAttributesService poAttributesService;
   final CustomerFacingServiceSpecService customerFacingServiceSpecService;
@@ -70,6 +76,62 @@ public class POAttributeController {
     } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
     }
+  }
+
+  @GetMapping("/searchByProductId")
+  public List<POAttributes> searchByProductID(@RequestParam Integer productId) {
+    // SQL query to get all columns from POAttributes where product_id matches
+    String sqlSearchByProductId =
+        "SELECT po_attribute_code, name, category, bsexternal_id, csexternal_id, char_type, char_value, mandatory,"
+            + " display_format, externalcfs, max_size, service, product_id FROM poattributes WHERE product_id = ?";
+
+    // Execute the query and map the result set to POAttributes objects
+    List<POAttributes> poAttributesResponses =
+        base.query(
+            sqlSearchByProductId,
+            new Object[] {productId},
+            new RowMapper<POAttributes>() {
+              @Override
+              public POAttributes mapRow(ResultSet rs, int rowNum) throws SQLException {
+                POAttributes response = new POAttributes();
+                response.setPoAttribute_code(rs.getInt("po_attribute_code"));
+                response.setName(rs.getString("name"));
+                response.setCategory(rs.getString("category"));
+                response.setBsexternalId(rs.getString("bsexternal_id"));
+                response.setCsexternalId(rs.getString("csexternal_id"));
+                response.setCharType(rs.getString("char_type"));
+                response.setCharValue(rs.getString("char_value"));
+                response.setMandatory(rs.getBoolean("mandatory"));
+                response.setDisplayFormat(rs.getString("display_format"));
+                response.setExternalcfs(rs.getBoolean("externalcfs"));
+                response.setMaxSize(rs.getString("max_size"));
+                response.setService(rs.getString("service"));
+                response.setProduct_id(rs.getInt("product_id"));
+
+                // Query for ValueDescription list
+                String sqlValueDescription =
+                    "SELECT value, description FROM value_description WHERE po_attribute_code = ?";
+                List<POAttributes.ValueDescription> valueDescriptions =
+                    base.query(
+                        sqlValueDescription,
+                        new Object[] {response.getPoAttribute_code()},
+                        new RowMapper<POAttributes.ValueDescription>() {
+                          @Override
+                          public POAttributes.ValueDescription mapRow(ResultSet rs, int rowNum) throws SQLException {
+                            POAttributes.ValueDescription valueDescription = new POAttributes.ValueDescription();
+                            valueDescription.setValue(rs.getString("value"));
+                            valueDescription.setDescription(rs.getString("description"));
+                            return valueDescription;
+                          }
+                        });
+
+                response.setValueDescription(valueDescriptions);
+
+                return response;
+              }
+            });
+
+    return poAttributesResponses;
   }
 
   @PutMapping("/updatePOAttributes/{poAttribute_code}")

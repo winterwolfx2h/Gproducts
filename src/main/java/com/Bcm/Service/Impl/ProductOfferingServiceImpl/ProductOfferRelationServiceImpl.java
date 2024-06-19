@@ -3,6 +3,7 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 import com.Bcm.Model.ProductOfferingABE.PrimeryKeyProductRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
+import com.Bcm.Model.ProductOfferingABE.RelationResponse;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
@@ -70,5 +71,10 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
   @Override
   public void deleteById(PrimeryKeyProductRelation id) {
     productOfferRelationRepository.deleteById(id);
+  }
+
+  @Override
+  public List<RelationResponse> searchByProductID(Integer productId) {
+    return productOfferRelationRepository.findRelationsByProductId(productId);
   }
 }

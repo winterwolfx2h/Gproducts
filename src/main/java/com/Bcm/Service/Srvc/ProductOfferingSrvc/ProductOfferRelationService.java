@@ -2,6 +2,7 @@ package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 
 import com.Bcm.Model.ProductOfferingABE.PrimeryKeyProductRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
+import com.Bcm.Model.ProductOfferingABE.RelationResponse;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -17,4 +18,6 @@ public interface ProductOfferRelationService {
   ProductOfferRelation findById(PrimeryKeyProductRelation id);
 
   void deleteById(PrimeryKeyProductRelation id);
+
+  List<RelationResponse> searchByProductID(Integer productId);
 }

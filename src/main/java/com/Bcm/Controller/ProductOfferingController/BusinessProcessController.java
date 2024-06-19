@@ -6,10 +6,14 @@ import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.BusinessProcessService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Business Process Controller", description = "All of the Business Process's methods")
@@ -19,7 +23,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/BusinessProcess")
 public class BusinessProcessController {
 
+  final JdbcTemplate base;
   final BusinessProcessService businessProcessService;
+  @PersistenceContext private EntityManager entityManager;
 
   @PostMapping("/addBusinessProcess")
   public ResponseEntity<?> createBusinessProcess(@RequestBody BusinessProcess businessProcess) {
@@ -40,6 +46,30 @@ public class BusinessProcessController {
       return ResponseEntity.ok(businessProcesses);
     } catch (RuntimeException e) {
       return ResponseEntity.status(500).body(null);
+    }
+  }
+
+  @GetMapping("/searchProductAndBusinessProcess")
+  public String searchProductAndBusinessProcess(@RequestParam Integer productId) {
+    String jpqlQuery =
+        "SELECT po.name AS productName, bp.name AS businessProcessName "
+            + "FROM ProductOffering po "
+            + "JOIN BusinessProcess bp "
+            + "ON po.businessProcess_id = bp.businessProcess_id "
+            + "WHERE po.Product_id = :productId";
+
+    TypedQuery<Object[]> query = entityManager.createQuery(jpqlQuery, Object[].class);
+    query.setParameter("productId", productId);
+
+    List<Object[]> results = query.getResultList();
+
+    if (results.isEmpty()) {
+      return "No data found for Product ID: " + productId;
+    } else {
+      Object[] result = results.get(0);
+      String productName = (String) result[0];
+      String businessProcessName = (String) result[1];
+      return "Product Name: " + productName + ", Business Process Name: " + businessProcessName;
     }
   }
 

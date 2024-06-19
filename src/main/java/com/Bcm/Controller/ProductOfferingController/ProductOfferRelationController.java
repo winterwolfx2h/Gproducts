@@ -5,7 +5,15 @@ import com.Bcm.Model.ProductOfferingABE.PrimeryKeyProductRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Model.ProductOfferingABE.RelationResponse;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
+<<<<<<< src/main/java/com/Bcm/Controller/ProductOfferingController/ProductOfferRelationController.java
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+=======
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import io.swagger.v3.oas.annotations.tags.Tag;
+>>>>>>> src/main/java/com/Bcm/Controller/ProductOfferingController/ProductOfferRelationController.java
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +26,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Product Offer Relations Controller", description = "All of the Product Offer Relation's methods")
@@ -73,6 +83,34 @@ public class ProductOfferRelationController {
 
     return relationResponses;
   }
+
+
+  @GetMapping("/searchByProductId")
+  public List<RelationResponse> searchByProductID(@RequestParam Integer productId) {
+
+    String sqlSearchByProductId = "SELECT p.product_id,po.name " +
+            "FROM product_offer_relation p " +
+            "JOIN public.product po ON p.related_product_id = po.product_id " +
+            "WHERE p.product_id = ? AND p.type = 'Plan'";
+
+
+    List<RelationResponse> relationResponses = base.query(
+            sqlSearchByProductId,
+            new Object[]{productId},
+            new RowMapper<RelationResponse>() {
+              @Override
+              public RelationResponse mapRow(ResultSet rs, int rowNum) throws SQLException {
+                RelationResponse response = new RelationResponse();
+                response.setProduct_id(rs.getInt("product_id"));
+                response.setName(rs.getString("name"));
+                return response;
+              }
+            });
+
+    return relationResponses;
+  }
+
+
 
   @PostMapping("/addProdOffRelations")
   @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)

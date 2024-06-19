@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "ProductRelation")
@@ -27,6 +28,7 @@ public class ProductRelation {
   private String type;
 
   @Column(name = "validFor", nullable = false)
+  @Value("#{new java.util.Date()}")
   @JsonFormat(pattern = "dd/MM/yyyy")
   private Date validFor;
 

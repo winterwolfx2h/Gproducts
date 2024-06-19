@@ -31,80 +31,16 @@ public class EligibilityController {
   @PostMapping("/addEligibility")
   public ResponseEntity<?> createEligibility(@RequestBody Eligibility eligibility) {
     try {
-      // Find the ProductOffering by the provided productId
-      //      Optional<ProductOffering> productOfferingOpt =
-      // productOfferingRepository.findById(eligibility.getProduct_id());
-      //      if (!productOfferingOpt.isPresent()) {
-      //        return ResponseEntity.badRequest().body("Invalid Product ID");
-      //      }
-
-      //      // Set the ProductOffering to the Eligibility
-      //      eligibility.setProductOffering(productOfferingOpt.get());
-
-      // Save the Eligibility entity
       Eligibility createdEligibility = eligibilityService.create(eligibility);
-
       return ResponseEntity.ok(createdEligibility);
-
     } catch (InvalidInputException e) {
       return ResponseEntity.badRequest().body(e.getMessage());
     } catch (RuntimeException e) {
-      // Log the stack trace for debugging purposes
       e.printStackTrace();
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An unexpected error occurred: " + e.getMessage());
     }
   }
-
-  //
-  //  @Transactional
-  //  @PostMapping("/addEligibility")
-  //  public ResponseEntity<?> createEligibility(
-  //      @RequestBody
-  //          Eligibility eligibility /*, @RequestParam Integer productPriceGroups, @RequestParam Integer entity*/) {
-  //
-  //    try {
-  //
-  //      Eligibility createdEligibility = eligibilityService.create(eligibility);
-  //
-  //      //            base.update("INSERT INTO public.eligibility_pricegroup(" +
-  //      //                    " eligibility_id, product_price_group_code) " +
-  //      //                    " VALUES (?, ?);", new Object[]{createdEligibility.getEligibility_id(),
-  //      // productPriceGroups});
-  //
-  //      return ResponseEntity.ok(eligibility);
-  //
-  //    } catch (InvalidInputException e) {
-  //      return ResponseEntity.badRequest().body(e.getMessage());
-  //    } catch (RuntimeException e) {
-  //      // Log the stack trace for debugging purposes
-  //      e.printStackTrace();
-  //      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-  //          .body("An unexpected error occurred: " + e.getMessage());
-  //    }
-  //  }
-
-  //    public ResponseEntity<?> createEligibility(@RequestBody List<Eligibility> eligibilityList) {
-  //
-  //        try {
-  //            // Validate channels in each eligibility
-  //            for (Eligibility eligibility : eligibilityList) {
-  //                if (eligibility.getChannels() == null || eligibility.getChannels().isEmpty()) {
-  //                    return ResponseEntity.badRequest().body("Channels list cannot be empty.");
-  //                }
-  //            }
-  //            // Proceed with creating eligibility instances
-  //            List<Eligibility> createdEligibilities = eligibilityService.create(eligibilityList);
-  //            return ResponseEntity.ok(createdEligibilities);
-  //        } catch (InvalidInputException e) {
-  //            return ResponseEntity.badRequest().body(e.getMessage());
-  //        } catch (RuntimeException e) {
-  //            // Log the stack trace for debugging purposes
-  //            e.printStackTrace();
-  //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " +
-  // e.getMessage());
-  //        }
-  //    }
 
   @GetMapping("/listEligibilitys")
   @Cacheable(value = "EligibilityCache")

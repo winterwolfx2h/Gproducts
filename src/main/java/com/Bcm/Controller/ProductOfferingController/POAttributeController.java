@@ -86,7 +86,8 @@ public class POAttributeController {
             + " display_format, externalcfs, max_size, service, product_id FROM poattributes WHERE product_id = ?";
 
     // Execute the query and map the result set to POAttributes objects
-    List<POAttributes> poAttributesResponses =
+    List<POAttributes> poAttributesResponses;
+    poAttributesResponses =
         base.query(
             sqlSearchByProductId,
             new Object[] {productId},

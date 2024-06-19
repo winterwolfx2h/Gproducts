@@ -84,7 +84,8 @@ public class ProductOfferRelationController {
             + "JOIN public.product po ON p.related_product_id = po.product_id "
             + "WHERE p.product_id = ? AND p.type = 'Plan'";
 
-    List<RelationResponse> relationResponses =
+    List<RelationResponse> relationResponses;
+    relationResponses =
         base.query(
             sqlSearchByProductId,
             new Object[] {productId},

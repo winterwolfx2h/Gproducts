@@ -135,7 +135,7 @@ public class GeneralInfoController {
 
       List<String> errorPOTYPE = Arrays.asList("PO-Basic", "PO-Optional", "Both", "Internal");
       if (!errorPOTYPE.contains(generalInfoDTO.getPoType())) {
-        errors.add("category must be one of the following: " + String.join(", ", errorPOTYPE));
+        errors.add("PO-Type must be one of the following: " + String.join(", ", errorPOTYPE));
       }
     }
 

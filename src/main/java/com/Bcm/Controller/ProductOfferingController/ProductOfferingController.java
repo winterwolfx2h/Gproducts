@@ -497,13 +497,4 @@ public class ProductOfferingController {
     return productOfferingService.updatePODTORelations(
         productOfferingDTO, Product_id, channelCode, entityCode, productPriceGroupCode);
   }
-
-  //  @GetMapping("/{Product_id}/poplan-names")
-  //  @Operation(
-  //      summary = "Gets the list of PO-Plans that are related to a Product",
-  //      description = "Returns a List of PO-PLANs names that are related to a specific Product_id")
-  //  public ResponseEntity<List<String>> getPOPLANNamesByProductId(@PathVariable int Product_id) {
-  //    List<String> poPlanNames = productOfferingServiceImpl.getRelatedPOPLANNamesByProductId(Product_id);
-  //    return new ResponseEntity<>(poPlanNames, HttpStatus.OK);
-  //  }
 }

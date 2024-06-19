@@ -3,14 +3,11 @@ package com.Bcm.Controller.ProductOfferingController;
 import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
 import com.Bcm.Exception.ProductOfferingNotFoundException;
 import com.Bcm.Model.Product.GeneralInfoDTO;
-import com.Bcm.Model.Product.ProductOfferingDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.GeneralInfoService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
-
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -98,23 +95,23 @@ public class GeneralInfoController {
         generalInfoDTO, Product_id, channelCode, entityCode, eligibility_id, productPriceGroupCode);
   }
 
-
   List<String> checkPO(GeneralInfoDTO generalInfoDTO) {
     List<String> errors = new ArrayList<>();
 
     if (generalInfoDTO.getName() == null || generalInfoDTO.getName().isEmpty()) {
       errors.add("Name cannot be empty");
     } else {
-      if (!(generalInfoDTO.getName().startsWith("po_Basic-") || generalInfoDTO.getName().startsWith("po-optional-") || generalInfoDTO.getName().startsWith("po-addo-"))) {
-        errors.add("Name must start with 'po_Basic-', 'po-optional-', or 'po-addo-'");
+      if (!(generalInfoDTO.getName().startsWith("po_Basic-")
+          || generalInfoDTO.getName().startsWith("po-optional-")
+          || generalInfoDTO.getName().startsWith("po-addon-"))) {
+        errors.add("Name must start with 'po_Basic-', 'po-optional-', or 'po-addon-'");
       }
-
     }
 
     if (generalInfoDTO.getEffectiveFrom() == null
-            || generalInfoDTO.getName().isEmpty()
-            || generalInfoDTO.getEffectiveTo() == null
-            || generalInfoDTO.getName().isEmpty()) {
+        || generalInfoDTO.getName().isEmpty()
+        || generalInfoDTO.getEffectiveTo() == null
+        || generalInfoDTO.getName().isEmpty()) {
       errors.add("Effective from and effective to dates cannot be null");
     } else {
       if (generalInfoDTO.getEffectiveFrom().compareTo(generalInfoDTO.getEffectiveTo()) >= 0) {
@@ -126,7 +123,7 @@ public class GeneralInfoController {
       errors.add(" Category cannot be empty");
     } else {
 
-      List<String> errorCategory = Arrays.asList("Billing System", "Charging System", "Both","Internal");
+      List<String> errorCategory = Arrays.asList("Billing System", "Charging System", "Both", "Internal");
       if (!errorCategory.contains(generalInfoDTO.getCategory())) {
         errors.add("category must be one of the following: " + String.join(", ", errorCategory));
       }
@@ -136,7 +133,7 @@ public class GeneralInfoController {
       errors.add(" poType cannot be empty");
     } else {
 
-      List<String> errorPOTYPE = Arrays.asList("PO-Basic", "PO-Optional", "Both","Internal");
+      List<String> errorPOTYPE = Arrays.asList("PO-Basic", "PO-Optional", "Both", "Internal");
       if (!errorPOTYPE.contains(generalInfoDTO.getPoType())) {
         errors.add("category must be one of the following: " + String.join(", ", errorPOTYPE));
       }
@@ -144,7 +141,6 @@ public class GeneralInfoController {
 
     return errors;
   }
-
 
   @PostMapping("/checkErrorPO")
   public ResponseEntity<?> checkErrorPo(@RequestBody GeneralInfoDTO generalInfoDTO) {

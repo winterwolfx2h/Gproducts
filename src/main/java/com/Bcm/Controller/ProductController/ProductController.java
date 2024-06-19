@@ -57,7 +57,8 @@ public class ProductController {
             + "WHERE po.product_id = ?";
 
     // Execute the query and map the result set to a Map
-    Map<String, String> productDetails =
+    Map<String, String> productDetails;
+    productDetails =
         base.queryForObject(
             sql,
             new Object[] {productId},
@@ -130,26 +131,12 @@ public class ProductController {
                     productOfferingDTO.setParent(productOffering.getParent());
                     productOfferingDTO.setStatus(productOffering.getStatus());
                     productOfferingDTO.setCategory(productOffering.getCategory());
-                    /*
-                    productOfferingDTO.setEligibility(productOffering.getEligibility());
-
-                     */
                     productOfferingDTO.setPoParent_Child(productOffering.getPoParent_Child());
-                    /*
-                    productOfferingDTO.setCustomerFacingServiceSpec(productOffering.getCustomerFacingServiceSpec());
-
-                     */
                     productOfferingDTO.setMarkets(productOffering.getMarkets());
                     productOfferingDTO.setSubmarkets(productOffering.getSubmarkets());
                     productOfferingDTO.setBS_externalId(productOffering.getBS_externalId());
                     productOfferingDTO.setCS_externalId(productOffering.getCS_externalId());
-                    /*
-                    productOfferingDTO.setPoAttributes(productOffering.getPoAttributes());
-                    productOfferingDTO.setProductRelation(productOffering.getProductRelation());
-                    productOfferingDTO.setPhysicalResource(productOffering.getPhysicalResource());
-                    productOfferingDTO.setBusinessProcess(productOffering.getBusinessProcess());
 
-                     */
                     return productOfferingDTO;
                   })
               .collect(Collectors.toList());

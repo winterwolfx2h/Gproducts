@@ -11,8 +11,6 @@ public interface ProductOfferingService {
 
   ProductOffering create(ProductOffering productOffering);
 
-  //    ProductOffering recreate(int Product_id ,ProductOffering productOffering);
-
   ProductOffering createProductOfferingDTO(ProductOfferingDTO dto);
 
   List<ProductOffering> read();
@@ -33,17 +31,11 @@ public interface ProductOfferingService {
 
   List<ProductOffering> findByFamilyName(String familyName);
 
-  /*
-
-      List<ProductOffering> findByEligibility(String eligibilities);
-  */
   ProductOffering changeProductOfferingStatus(int po_code);
 
   boolean existsByName(String name);
 
   List<ProductOffering> changeMultipleProductStatuses(List<Integer> poCodes);
-
-  // ProductOffering createProductOfferingDTO(ProductOfferingDTO dto);
 
   List<ProductOfferingDTO> getAllProductOfferingDTOs();
 

@@ -20,6 +20,7 @@ import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubMarketService;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.PhysicalResourceService;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.*;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+@Tag(name = "Product Offering Controller", description = "All of the Product Offering's methods")
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -90,35 +92,6 @@ public class ProductOfferingController {
         return ResponseEntity.badRequest().body("Family with name '" + familyName + "' does not exist.");
       }
 
-      /*
-
-      // Validate eligibilities by ID
-      List<Integer> eligibilities = productOffering.getEligibility();
-      if (eligibilities == null || eligibilities.isEmpty()) {
-          return ResponseEntity.badRequest().body("Eligibility list cannot be empty.");
-      }
-
-      for (Integer eligibilityId : eligibilities) {
-          if (!eligibilityService.findByIdExists(eligibilityId)) {
-              return ResponseEntity.badRequest().body("Eligibility with ID '" + eligibilityId + "' does not exist.");
-          }
-      }
-
-       */
-      /*
-
-      // Validate customer facing service spec configurations
-      List<String> serviceSpecConfigs = productOffering.getCustomerFacingServiceSpec();
-      List<String> missingServices = serviceSpecConfigs.stream()
-              .filter(serviceType -> !customerFacingServiceSpecService.findByNameexist(serviceType))
-              .collect(Collectors.toList());
-
-      if (!missingServices.isEmpty()) {
-          return ResponseEntity.badRequest().body("Service(s) with Service Spec Type '" + String.join(", ", missingServices) + "' do not exist.");
-      }
-
-       */
-
       // Check if product offering with the same name exists
       if (productOfferingService.existsByName(productOffering.getName())) {
         return ResponseEntity.badRequest().body("A product offering with the same name already exists.");
@@ -141,36 +114,6 @@ public class ProductOfferingController {
           .body("An unexpected error occurred while creating the Product Offering: " + e.getMessage());
     }
   }
-
-  /*@PostMapping("/reAddProdOff")
-  @PutMapping("/reAddProdOff/{Product_id}")
-  @CacheEvict(value = "productOfferingsCache", allEntries = true)
-  public ResponseEntity<?> createOrUpdateProductOffering(@PathVariable(required = false) Integer Product_id, @RequestBody ProductOffering productOffering) {
-      try {
-          // Attempt to retrieve the existing ProductOffering by ID if provided
-          if (Product_id != null) {
-              ProductOffering existingProductOffering = productOfferingService.findById(Product_id);
-              if (existingProductOffering != null) {
-                  productOffering.setProduct_id(Product_id); // Ensure the ID is set for update
-              }
-          }
-
-          // Use the recreate method to handle both creation and update
-          ProductOffering resultProductOffering = productOfferingService.recreate(Product_id,productOffering);
-          return ResponseEntity.ok(resultProductOffering);
-      } catch (DataIntegrityViolationException e) {
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                  .body("Data integrity violation: " + e.getRootCause().getMessage());
-      } catch (InvalidInputException e) {
-          return ResponseEntity.badRequest().body(e.getMessage());
-      } catch (DatabaseOperationException e) {
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                  .body("Database operation error: " + e.getMessage());
-      } catch (RuntimeException e) {
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                  .body("An unexpected error occurred while processing the request: " + e.getMessage());
-      }
-  }*/
 
   @CacheEvict(value = "productOfferingsCache", allEntries = true)
   public void invalidateProductOfferingsCache() {}
@@ -217,12 +160,6 @@ public class ProductOfferingController {
   }
 
   private void ensureRelatedEntitiesExist(ProductOffering productOffering) {
-    /*
-    ensurePOAttributesExists((List<POAttributes>) productOffering.getPoAttributes());
-    ensureProductRelationExists(productOffering.getProductRelation());
-    ensureCustomerFacingServiceSpecExists(productOffering.getCustomerFacingServiceSpec());
-
-     */
     ensureFamilyExists(productOffering.getFamilyName());
   }
 
@@ -305,36 +242,6 @@ public class ProductOfferingController {
         return ResponseEntity.badRequest().body("Family with name '" + newFamilyName + "' does not exist.");
       }
       existingProductOffering.setFamilyName(newFamilyName);
-      /*
-
-      // Validate eligibilities by ID
-      List<Integer> eligibilities = updatedProductOffering.getEligibility();
-      if (eligibilities == null || eligibilities.isEmpty()) {
-          return ResponseEntity.badRequest().body("Eligibility ID list cannot be empty.");
-      }
-
-      for (Integer eligibilityId : eligibilities) {
-          if (!eligibilityService.findByIdExists(eligibilityId)) {
-              return ResponseEntity.badRequest().body("Eligibility with ID '" + eligibilityId + "' does not exist.");
-          }
-      }
-
-      existingProductOffering.setEligibility(eligibilities);
-
-      // Validate customer facing service spec configurations
-      List<String> serviceSpecConfigs = updatedProductOffering.getCustomerFacingServiceSpec();
-      List<String> missingServices = serviceSpecConfigs.stream()
-              .filter(serviceType -> !customerFacingServiceSpecService.findByNameexist(serviceType))
-              .collect(Collectors.toList());
-
-      if (!missingServices.isEmpty()) {
-          return ResponseEntity.badRequest().body("Service(s) with Service Spec Type '" + String.join(", ", missingServices) + "' do not exist.");
-      }
-
-
-
-      existingProductOffering.setCustomerFacingServiceSpec(serviceSpecConfigs);
-       */
       existingProductOffering.setEffectiveFrom(updatedProductOffering.getEffectiveFrom());
       existingProductOffering.setEffectiveTo(updatedProductOffering.getEffectiveTo());
       existingProductOffering.setDescription(updatedProductOffering.getDescription());
@@ -532,13 +439,8 @@ public class ProductOfferingController {
   @CacheEvict(value = "productOfferingsCache", allEntries = true)
   public ResponseEntity<?> changeProductStatus(@PathVariable int po_code) {
     try {
-
-      var errors = check(productOfferingService.findById(po_code));
-      if (errors.isEmpty()) {
-        ProductOffering updatedProduct = productOfferingService.changeProductOfferingStatus(po_code);
-        return ResponseEntity.ok(updatedProduct);
-      }
-      return ResponseEntity.badRequest().body(errors);
+      ProductOffering updatedProduct = productOfferingService.changeProductOfferingStatus(po_code);
+      return ResponseEntity.ok(updatedProduct);
 
     } catch (ProductOfferingLogicException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

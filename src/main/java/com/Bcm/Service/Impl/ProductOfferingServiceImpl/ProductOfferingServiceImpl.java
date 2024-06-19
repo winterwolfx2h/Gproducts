@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -180,18 +181,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
       ProductOffering existingProduct = existingProductOptional.get();
       existingProduct.setName(updatedProductOffering.getName());
       existingProduct.setParent(updatedProductOffering.getParent());
-      /*
-      existingProduct.setPoAttributes(updatedProductOffering.getPoAttributes());
-      existingProduct.setProductRelation(updatedProductOffering.getProductRelation());
-      existingProduct.setPhysicalResource(updatedProductOffering.getPhysicalResource());
-      existingProduct.setBusinessProcess(updatedProductOffering.getBusinessProcess());
-
-       */
       existingProduct.setPoParent_Child(updatedProductOffering.getPoParent_Child());
-      /*
-      existingProduct.setEligibility(updatedProductOffering.getEligibility());
-
-       */
       existingProduct.setWorkingStep(updatedProductOffering.getWorkingStep());
 
       try {
@@ -293,9 +283,14 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
   }
 
   @Override
+  @Transactional
   public ProductOffering changeProductOfferingStatus(int po_code) {
     try {
-      ProductOffering existingProduct = findById(po_code);
+      ProductOffering existingProduct =
+          productOfferingRepository
+              .findById(po_code)
+              .orElseThrow(
+                  () -> new ResourceNotFoundException("Product Offering with ID \"" + po_code + "\" not found"));
 
       switch (existingProduct.getStatus()) {
         case "Working state":

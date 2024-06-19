@@ -1,7 +1,6 @@
 package com.Bcm.Model.Product;
 
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
-import com.Bcm.Model.ProductOfferingABE.ProductPrice;
 import com.Bcm.Model.ProductOfferingABE.ProductPriceGroup;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
@@ -61,8 +60,6 @@ public class Product {
   @JoinColumn(name = "Product_id")
   @JsonIgnore
   private List<POAttributes> poAttributes;
-
-
 
   @OneToMany(cascade = CascadeType.ALL, targetEntity = Type.class)
   @JoinColumn(name = "Product_id")

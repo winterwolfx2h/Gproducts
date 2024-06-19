@@ -5,6 +5,7 @@ import com.Bcm.Exception.ServiceAlreadyExistsException;
 import com.Bcm.Exception.ServiceLogicException;
 import com.Bcm.Model.ProductResourceABE.PhysicalResource;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.PhysicalResourceService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+@Tag(name = "Physical Resource Controller", description = "All of the Physical Resource's methods")
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")

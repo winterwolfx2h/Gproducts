@@ -4,12 +4,14 @@ import com.Bcm.Exception.ProductPriceGroupAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.ProductPriceGroup;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceGroupService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Product Price Group Controller", description = "All of the Product Price Group's methods")
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/ProductPriceGroup")
@@ -19,7 +21,7 @@ public class ProductPriceGroupController {
   final ProductPriceGroupService productPriceGroupService;
 
   @PostMapping("/addProductPriceGroup")
-  public ResponseEntity<?> createType(@RequestBody ProductPriceGroup productPriceGroup) {
+  public ResponseEntity<?> createPriceGroup(@RequestBody ProductPriceGroup productPriceGroup) {
     try {
       ProductPriceGroup createdProductPriceGroup = productPriceGroupService.create(productPriceGroup);
       return ResponseEntity.ok(createdProductPriceGroup);

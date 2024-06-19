@@ -23,9 +23,4 @@ public class Type {
 
   @Column(name = "description", nullable = false)
   private String description;
-
-  //  @OneToMany(cascade = CascadeType.ALL, targetEntity = BusinessProcess.class)
-  //  @JoinColumn(name = "type_id")
-  //  @JsonIgnore
-  //  private List<BusinessProcess> businessProcesses;
 }

@@ -57,9 +57,6 @@ public class ProductOfferingDTO {
   @Column(name = "status", nullable = false)
   private String status;
 
-  @Column(name = "externalId", nullable = false)
-  private String externalId;
-
   @Column(name = "market", nullable = true)
   private String markets;
 

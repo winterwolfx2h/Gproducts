@@ -16,7 +16,4 @@ public interface ResourceFacingServiceSpecService {
   ResourceFacingServiceSpec findById(int Rfss_code);
 
   boolean findByexternalNPCodeexist(String externalNPCode);
-
-  // ResourceFacingServiceSpec changeServiceStatus(int Rfss_code);
-
 }

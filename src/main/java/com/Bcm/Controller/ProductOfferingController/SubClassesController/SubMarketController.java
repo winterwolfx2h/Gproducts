@@ -4,12 +4,14 @@ import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Exception.SubMarketAlreadyExistsException;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubMarketService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Sub-Market Controller", description = "All of the Sub-Market's methods")
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/SubMarket")

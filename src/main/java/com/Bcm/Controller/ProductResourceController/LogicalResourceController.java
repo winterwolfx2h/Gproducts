@@ -4,6 +4,7 @@ import com.Bcm.Exception.DuplicateResourceException;
 import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Model.ProductResourceABE.LogicalResource;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+@Tag(name = "Logical Resource Controller", description = "All of the Logical Resource's methods")
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")

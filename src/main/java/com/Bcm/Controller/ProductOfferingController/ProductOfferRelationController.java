@@ -5,9 +5,15 @@ import com.Bcm.Model.ProductOfferingABE.PrimeryKeyProductRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Model.ProductOfferingABE.RelationResponse;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
+<<<<<<< src/main/java/com/Bcm/Controller/ProductOfferingController/ProductOfferRelationController.java
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+=======
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import io.swagger.v3.oas.annotations.tags.Tag;
+>>>>>>> src/main/java/com/Bcm/Controller/ProductOfferingController/ProductOfferRelationController.java
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +30,7 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Product Offer Relations Controller", description = "All of the Product Offer Relation's methods")
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/ProductOfferRelation")

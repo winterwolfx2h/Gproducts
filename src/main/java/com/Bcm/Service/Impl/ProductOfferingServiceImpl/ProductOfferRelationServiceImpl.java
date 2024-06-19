@@ -71,27 +71,4 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
   public void deleteById(PrimeryKeyProductRelation id) {
     productOfferRelationRepository.deleteById(id);
   }
-
-  //    @Override
-  //    public ProductOfferRelation update(ProductOfferRelation productOfferRelation) {
-  //        PrimeryKeyProductRelation id = productOfferRelation.getId();
-  //        Optional<ProductOfferRelation> existingProductOfferRelation = productOfferRelationRepository.findById(id);
-  //        if (existingProductOfferRelation.isPresent()) {
-  //            ProductOfferRelation updatedProductOfferRelation = existingProductOfferRelation.get();
-  //            if (updatedProductOfferRelation.getProduct_id() == productOfferRelation.getProduct_id() &&
-  //                    updatedProductOfferRelation.getId().getRelatedProductId() ==
-  // productOfferRelation.getId().getRelatedProductId()) {
-  //                updatedProductOfferRelation.setType(productOfferRelation.getType());
-  //                return productOfferRelationRepository.save(updatedProductOfferRelation);
-  //            } else {
-  //                throw new RuntimeException("Product with ID " + productOfferRelation.getProduct_id() +
-  //                        " is not related to the product with ID " +
-  // productOfferRelation.getId().getRelatedProductId());
-  //
-  //            }
-  //        } else {
-  //            throw new RuntimeException("ProductOfferRelation with ID " + id + " not found");
-  //        }
-  //    }
-
 }

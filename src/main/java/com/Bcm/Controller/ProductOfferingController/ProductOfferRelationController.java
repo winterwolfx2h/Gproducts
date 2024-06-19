@@ -166,19 +166,6 @@ public class ProductOfferRelationController {
     }
   }
 
-  //    @PutMapping("/updateOfferRelation")
-  //    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
-  //    public ResponseEntity<?> updateProductOfferRelation(@RequestBody List<ProductOfferRelation>
-  // productOfferRelation) {
-  //        try {
-  //            ProductOfferRelation updatedProductOfferRelation =
-  // productOfferRelationService.update((ProductOfferRelation) productOfferRelation);
-  //            return ResponseEntity.ok(updatedProductOfferRelation);
-  //        } catch (RuntimeException e) {
-  //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-  //        }
-  //    }
-
   @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
   public void invalidateProdOfferRelationCache() {}
 }

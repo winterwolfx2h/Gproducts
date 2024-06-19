@@ -12,6 +12,7 @@ import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
+import com.Bcm.Service.Impl.ProductOfferingServiceImpl.ProductOfferingServiceImpl;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.*;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ChannelService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
@@ -54,34 +55,13 @@ public class ProductOfferingController {
   final ProductOfferingValidationService validationService;
   private final ProductOfferingRepository productOfferingRepository;
   private final ProductOfferRelationRepository productOfferRelationRepository;
+  private final ProductOfferingServiceImpl productOfferingServiceImpl;
 
   @PostMapping("/addProdOff")
   @CacheEvict(value = "productOfferingsCache", allEntries = true)
   public ResponseEntity<?> create(@RequestBody ProductOffering productOffering) {
     try {
-      /*
-                  // Validate market names
-                  List<ProductOfferingDTO> validPoplans = productOfferingService.getAllProductOfferingDTOs();
-                  List<String> poplanNames = productOffering.getPoplans();
 
-                  if (poplanNames == null || poplanNames.isEmpty()) {
-                      return ResponseEntity.badRequest().body("Poplan names list cannot be empty.");
-                  }
-
-                  List<ProductOfferingDTO> validIncomingPoplans = poplanNames.stream()
-                          .map(name -> validPoplans.stream()
-                                  .filter(validPoplan -> validPoplan.getName().equals(name))
-                                  .findFirst())
-                          .filter(Optional::isPresent)
-                          .map(Optional::get)
-                          .collect(Collectors.toList());
-
-                  if (validIncomingPoplans.size() != poplanNames.size()) {
-                      return ResponseEntity.badRequest().body("Some provided Poplan names are invalid.");
-                  }
-
-                  productOffering.setPoplans(poplanNames);
-      */
       // Validate market names
       List<Market> validMarkets = marketService.read();
       List<String> marketNames = Collections.singletonList(productOffering.getMarkets());
@@ -283,12 +263,7 @@ public class ProductOfferingController {
         new ErrorMessage(
             HttpStatus.INTERNAL_SERVER_ERROR.value(), new Date(), ex.getMessage(), request.getDescription(false));
     return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
-
   }
-
-
-
-
 
   List<String> check(ProductOfferingDTO productOfferingDTO) {
     List<String> errors = new ArrayList<>();
@@ -522,4 +497,13 @@ public class ProductOfferingController {
     return productOfferingService.updatePODTORelations(
         productOfferingDTO, Product_id, channelCode, entityCode, productPriceGroupCode);
   }
+
+  //  @GetMapping("/{Product_id}/poplan-names")
+  //  @Operation(
+  //      summary = "Gets the list of PO-Plans that are related to a Product",
+  //      description = "Returns a List of PO-PLANs names that are related to a specific Product_id")
+  //  public ResponseEntity<List<String>> getPOPLANNamesByProductId(@PathVariable int Product_id) {
+  //    List<String> poPlanNames = productOfferingServiceImpl.getRelatedPOPLANNamesByProductId(Product_id);
+  //    return new ResponseEntity<>(poPlanNames, HttpStatus.OK);
+  //  }
 }

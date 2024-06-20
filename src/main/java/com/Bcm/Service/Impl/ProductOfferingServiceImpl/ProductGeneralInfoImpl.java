@@ -3,6 +3,7 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
 import com.Bcm.Exception.ProductOfferingNotFoundException;
 import com.Bcm.Model.Product.GeneralInfoDTO;
+import com.Bcm.Model.Product.GeneralInfoMapper;
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.ProductPrice;
@@ -79,6 +80,16 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     return productOfferingRepository
         .findById(Product_id)
         .orElseThrow(() -> new ProductOfferingNotFoundException("Product Offering not found with id: " + Product_id));
+  }
+
+  @Override
+  public GeneralInfoDTO getDTOById(int Product_id) throws ProductOfferingNotFoundException {
+    ProductOffering productOffering =
+        generalInfoRepository
+            .findById(Product_id)
+            .orElseThrow(() -> new ProductOfferingNotFoundException("GeneralInfoDTO not found with id: " + Product_id));
+
+    return GeneralInfoMapper.toDTO(productOffering);
   }
 
   private void convertToEntity(GeneralInfoDTO generalInfoDTO, ProductOffering productOffering) {
@@ -283,6 +294,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     productOffering.setCS_externalId(generalInfoDTO.getCS_externalId());
     productOffering.setSellIndicator(generalInfoDTO.getSellIndicator());
     productOffering.setQuantityIndicator(generalInfoDTO.getQuantityIndicator());
+    productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
+    productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
     productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
 
     // Save the updated ProductOffering

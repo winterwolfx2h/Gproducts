@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface GeneralInfoService {
 
+  GeneralInfoDTO getDTOById(int Product_id) throws ProductOfferingNotFoundException;
+
   ProductOffering createGeneralInfoDTO(GeneralInfoDTO generalInfoDTO);
 
   List<GeneralInfoDTO> getAllGeneralInfoDTOs();

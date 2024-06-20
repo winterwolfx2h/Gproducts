@@ -82,6 +82,6 @@ public class ProductOffering extends Product {
   private Integer eligibility_id;
 
   @OneToMany(mappedBy = "productOffering", cascade = CascadeType.ALL)
-  @JsonIgnore // To avoid serialization loop
+  @JsonIgnore
   private List<Eligibility> eligibilities;
 }

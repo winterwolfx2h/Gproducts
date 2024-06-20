@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class ProductController {
   final JdbcTemplate base;
   final ProductService productService;
   final ProductOfferingService productOfferingService;
+
   @PersistenceContext private EntityManager entityManager;
 
   @GetMapping("/ProductList")
@@ -95,29 +97,51 @@ public class ProductController {
 
   @GetMapping("/searchProductDetails")
   public ResponseEntity<ProductDetailsResponse> searchProductDetails(@RequestParam Integer productId) {
-    String jpqlQuery =
-        "SELECT ch.name AS channelName, ee.name AS entityName, ppg.name AS productPriceGroupName "
-            + "FROM Product p "
-            + "JOIN p.channelCode ch "
-            + "JOIN p.entityCode ee "
-            + "JOIN p.productPriceGroups ppg "
-            + "WHERE p.Product_id = :productId";
+    try {
+      // Check if the productId exists in the database
+      String checkProductIdQuery =
+          "SELECT COUNT(po.Product_id) FROM ProductOffering po WHERE po.Product_id = :productId";
+      Long count =
+          entityManager
+              .createQuery(checkProductIdQuery, Long.class)
+              .setParameter("productId", productId)
+              .getSingleResult();
 
-    TypedQuery<Object[]> query = entityManager.createQuery(jpqlQuery, Object[].class);
-    query.setParameter("productId", productId);
+      if (count == 0) {
+        throw new IllegalArgumentException("Product with ID " + productId + " does not exist.");
+      }
 
-    List<Object[]> results = query.getResultList();
+      String jpqlQuery =
+          "SELECT ch.name AS channelName, ee.name AS entityName, ppg.name AS productPriceGroupName, e.stock_Indicator "
+              + "FROM ProductOffering po "
+              + "JOIN po.channelCode ch "
+              + "JOIN po.entityCode ee "
+              + "JOIN po.productPriceGroups ppg "
+              + "LEFT JOIN po.eligibilities e "
+              + "WHERE po.Product_id = :productId";
 
-    if (results.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    } else {
-      Object[] result = results.get(0);
+      TypedQuery<Object[]> query =
+          entityManager.createQuery(jpqlQuery, Object[].class).setParameter("productId", productId);
+
+      Object[] result = query.getSingleResult();
+
       String channelName = (String) result[0];
       String entityName = (String) result[1];
       String productPriceGroupName = (String) result[2];
+      Boolean stockIndicator = (Boolean) result[3]; // Fetch the stock_Indicator
 
-      ProductDetailsResponse response = new ProductDetailsResponse(channelName, entityName, productPriceGroupName);
+      // Create ProductDetailsResponse object with stockIndicator
+      ProductDetailsResponse response =
+          new ProductDetailsResponse(channelName, entityName, productPriceGroupName, stockIndicator);
+
       return ResponseEntity.ok(response);
+    } catch (NoResultException ex) {
+      return ResponseEntity.notFound().build(); // Handle if no results found
+    } catch (IllegalArgumentException ex) {
+      throw ex; // Re-throw the IllegalArgumentException for clarity
+    } catch (Exception ex) {
+      // Handle any unexpected exceptions
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // or handle differently
     }
   }
 

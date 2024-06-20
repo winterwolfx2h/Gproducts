@@ -80,4 +80,8 @@ public class ProductOffering extends Product {
 
   @Column(name = "eligibility_id", insertable = false, updatable = true)
   private Integer eligibility_id;
+
+  @OneToMany(mappedBy = "productOffering", cascade = CascadeType.ALL)
+  @JsonIgnore // To avoid serialization loop
+  private List<Eligibility> eligibilities;
 }

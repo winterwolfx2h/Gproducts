@@ -95,6 +95,19 @@ public class ProductController {
 
   @GetMapping("/searchProductDetails")
   public ResponseEntity<ProductDetailsResponse> searchProductDetails(@RequestParam Integer productId) {
+    // Check if the productId exists in the database
+    String checkProductIdQuery = "SELECT COUNT(p.Product_id) FROM Product p WHERE p.Product_id = :productId";
+    Long count =
+        entityManager
+            .createQuery(checkProductIdQuery, Long.class)
+            .setParameter("productId", productId)
+            .getSingleResult();
+
+    if (count == 0) {
+      throw new IllegalArgumentException("Product with ID " + productId + " does not exist.");
+    }
+
+    // Query to retrieve product details
     String jpqlQuery =
         "SELECT ch.name AS channelName, ee.name AS entityName, ppg.name AS productPriceGroupName "
             + "FROM Product p "
@@ -106,18 +119,23 @@ public class ProductController {
     TypedQuery<Object[]> query = entityManager.createQuery(jpqlQuery, Object[].class);
     query.setParameter("productId", productId);
 
-    List<Object[]> results = query.getResultList();
+    try {
+      List<Object[]> results = query.getResultList();
 
-    if (results.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    } else {
-      Object[] result = results.get(0);
-      String channelName = (String) result[0];
-      String entityName = (String) result[1];
-      String productPriceGroupName = (String) result[2];
+      if (results.isEmpty()) {
+        return ResponseEntity.notFound().build();
+      } else {
+        Object[] result = results.get(0);
+        String channelName = (String) result[0];
+        String entityName = (String) result[1];
+        String productPriceGroupName = (String) result[2];
 
-      ProductDetailsResponse response = new ProductDetailsResponse(channelName, entityName, productPriceGroupName);
-      return ResponseEntity.ok(response);
+        ProductDetailsResponse response = new ProductDetailsResponse(channelName, entityName, productPriceGroupName);
+        return ResponseEntity.ok(response);
+      }
+    } catch (Exception ex) {
+      // Handle any unexpected exceptions
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // or handle differently
     }
   }
 

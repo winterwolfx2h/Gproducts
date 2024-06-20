@@ -18,5 +18,5 @@ public interface BusinessProcessRepository extends JpaRepository<BusinessProcess
   boolean existsByName(String name);
 
   @Query("SELECT b FROM BusinessProcess b ORDER BY b.businessProcess_id")
-  List<BusinessProcess> findAllOrderedByBusnissProcess();
+  List<BusinessProcess> findAllOrderedByBusinessProcess();
 }

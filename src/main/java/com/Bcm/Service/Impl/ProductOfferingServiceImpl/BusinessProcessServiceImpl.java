@@ -18,45 +18,44 @@ import org.springframework.stereotype.Service;
 public class BusinessProcessServiceImpl implements BusinessProcessService {
 
   final BusinessProcessRepository businessProcessRepository;
-
   final ProductOfferingRepository productOfferingRepository;
 
   @Override
   public BusinessProcess create(BusinessProcess businessProcess) {
-    Optional<BusinessProcess> existingBusnissProcess = businessProcessRepository.findByName(businessProcess.getName());
-    if (existingBusnissProcess.isPresent()) {
-      throw new MethodsAlreadyExistsException("busniss with name: " + businessProcess.getName() + " already exists.");
+    Optional<BusinessProcess> existingBusinessProcess = businessProcessRepository.findByName(businessProcess.getName());
+    if (existingBusinessProcess.isPresent()) {
+      throw new MethodsAlreadyExistsException(
+          "Business Process with name: " + businessProcess.getName() + " already exists.");
     }
     try {
       return businessProcessRepository.save(businessProcess);
     } catch (DataIntegrityViolationException e) {
-      throw new DatabaseOperationException("Error creating busniss", e);
+      throw new DatabaseOperationException("Error creating Business Process", e);
     }
   }
 
   @Override
   public List<BusinessProcess> read() {
     try {
-      return businessProcessRepository.findAllOrderedByBusnissProcess();
+      return businessProcessRepository.findAllOrderedByBusinessProcess();
     } catch (Exception e) {
-      throw new RuntimeException("Error occurred while retrieving busniss");
+      throw new RuntimeException("Error occurred while retrieving Business");
     }
   }
 
   @Override
-  public BusinessProcess update(int businessProcess_id, BusinessProcess updatedBusnissProcess) {
-    Optional<BusinessProcess> existingBusnissOptional = businessProcessRepository.findById(businessProcess_id);
-    if (existingBusnissOptional.isPresent()) {
-      BusinessProcess existingBusnissProcess = existingBusnissOptional.get();
+  public BusinessProcess update(int businessProcess_id, BusinessProcess updatedBusinessProcess) {
+    Optional<BusinessProcess> existingBusinessOptional = businessProcessRepository.findById(businessProcess_id);
+    if (existingBusinessOptional.isPresent()) {
+      BusinessProcess existingBusinessProcess = existingBusinessOptional.get();
 
-      String newName = updatedBusnissProcess.getName();
-      // Check if there's another Methods with the same name
-      if (!existingBusnissProcess.getName().equals(newName) && businessProcessRepository.existsByName(newName)) {
-        throw new MethodsAlreadyExistsException("busniss with name '" + newName + "' already exists.");
+      String newName = updatedBusinessProcess.getName();
+      if (!existingBusinessProcess.getName().equals(newName) && businessProcessRepository.existsByName(newName)) {
+        throw new MethodsAlreadyExistsException("Business with name '" + newName + "' already exists.");
       }
-      existingBusnissProcess.setName(updatedBusnissProcess.getName());
-      existingBusnissProcess.setDescription(updatedBusnissProcess.getDescription());
-      return businessProcessRepository.save(existingBusnissProcess);
+      existingBusinessProcess.setName(updatedBusinessProcess.getName());
+      existingBusinessProcess.setDescription(updatedBusinessProcess.getDescription());
+      return businessProcessRepository.save(existingBusinessProcess);
     } else {
       throw new ResourceNotFoundException("BusinessProcess with ID " + businessProcess_id + " not found.");
     }
@@ -100,7 +99,7 @@ public class BusinessProcessServiceImpl implements BusinessProcessService {
       return optionalBusinessProcess.orElseThrow(
           () -> new RuntimeException("BusinessProcess with name " + name + " not found"));
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding Methods");
+      throw new RuntimeException("Invalid argument provided for finding BusinessProcess");
     }
   }
 }

@@ -32,4 +32,7 @@ public interface GeneralInfoService {
       int eligibility_id,
       int productPriceGroupCode)
       throws ProductOfferingNotFoundException;
+
+  ProductOffering updateGeneralInfoDTO(GeneralInfoDTO generalInfoDTO, int productId)
+      throws ProductOfferingNotFoundException;
 }

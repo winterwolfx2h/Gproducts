@@ -157,4 +157,18 @@ public class GeneralInfoController {
     List<GeneralInfoDTO> dtos = generalInfoService.getAllGeneralInfoDTOs();
     return ResponseEntity.ok(dtos);
   }
+
+  @PutMapping("/{productId}")
+  public ResponseEntity<?> updateGeneralInfo(@RequestBody GeneralInfoDTO generalInfoDTO, @PathVariable int productId) {
+    try {
+      ProductOffering updatedProductOffering = generalInfoService.updateGeneralInfoDTO(generalInfoDTO, productId);
+      return ResponseEntity.ok(updatedProductOffering);
+    } catch (ProductOfferingNotFoundException ex) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("An unexpected error occurred: " + e.getMessage());
+    }
+  }
 }

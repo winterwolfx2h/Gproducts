@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +20,15 @@ public class EligibilityServiceImpl implements EligibilityService {
   private final EntityRepository entityRepository;
 
   @Override
+  @Transactional
   public Eligibility create(Eligibility eligibility) {
-    return eligibilityRepository.save(eligibility);
+    try {
+      return eligibilityRepository.save(eligibility);
+    } catch (Exception e) {
+      // Log the exception or print the stack trace
+      e.printStackTrace();
+      throw new RuntimeException("Failed to create Eligibility: " + e.getMessage(), e);
+    }
   }
 
   @Override

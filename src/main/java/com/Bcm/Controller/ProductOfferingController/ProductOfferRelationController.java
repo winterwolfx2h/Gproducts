@@ -71,7 +71,6 @@ public class ProductOfferRelationController {
         throw new NoRelationFoundException("No relations found for the provided Product IDs");
       }
     }
-
     return relationResponses;
   }
 
@@ -106,10 +105,9 @@ public class ProductOfferRelationController {
   public List<Map<String, Object>> searchByProductID(@RequestParam Integer productId) {
 
     String sqlSearchByProductId =
-        "SELECT por.product_id AS product_id, po.name AS product_name, por.type "
-            + "FROM product_offer_relation por "
-            + "JOIN product po ON por.related_product_id = po.product_id "
-            + "WHERE por.product_id = ? AND por.type NOT LIKE 'Plan'";
+        "SELECT por.product_id AS product_id, por.related_product_id As related_product_id ,po.name AS product_name,"
+            + " por.type FROM product_offer_relation por JOIN product po ON por.related_product_id = po.product_id"
+            + " WHERE por.product_id = ? AND por.type NOT LIKE 'Plan'";
 
     List<Map<String, Object>> result =
         base.query(
@@ -120,6 +118,7 @@ public class ProductOfferRelationController {
               public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Map<String, Object> response = new HashMap<>();
                 response.put("product_id", rs.getInt("product_id"));
+                response.put("related_product_id", rs.getInt("related_product_id"));
                 response.put("product_name", rs.getString("product_name"));
                 response.put("type", rs.getString("type"));
                 return response;

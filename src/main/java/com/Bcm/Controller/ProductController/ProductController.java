@@ -48,6 +48,17 @@ public class ProductController {
 
   @GetMapping("/searchProductResDetails")
   public Map<String, String> searchProductResDetails(@RequestParam Integer productId) {
+    Map<String, String> response = new HashMap<>();
+
+    // SQL query to check if the product exists
+    String checkProductSql = "SELECT COUNT(*) FROM product_offering WHERE product_id = ?";
+    int productCount = base.queryForObject(checkProductSql, new Object[] {productId}, Integer.class);
+
+    if (productCount == 0) {
+      response.put("message", "Product with the given ID does not exist.");
+      return response;
+    }
+
     // SQL query to get the names of the PhysicalResource and CustomerFacingServiceSpec for the specified product_id
     String sql =
         "SELECT pr.name AS physical_resource_name, cfss.name AS service_spec_name "
@@ -66,8 +77,15 @@ public class ProductController {
               @Override
               public Map<String, String> mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Map<String, String> result = new HashMap<>();
-                result.put("physicalResourceName", rs.getString("physical_resource_name"));
-                result.put("serviceSpecName", rs.getString("service_spec_name"));
+                String physicalResourceName = rs.getString("physical_resource_name");
+                String serviceSpecName = rs.getString("service_spec_name");
+
+                if (physicalResourceName == null && serviceSpecName == null) {
+                  result.put("message", "No CFS or Physical Resource is associated with that product.");
+                } else {
+                  result.put("physicalResourceName", physicalResourceName);
+                  result.put("serviceSpecName", serviceSpecName);
+                }
                 return result;
               }
             });

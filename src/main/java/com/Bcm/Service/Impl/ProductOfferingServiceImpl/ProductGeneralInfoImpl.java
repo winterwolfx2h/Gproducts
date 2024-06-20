@@ -262,4 +262,30 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     }
     return dtos;
   }
+
+  @Override
+  public ProductOffering updateGeneralInfoDTO(GeneralInfoDTO generalInfoDTO, int productId)
+      throws ProductOfferingNotFoundException {
+    ProductOffering productOffering = getProductOfferingById(productId);
+    if (productOffering == null) {
+      throw new ProductOfferingNotFoundException("Product Offering not found");
+    }
+
+    productOffering.setName(generalInfoDTO.getName());
+    productOffering.setPoType(generalInfoDTO.getPoType());
+    productOffering.setEffectiveFrom(generalInfoDTO.getEffectiveFrom());
+    productOffering.setEffectiveTo(generalInfoDTO.getEffectiveTo());
+    productOffering.setDescription(generalInfoDTO.getDescription());
+    productOffering.setDetailedDescription(generalInfoDTO.getDetailedDescription());
+    productOffering.setParent(generalInfoDTO.getParent());
+    productOffering.setCategory(generalInfoDTO.getCategory());
+    productOffering.setBS_externalId(generalInfoDTO.getBS_externalId());
+    productOffering.setCS_externalId(generalInfoDTO.getCS_externalId());
+    productOffering.setSellIndicator(generalInfoDTO.getSellIndicator());
+    productOffering.setQuantityIndicator(generalInfoDTO.getQuantityIndicator());
+    productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
+
+    // Save the updated ProductOffering
+    return productOfferingRepository.save(productOffering);
+  }
 }

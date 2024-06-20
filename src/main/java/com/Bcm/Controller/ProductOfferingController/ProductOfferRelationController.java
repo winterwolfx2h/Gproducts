@@ -75,37 +75,73 @@ public class ProductOfferRelationController {
   }
 
   @GetMapping("/searchPO-PlanByProductId")
-  public List<RelationResponse> searchPOPlanByProductId(@RequestParam Integer productId) {
+  public ResponseEntity<List<Map<String, Object>>> searchPOPlanByProductId(@RequestParam Integer productId) {
 
+    // Check if product exists
+    String checkProductQuery = "SELECT COUNT(*) FROM product WHERE product_id = ?";
+    Integer productCount = base.queryForObject(checkProductQuery, new Object[] {productId}, Integer.class);
+
+    if (productCount == null || productCount == 0) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(Collections.singletonList(Map.of("message", "Product with ID " + productId + " does not exist")));
+    }
+
+    // Check if product has any associated plans
+    String checkPlanAssociationQuery =
+        "SELECT COUNT(*) FROM product_offer_relation WHERE product_id = ? AND type = 'Plan'";
+    Integer planCount = base.queryForObject(checkPlanAssociationQuery, new Object[] {productId}, Integer.class);
+
+    if (planCount == null || planCount == 0) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT)
+          .body(
+              Collections.singletonList(
+                  Map.of("message", "Product with ID " + productId + " has no associated plans")));
+    }
+
+    // Query to fetch plans associated with the product
     String sqlSearchByProductId =
-        "SELECT p.product_id,po.name "
+        "SELECT p.product_id, po.name AS product_name, p.related_product_id "
             + "FROM product_offer_relation p "
-            + "JOIN public.product po ON p.related_product_id = po.product_id "
+            + "JOIN product po ON p.related_product_id = po.product_id "
             + "WHERE p.product_id = ? AND p.type = 'Plan'";
 
-    List<RelationResponse> relationResponses;
-    relationResponses =
+    List<Map<String, Object>> result =
         base.query(
             sqlSearchByProductId,
             new Object[] {productId},
-            new RowMapper<RelationResponse>() {
+            new RowMapper<Map<String, Object>>() {
               @Override
-              public RelationResponse mapRow(ResultSet rs, int rowNum) throws SQLException {
-                RelationResponse response = new RelationResponse();
-                response.setProduct_id(rs.getInt("product_id"));
-                response.setName(rs.getString("name"));
+              public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Map<String, Object> response = new HashMap<>();
+                response.put("product_id", rs.getInt("product_id"));
+                response.put("related_product_id", rs.getInt("related_product_id"));
+                response.put("product_name", rs.getString("product_name"));
                 return response;
               }
             });
 
-    return relationResponses;
+    if (result.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT)
+          .body(
+              Collections.singletonList(
+                  Map.of("message", "Product with ID " + productId + " has no associated plans")));
+    }
+    return ResponseEntity.ok(result);
   }
 
   @GetMapping("/searchByProductId")
   public List<Map<String, Object>> searchByProductID(@RequestParam Integer productId) {
+    // Check if the productId exists in the database
+    String sqlCheckProductId = "SELECT COUNT(*) FROM product WHERE product_id = ?";
+    int count = base.queryForObject(sqlCheckProductId, Integer.class, productId);
 
+    if (count == 0) {
+      throw new IllegalArgumentException("Product with ID " + productId + " does not exist.");
+    }
+
+    // Query to retrieve related products
     String sqlSearchByProductId =
-        "SELECT por.product_id AS product_id, por.related_product_id As related_product_id ,po.name AS product_name,"
+        "SELECT por.product_id AS product_id, por.related_product_id AS related_product_id, po.name AS product_name,"
             + " por.type FROM product_offer_relation por JOIN product po ON por.related_product_id = po.product_id"
             + " WHERE por.product_id = ? AND por.type NOT LIKE 'Plan'";
 
@@ -124,6 +160,11 @@ public class ProductOfferRelationController {
                 return response;
               }
             });
+
+    // Check if any results were found
+    if (result.isEmpty()) {
+      throw new IllegalArgumentException("Product with ID " + productId + " has no associations.");
+    }
 
     return result;
   }

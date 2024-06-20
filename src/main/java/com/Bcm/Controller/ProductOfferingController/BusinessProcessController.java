@@ -4,6 +4,9 @@ import com.Bcm.Exception.MethodsAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.BusinessProcessService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -50,26 +53,59 @@ public class BusinessProcessController {
   }
 
   @GetMapping("/searchProductAndBusinessProcess")
-  public String searchProductAndBusinessProcess(@RequestParam Integer productId) {
-    String jpqlQuery =
-        "SELECT po.name AS productName, bp.name AS businessProcessName "
-            + "FROM ProductOffering po "
-            + "JOIN BusinessProcess bp "
-            + "ON po.businessProcess_id = bp.businessProcess_id "
-            + "WHERE po.Product_id = :productId";
+  public ResponseEntity<String> searchProductAndBusinessProcess(@RequestParam Integer productId) {
+    // Check if product exists
+    String checkProductQuery = "SELECT COUNT(po) FROM ProductOffering po WHERE po.Product_id = :productId";
+    TypedQuery<Long> checkProduct = entityManager.createQuery(checkProductQuery, Long.class);
+    checkProduct.setParameter("productId", productId);
 
-    TypedQuery<Object[]> query = entityManager.createQuery(jpqlQuery, Object[].class);
-    query.setParameter("productId", productId);
+    Long productCount = checkProduct.getSingleResult();
+    ObjectMapper mapper = new ObjectMapper();
+    ObjectNode responseJson = mapper.createObjectNode();
 
-    List<Object[]> results = query.getResultList();
-
-    if (results.isEmpty()) {
-      return "No data found for Product ID: " + productId;
+    if (productCount == 0) {
+      responseJson.put("message", "Product does not exist for Product ID: " + productId);
+      ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
+      try {
+        return new ResponseEntity<>(writer.writeValueAsString(responseJson), HttpStatus.NOT_FOUND);
+      } catch (Exception e) {
+        return new ResponseEntity<>("{\"error\":\"Failed to generate JSON\"}", HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     } else {
-      Object[] result = results.get(0);
-      String productName = (String) result[0];
-      String businessProcessName = (String) result[1];
-      return "Product Name: " + productName + ", Business Process Name: " + businessProcessName;
+      String jpqlQuery =
+          "SELECT po.name AS productName, bp.name AS businessProcessName "
+              + "FROM ProductOffering po "
+              + "JOIN BusinessProcess bp "
+              + "ON po.businessProcess_id = bp.businessProcess_id "
+              + "WHERE po.Product_id = :productId";
+
+      TypedQuery<Object[]> query = entityManager.createQuery(jpqlQuery, Object[].class);
+      query.setParameter("productId", productId);
+
+      List<Object[]> results = query.getResultList();
+
+      if (results.isEmpty()) {
+        responseJson.put("message", "No associated business processes found for Product ID: " + productId);
+        ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
+        try {
+          return new ResponseEntity<>(writer.writeValueAsString(responseJson), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+          return new ResponseEntity<>("{\"error\":\"Failed to generate JSON\"}", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+      } else {
+        Object[] result = results.get(0);
+        String productName = (String) result[0];
+        String businessProcessName = (String) result[1];
+        responseJson.put("productName", productName);
+        responseJson.put("businessProcessName", businessProcessName);
+
+        ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
+        try {
+          return new ResponseEntity<>(writer.writeValueAsString(responseJson), HttpStatus.OK);
+        } catch (Exception e) {
+          return new ResponseEntity<>("{\"error\":\"Failed to generate JSON\"}", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+      }
     }
   }
 

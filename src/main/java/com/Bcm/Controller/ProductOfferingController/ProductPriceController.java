@@ -39,12 +39,21 @@ public class ProductPriceController {
   }
 
   @PostMapping("/addProductPrices")
-  public ResponseEntity<List<ProductPrice>> createProductPrices(@RequestBody List<ProductPrice> productPrices) {
-    List<ProductPrice> createdProductPrices = new ArrayList<>();
-    for (ProductPrice productPrice : productPrices) {
-      createdProductPrices.addAll(productPriceService.create(Collections.singletonList(productPrice)));
+  public ResponseEntity<?> createProductPrices(@RequestBody List<ProductPrice> productPrices) {
+    try {
+      List<ProductPrice> createdProductPrices = new ArrayList<>();
+      for (ProductPrice productPrice : productPrices) {
+        createdProductPrices.addAll(productPriceService.create(Collections.singletonList(productPrice)));
+      }
+      return ResponseEntity.ok(createdProductPrices);
+    } catch (IllegalArgumentException e) {
+      // Handle the case where the ProductPrice already exists
+      return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    } catch (Exception e) {
+      // Handle other exceptions
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("An error occurred while creating ProductPrices.");
     }
-    return ResponseEntity.ok(createdProductPrices);
   }
 
   @GetMapping("/searchByProductId")

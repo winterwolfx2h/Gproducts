@@ -47,18 +47,26 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     List<ProductPrice> createdProductPrices = new ArrayList<>();
 
     for (ProductPrice productPrice : productPrices) {
-      createdProductPrices.add(productPriceRepository.save(productPrice));
+      if (!productPriceRepository.existsById(productPrice.getProductPriceCode())) {
+        createdProductPrices.add(productPriceRepository.save(productPrice));
 
-      // Fetch the ProductOffering by its Product_id
-      int productId = productPrice.getProduct_id();
-      ProductOffering productOffering =
-          productOfferingRepository
-              .findById(productId)
-              .orElseThrow(() -> new EntityNotFoundException("ProductOffering not found for Product_id: " + productId));
+        // Fetch the ProductOffering by its Product_id
+        int productId = productPrice.getProduct_id();
+        ProductOffering productOffering =
+            productOfferingRepository
+                .findById(productId)
+                .orElseThrow(
+                    () -> new EntityNotFoundException("ProductOffering not found for Product_id: " + productId));
 
-      // Update the ProductOffering's working step
-      productOffering.setWorkingStep("Product Price");
-      productOfferingRepository.save(productOffering);
+        // Update the ProductOffering's working step
+        productOffering.setWorkingStep("Product Price");
+        productOfferingRepository.save(productOffering);
+      } else {
+        // Optionally, you can handle the case where the ProductPrice already exists
+        // For example, you might throw an exception or log a warning
+        throw new IllegalArgumentException(
+            "ProductPrice with code " + productPrice.getProductPriceCode() + " already exists.");
+      }
     }
 
     return createdProductPrices;

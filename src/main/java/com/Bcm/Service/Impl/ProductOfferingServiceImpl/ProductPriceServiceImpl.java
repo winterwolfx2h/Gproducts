@@ -61,11 +61,6 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         // Update the ProductOffering's working step
         productOffering.setWorkingStep("Product Price");
         productOfferingRepository.save(productOffering);
-      } else {
-        // Optionally, you can handle the case where the ProductPrice already exists
-        // For example, you might throw an exception or log a warning
-        throw new IllegalArgumentException(
-            "ProductPrice with code " + productPrice.getProductPriceCode() + " already exists.");
       }
     }
 

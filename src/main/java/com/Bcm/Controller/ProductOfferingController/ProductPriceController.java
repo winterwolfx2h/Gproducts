@@ -7,9 +7,7 @@ import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -40,20 +38,22 @@ public class ProductPriceController {
 
   @PostMapping("/addProductPrices")
   public ResponseEntity<?> createProductPrices(@RequestBody List<ProductPrice> productPrices) {
-    try {
-      List<ProductPrice> createdProductPrices = new ArrayList<>();
-      for (ProductPrice productPrice : productPrices) {
+    List<ProductPrice> createdProductPrices = new ArrayList<>();
+    List<Integer> existingProductPrices = new ArrayList<>();
+
+    for (ProductPrice productPrice : productPrices) {
+      if (productPriceService.existsById(productPrice.getProductPriceCode())) {
+        existingProductPrices.add(productPrice.getProductPriceCode());
+      } else {
         createdProductPrices.addAll(productPriceService.create(Collections.singletonList(productPrice)));
       }
-      return ResponseEntity.ok(createdProductPrices);
-    } catch (IllegalArgumentException e) {
-      // Handle the case where the ProductPrice already exists
-      return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-    } catch (Exception e) {
-      // Handle other exceptions
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("An error occurred while creating ProductPrices.");
     }
+
+    Map<String, Object> response = new HashMap<>();
+    response.put("createdProductPrices", createdProductPrices);
+    response.put("existingProductPrices", existingProductPrices);
+
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping("/searchByProductId")

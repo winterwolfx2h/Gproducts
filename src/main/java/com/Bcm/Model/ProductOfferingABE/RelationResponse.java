@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RelationResponse {
 
-  Integer product_id;
-  String name;
+    Integer product_id;
+    String name;
 }

@@ -12,8 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDetailsResponse {
-  private String channelName;
-  private String entityName;
-  private String productPriceGroupName;
-  private Boolean stockIndicator;
+    private String channelName;
+    private String entityName;
+    private String productPriceGroupName;
+    private Boolean stockIndicator;
 }

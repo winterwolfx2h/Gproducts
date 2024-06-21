@@ -1,25 +1,26 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 
 import com.Bcm.Model.ProductOfferingABE.ProductRelation;
-import java.util.List;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public interface ProductRelationService {
 
-  ProductRelation create(ProductRelation productRelation);
+    ProductRelation create(ProductRelation productRelation);
 
-  List<ProductRelation> read();
+    List<ProductRelation> read();
 
-  ProductRelation update(int poRelation_Code, ProductRelation ProductRelation);
+    ProductRelation update(int poRelation_Code, ProductRelation ProductRelation);
 
-  String delete(int poRelation_Code);
+    String delete(int poRelation_Code);
 
-  ProductRelation findById(int poRelation_Code);
+    ProductRelation findById(int poRelation_Code);
 
-  List<ProductRelation> searchByKeyword(String type);
+    List<ProductRelation> searchByKeyword(String type);
 
-  ProductRelation findByType(String type);
+    ProductRelation findByType(String type);
 
-  boolean existsById(int poRelation_Code);
+    boolean existsById(int poRelation_Code);
 }

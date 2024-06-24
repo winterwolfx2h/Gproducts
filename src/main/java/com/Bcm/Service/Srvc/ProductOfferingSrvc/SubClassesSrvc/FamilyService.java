@@ -13,7 +13,7 @@ public interface FamilyService {
     Family create(Family family);
 
     @Transactional
-    Family createFamily(FamilyRequestDTO familyRequestDTO);
+    Family createOrUpdateFamily(FamilyRequestDTO familyRequestDTO);
 
     List<Family> read();
 

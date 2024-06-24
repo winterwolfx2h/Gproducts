@@ -1,19 +1,19 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses;
 
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
-@Table(name = "SubFamily")
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
+@Table(name = "SubFamily")
 @Getter
 @Setter
+@NoArgsConstructor
+@JsonIgnoreProperties("subFamilies")
 public class SubFamily {
 
     @Id
@@ -24,4 +24,8 @@ public class SubFamily {
 
     @Column(name = "subFamilyName", nullable = false)
     private String subFamilyName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "familyCode", nullable = false)
+    private Family family;
 }

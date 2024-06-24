@@ -41,24 +41,38 @@ public class FamilyServiceImpl implements FamilyService {
 
     @Transactional
     @Override
-    public Family createFamily(FamilyRequestDTO familyRequestDTO) {
+    public Family createOrUpdateFamily(FamilyRequestDTO familyRequestDTO) {
+        // Check if a Family with the given name already exists
+        Optional<Family> existingFamilyOptional = familyRepository.findByName(familyRequestDTO.getName());
+        Family family;
+        if (existingFamilyOptional.isPresent()) {
+            // If Family exists, use it
+            family = existingFamilyOptional.get();
+        } else {
+            // If Family does not exist, create a new one
+            family = new Family();
+            family.setName(familyRequestDTO.getName());
+            family.setDescription(familyRequestDTO.getDescription());
+        }
+
         // Check if a SubFamily with the given name already exists
         SubFamily subFamily = subFamilyRepository.findBySubFamilyName(familyRequestDTO.getSubFamilyName())
                 .orElseGet(() -> {
                     // Create a new SubFamily entity if it does not exist
                     SubFamily newSubFamily = new SubFamily();
                     newSubFamily.setSubFamilyName(familyRequestDTO.getSubFamilyName());
-                    return subFamilyRepository.save(newSubFamily);
+                    return newSubFamily;
                 });
 
-        // Create Family entity
-        Family family = new Family();
-        family.setName(familyRequestDTO.getName());
-        family.setDescription(familyRequestDTO.getDescription());
-        family.setSubFamily(subFamily);
+        // Add the SubFamily to the Family (if not already associated)
+        if (!family.getSubFamilies().contains(subFamily)) {
+            family.addSubFamily(subFamily);
+        }
 
+        // Save the Family (will cascade to SubFamily if new)
         return familyRepository.save(family);
     }
+
 
     @Override
     public List<Family> read() {

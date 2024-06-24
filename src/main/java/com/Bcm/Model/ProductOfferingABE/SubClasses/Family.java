@@ -1,18 +1,20 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
-@Table(name = "Family")
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
+@Table(name = "Family")
 @Getter
 @Setter
+@NoArgsConstructor
+@JsonIgnoreProperties("family")
 public class Family {
 
     @Id
@@ -27,7 +29,18 @@ public class Family {
     @Column(name = "description", nullable = true)
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "subFamilyCode", referencedColumnName = "po_SubFamilyCode", nullable = false)
-    private SubFamily subFamily;
+    @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SubFamily> subFamilies = new ArrayList<>();
+
+    // Helper method to add SubFamily to Family
+    public void addSubFamily(SubFamily subFamily) {
+        subFamilies.add(subFamily);
+        subFamily.setFamily(this);
+    }
+
+    // Helper method to remove SubFamily from Family
+    public void removeSubFamily(SubFamily subFamily) {
+        subFamilies.remove(subFamily);
+        subFamily.setFamily(null);
+    }
 }

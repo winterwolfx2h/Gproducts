@@ -73,7 +73,7 @@ public class BusinessProcessController {
       }
     } else {
       String jpqlQuery =
-          "SELECT po.name AS productName, bp.name AS businessProcessName "
+          "SELECT bp.businessProcess_id AS businessProcess_id, bp.name AS businessProcessName "
               + "FROM ProductOffering po "
               + "JOIN BusinessProcess bp "
               + "ON po.businessProcess_id = bp.businessProcess_id "
@@ -94,9 +94,9 @@ public class BusinessProcessController {
         }
       } else {
         Object[] result = results.get(0);
-        String productName = (String) result[0];
+        Integer businessProcess_id = (Integer) result[0];
         String businessProcessName = (String) result[1];
-        responseJson.put("productName", productName);
+        responseJson.put("businessProcess_id", businessProcess_id);
         responseJson.put("businessProcessName", businessProcessName);
 
         ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();

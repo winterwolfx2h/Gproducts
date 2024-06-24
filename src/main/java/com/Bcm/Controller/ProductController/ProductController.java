@@ -112,7 +112,7 @@ public class ProductController {
       }
 
       String jpqlQuery =
-          "SELECT ch.name AS channelName, ee.name AS entityName, ppg.name AS productPriceGroupName, e.stock_Indicator "
+          "SELECT ch.channelCode AS channelCode, ch.name AS channelName,ee.entityCode AS entityCode, ee.name AS entityName, ppg.productPriceGroupCode AS productPriceGroupCode , ppg.name AS productPriceGroupName, e.stock_Indicator "
               + "FROM ProductOffering po "
               + "JOIN po.channelCode ch "
               + "JOIN po.entityCode ee "
@@ -125,14 +125,17 @@ public class ProductController {
 
       Object[] result = query.getSingleResult();
 
-      String channelName = (String) result[0];
-      String entityName = (String) result[1];
-      String productPriceGroupName = (String) result[2];
-      Boolean stockIndicator = (Boolean) result[3]; // Fetch the stock_Indicator
+        Integer channelCode = (Integer) result[0];
+        String channelName = (String) result[1];
+        Integer entityCode = (Integer) result[2];
+        String entityName = (String) result[3];
+        Integer productPriceGroupCode = (Integer) result[4];
+      String productPriceGroupName = (String) result[5];
+      Boolean stockIndicator = (Boolean) result[6]; // Fetch the stock_Indicator
 
       // Create ProductDetailsResponse object with stockIndicator
       ProductDetailsResponse response =
-          new ProductDetailsResponse(channelName, entityName, productPriceGroupName, stockIndicator);
+          new ProductDetailsResponse(channelCode,channelName,entityCode, entityName,productPriceGroupCode, productPriceGroupName, stockIndicator);
 
       return ResponseEntity.ok(response);
     } catch (NoResultException ex) {

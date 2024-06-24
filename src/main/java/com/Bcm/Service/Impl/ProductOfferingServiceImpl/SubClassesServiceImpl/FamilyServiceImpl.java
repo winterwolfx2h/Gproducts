@@ -5,12 +5,16 @@ import com.Bcm.Exception.FamilyAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyRequestDTO;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.SubFamily;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.FamilyRepository;
+import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.SubFamilyRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +25,7 @@ public class FamilyServiceImpl implements FamilyService {
 
     final FamilyRepository familyRepository;
     final ProductOfferingService productOfferingService;
+    private final SubFamilyRepository subFamilyRepository;
 
     @Override
     public Family create(Family family) {
@@ -32,6 +37,27 @@ public class FamilyServiceImpl implements FamilyService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseOperationException("Error creating Family", e);
         }
+    }
+
+    @Transactional
+    @Override
+    public Family createFamily(FamilyRequestDTO familyRequestDTO) {
+        // Check if a SubFamily with the given name already exists
+        SubFamily subFamily = subFamilyRepository.findBySubFamilyName(familyRequestDTO.getSubFamilyName())
+                .orElseGet(() -> {
+                    // Create a new SubFamily entity if it does not exist
+                    SubFamily newSubFamily = new SubFamily();
+                    newSubFamily.setSubFamilyName(familyRequestDTO.getSubFamilyName());
+                    return subFamilyRepository.save(newSubFamily);
+                });
+
+        // Create Family entity
+        Family family = new Family();
+        family.setName(familyRequestDTO.getName());
+        family.setDescription(familyRequestDTO.getDescription());
+        family.setSubFamily(subFamily);
+
+        return familyRepository.save(family);
     }
 
     @Override

@@ -26,4 +26,8 @@ public class Family {
 
     @Column(name = "description", nullable = true)
     private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "subFamilyCode", referencedColumnName = "po_SubFamilyCode", nullable = false)
+    private SubFamily subFamily;
 }

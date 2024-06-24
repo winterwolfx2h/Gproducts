@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FamilyRequestDTO {
-    private String name;
-    private String description;
+public class SubFamilyResponseDTO {
+    private int po_SubFamilyCode;
     private String subFamilyName;
 }

@@ -3,6 +3,7 @@ package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 import com.Bcm.Exception.FamilyAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyRequestDTO;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,12 @@ public class FamilyController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
+    }
+
+    @PostMapping("/CreateFamily")
+    public ResponseEntity<Family> createFamily(@RequestBody FamilyRequestDTO familyRequestDTO) {
+        Family createdFamily = familyService.createFamily(familyRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdFamily);
     }
 
     @GetMapping("/listFamily")

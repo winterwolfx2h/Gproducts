@@ -1,7 +1,9 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyRequestDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -9,6 +11,9 @@ import java.util.List;
 public interface FamilyService {
 
     Family create(Family family);
+
+    @Transactional
+    Family createFamily(FamilyRequestDTO familyRequestDTO);
 
     List<Family> read();
 

@@ -34,12 +34,12 @@ public class Market {
 
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = LogicalResource.class)
-    @JoinColumn(name = "LR_id")
-    @JsonIgnore
-    private List<LogicalResource> logicalResources;
+    @JoinColumn(name = "po_MarketCode")
+
+    private List<LogicalResource> MarketResource;
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = PhysicalResource.class)
-    @JoinColumn(name = "PR_id")
+    @JoinColumn(name = "po_MarketCode")
     @JsonIgnore
-    private List<PhysicalResource> physicalResources;
+    private List<PhysicalResource> physicalResource;
 }

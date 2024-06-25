@@ -32,12 +32,12 @@ public class SubMarket {
     private String description;
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = LogicalResource.class)
-    @JoinColumn(name = "LR_id")
-    @JsonIgnore
+    @JoinColumn(name = "po_SubMarketCode")
+
     private List<LogicalResource> logicalResources;
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = PhysicalResource.class)
-    @JoinColumn(name = "PR_id")
+    @JoinColumn(name = "po_SubMarketCode")
     @JsonIgnore
     private List<PhysicalResource> physicalResources;
 }

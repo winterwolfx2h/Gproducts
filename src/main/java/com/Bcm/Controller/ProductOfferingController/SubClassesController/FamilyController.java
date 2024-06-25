@@ -2,7 +2,9 @@ package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
 import com.Bcm.Exception.FamilyAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.*;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyRequestDTO;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyResponseDTO;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -14,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,30 +48,10 @@ public class FamilyController {
             @ApiResponse(code = 400, message = "Bad request"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-
-    @PostMapping("/CreateFamily")
+    @PostMapping("/createFamily")
     public ResponseEntity<FamilyResponseDTO> createFamily(@RequestBody FamilyRequestDTO familyRequestDTO) {
-        Family createdFamily = familyService.createOrUpdateFamily(familyRequestDTO);
-        FamilyResponseDTO responseDTO = convertToResponseDTO(createdFamily);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
-    }
-
-    private FamilyResponseDTO convertToResponseDTO(Family family) {
-        FamilyResponseDTO responseDTO = new FamilyResponseDTO();
-        responseDTO.setPo_FamilyCode(family.getPo_FamilyCode());
-        responseDTO.setName(family.getName());
-        responseDTO.setDescription(family.getDescription());
-
-        List<SubFamilyResponseDTO> subFamiliesDTO = new ArrayList<>();
-        for (SubFamily subFamily : family.getSubFamilies()) {
-            SubFamilyResponseDTO subFamilyDTO = new SubFamilyResponseDTO();
-            subFamilyDTO.setPo_SubFamilyCode(subFamily.getPo_SubFamilyCode());
-            subFamilyDTO.setSubFamilyName(subFamily.getSubFamilyName());
-            subFamiliesDTO.add(subFamilyDTO);
-        }
-        responseDTO.setSubFamilies(subFamiliesDTO);
-
-        return responseDTO;
+        FamilyResponseDTO createdFamily = familyService.createOrUpdateFamily(familyRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdFamily);
     }
 
     @GetMapping("/subFamiliesByFamily")

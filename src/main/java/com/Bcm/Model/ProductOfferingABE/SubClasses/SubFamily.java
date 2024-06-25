@@ -26,6 +26,6 @@ public class SubFamily {
     private String subFamilyName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "familyCode", nullable = false)
+    @JoinColumn(name = "familyCode", nullable = true)
     private Family family;
 }

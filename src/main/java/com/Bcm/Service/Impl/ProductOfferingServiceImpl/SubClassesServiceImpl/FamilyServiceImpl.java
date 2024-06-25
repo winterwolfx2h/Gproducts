@@ -4,9 +4,7 @@ import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.FamilyAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyRequestDTO;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.SubFamily;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.*;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.FamilyRepository;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.SubFamilyRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
@@ -18,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -41,7 +40,7 @@ public class FamilyServiceImpl implements FamilyService {
 
     @Transactional
     @Override
-    public Family createOrUpdateFamily(FamilyRequestDTO familyRequestDTO) {
+    public FamilyResponseDTO createOrUpdateFamily(FamilyRequestDTO familyRequestDTO) {
         // Check if a Family with the given name already exists
         Optional<Family> existingFamilyOptional = familyRepository.findByName(familyRequestDTO.getName());
         Family family;
@@ -70,9 +69,15 @@ public class FamilyServiceImpl implements FamilyService {
         }
 
         // Save the Family (will cascade to SubFamily if new)
-        return familyRepository.save(family);
-    }
+        family = familyRepository.save(family);
 
+        // Prepare response DTO
+        List<SubFamilyResponseDTO> subFamilyResponseDTOs = family.getSubFamilies().stream()
+                .map(subFam -> new SubFamilyResponseDTO(subFam.getPo_SubFamilyCode(), subFam.getSubFamilyName()))
+                .collect(Collectors.toList());
+
+        return new FamilyResponseDTO(family.getPo_FamilyCode(), family.getName(), family.getDescription(), subFamilyResponseDTOs);
+    }
 
     @Override
     public List<Family> read() {

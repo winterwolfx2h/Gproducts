@@ -1,6 +1,7 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
 import com.Bcm.Exception.DatabaseOperationException;
+import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.POAttributesRepository;
@@ -97,6 +98,29 @@ public class POAttributesServiceImpl implements POAttributesService {
             throw new RuntimeException("Invalid argument provided for finding POAttributes");
         }
     }
+
+    public POAttributes saveOrUpdate(int poAttribute_code, POAttributes poAttributes) throws InvalidInputException {
+        Optional<POAttributes> existingAttribute = poAttributesRepository.findById(poAttribute_code);
+
+        if (existingAttribute.isPresent()) {
+            POAttributes existingPOAttributes = existingAttribute.get();
+            existingPOAttributes.setName(poAttributes.getName());
+            existingPOAttributes.setCategory(poAttributes.getCategory());
+            existingPOAttributes.setBsexternalId(poAttributes.getBsexternalId());
+            existingPOAttributes.setCsexternalId(poAttributes.getCsexternalId());
+            existingPOAttributes.setCharType(poAttributes.getCharType());
+            existingPOAttributes.setCharValue(poAttributes.getCharValue());
+            // Set other fields as necessary
+            return poAttributesRepository.save(existingPOAttributes);
+        } else {
+            // Add new attribute
+            poAttributes.setPoAttribute_code(poAttribute_code);  // Ensure the ID is set correctly
+            return poAttributesRepository.save(poAttributes);
+        }
+    }
+
+
+
 
     @Override
     public boolean existsById(int poAttribute_code) {

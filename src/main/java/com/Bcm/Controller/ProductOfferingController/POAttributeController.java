@@ -136,12 +136,31 @@ public class POAttributeController {
         return poAttributesResponses;
     }
 
+
+
+
     @PutMapping("/updatePOAttributes/{poAttribute_code}")
     @CacheEvict(value = "AttributesCache", allEntries = true)
     public ResponseEntity<?> update(@PathVariable int poAttribute_code, @RequestBody POAttributes POAttributes) {
         try {
             POAttributes updatedPlan = poAttributesService.update(poAttribute_code, POAttributes);
             return ResponseEntity.ok(updatedPlan);
+        } catch (InvalidInputException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+    @PutMapping("/updateOrSavePOAttributes")
+    @CacheEvict(value = "AttributesCache", allEntries = true)
+    public ResponseEntity<?> saveOrUpdate(@RequestBody List<POAttributes> poAttributesList) {
+        try {
+            List<POAttributes> savedOrUpdatedPlans = new ArrayList<>();
+            for (POAttributes poAttributes : poAttributesList) {
+                POAttributes savedOrUpdatedPlan = poAttributesService.saveOrUpdate(poAttributes.getPoAttribute_code(), poAttributes);
+                savedOrUpdatedPlans.add(savedOrUpdatedPlan);
+            }
+            return ResponseEntity.ok(savedOrUpdatedPlans);
         } catch (InvalidInputException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

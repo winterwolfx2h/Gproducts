@@ -14,6 +14,8 @@ public interface POAttributesService {
 
     POAttributes update(int poAttribute_code, POAttributes poAttributes);
 
+    POAttributes saveOrUpdate(int poAttribute_code, POAttributes poAttributes);
+
     String delete(int poAttribute_code);
 
     POAttributes findById(int poAttribute_code);

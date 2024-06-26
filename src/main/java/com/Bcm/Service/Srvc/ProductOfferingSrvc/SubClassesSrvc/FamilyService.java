@@ -2,6 +2,7 @@ package com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyRequestDTO;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyRequestDTOUpdate;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,7 @@ public interface FamilyService {
 
     List<Family> read();
 
-    Family update(int po_FamilyCode, Family family);
+    FamilyResponseDTO update(int po_FamilyCode, FamilyRequestDTOUpdate familyRequestDTO);
 
     String delete(int po_FamilyCode);
 
@@ -31,4 +32,6 @@ public interface FamilyService {
     boolean findByNameexist(String name);
 
     boolean existsById(int po_FamilyCode);
+
+    List<FamilyResponseDTO> getAllFamilies();
 }

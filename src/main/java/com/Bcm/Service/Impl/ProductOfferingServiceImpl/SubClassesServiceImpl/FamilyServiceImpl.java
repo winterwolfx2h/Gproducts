@@ -14,7 +14,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -88,25 +90,75 @@ public class FamilyServiceImpl implements FamilyService {
         }
     }
 
+    @Transactional
     @Override
-    public Family update(int po_FamilyCode, Family updatedFamily) {
+    public FamilyResponseDTO update(int po_FamilyCode, FamilyRequestDTOUpdate familyRequestDTO) {
         Optional<Family> existingFamilyOptional = familyRepository.findById(po_FamilyCode);
         if (existingFamilyOptional.isPresent()) {
             Family existingFamily = existingFamilyOptional.get();
 
-            String newName = updatedFamily.getName();
             // Check if there's another family with the same name
+            String newName = familyRequestDTO.getName();
             if (!existingFamily.getName().equals(newName) && familyRepository.existsByName(newName)) {
                 throw new FamilyAlreadyExistsException("Family with name '" + newName + "' already exists.");
             }
 
+            // Update family fields
             existingFamily.setName(newName);
-            existingFamily.setDescription(updatedFamily.getDescription());
-            return familyRepository.save(existingFamily);
+            existingFamily.setDescription(familyRequestDTO.getDescription());
+
+            // Map existing subfamilies to a map for quick lookup
+            Map<Integer, SubFamily> existingSubFamiliesMap = existingFamily.getSubFamilies().stream()
+                    .collect(Collectors.toMap(SubFamily::getPo_SubFamilyCode, subFamily -> subFamily));
+
+            // Update or add subfamilies from the request
+            List<SubFamily> updatedSubFamilies = new ArrayList<>();
+            for (SubFamilyRequestDTO subFamilyRequestDTO : familyRequestDTO.getSubFamilies()) {
+                if (subFamilyRequestDTO.getPo_SubFamilyCode() != null) {
+                    // Check if subfamily exists in the existing subfamilies map
+                    SubFamily subFamily = existingSubFamiliesMap.get(subFamilyRequestDTO.getPo_SubFamilyCode());
+                    if (subFamily == null) {
+                        throw new ResourceNotFoundException("SubFamily with ID " + subFamilyRequestDTO.getPo_SubFamilyCode() + " not found.");
+                    }
+                    // Update existing subfamily name
+                    subFamily.setSubFamilyName(subFamilyRequestDTO.getSubFamilyName());
+                    updatedSubFamilies.add(subFamily);
+                } else {
+                    // Create new subfamily only if it doesn't already exist in the updated subfamilies list
+                    boolean existsInUpdatedList = updatedSubFamilies.stream()
+                            .anyMatch(sf -> sf.getSubFamilyName().equals(subFamilyRequestDTO.getSubFamilyName()));
+                    if (!existsInUpdatedList) {
+                        SubFamily newSubFamily = new SubFamily();
+                        newSubFamily.setSubFamilyName(subFamilyRequestDTO.getSubFamilyName());
+                        newSubFamily.setFamily(existingFamily);
+                        updatedSubFamilies.add(newSubFamily);
+                    }
+                }
+            }
+
+            // Add existing subfamilies not updated in the request
+            existingFamily.getSubFamilies().stream()
+                    .filter(subFamily -> !updatedSubFamilies.contains(subFamily))
+                    .forEach(updatedSubFamilies::add);
+
+            // Set updated subfamilies in the existing family
+            existingFamily.getSubFamilies().clear();
+            existingFamily.getSubFamilies().addAll(updatedSubFamilies);
+
+            // Save the updated Family (will cascade to SubFamily if new)
+            existingFamily = familyRepository.save(existingFamily);
+
+            // Prepare response DTO
+            List<SubFamilyResponseDTO> subFamilyResponseDTOs = existingFamily.getSubFamilies().stream()
+                    .map(subFam -> new SubFamilyResponseDTO(subFam.getPo_SubFamilyCode(), subFam.getSubFamilyName()))
+                    .collect(Collectors.toList());
+
+            return new FamilyResponseDTO(existingFamily.getPo_FamilyCode(), existingFamily.getName(), existingFamily.getDescription(), subFamilyResponseDTOs);
         } else {
             throw new ResourceNotFoundException("Family with ID " + po_FamilyCode + " not found.");
         }
     }
+
 
     @Override
     public String delete(int po_FamilyCode) {
@@ -170,5 +222,16 @@ public class FamilyServiceImpl implements FamilyService {
     @Override
     public boolean existsById(int po_FamilyCode) {
         return familyRepository.existsById(po_FamilyCode);
+    }
+
+    @Override
+    public List<FamilyResponseDTO> getAllFamilies() {
+        List<Family> families = familyRepository.findAll();
+        return families.stream().map(family -> {
+            List<SubFamilyResponseDTO> subFamilyResponseDTOs = family.getSubFamilies().stream()
+                    .map(subFamily -> new SubFamilyResponseDTO(subFamily.getPo_SubFamilyCode(), subFamily.getSubFamilyName()))
+                    .collect(Collectors.toList());
+            return new FamilyResponseDTO(family.getPo_FamilyCode(), family.getName(), family.getDescription(), subFamilyResponseDTOs);
+        }).collect(Collectors.toList());
     }
 }

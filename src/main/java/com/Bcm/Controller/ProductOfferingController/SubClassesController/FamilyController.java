@@ -4,6 +4,7 @@ import com.Bcm.Exception.FamilyAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyRequestDTO;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyRequestDTOUpdate;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyResponseDTO;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import io.swagger.annotations.ApiOperation;
@@ -63,7 +64,7 @@ public class FamilyController {
         }
 
         // Family exists, proceed with retrieving subfamilies
-        String sql = "SELECT sf.po_sub_family_code, sf.sub_family_name, f.name " +
+        String sql = "SELECT sf.po_sub_family_code, sf.sub_family_name, f.name AS familyName " +
                 "FROM sub_family sf " +
                 "JOIN family f ON f.po_family_code = sf.family_code " +
                 "WHERE f.name = ?";
@@ -92,12 +93,12 @@ public class FamilyController {
     }
 
     @GetMapping("/listFamily")
-    public ResponseEntity<List<Family>> getAllFamilies() {
+    public ResponseEntity<List<FamilyResponseDTO>> getAllFamilies() {
         try {
-            List<Family> families = familyService.read();
+            List<FamilyResponseDTO> families = familyService.getAllFamilies();
             return ResponseEntity.ok(families);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
@@ -107,16 +108,16 @@ public class FamilyController {
             Family family = familyService.findById(po_FamilyCode);
             return ResponseEntity.ok(family);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
     @PutMapping("/{po_FamilyCode}")
     public ResponseEntity<?> updateFamily(
-            @PathVariable("po_FamilyCode") int po_FamilyCode, @RequestBody Family updatedFamily) {
+            @PathVariable("po_FamilyCode") int po_FamilyCode, @RequestBody FamilyRequestDTOUpdate familyRequestDTO) {
         try {
-            Family updatedGroup = familyService.update(po_FamilyCode, updatedFamily);
-            return ResponseEntity.ok(updatedGroup);
+            FamilyResponseDTO updatedFamily = familyService.update(po_FamilyCode, familyRequestDTO);
+            return ResponseEntity.ok(updatedFamily);
         } catch (FamilyAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (ResourceNotFoundException e) {
@@ -126,13 +127,14 @@ public class FamilyController {
         }
     }
 
+
     @DeleteMapping("/{po_FamilyCode}")
     public ResponseEntity<String> deleteFamily(@PathVariable("po_FamilyCode") int po_FamilyCode) {
         try {
             String resultMessage = familyService.delete(po_FamilyCode);
             return ResponseEntity.ok(resultMessage);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

@@ -25,6 +25,9 @@ public class SubFamily {
     @Column(name = "subFamilyName", nullable = false)
     private String subFamilyName;
 
+    @Column(name = "subFamilyDescription", nullable = true)
+    private String subFamilyDescription;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "familyCode", nullable = true)
     private Family family;

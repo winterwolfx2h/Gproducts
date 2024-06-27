@@ -157,7 +157,8 @@ public class FamilyController {
             List<SubFamily> subFamilies = familyService.readSubFamilies();
             List<SubFamilyResponseDTO> subFamilyResponseDTOs = subFamilies.stream()
                     .map(subFamily -> new SubFamilyResponseDTO(subFamily.getPo_SubFamilyCode(),
-                            subFamily.getSubFamilyName()))
+                            subFamily.getSubFamilyName(),
+                            subFamily.getSubFamilyDescription()))
                     .collect(Collectors.toList());
             return ResponseEntity.ok(subFamilyResponseDTOs);
         } catch (RuntimeException e) {

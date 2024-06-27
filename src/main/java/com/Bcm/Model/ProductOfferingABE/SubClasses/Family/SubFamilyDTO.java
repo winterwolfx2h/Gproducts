@@ -11,4 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SubFamilyDTO {
     private String subFamilyName;
+    private String subFamilyDescription;
 }

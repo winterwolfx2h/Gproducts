@@ -44,6 +44,7 @@ public class FamilyServiceImpl implements FamilyService {
                     .orElseGet(() -> {
                         SubFamily newSubFamily = new SubFamily();
                         newSubFamily.setSubFamilyName(subFamilyDTO.getSubFamilyName());
+                        newSubFamily.setSubFamilyDescription(subFamilyDTO.getSubFamilyDescription());
                         return newSubFamily;
                     });
 
@@ -56,7 +57,7 @@ public class FamilyServiceImpl implements FamilyService {
 
         List<SubFamilyResponseDTO> subFamilyResponseDTOs = family.getSubFamilies().stream()
                 .map(subFml -> new SubFamilyResponseDTO(subFml.getPo_SubFamilyCode(),
-                        subFml.getSubFamilyName()))
+                        subFml.getSubFamilyName(), subFml.getSubFamilyDescription()))
                 .collect(Collectors.toList());
 
         return new FamilyResponseDTO(family.getPo_FamilyCode(), family.getName(), family.getDescription(), subFamilyResponseDTOs);
@@ -102,8 +103,9 @@ public class FamilyServiceImpl implements FamilyService {
                     if (subFamily == null) {
                         throw new ResourceNotFoundException("SubFamily with ID " + subFamilyRequestDTO.getPo_SubFamilyCode() + " not found.");
                     }
-                    // Update existing subfamily name
+                    // Update existing subfamily name & description
                     subFamily.setSubFamilyName(subFamilyRequestDTO.getSubFamilyName());
+                    subFamily.setSubFamilyDescription(subFamilyRequestDTO.getSubFamilyDescription());
                     updatedSubFamilies.add(subFamily);
                 } else {
                     // Create new subfamily only if it doesn't already exist in the updated subfamilies list
@@ -112,6 +114,7 @@ public class FamilyServiceImpl implements FamilyService {
                     if (!existsInUpdatedList) {
                         SubFamily newSubFamily = new SubFamily();
                         newSubFamily.setSubFamilyName(subFamilyRequestDTO.getSubFamilyName());
+                        newSubFamily.setSubFamilyDescription(subFamilyRequestDTO.getSubFamilyDescription());
                         newSubFamily.setFamily(existingFamily);
                         updatedSubFamilies.add(newSubFamily);
                     }
@@ -132,7 +135,7 @@ public class FamilyServiceImpl implements FamilyService {
 
             // Prepare response DTO
             List<SubFamilyResponseDTO> subFamilyResponseDTOs = existingFamily.getSubFamilies().stream()
-                    .map(subFam -> new SubFamilyResponseDTO(subFam.getPo_SubFamilyCode(), subFam.getSubFamilyName()))
+                    .map(subFam -> new SubFamilyResponseDTO(subFam.getPo_SubFamilyCode(), subFam.getSubFamilyName(), subFam.getSubFamilyDescription()))
                     .collect(Collectors.toList());
 
             return new FamilyResponseDTO(existingFamily.getPo_FamilyCode(), existingFamily.getName(), existingFamily.getDescription(), subFamilyResponseDTOs);
@@ -211,7 +214,7 @@ public class FamilyServiceImpl implements FamilyService {
         List<Family> families = familyRepository.findAll();
         return families.stream().map(family -> {
             List<SubFamilyResponseDTO> subFamilyResponseDTOs = family.getSubFamilies().stream()
-                    .map(subFamily -> new SubFamilyResponseDTO(subFamily.getPo_SubFamilyCode(), subFamily.getSubFamilyName()))
+                    .map(subFamily -> new SubFamilyResponseDTO(subFamily.getPo_SubFamilyCode(), subFamily.getSubFamilyName(), subFamily.getSubFamilyDescription()))
                     .collect(Collectors.toList());
             return new FamilyResponseDTO(family.getPo_FamilyCode(), family.getName(), family.getDescription(), subFamilyResponseDTOs);
         }).collect(Collectors.toList());

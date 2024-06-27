@@ -12,4 +12,5 @@ import lombok.Setter;
 public class SubFamilyRequestDTO {
     private Integer po_SubFamilyCode;
     private String subFamilyName;
+    private String subFamilyDescription;
 }

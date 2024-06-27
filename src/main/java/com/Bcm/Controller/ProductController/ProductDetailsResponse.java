@@ -12,13 +12,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDetailsResponse {
-  private Integer channelCode;
-  private String channelName;
-  private Integer entityCode;
-  private String entityName;
-  private Integer productPriceGroupCode;
-  private String productPriceGroupName;
-  private Boolean stockIndicator;
+    private Integer channelCode;
+    private String channelName;
+    private Integer entityCode;
+    private String entityName;
+    private Integer productPriceGroupCode;
+    private String productPriceGroupName;
+    private Boolean stockIndicator;
 
 
 }

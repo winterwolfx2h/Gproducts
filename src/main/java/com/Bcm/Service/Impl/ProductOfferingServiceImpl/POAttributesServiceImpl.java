@@ -120,8 +120,6 @@ public class POAttributesServiceImpl implements POAttributesService {
     }
 
 
-
-
     @Override
     public boolean existsById(int poAttribute_code) {
         return poAttributesRepository.existsById(poAttribute_code);

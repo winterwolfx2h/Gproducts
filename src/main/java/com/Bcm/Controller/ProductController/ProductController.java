@@ -6,16 +6,6 @@ import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -23,6 +13,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.*;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Tag(name = "Product Controller", description = "All of the Product's methods")
 @RestController
@@ -35,7 +36,8 @@ public class ProductController {
     final ProductService productService;
     final ProductOfferingService productOfferingService;
 
-    @PersistenceContext private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @GetMapping("/ProductList")
     @Cacheable(value = "productCache")
@@ -54,7 +56,7 @@ public class ProductController {
 
         // SQL query to check if the product exists
         String checkProductSql = "SELECT COUNT(*) FROM product_offering WHERE product_id = ?";
-        int productCount = base.queryForObject(checkProductSql, new Object[] {productId}, Integer.class);
+        int productCount = base.queryForObject(checkProductSql, new Object[]{productId}, Integer.class);
 
         if (productCount == 0) {
             response.put("message", "Product with the given ID does not exist.");
@@ -74,7 +76,7 @@ public class ProductController {
         productDetails =
                 base.queryForObject(
                         sql,
-                        new Object[] {productId},
+                        new Object[]{productId},
                         new RowMapper<Map<String, String>>() {
                             @Override
                             public Map<String, String> mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -135,7 +137,7 @@ public class ProductController {
 
             // Create ProductDetailsResponse object with stockIndicator
             ProductDetailsResponse response =
-                    new ProductDetailsResponse(channelCode,channelName,entityCode, entityName,productPriceGroupCode, productPriceGroupName, stockIndicator);
+                    new ProductDetailsResponse(channelCode, channelName, entityCode, entityName, productPriceGroupCode, productPriceGroupName, stockIndicator);
 
             return ResponseEntity.ok(response);
         } catch (NoResultException ex) {

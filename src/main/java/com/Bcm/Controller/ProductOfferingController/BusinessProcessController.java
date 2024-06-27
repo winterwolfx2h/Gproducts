@@ -8,16 +8,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.util.List;
 
 @Tag(name = "Business Process Controller", description = "All of the Business Process's methods")
 @RestController
@@ -28,7 +29,8 @@ public class BusinessProcessController {
 
     final JdbcTemplate base;
     final BusinessProcessService businessProcessService;
-    @PersistenceContext private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @PostMapping("/addBusinessProcess")
     public ResponseEntity<?> createBusinessProcess(@RequestBody BusinessProcess businessProcess) {
@@ -145,5 +147,6 @@ public class BusinessProcessController {
     }
 
     @CacheEvict(value = "BusinessProcesssCache", allEntries = true)
-    public void invalidateBusinessProcesssCache() {}
+    public void invalidateBusinessProcesssCache() {
+    }
 }

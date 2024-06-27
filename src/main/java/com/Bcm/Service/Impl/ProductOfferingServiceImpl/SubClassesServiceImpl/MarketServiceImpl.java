@@ -75,56 +75,67 @@ public class MarketServiceImpl implements MarketService {
 
     @Transactional
     @Override
-    public MarketResponseDTO update(int po_MarketCode, MarketRequestDTOUpdate MarketRequestDTO) {
+    public MarketResponseDTO update(int po_MarketCode, MarketRequestDTOUpdate marketRequestDTOUpdate) {
         Optional<Market> existingMarketOptional = marketRepository.findById(po_MarketCode);
         if (existingMarketOptional.isPresent()) {
             Market existingMarket = existingMarketOptional.get();
 
-            String newName = MarketRequestDTO.getName();
+            // Check if there's another market with the same name
+            String newName = marketRequestDTOUpdate.getName();
             if (!existingMarket.getName().equals(newName) && marketRepository.existsByName(newName)) {
                 throw new MarketAlreadyExistsException("Market with name '" + newName + "' already exists.");
             }
 
+            // Update market fields
             existingMarket.setName(newName);
-            existingMarket.setDescription(MarketRequestDTO.getDescription());
+            existingMarket.setDescription(marketRequestDTOUpdate.getDescription());
 
+            // Map existing subMarkets to a map for quick lookup
             Map<Integer, SubMarket> existingSubMarketsMap = existingMarket.getSubMarkets().stream()
                     .collect(Collectors.toMap(SubMarket::getPo_SubMarketCode, subMarket -> subMarket));
 
+            // Update or add subMarkets from the request
             List<SubMarket> updatedSubMarkets = new ArrayList<>();
-            for (SubMarketRequestDTO subMarketRequestDTO : MarketRequestDTO.getSubMarkets()) {
+            for (SubMarketRequestDTO subMarketRequestDTO : marketRequestDTOUpdate.getSubMarkets()) {
                 if (subMarketRequestDTO.getPo_SubMarketCode() != null) {
                     // Check if subMarket exists in the existing subMarkets map
                     SubMarket subMarket = existingSubMarketsMap.get(subMarketRequestDTO.getPo_SubMarketCode());
                     if (subMarket == null) {
                         throw new ResourceNotFoundException("SubMarket with ID " + subMarketRequestDTO.getPo_SubMarketCode() + " not found.");
                     }
+                    // Update existing subMarket name and description
                     subMarket.setSubMarketName(subMarketRequestDTO.getSubMarketName());
+                    subMarket.setSubMarketDescription(subMarketRequestDTO.getSubMarketDescription());
                     updatedSubMarkets.add(subMarket);
                 } else {
+                    // Create new subMarket only if it doesn't already exist in the updated subMarkets list
                     boolean existsInUpdatedList = updatedSubMarkets.stream()
-                            .anyMatch(sf -> sf.getSubMarketName().equals(subMarketRequestDTO.getSubMarketName()));
+                            .anyMatch(sm -> sm.getSubMarketName().equals(subMarketRequestDTO.getSubMarketName()));
                     if (!existsInUpdatedList) {
                         SubMarket newSubMarket = new SubMarket();
                         newSubMarket.setSubMarketName(subMarketRequestDTO.getSubMarketName());
+                        newSubMarket.setSubMarketDescription(subMarketRequestDTO.getSubMarketDescription());
                         newSubMarket.setMarket(existingMarket);
                         updatedSubMarkets.add(newSubMarket);
                     }
                 }
             }
 
+            // Add existing subMarkets not updated in the request
             existingMarket.getSubMarkets().stream()
                     .filter(subMarket -> !updatedSubMarkets.contains(subMarket))
                     .forEach(updatedSubMarkets::add);
 
+            // Set updated subMarkets in the existing market
             existingMarket.getSubMarkets().clear();
             existingMarket.getSubMarkets().addAll(updatedSubMarkets);
 
+            // Save the updated Market (will cascade to SubMarket if new)
             existingMarket = marketRepository.save(existingMarket);
 
+            // Prepare response DTO
             List<SubMarketResponseDTO> subMarketResponseDTOs = existingMarket.getSubMarkets().stream()
-                    .map(subMkt -> new SubMarketResponseDTO(subMkt.getPo_SubMarketCode(),
-                            subMkt.getSubMarketName(), subMkt.getSubMarketDescription()))
+                    .map(subMkt -> new SubMarketResponseDTO(subMkt.getPo_SubMarketCode(), subMkt.getSubMarketName(), subMkt.getSubMarketDescription()))
                     .collect(Collectors.toList());
 
             return new MarketResponseDTO(existingMarket.getPo_MarketCode(), existingMarket.getName(), existingMarket.getDescription(), subMarketResponseDTOs);

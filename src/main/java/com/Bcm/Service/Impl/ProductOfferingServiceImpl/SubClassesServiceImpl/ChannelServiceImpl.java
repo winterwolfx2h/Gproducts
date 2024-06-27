@@ -56,6 +56,7 @@ public class ChannelServiceImpl implements ChannelService {
 
             existingChannel.setName(newName);
             existingChannel.setDescription(updatedChannel.getDescription());
+
             return channelRepository.save(existingChannel);
         } else {
             throw new ResourceNotFoundException("Channel with ID " + channelCode + " not found.");

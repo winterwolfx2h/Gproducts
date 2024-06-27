@@ -1,16 +1,14 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl.SubClassesServiceImpl;
 
-import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.FamilyAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.*;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Family.*;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.FamilyRepository;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.SubFamilyRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,58 +26,42 @@ public class FamilyServiceImpl implements FamilyService {
     final ProductOfferingService productOfferingService;
     private final SubFamilyRepository subFamilyRepository;
 
-    @Override
-    public Family create(Family family) {
-        try {
-            if (findByNameexist(family.getName())) {
-                throw new FamilyAlreadyExistsException("Family with the same name already exists");
-            }
-            return familyRepository.save(family);
-        } catch (DataIntegrityViolationException e) {
-            throw new DatabaseOperationException("Error creating Family", e);
-        }
-    }
-
     @Transactional
     @Override
     public FamilyResponseDTO createOrUpdateFamily(FamilyRequestDTO familyRequestDTO) {
-        // Check if a Family with the given name already exists
         Optional<Family> existingFamilyOptional = familyRepository.findByName(familyRequestDTO.getName());
         Family family;
         if (existingFamilyOptional.isPresent()) {
-            // If Family exists, use it
             family = existingFamilyOptional.get();
         } else {
-            // If Family does not exist, create a new one
             family = new Family();
             family.setName(familyRequestDTO.getName());
             family.setDescription(familyRequestDTO.getDescription());
         }
 
-        // Check if a SubFamily with the given name already exists
-        SubFamily subFamily = subFamilyRepository.findBySubFamilyName(familyRequestDTO.getSubFamilyName())
-                .orElseGet(() -> {
-                    // Create a new SubFamily entity if it does not exist
-                    SubFamily newSubFamily = new SubFamily();
-                    newSubFamily.setSubFamilyName(familyRequestDTO.getSubFamilyName());
-                    return newSubFamily;
-                });
+        for (SubFamilyRequestDTO subFamilyDTO : familyRequestDTO.getSubFamilies()) {
+            SubFamily subFamily = subFamilyRepository.findBySubFamilyName(subFamilyDTO.getSubFamilyName())
+                    .orElseGet(() -> {
+                        SubFamily newSubFamily = new SubFamily();
+                        newSubFamily.setSubFamilyName(subFamilyDTO.getSubFamilyName());
+                        return newSubFamily;
+                    });
 
-        // Add the SubFamily to the Family (if not already associated)
-        if (!family.getSubFamilies().contains(subFamily)) {
-            family.addSubFamily(subFamily);
+            if (!family.getSubFamilies().contains(subFamily)) {
+                family.addSubFamily(subFamily);
+            }
         }
 
-        // Save the Family (will cascade to SubFamily if new)
         family = familyRepository.save(family);
 
-        // Prepare response DTO
         List<SubFamilyResponseDTO> subFamilyResponseDTOs = family.getSubFamilies().stream()
-                .map(subFam -> new SubFamilyResponseDTO(subFam.getPo_SubFamilyCode(), subFam.getSubFamilyName()))
+                .map(subFml -> new SubFamilyResponseDTO(subFml.getPo_SubFamilyCode(),
+                        subFml.getSubFamilyName()))
                 .collect(Collectors.toList());
 
         return new FamilyResponseDTO(family.getPo_FamilyCode(), family.getName(), family.getDescription(), subFamilyResponseDTOs);
     }
+
 
     @Override
     public List<Family> read() {
@@ -234,4 +216,62 @@ public class FamilyServiceImpl implements FamilyService {
             return new FamilyResponseDTO(family.getPo_FamilyCode(), family.getName(), family.getDescription(), subFamilyResponseDTOs);
         }).collect(Collectors.toList());
     }
+
+    @Transactional
+    @Override
+    public void unlinkSubFamilyFromFamily(int familyId, int subFamilyId) {
+        Optional<Family> familyOptional = familyRepository.findById(familyId);
+        if (familyOptional.isEmpty()) {
+            throw new ResourceNotFoundException("Family with ID " + familyId + " not found.");
+        }
+
+        Family family = familyOptional.get();
+        Optional<SubFamily> subFamilyOptional = subFamilyRepository.findById(subFamilyId);
+        if (subFamilyOptional.isEmpty()) {
+            throw new ResourceNotFoundException("SubFamily with ID " + subFamilyId + " not found.");
+        }
+
+        SubFamily subFamily = subFamilyOptional.get();
+        if (!family.getSubFamilies().contains(subFamily)) {
+            throw new IllegalArgumentException("SubFamily with ID " + subFamilyId + " is not linked to Family with ID " + familyId);
+        }
+
+        family.removeSubFamily(subFamily);
+        subFamily.setFamily(null);
+
+        familyRepository.save(family);
+        subFamilyRepository.save(subFamily);
+    }
+
+
+    @Override
+    public List<SubFamily> readSubFamilies() {
+        try {
+            return subFamilyRepository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while retrieving SubFamilies", e);
+        }
+    }
+
+    @Override
+    public boolean findBySubFamilyNameExist(String subFamilyName) {
+        try {
+            Optional<SubFamily> optionalSubFamily = subFamilyRepository.findBySubFamilyName(subFamilyName);
+            return optionalSubFamily.isPresent(); // Return true if SubFamily exists, false otherwise
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding SubFamily", e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteSubFamily(int po_SubFamilyCode) {
+        Optional<SubFamily> subFamilyOptional = subFamilyRepository.findById(po_SubFamilyCode);
+        if (subFamilyOptional.isPresent()) {
+            subFamilyRepository.delete(subFamilyOptional.get());
+        } else {
+            throw new ResourceNotFoundException("SubFamily with ID " + po_SubFamilyCode + " not found.");
+        }
+    }
+
 }

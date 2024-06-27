@@ -1,4 +1,4 @@
-package com.Bcm.Model.ProductOfferingABE.SubClasses;
+package com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
@@ -32,13 +32,11 @@ public class Family {
     @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubFamily> subFamilies = new ArrayList<>();
 
-    // Helper method to add SubFamily to Family
     public void addSubFamily(SubFamily subFamily) {
         subFamilies.add(subFamily);
         subFamily.setFamily(this);
     }
 
-    // Helper method to remove SubFamily from Family
     public void removeSubFamily(SubFamily subFamily) {
         subFamilies.remove(subFamily);
         subFamily.setFamily(null);

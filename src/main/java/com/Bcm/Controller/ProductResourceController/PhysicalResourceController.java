@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -24,8 +23,6 @@ import java.util.List;
 public class PhysicalResourceController {
 
     final PhysicalResourceService physicalResourceService;
-
-
 
 
     @PostMapping("/addPhysicalResource")

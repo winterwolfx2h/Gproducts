@@ -137,8 +137,6 @@ public class POAttributeController {
     }
 
 
-
-
     @PutMapping("/updatePOAttributes/{poAttribute_code}")
     @CacheEvict(value = "AttributesCache", allEntries = true)
     public ResponseEntity<?> update(@PathVariable int poAttribute_code, @RequestBody POAttributes POAttributes) {

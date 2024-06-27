@@ -1,4 +1,4 @@
-package com.Bcm.Model.ProductOfferingABE.SubClasses;
+package com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,8 +11,9 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FamilyRequestDTOUpdate {
+public class FamilyResponseDTO {
+    private int po_FamilyCode;
     private String name;
     private String description;
-    private List<SubFamilyRequestDTO> subFamilies;
+    private List<SubFamilyResponseDTO> subFamilies;
 }

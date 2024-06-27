@@ -66,9 +66,9 @@ public class MarketController {
 
     @PutMapping("/{po_MarketCode}")
     public ResponseEntity<?> updateMarket(
-            @PathVariable("po_MarketCode") int po_MarketCode, @RequestBody MarketRequestDTOUpdate MarketRequestDTO) {
+            @PathVariable("po_MarketCode") int po_MarketCode, @RequestBody MarketRequestDTOUpdate marketRequestDTOUpdate) {
         try {
-            MarketResponseDTO updatedMarket = marketService.update(po_MarketCode, MarketRequestDTO);
+            MarketResponseDTO updatedMarket = marketService.update(po_MarketCode, marketRequestDTOUpdate);
             return ResponseEntity.ok(updatedMarket);
         } catch (MarketAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());

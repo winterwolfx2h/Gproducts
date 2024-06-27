@@ -30,8 +30,7 @@ public class EligibilityEntity {
     @Column(name = "description", nullable = true)
     private String description;
 
-
-    @Column(name = "channelCode", nullable = true)
+    @Column(name = "channelCode", nullable = true, columnDefinition = "integer default 0")
     private Integer channelCode;
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = Product.class)

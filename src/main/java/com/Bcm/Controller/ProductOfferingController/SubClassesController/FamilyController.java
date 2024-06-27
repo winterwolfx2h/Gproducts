@@ -48,13 +48,11 @@ public class FamilyController {
 
     @GetMapping("/subFamiliesByFamily")
     public ResponseEntity<?> getSubFamiliesByFamily(@RequestParam String name) {
-        // Check if the family exists by name
         Optional<Integer> familyId = findFamilyIdByName(name);
         if (familyId.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Family with name '" + name + "' does not exist in the database.");
         }
 
-        // Family exists, proceed with retrieving subfamilies
         String sql = "SELECT sf.po_sub_family_code, sf.sub_family_name, f.name AS familyName " +
                 "FROM sub_family sf " +
                 "JOIN family f ON f.po_family_code = sf.family_code " +
@@ -71,14 +69,12 @@ public class FamilyController {
         }
     }
 
-    // Helper method to find family ID by name
     private Optional<Integer> findFamilyIdByName(String name) {
         String sql = "SELECT po_family_code FROM family WHERE name = ?";
         try {
             Integer familyId = jdbcTemplate.queryForObject(sql, Integer.class, name);
             return Optional.ofNullable(familyId);
         } catch (Exception e) {
-            // Log the exception or handle it according to your application's error handling strategy
             return Optional.empty();
         }
     }

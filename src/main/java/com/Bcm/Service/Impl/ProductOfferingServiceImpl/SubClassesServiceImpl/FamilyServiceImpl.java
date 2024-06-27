@@ -86,24 +86,19 @@ public class FamilyServiceImpl implements FamilyService {
                 throw new FamilyAlreadyExistsException("Family with name '" + newName + "' already exists.");
             }
 
-            // Update family fields
             existingFamily.setName(newName);
             existingFamily.setDescription(familyRequestDTO.getDescription());
 
-            // Map existing subfamilies to a map for quick lookup
             Map<Integer, SubFamily> existingSubFamiliesMap = existingFamily.getSubFamilies().stream()
                     .collect(Collectors.toMap(SubFamily::getPo_SubFamilyCode, subFamily -> subFamily));
 
-            // Update or add subfamilies from the request
             List<SubFamily> updatedSubFamilies = new ArrayList<>();
             for (SubFamilyRequestDTO subFamilyRequestDTO : familyRequestDTO.getSubFamilies()) {
                 if (subFamilyRequestDTO.getPo_SubFamilyCode() != null) {
-                    // Check if subfamily exists in the existing subfamilies map
                     SubFamily subFamily = existingSubFamiliesMap.get(subFamilyRequestDTO.getPo_SubFamilyCode());
                     if (subFamily == null) {
                         throw new ResourceNotFoundException("SubFamily with ID " + subFamilyRequestDTO.getPo_SubFamilyCode() + " not found.");
                     }
-                    // Update existing subfamily name & description
                     subFamily.setSubFamilyName(subFamilyRequestDTO.getSubFamilyName());
                     subFamily.setSubFamilyDescription(subFamilyRequestDTO.getSubFamilyDescription());
                     updatedSubFamilies.add(subFamily);
@@ -121,19 +116,15 @@ public class FamilyServiceImpl implements FamilyService {
                 }
             }
 
-            // Add existing subfamilies not updated in the request
             existingFamily.getSubFamilies().stream()
                     .filter(subFamily -> !updatedSubFamilies.contains(subFamily))
                     .forEach(updatedSubFamilies::add);
 
-            // Set updated subfamilies in the existing family
             existingFamily.getSubFamilies().clear();
             existingFamily.getSubFamilies().addAll(updatedSubFamilies);
 
-            // Save the updated Family (will cascade to SubFamily if new)
             existingFamily = familyRepository.save(existingFamily);
 
-            // Prepare response DTO
             List<SubFamilyResponseDTO> subFamilyResponseDTOs = existingFamily.getSubFamilies().stream()
                     .map(subFam -> new SubFamilyResponseDTO(subFam.getPo_SubFamilyCode(), subFam.getSubFamilyName(), subFam.getSubFamilyDescription()))
                     .collect(Collectors.toList());
@@ -198,7 +189,7 @@ public class FamilyServiceImpl implements FamilyService {
     public boolean findByNameexist(String name) {
         try {
             Optional<Family> optionalFamily = familyRepository.findByName(name);
-            return optionalFamily.isPresent(); // Return true if family exists, false otherwise
+            return optionalFamily.isPresent();
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding Family");
         }
@@ -260,7 +251,7 @@ public class FamilyServiceImpl implements FamilyService {
     public boolean findBySubFamilyNameExist(String subFamilyName) {
         try {
             Optional<SubFamily> optionalSubFamily = subFamilyRepository.findBySubFamilyName(subFamilyName);
-            return optionalSubFamily.isPresent(); // Return true if SubFamily exists, false otherwise
+            return optionalSubFamily.isPresent();
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid argument provided for finding SubFamily", e);
         }

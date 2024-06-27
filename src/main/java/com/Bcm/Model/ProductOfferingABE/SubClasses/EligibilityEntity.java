@@ -30,6 +30,10 @@ public class EligibilityEntity {
     @Column(name = "description", nullable = true)
     private String description;
 
+
+    @Column(name = "channelCode", nullable = true)
+    private Integer channelCode;
+
     @OneToMany(cascade = CascadeType.ALL, targetEntity = Product.class)
     @JoinColumn(name = "entityCode")
     @JsonIgnore

@@ -56,6 +56,7 @@ public class EntityServiceImpl implements EntityService {
 
             existingEntity.setName(newName);
             existingEntity.setDescription(updatedEntity.getDescription());
+            existingEntity.setChannelCode(updatedEntity.getChannelCode());
             return entityRepository.save(existingEntity);
         } else {
             throw new ResourceNotFoundException("Entity with ID " + entityCode + " not found.");

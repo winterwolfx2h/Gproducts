@@ -1,4 +1,4 @@
-package com.Bcm.Model.ProductOfferingABE.SubClasses;
+package com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

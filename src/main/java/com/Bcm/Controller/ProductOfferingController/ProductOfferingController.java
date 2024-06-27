@@ -6,9 +6,9 @@ import com.Bcm.Model.Product.ProductOfferingDTO;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.ProductRelation;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.SubMarket;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Family.FamilyRequestDTO;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Market.Market;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Market.SubMarket;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
@@ -17,7 +17,6 @@ import com.Bcm.Service.Srvc.ProductOfferingSrvc.*;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ChannelService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.MarketService;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.SubMarketService;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.PhysicalResourceService;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
@@ -52,7 +51,6 @@ public class ProductOfferingController {
     final ChannelService channelService;
     final CustomerFacingServiceSpecService customerFacingServiceSpecService;
     final MarketService marketService;
-    final SubMarketService subMarketService;
     final ProductOfferingValidationService validationService;
     private final ProductOfferingRepository productOfferingRepository;
     private final ProductOfferRelationRepository productOfferRelationRepository;
@@ -118,7 +116,7 @@ public class ProductOfferingController {
 
             // Validate submarket name
             String submarketName = dto.getSubmarkets();
-            if (submarketName == null || !subMarketService.findByNameexist(submarketName)) {
+            if (submarketName == null || !marketService.findBySubMarketNameExist(submarketName)) {
                 return ResponseEntity.badRequest().body("Submarket with name '" + submarketName + "' does not exist.");
             }
 
@@ -168,9 +166,9 @@ public class ProductOfferingController {
 
             if (!familyService.findByNameexist(familyName)) {
 
-                Family family = new Family();
+                FamilyRequestDTO family = new FamilyRequestDTO();
                 family.setName(familyName);
-                familyService.create(family);
+                familyService.createOrUpdateFamily(family);
             }
         }
     }
@@ -320,11 +318,11 @@ public class ProductOfferingController {
             errors.add("markets must be one of the following: " + String.join(", ", markets));
         }
 
-        List<SubMarket> validSubMarket = subMarketService.read();
+        List<SubMarket> validSubMarket = marketService.readSubMarkets();
         List<String> submarkets = new ArrayList<>();
 
         for (SubMarket subMarket : validSubMarket) {
-            submarkets.add(subMarket.getName());
+            submarkets.add(subMarket.getSubMarketName());
         }
         if (productOfferingDTO.getSubmarkets() == null || productOfferingDTO.getSubmarkets().isEmpty()) {
             errors.add("submarkets cannot be empty");
@@ -388,8 +386,8 @@ public class ProductOfferingController {
         }
 
         // IF SUBMARKET IS NULL OR SUBMARKET DOES NOT EXIST
-        List<SubMarket> validSubMarket = subMarketService.read();
-        List<String> submarkets = validSubMarket.stream().map(SubMarket::getName).toList();
+        List<SubMarket> validSubMarket = marketService.readSubMarkets();
+        List<String> submarkets = validSubMarket.stream().map(SubMarket::getSubMarketName).toList();
 
         if (productOfferingDTO.getSubmarkets() == null || productOfferingDTO.getSubmarkets().isEmpty()) {
             errors.add("submarkets cannot be empty");
@@ -470,7 +468,7 @@ public class ProductOfferingController {
                 return ResponseEntity.badRequest().body("Market with name '" + marketName + "' does not exist.");
             }
             String submarketName = updatedDTO.getSubmarkets();
-            if (submarketName == null || !subMarketService.findByNameexist(submarketName)) {
+            if (submarketName == null || !marketService.findBySubMarketNameExist(submarketName)) {
                 return ResponseEntity.badRequest().body("Submarket with name '" + submarketName + "' does not exist.");
             }
             existingProductOffering.setFamilyName(newFamilyName);

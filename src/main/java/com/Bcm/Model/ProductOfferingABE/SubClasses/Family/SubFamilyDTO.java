@@ -1,4 +1,4 @@
-package com.Bcm.Model.ProductOfferingABE.SubClasses;
+package com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubFamilyResponseDTO {
-    private int po_SubFamilyCode;
+public class SubFamilyDTO {
     private String subFamilyName;
 }

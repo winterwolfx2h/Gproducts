@@ -1,9 +1,6 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc;
 
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyRequestDTO;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyRequestDTOUpdate;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyResponseDTO;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Family.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,8 +8,6 @@ import java.util.List;
 
 @Service
 public interface FamilyService {
-
-    Family create(Family family);
 
     @Transactional
     FamilyResponseDTO createOrUpdateFamily(FamilyRequestDTO familyRequestDTO);
@@ -34,4 +29,13 @@ public interface FamilyService {
     boolean existsById(int po_FamilyCode);
 
     List<FamilyResponseDTO> getAllFamilies();
+
+    void unlinkSubFamilyFromFamily(int familyId, int subFamilyId);
+
+    List<SubFamily> readSubFamilies();
+
+    boolean findBySubFamilyNameExist(String subFamilyName);
+
+    void deleteSubFamily(int po_SubFamilyCode);
+
 }

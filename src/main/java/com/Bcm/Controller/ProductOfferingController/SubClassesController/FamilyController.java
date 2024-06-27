@@ -2,10 +2,7 @@ package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
 import com.Bcm.Exception.FamilyAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Family;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyRequestDTO;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyRequestDTOUpdate;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.FamilyResponseDTO;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Family.*;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -20,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Tag(name = "Family Controller", description = "All of the Families methods")
 @RestController
@@ -31,18 +29,6 @@ public class FamilyController {
     final FamilyService familyService;
     final JdbcTemplate jdbcTemplate;
 
-    @PostMapping("/addFamily")
-    public ResponseEntity<?> createFamily(@RequestBody Family family) {
-        try {
-            Family createdFamily = familyService.create(family);
-            return ResponseEntity.ok(createdFamily);
-        } catch (FamilyAlreadyExistsException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-        }
-    }
-
     @ApiOperation(value = "Create a new Family", response = FamilyResponseDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Family created successfully", response = FamilyResponseDTO.class),
@@ -51,9 +37,14 @@ public class FamilyController {
     })
     @PostMapping("/createFamily")
     public ResponseEntity<FamilyResponseDTO> createFamily(@RequestBody FamilyRequestDTO familyRequestDTO) {
-        FamilyResponseDTO createdFamily = familyService.createOrUpdateFamily(familyRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdFamily);
+        try {
+            FamilyResponseDTO createdFamily = familyService.createOrUpdateFamily(familyRequestDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdFamily);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
+
 
     @GetMapping("/subFamiliesByFamily")
     public ResponseEntity<?> getSubFamiliesByFamily(@RequestParam String name) {
@@ -127,7 +118,6 @@ public class FamilyController {
         }
     }
 
-
     @DeleteMapping("/{po_FamilyCode}")
     public ResponseEntity<String> deleteFamily(@PathVariable("po_FamilyCode") int po_FamilyCode) {
         try {
@@ -145,6 +135,45 @@ public class FamilyController {
             return ResponseEntity.ok(searchResults);
         } catch (RuntimeException e) {
             return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @PutMapping("/unlinkSubFamily")
+    public ResponseEntity<String> unlinkSubFamilyFromFamily(
+            @RequestParam int familyId, @RequestParam int subFamilyId) {
+        try {
+            familyService.unlinkSubFamilyFromFamily(familyId, subFamilyId);
+            return ResponseEntity.ok("SubFamily with ID " + subFamilyId + " unlinked from Family with ID " + familyId);
+        } catch (ResourceNotFoundException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
+        }
+    }
+
+    @GetMapping("/listSubFamilies")
+    public ResponseEntity<List<SubFamilyResponseDTO>> getAllSubFamilies() {
+        try {
+            List<SubFamily> subFamilies = familyService.readSubFamilies();
+            List<SubFamilyResponseDTO> subFamilyResponseDTOs = subFamilies.stream()
+                    .map(subFamily -> new SubFamilyResponseDTO(subFamily.getPo_SubFamilyCode(),
+                            subFamily.getSubFamilyName()))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(subFamilyResponseDTOs);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @DeleteMapping("/subFamily/{po_SubFamilyCode}")
+    public ResponseEntity<String> deleteSubFamily(@PathVariable int po_SubFamilyCode) {
+        try {
+            familyService.deleteSubFamily(po_SubFamilyCode);
+            return ResponseEntity.ok("SubFamily with ID " + po_SubFamilyCode + " was successfully deleted");
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
 }

@@ -26,6 +26,6 @@ public class Eligibility {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "Product_id", insertable = false, updatable = false)
+    @JoinColumn(name = "Product_id", insertable = true, updatable = true)
     private ProductOffering productOffering;
 }

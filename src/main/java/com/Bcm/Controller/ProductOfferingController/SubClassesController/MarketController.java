@@ -2,17 +2,22 @@ package com.Bcm.Controller.ProductOfferingController.SubClassesController;
 
 import com.Bcm.Exception.MarketAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Market.*;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.MarketService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Tag(name = "Market Controller", description = "All of the Market's methods")
+@Tag(name = "Market Controller", description = "All of the Markets methods")
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/market")
@@ -20,27 +25,32 @@ import java.util.List;
 public class MarketController {
 
     final MarketService marketService;
+    final JdbcTemplate jdbcTemplate;
 
-    @PostMapping("/addMarket")
-    public ResponseEntity<String> createMarket(@RequestBody Market market) {
+    @ApiOperation(value = "Create a new Market", response = MarketResponseDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Market created successfully", response = MarketResponseDTO.class),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @PostMapping("/createMarket")
+    public ResponseEntity<MarketResponseDTO> createMarket(@RequestBody MarketRequestDTO marketRequestDTO) {
         try {
-            Market createdMarket = marketService.create(market);
-            return ResponseEntity.ok(createdMarket.toString());
-        } catch (RuntimeException e) {
-            if (e.getMessage().contains("already exists")) {
-                return ResponseEntity.status(409).body("Market with name '" + market.getName() + "' already exists");
-            }
-            return ResponseEntity.status(500).body("Internal server error");
+            MarketResponseDTO createdMarket = marketService.createOrUpdateMarket(marketRequestDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdMarket);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
+
     @GetMapping("/listMarket")
-    public ResponseEntity<List<Market>> getAllMarkets() {
+    public ResponseEntity<List<MarketResponseDTO>> getAllMarkets() {
         try {
-            List<Market> markets = marketService.read();
+            List<MarketResponseDTO> markets = marketService.getAllMarkets();
             return ResponseEntity.ok(markets);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
@@ -50,17 +60,16 @@ public class MarketController {
             Market market = marketService.findById(po_MarketCode);
             return ResponseEntity.ok(market);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
     @PutMapping("/{po_MarketCode}")
     public ResponseEntity<?> updateMarket(
-            @PathVariable("po_MarketCode") int po_MarketCode, @RequestBody Market updatedMarket) {
+            @PathVariable("po_MarketCode") int po_MarketCode, @RequestBody MarketRequestDTOUpdate MarketRequestDTO) {
         try {
-            Market updatedMarketResult = marketService.update(po_MarketCode, updatedMarket);
-            return ResponseEntity.ok(updatedMarketResult);
-
+            MarketResponseDTO updatedMarket = marketService.update(po_MarketCode, MarketRequestDTO);
+            return ResponseEntity.ok(updatedMarket);
         } catch (MarketAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (ResourceNotFoundException e) {
@@ -70,13 +79,14 @@ public class MarketController {
         }
     }
 
+
     @DeleteMapping("/{po_MarketCode}")
     public ResponseEntity<String> deleteMarket(@PathVariable("po_MarketCode") int po_MarketCode) {
         try {
             String resultMessage = marketService.delete(po_MarketCode);
             return ResponseEntity.ok(resultMessage);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -89,4 +99,45 @@ public class MarketController {
             return ResponseEntity.status(500).body(null);
         }
     }
+
+    @GetMapping("/listSubMarkets")
+    public ResponseEntity<List<SubMarketResponseDTO>> getAllSubMarkets() {
+        try {
+            List<SubMarket> subMarkets = marketService.readSubMarkets();
+            List<SubMarketResponseDTO> subMarketResponseDTOs = subMarkets.stream()
+                    .map(subMarket -> new SubMarketResponseDTO(subMarket.getPo_SubMarketCode(),
+                            subMarket.getSubMarketName(),
+                            subMarket.getSubMarketDescription()))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(subMarketResponseDTOs);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @DeleteMapping("/submarket/{po_SubMarketCode}")
+    public ResponseEntity<String> deleteSubMarket(@PathVariable int po_SubMarketCode) {
+        try {
+            marketService.deleteSubMarket(po_SubMarketCode);
+            return ResponseEntity.ok("SubMarket with ID " + po_SubMarketCode + " was successfully deleted");
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @PutMapping("/unlinkSubMarket")
+    public ResponseEntity<String> unlinkSubMarketFromMarket(
+            @RequestParam int MarketId, @RequestParam int subMarketId) {
+        try {
+            marketService.unlinkSubMarketFromMarket(MarketId, subMarketId);
+            return ResponseEntity.ok("SubMarket with ID " + subMarketId + " unlinked from Market with ID " + MarketId);
+        } catch (ResourceNotFoundException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
+        }
+    }
+
 }

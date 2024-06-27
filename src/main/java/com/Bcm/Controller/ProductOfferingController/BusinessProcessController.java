@@ -8,17 +8,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import java.util.List;
 
 @Tag(name = "Business Process Controller", description = "All of the Business Process's methods")
 @RestController
@@ -29,8 +28,7 @@ public class BusinessProcessController {
 
     final JdbcTemplate base;
     final BusinessProcessService businessProcessService;
-    @PersistenceContext
-    private EntityManager entityManager;
+    @PersistenceContext private EntityManager entityManager;
 
     @PostMapping("/addBusinessProcess")
     public ResponseEntity<?> createBusinessProcess(@RequestBody BusinessProcess businessProcess) {
@@ -75,7 +73,7 @@ public class BusinessProcessController {
             }
         } else {
             String jpqlQuery =
-                    "SELECT po.name AS productName, bp.name AS businessProcessName "
+                    "SELECT bp.businessProcess_id AS businessProcess_id, bp.name AS businessProcessName "
                             + "FROM ProductOffering po "
                             + "JOIN BusinessProcess bp "
                             + "ON po.businessProcess_id = bp.businessProcess_id "
@@ -96,9 +94,9 @@ public class BusinessProcessController {
                 }
             } else {
                 Object[] result = results.get(0);
-                String productName = (String) result[0];
+                Integer businessProcess_id = (Integer) result[0];
                 String businessProcessName = (String) result[1];
-                responseJson.put("productName", productName);
+                responseJson.put("businessProcess_id", businessProcess_id);
                 responseJson.put("businessProcessName", businessProcessName);
 
                 ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
@@ -147,6 +145,5 @@ public class BusinessProcessController {
     }
 
     @CacheEvict(value = "BusinessProcesssCache", allEntries = true)
-    public void invalidateBusinessProcesssCache() {
-    }
+    public void invalidateBusinessProcesssCache() {}
 }

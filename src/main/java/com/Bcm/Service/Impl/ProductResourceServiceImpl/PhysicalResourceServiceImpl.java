@@ -54,6 +54,8 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
             existingProduct.setPhysicalResourceType(updatedPhysicalResource.getPhysicalResourceType());
             existingProduct.setPhysicalResourceFormat(updatedPhysicalResource.getPhysicalResourceFormat());
             existingProduct.setGenerationType(updatedPhysicalResource.getGenerationType());
+            existingProduct.setPo_MarketCode(updatedPhysicalResource.getPo_MarketCode());
+            existingProduct.setPo_SubMarketCode(updatedPhysicalResource.getPo_SubMarketCode());
             return physicalResourceRepository.save(existingProduct);
         } else {
             throw new RuntimeException("Could not find PhysicalResource with ID: " + PR_id);

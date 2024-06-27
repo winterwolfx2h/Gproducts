@@ -44,6 +44,13 @@ public class LogicalResource {
     @Column(name = "status", nullable = false)
     private String status;
 
+
+    @Column(name = "po_MarketCode", insertable = true, updatable = true)
+    private Integer po_MarketCode;
+
+    @Column(name = "po_SubMarketCode", insertable = true, updatable = true)
+    private Integer po_SubMarketCode;
+
     @OneToMany(cascade = CascadeType.ALL, targetEntity = CustomerFacingServiceSpec.class)
     @JoinColumn(name = "LR_id")
     @JsonIgnore

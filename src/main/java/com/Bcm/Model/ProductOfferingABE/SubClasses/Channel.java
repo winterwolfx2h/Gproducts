@@ -30,6 +30,13 @@ public class Channel {
     @Column(name = "description", nullable = true)
     private String description;
 
+
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = EligibilityEntity.class)
+    @JoinColumn(name = "channelCode")
+    @JsonIgnore
+    private List<EligibilityEntity> eligibilityEntities;
+
     @OneToMany(cascade = CascadeType.ALL, targetEntity = Product.class)
     @JoinColumn(name = "channelCode")
     @JsonIgnore

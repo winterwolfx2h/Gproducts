@@ -80,7 +80,6 @@ public class FamilyServiceImpl implements FamilyService {
         if (existingFamilyOptional.isPresent()) {
             Family existingFamily = existingFamilyOptional.get();
 
-            // Check if there's another family with the same name
             String newName = familyRequestDTO.getName();
             if (!existingFamily.getName().equals(newName) && familyRepository.existsByName(newName)) {
                 throw new FamilyAlreadyExistsException("Family with name '" + newName + "' already exists.");

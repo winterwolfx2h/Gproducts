@@ -101,19 +101,22 @@ public class MarketController {
     }
 
     @GetMapping("/listSubMarkets")
-    public ResponseEntity<List<SubMarketResponseDTO>> getAllSubMarkets() {
+    public ResponseEntity<List<SubMarketListResponseDTO>> getAllSubMarkets() {
         try {
             List<SubMarket> subMarkets = marketService.readSubMarkets();
-            List<SubMarketResponseDTO> subMarketResponseDTOs = subMarkets.stream()
-                    .map(subMarket -> new SubMarketResponseDTO(subMarket.getPo_SubMarketCode(),
+            List<SubMarketListResponseDTO> subMarketResponseDTOs = subMarkets.stream()
+                    .map(subMarket -> new SubMarketListResponseDTO(
+                            subMarket.getPo_SubMarketCode(),
                             subMarket.getSubMarketName(),
-                            subMarket.getSubMarketDescription()))
+                            subMarket.getSubMarketDescription(),
+                            subMarket.getMarket() != null ? subMarket.getMarket().getPo_MarketCode() : null))
                     .collect(Collectors.toList());
             return ResponseEntity.ok(subMarketResponseDTOs);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
 
     @DeleteMapping("/submarket/{po_SubMarketCode}")
     public ResponseEntity<String> deleteSubMarket(@PathVariable int po_SubMarketCode) {

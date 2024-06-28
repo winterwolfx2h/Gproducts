@@ -1,12 +1,16 @@
 package com.Bcm.Model.ProductOfferingABE.SubClasses.Market;
 
 
+import com.Bcm.Model.ProductResourceABE.LogicalResource;
+import com.Bcm.Model.ProductResourceABE.PhysicalResource;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "SubMarket")
@@ -31,5 +35,15 @@ public class SubMarket {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "marketCode", nullable = true)
     private Market market;
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = LogicalResource.class)
+    @JoinColumn(name = "po_SubMarketCode")
+    @JsonIgnore
+    private List<LogicalResource> logicalResources;
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = PhysicalResource.class)
+    @JoinColumn(name = "po_SubMarketCode")
+    @JsonIgnore
+    private List<PhysicalResource> physicalResources;
 }
 

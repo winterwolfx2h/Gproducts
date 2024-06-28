@@ -9,11 +9,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Physical Resource Controller", description = "All of the Physical Resource's methods")
 @RestController
@@ -21,7 +27,7 @@ import java.util.List;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/physicalResource")
 public class PhysicalResourceController {
-
+    final JdbcTemplate base;
     final PhysicalResourceService physicalResourceService;
 
 
@@ -106,5 +112,48 @@ public class PhysicalResourceController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
+    }
+
+    @GetMapping("/searchByMarketSubMarket")
+    public List<Map<String, Object>> searchByMarketSubMarket(
+            @RequestParam String marketName,
+            @RequestParam String subMarketName) {
+
+        String sqlSearchByMarketSubMarket =
+                "SELECT " +
+                        "    lr.name AS resource_name, " +
+                        "    lr.po_market_code, " +
+                        "    market.name AS market_name, " +
+                        "    lr.po_sub_market_code, " +
+                        "    sub_market.sub_market_name " +
+                        "FROM public.physical_resource lr " +
+                        "JOIN public.market market ON lr.po_market_code = market.po_market_code " +
+                        "JOIN public.sub_market sub_market ON lr.po_sub_market_code = sub_market.po_sub_market_code " +
+                        "WHERE market.name = ? AND sub_market.sub_market_name = ? " +
+                        "ORDER BY lr.pr_id ASC, market.po_market_code ASC, sub_market.po_sub_market_code ASC;";
+
+        List<Map<String, Object>> result =
+                base.query(
+                        sqlSearchByMarketSubMarket,
+                        new Object[]{marketName, subMarketName},
+                        new RowMapper<Map<String, Object>>() {
+                            @Override
+                            public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+                                Map<String, Object> response = new HashMap<>();
+                                response.put("resource_name", rs.getString("resource_name"));
+                                response.put("po_market_code", rs.getInt("po_market_code"));
+                                response.put("name", rs.getString("market_name"));
+                                response.put("po_sub_market_code", rs.getInt("po_sub_market_code"));
+                                response.put("po_sub_market_code", rs.getString("sub_market_name"));
+                                return response;
+                            }
+                        });
+
+        // Check if any results were found
+        if (result.isEmpty()) {
+            throw new IllegalArgumentException("No data found for market " + marketName + " and sub-market " + subMarketName);
+        }
+
+        return result;
     }
 }

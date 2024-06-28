@@ -8,11 +8,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Logical Resource Controller", description = "All of the Logical Resource's methods")
 @RestController
@@ -20,6 +26,8 @@ import java.util.List;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/logicalResource")
 public class LogicalResourceController {
+
+
 
     final LogicalResourceService logicalResourceService;
 
@@ -83,6 +91,8 @@ public class LogicalResourceController {
         List<LogicalResource> searchResults = logicalResourceService.searchByKeyword(logicalResourceType);
         return ResponseEntity.ok(searchResults);
     }
+
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorMessage> globalExceptionHandler(Exception ex, WebRequest request) {

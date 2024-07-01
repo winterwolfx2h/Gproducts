@@ -77,6 +77,7 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
             existingCustomerFacingServiceSpec.setServiceSpecType(updatedCustomerFacingServiceSpec.getServiceSpecType());
             existingCustomerFacingServiceSpec.setExternalId(updatedCustomerFacingServiceSpec.getExternalId());
             existingCustomerFacingServiceSpec.setStatus(updatedCustomerFacingServiceSpec.getStatus());
+            existingCustomerFacingServiceSpec.setLR_id(updatedCustomerFacingServiceSpec.getLR_id());
             return customerFacingServiceSpecRepository.save(existingCustomerFacingServiceSpec);
         } else {
             throw new ResourceNotFoundException("Could not find CustomerFacingServiceSpec with ID: " + serviceId);

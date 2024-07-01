@@ -125,7 +125,10 @@ public class PhysicalResourceController {
                         "    lr.po_market_code, " +
                         "    market.name AS market_name, " +
                         "    lr.po_sub_market_code, " +
-                        "    sub_market.sub_market_name " +
+                        "    sub_market.sub_market_name, " +
+                        "    lr.pr_id AS pr_id, " +
+                        "    lr.physical_resource_format, " +  // Include physical_resource_format
+                        "    lr.physical_resource_type " +     // Include physical_resource_type
                         "FROM public.physical_resource lr " +
                         "JOIN public.market market ON lr.po_market_code = market.po_market_code " +
                         "JOIN public.sub_market sub_market ON lr.po_sub_market_code = sub_market.po_sub_market_code " +
@@ -142,9 +145,12 @@ public class PhysicalResourceController {
                                 Map<String, Object> response = new HashMap<>();
                                 response.put("resource_name", rs.getString("resource_name"));
                                 response.put("po_market_code", rs.getInt("po_market_code"));
-                                response.put("name", rs.getString("market_name"));
+                                response.put("market_name", rs.getString("market_name"));  // corrected key name
                                 response.put("po_sub_market_code", rs.getInt("po_sub_market_code"));
-                                response.put("po_sub_market_code", rs.getString("sub_market_name"));
+                                response.put("sub_market_name", rs.getString("sub_market_name"));
+                                response.put("pr_id", rs.getString("pr_id"));
+                                response.put("physical_resource_format", rs.getString("physical_resource_format"));  // Add physical_resource_format
+                                response.put("physical_resource_type", rs.getString("physical_resource_type"));      // Add physical_resource_type
                                 return response;
                             }
                         });

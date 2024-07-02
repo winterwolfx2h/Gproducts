@@ -18,10 +18,10 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
 
     @Override
     public LogicalResource create(LogicalResource logicalResource) {
-        if (logicalResourceRepository.existsByName(logicalResource.getName())) {
-            throw new DuplicateResourceException(
-                    "LogicalResource with name " + logicalResource.getName() + " already exists");
-        }
+//        if (logicalResourceRepository.existsByName(logicalResource.getName())) {
+//            throw new DuplicateResourceException(
+//                    "LogicalResource with name " + logicalResource.getName() + " already exists");
+//        }
         logicalResource.setStatus("Working state");
         return logicalResourceRepository.save(logicalResource);
     }

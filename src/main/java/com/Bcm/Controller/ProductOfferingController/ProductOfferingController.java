@@ -2,6 +2,9 @@ package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.BCMDrools.ProductOfferingDrools.ProductOfferingValidationService;
 import com.Bcm.Exception.*;
+import com.Bcm.Model.Product.ProductChannelDTO;
+import com.Bcm.Model.Product.ProductEntityDTO;
+import com.Bcm.Model.Product.ProductGroupDto;
 import com.Bcm.Model.Product.ProductOfferingDTO;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
@@ -26,10 +29,14 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 
 @Tag(name = "Product Offering Controller", description = "All of the Product Offering's methods")
@@ -55,6 +62,8 @@ public class ProductOfferingController {
     private final ProductOfferingRepository productOfferingRepository;
     private final ProductOfferRelationRepository productOfferRelationRepository;
     private final ProductOfferingServiceImpl productOfferingServiceImpl;
+
+    final JdbcTemplate base;
 
     @PostMapping("/addProdOff")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)
@@ -486,15 +495,91 @@ public class ProductOfferingController {
         }
     }
 
-    @PutMapping("/DTORelations/{Product_id}")
-    public ProductOffering updateProductOfferingEligibility(
-            @RequestBody ProductOfferingDTO productOfferingDTO,
-            @PathVariable int Product_id,
-            @RequestParam int channelCode,
-            @RequestParam int entityCode,
-            @RequestParam int productPriceGroupCode)
-            throws ProductOfferingNotFoundException {
-        return productOfferingService.updatePODTORelations(
-                productOfferingDTO, Product_id, channelCode, entityCode, productPriceGroupCode);
+//    @PutMapping("/DTORelations/{Product_id}")
+//    public ProductOffering updateProductOfferingEligibility(
+//            @RequestBody ProductOfferingDTO productOfferingDTO,
+//            @PathVariable int Product_id,
+//            @RequestParam int channelCode,
+//            @RequestParam int entityCode,
+//            @RequestParam int productPriceGroupCode)
+//            throws ProductOfferingNotFoundException {
+//        return productOfferingService.updatePODTORelations(
+//                productOfferingDTO, Product_id, channelCode, entityCode, productPriceGroupCode);
+//    }
+
+
+    @PostMapping("/insertProductChannels")
+    public ResponseEntity<String> insertProductChannels(@RequestBody List<ProductChannelDTO> productChannelDTOs) {
+        if (productChannelDTOs.isEmpty()) {
+            throw new IllegalArgumentException("At least one productChannelDTO must be provided");
+        }
+
+        String sql = "INSERT INTO product_channel (product_id, channel_code) VALUES (?, ?)";
+
+        base.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setInt(1, productChannelDTOs.get(i).getProductId());
+                ps.setInt(2, productChannelDTOs.get(i).getChannelCode());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return productChannelDTOs.size();
+            }
+        });
+
+        return ResponseEntity.ok("Product channels inserted successfully");
+    }
+
+
+    @PostMapping("/insertProductEntity")
+    public ResponseEntity<String> insertProductEntity(@RequestBody List<ProductEntityDTO> productEntityDTO) {
+        if (productEntityDTO.isEmpty()) {
+            throw new IllegalArgumentException("At least one productEntityDTO must be provided");
+        }
+
+        String sql = "INSERT INTO product_entity (product_id, entity_code) VALUES (?, ?)";
+
+        base.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setInt(1, productEntityDTO.get(i).getProductId());
+                ps.setInt(2, productEntityDTO.get(i).getEntityCode());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return productEntityDTO.size();
+            }
+        });
+
+        return ResponseEntity.ok("Product channels inserted successfully");
+    }
+
+    @PostMapping("/insertProductGroup")
+    public ResponseEntity<String> insertProductGROUP(@RequestBody List<ProductGroupDto> productGroupDtos) {
+        if (productGroupDtos.isEmpty()) {
+            throw new IllegalArgumentException("At least one productGroupDtos must be provided");
+        }
+
+        String sql = "INSERT INTO product_pricegroup (product_id, product_price_group_code) VALUES (?, ?)";
+
+        base.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setInt(1, productGroupDtos.get(i).getProductId());
+                ps.setInt(2, productGroupDtos.get(i).getProductPriceGroupCode());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return productGroupDtos.size();
+            }
+        });
+
+        return ResponseEntity.ok("Product channels inserted successfully");
     }
 }
+
+

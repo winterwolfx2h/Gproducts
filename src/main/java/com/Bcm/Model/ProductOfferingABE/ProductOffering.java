@@ -45,6 +45,10 @@ public class ProductOffering extends Product {
     @Column(name = "CS_externalId")
     private String CS_externalId;
 
+    @Column(name = "externalId")
+    private String externalId;
+
+
     @Pattern(regexp = "^(PO-PARENT|PO-CHILD)$", message = "invalid code")
     @Column(name = "poParent_Child")
     private String poParent_Child;

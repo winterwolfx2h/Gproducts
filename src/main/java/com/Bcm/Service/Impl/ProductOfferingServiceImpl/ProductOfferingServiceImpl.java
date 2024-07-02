@@ -84,6 +84,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         productOffering.setQuantityIndicator(dto.getQuantityIndicator());
         productOffering.setMarkets(dto.getMarkets());
         productOffering.setSubmarkets(dto.getSubmarkets());
+        productOffering.setExternalId(dto.getExternalId());
         productOffering.setStatus("Working state");
 
         // Save the new ProductOffering

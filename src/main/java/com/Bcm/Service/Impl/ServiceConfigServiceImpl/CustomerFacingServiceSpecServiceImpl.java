@@ -26,10 +26,10 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
 
             List<CustomerFacingServiceSpec> existingServiceSpecs =
                     customerFacingServiceSpecRepository.findByName(customerFacingServiceSpec.getName());
-            if (!existingServiceSpecs.isEmpty()) {
-                throw new ServiceAlreadyExistsException(
-                        "CustomerFacingServiceSpec with name '" + customerFacingServiceSpec.getName() + "' already exists.");
-            }
+//            if (!existingServiceSpecs.isEmpty()) {
+//                throw new ServiceAlreadyExistsException(
+//                        "CustomerFacingServiceSpec with name '" + customerFacingServiceSpec.getName() + "' already exists.");
+//            }
             customerFacingServiceSpec.setStatus("Working state");
             return customerFacingServiceSpecRepository.save(customerFacingServiceSpec);
 
@@ -68,9 +68,9 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
                 List<CustomerFacingServiceSpec> existingServiceSpecs =
                         customerFacingServiceSpecRepository.findByServiceSpecType(
                                 updatedCustomerFacingServiceSpec.getServiceSpecType());
-                if (!existingServiceSpecs.isEmpty()) {
-                    throw new ServiceAlreadyExistsException("Service with the same type already exists");
-                }
+//                if (!existingServiceSpecs.isEmpty()) {
+//                    throw new ServiceAlreadyExistsException("Service with the same type already exists");
+//                }
             }
             existingCustomerFacingServiceSpec.setName(updatedCustomerFacingServiceSpec.getName());
             existingCustomerFacingServiceSpec.setDescription(updatedCustomerFacingServiceSpec.getDescription());

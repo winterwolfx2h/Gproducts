@@ -55,6 +55,9 @@ public class ProductOfferingDTO {
     @Column(name = "quantity_Indicator", nullable = true)
     private Boolean quantityIndicator;
 
+    @Column(name = "externalId")
+    private String externalId;
+
     @Column(name = "status", nullable = false)
     private String status;
 

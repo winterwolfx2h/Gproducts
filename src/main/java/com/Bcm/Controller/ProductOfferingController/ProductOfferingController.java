@@ -300,9 +300,10 @@ public class ProductOfferingController {
             errors.add("Sub Family cannot be empty");
         } else {
 
-            List<String> errorSubFamily = Arrays.asList("offer PrePayed", "offer PostPayed");
-            if (!errorSubFamily.contains(productOfferingDTO.getSubFamily())) {
-                errors.add("SubFamily must be one of the following: " + String.join(", ", errorSubFamily));
+            var validSubFamilyNames = familyService.readSubFamilies();
+            List<String> subFamilyNames = validSubFamilyNames.stream().map(e -> e.getSubFamilyName().toLowerCase()).toList();
+            if (subFamilyNames.contains(productOfferingDTO.getFamilyName().toLowerCase())) {
+                errors.add("subFamily must be one of the following: " + String.join(", ", subFamilyNames));
             }
         }
 
@@ -370,9 +371,14 @@ public class ProductOfferingController {
             errors.add("Sub Family cannot be empty");
         } else {
 
-            List<String> errorSubFamily = Arrays.asList("offer PrePayed", "offer PostPayed");
-            if (!errorSubFamily.contains(productOfferingDTO.getSubFamily())) {
-                errors.add("SubFamily must be one of the following: " + String.join(", ", errorSubFamily));
+//            List<String> errorSubFamily = Arrays.asList("offer PrePayed", "offer PostPayed");
+//            if (!errorSubFamily.contains(productOfferingDTO.getSubFamily())) {
+//                errors.add("SubFamily must be one of the following: " + String.join(", ", errorSubFamily));
+//            }
+            var validSubFamilyNames = familyService.readSubFamilies();
+            List<String> subFamilyNames = validSubFamilyNames.stream().map(e -> e.getSubFamilyName().toLowerCase()).toList();
+            if (subFamilyNames.contains(productOfferingDTO.getFamilyName().toLowerCase())) {
+                errors.add("subFamily must be one of the following: " + String.join(", ", subFamilyNames));
             }
         }
 

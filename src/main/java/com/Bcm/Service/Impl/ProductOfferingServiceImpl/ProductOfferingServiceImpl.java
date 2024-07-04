@@ -330,6 +330,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         dto.setSubFamily(productOffering.getSubFamily());
         dto.setSellIndicator(productOffering.getSellIndicator());
         dto.setQuantityIndicator(productOffering.getQuantityIndicator());
+        dto.setExternalId(productOffering.getExternalId());
         dto.setStatus(productOffering.getStatus());
 
         String marketsString = String.join(",", productOffering.getMarkets());

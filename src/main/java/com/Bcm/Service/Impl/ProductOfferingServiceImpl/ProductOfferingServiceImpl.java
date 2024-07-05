@@ -309,6 +309,8 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             existingProductOffering.setSubFamily(updatedDTO.getSubFamily());
             existingProductOffering.setSellIndicator(updatedDTO.getSellIndicator());
             existingProductOffering.setQuantityIndicator(updatedDTO.getQuantityIndicator());
+            existingProductOffering.setExternalId(updatedDTO.getExternalId());
+            existingProductOffering.setGlobal(updatedDTO.isGlobal());
 
             ProductOffering updatedProductOffering = productOfferingRepository.save(existingProductOffering);
             return convertToDTO(updatedProductOffering);
@@ -331,6 +333,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         dto.setSellIndicator(productOffering.getSellIndicator());
         dto.setQuantityIndicator(productOffering.getQuantityIndicator());
         dto.setExternalId(productOffering.getExternalId());
+        dto.setGlobal(productOffering.isGlobal());
         dto.setStatus(productOffering.getStatus());
 
         String marketsString = String.join(",", productOffering.getMarkets());

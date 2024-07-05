@@ -16,10 +16,11 @@ import javax.persistence.*;
 @JsonIgnoreProperties("subFamilies")
 public class SubFamily {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "subFamily_seq_generator")
     @SequenceGenerator(name = "subFamily_seq_generator", sequenceName = "subFamily_sequence", allocationSize = 1)
-    @Column(name = "po_SubFamilyCode", nullable = false)
+    @Column(name = "po_SubFamilyCode")
     private int po_SubFamilyCode;
 
     @Column(name = "subFamilyName", nullable = false)

@@ -70,4 +70,8 @@ public class ProductOfferingDTO {
     // New field for relation type
     @Column(name = "type", nullable = true)
     private String type;
+
+
+    @Column(name = "global")
+    private boolean global;
 }

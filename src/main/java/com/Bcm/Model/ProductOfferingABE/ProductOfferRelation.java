@@ -25,7 +25,5 @@ public class ProductOfferRelation {
     @Column(name = "type")
     private String type;
 
-    @Pattern(regexp = "^(Mandatory|Optional)$", message = "invalid code")
-    @Column(name = "Mandatory_Optional")
-    private String Mandatory_Optional;
+
 }

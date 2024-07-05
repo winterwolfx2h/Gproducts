@@ -55,7 +55,7 @@ public class BusinessProcessServiceImpl implements BusinessProcessService {
                 throw new MethodsAlreadyExistsException("Business with name '" + newName + "' already exists.");
             }
             existingBusinessProcess.setName(updatedBusinessProcess.getName());
-            existingBusinessProcess.setDescription(updatedBusinessProcess.getDescription());
+            existingBusinessProcess.setAction(updatedBusinessProcess.getAction());
             return businessProcessRepository.save(existingBusinessProcess);
         } else {
             throw new ResourceNotFoundException("BusinessProcess with ID " + businessProcess_id + " not found.");

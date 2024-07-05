@@ -75,7 +75,7 @@ public class BusinessProcessController {
             }
         } else {
             String jpqlQuery =
-                    "SELECT bp.businessProcess_id AS businessProcess_id, bp.name AS businessProcessName "
+                    "SELECT bp.businessProcess_id AS businessProcess_id, bp.businessProcess_name AS businessProcessName "
                             + "FROM ProductOffering po "
                             + "JOIN BusinessProcess bp "
                             + "ON po.businessProcess_id = bp.businessProcess_id "
@@ -137,9 +137,9 @@ public class BusinessProcessController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<BusinessProcess>> searchMethodsByKeyword(@RequestParam("name") String name) {
+    public ResponseEntity<List<BusinessProcess>> searchMethodsByKeyword(@RequestParam("businessProcess_name") String businessProcess_name) {
         try {
-            List<BusinessProcess> searchResults = businessProcessService.searchByKeyword(name);
+            List<BusinessProcess> searchResults = businessProcessService.searchByKeyword(businessProcess_name);
             return ResponseEntity.ok(searchResults);
         } catch (RuntimeException e) {
             return ResponseEntity.status(500).body(null);

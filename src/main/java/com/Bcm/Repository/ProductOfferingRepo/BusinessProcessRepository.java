@@ -13,10 +13,10 @@ public interface BusinessProcessRepository extends JpaRepository<BusinessProcess
 
     Optional<BusinessProcess> findByName(String name);
 
-    @Query("SELECT p FROM Methods p WHERE p.name = :name")
+    @Query("SELECT p FROM BusinessProcess p WHERE p.name = :name")
     List<BusinessProcess> searchByKeyword(String name);
 
-    boolean existsByName(String name);
+    boolean existsByName(String businessProcess_name);
 
     @Query("SELECT b FROM BusinessProcess b ORDER BY b.businessProcess_id")
     List<BusinessProcess> findAllOrderedByBusinessProcess();

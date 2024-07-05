@@ -21,11 +21,11 @@ public class BusinessProcess {
     @Column(name = "businessProcess_id", nullable = false)
     private int businessProcess_id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "businessProcess", nullable = false)
     private String name;
 
-    @Column(name = "description", nullable = true)
-    private String description;
+    @Column(name = "action", nullable = true)
+    private String action;
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOffering.class)
     @JoinColumn(name = "businessProcess_id")

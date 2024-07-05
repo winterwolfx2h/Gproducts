@@ -68,6 +68,10 @@ public class ProductOffering extends Product {
     @Column(name = "pr_id")
     private Integer pr_id;
 
+
+    @Column(name = "global")
+    private boolean global;
+
     @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOfferRelation.class)
     @JoinColumn(name = "Product_id")
     @JsonIgnore

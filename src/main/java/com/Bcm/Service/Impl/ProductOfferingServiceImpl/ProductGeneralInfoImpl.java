@@ -183,27 +183,30 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     }
 
     @Override
-    public ProductOffering updatePOSrvcPr(GeneralInfoDTO generalInfoDTO, int product_id, int pr_id, int serviceId)
+    public ProductOffering updatePOSrvcPr(GeneralInfoDTO generalInfoDTO, int product_id, Integer pr_id, Integer serviceId)
             throws ProductOfferingNotFoundException {
         ProductOffering productOffering = getProductOfferingById(product_id);
         if (productOffering == null) {
             throw new ProductOfferingNotFoundException("Product Offering not found");
         }
 
-        PhysicalResource physicalResource =
-                physicalResourceRepository
-                        .findById(pr_id)
-                        .orElseThrow(() -> new ProductOfferingNotFoundException("Physical Resource not found"));
+        if (pr_id != null) {
+            PhysicalResource physicalResource =
+                    physicalResourceRepository
+                            .findById(pr_id)
+                            .orElseThrow(() -> new ProductOfferingNotFoundException("Physical Resource not found"));
+            productOffering.setPr_id(pr_id);
+        }
 
-        CustomerFacingServiceSpec cfs =
-                customerFacingServiceSpecRepository
-                        .findById(serviceId)
-                        .orElseThrow(() -> new ProductOfferingNotFoundException("CFS not found"));
+        if (serviceId != null) {
+            CustomerFacingServiceSpec cfs =
+                    customerFacingServiceSpecRepository
+                            .findById(serviceId)
+                            .orElseThrow(() -> new ProductOfferingNotFoundException("CFS not found"));
+            productOffering.setServiceId(serviceId);
+        }
 
         convertToEntity(generalInfoDTO, productOffering);
-
-        productOffering.setPr_id(pr_id);
-        productOffering.setServiceId(serviceId);
 
         // Ensure the status is not modified
         productOffering.setStatus(productOffering.getStatus());

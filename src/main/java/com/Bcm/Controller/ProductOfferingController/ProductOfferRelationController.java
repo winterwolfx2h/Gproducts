@@ -171,15 +171,8 @@ public class ProductOfferRelationController {
     }
 
     @PostMapping("/addProdOffRelations")
-    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
-    public ResponseEntity<List<ProductOfferRelation>> createProductOfferRelations(
-            @RequestBody List<ProductOfferRelation> productOfferRelations) {
-        List<ProductOfferRelation> createdProductOfferRelations = new ArrayList<>();
-        for (ProductOfferRelation productOfferRelation : productOfferRelations) {
-            createdProductOfferRelations.addAll(
-                    productOfferRelationService.create(Collections.singletonList(productOfferRelation)));
-        }
-        return ResponseEntity.ok(createdProductOfferRelations);
+    public List<ProductOfferRelation> create(@RequestBody List<ProductOfferRelation> productOfferRelation) {
+        return productOfferRelationService.create(productOfferRelation);
     }
 
     @GetMapping("/listProdOffrelations")
@@ -193,38 +186,27 @@ public class ProductOfferRelationController {
         }
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<?> searchProductOfferRelationsByKeyword(@RequestParam("type") String type) {
-        try {
-            List<ProductOfferRelation> searchResults = productOfferRelationService.searchByKeyword(type);
-            return ResponseEntity.ok(searchResults);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-        }
+
+    @GetMapping("/searchByKeyword")
+    public List<ProductOfferRelation> searchByKeyword(@RequestParam String name) {
+        return productOfferRelationService.searchByKeyword(name);
     }
 
-    @GetMapping("/findById")
-    public ResponseEntity<?> findProductOfferRelationById(@RequestParam("id") PrimeryKeyProductRelation id) {
-        try {
-            ProductOfferRelation productOfferRelation = productOfferRelationService.findById(id);
-            return ResponseEntity.ok(productOfferRelation);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-        }
+    @GetMapping("/read")
+    public List<ProductOfferRelation> read() {
+        return productOfferRelationService.read();
     }
 
-    @DeleteMapping("/deleteById")
-    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
-    public ResponseEntity<?> deleteProductOfferRelationById(@RequestParam("id") PrimeryKeyProductRelation id) {
-        try {
-            productOfferRelationService.deleteById(id);
-            return ResponseEntity.ok("ProductOfferRelation deleted successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
-        }
-    }
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteProductOfferRelation(@RequestParam Integer id) {
+        ProductOfferRelation productOfferRelation = productOfferRelationService.findById(id);
 
-    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
-    public void invalidateProdOfferRelationCache() {
+        if (productOfferRelation == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ProductOfferRelation not found");
+        }
+
+        productOfferRelationService.deleteById(id);
+        return ResponseEntity.ok("ProductOfferRelation deleted successfully");
     }
 }
+

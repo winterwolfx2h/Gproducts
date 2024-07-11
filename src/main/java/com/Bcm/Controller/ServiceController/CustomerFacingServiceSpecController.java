@@ -124,7 +124,9 @@ public class CustomerFacingServiceSpecController {
             @RequestParam String subMarketName) {
 
         String sqlSearchByMarketSubMarket =
-                "SELECT cfss.name AS service_name, " +
+                "SELECT cfss.service_id AS service_id, " +
+                        "cfss.name AS service_name, " +
+                        "lr.lr_id AS lr_id, " +
                         "lr.po_market_code AS market_code, " +
                         "market.name AS market_name, " +
                         "lr.po_sub_market_code AS sub_market_code, " +
@@ -144,7 +146,9 @@ public class CustomerFacingServiceSpecController {
                             @Override
                             public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
                                 Map<String, Object> response = new HashMap<>();
+                                response.put("service_id", rs.getInt("service_id"));
                                 response.put("service_name", rs.getString("service_name"));
+                                response.put("lr_id", rs.getInt("lr_id"));
                                 response.put("market_code", rs.getInt("market_code"));
                                 response.put("market_name", rs.getString("market_name"));
                                 response.put("sub_market_code", rs.getInt("sub_market_code"));
@@ -160,4 +164,5 @@ public class CustomerFacingServiceSpecController {
 
         return result;
     }
+
 }

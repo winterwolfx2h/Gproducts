@@ -24,7 +24,7 @@ public interface GeneralInfoService {
     ProductOffering updatePOBusinessProc(GeneralInfoDTO generalInfoDTO, int Product_id, int businessProcess_id)
             throws ProductOfferingNotFoundException;
 
-    ProductOffering updatePOSrvcPr(GeneralInfoDTO generalInfoDTO, int Product_id, int pr_id, int serviceId)
+    ProductOffering updatePOSrvcPr(GeneralInfoDTO generalInfoDTO, int Product_id, Integer pr_id, Integer serviceId)
             throws ProductOfferingNotFoundException;
 
     ProductOffering updatePOEligibility(

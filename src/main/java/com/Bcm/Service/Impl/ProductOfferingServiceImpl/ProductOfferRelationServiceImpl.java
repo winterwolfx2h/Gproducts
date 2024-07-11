@@ -33,14 +33,12 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
         for (ProductOfferRelation productOfferRelation : productOfferRelations) {
             createdProductOfferRelations.add(productOfferRelationRepository.save(productOfferRelation));
 
-            // Fetch the ProductOffering by its Product_id
-            int productId = productOfferRelation.getId().getProductId();
+            int productId = productOfferRelation.getProductId();
             ProductOffering productOffering =
                     productOfferingRepository
                             .findById(productId)
                             .orElseThrow(() -> new EntityNotFoundException("ProductOffering not found for Product_id: " + productId));
 
-            // Update the ProductOffering's working step
             productOffering.setWorkingStep("Product Offer Relation");
             productOfferingRepository.save(productOffering);
         }
@@ -59,7 +57,7 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
     }
 
     @Override
-    public ProductOfferRelation findById(PrimeryKeyProductRelation id) {
+    public ProductOfferRelation findById(Integer id) {
         try {
             Optional<ProductOfferRelation> optionalProductOfferRelation = productOfferRelationRepository.findById(id);
             return optionalProductOfferRelation.orElseThrow(
@@ -70,7 +68,7 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
     }
 
     @Override
-    public void deleteById(PrimeryKeyProductRelation id) {
+    public void deleteById(Integer id) {
         productOfferRelationRepository.deleteById(id);
     }
 

@@ -76,24 +76,22 @@ public class GeneralInfoController {
     public ProductOffering updatePOBusinessProc(
             @RequestBody GeneralInfoDTO generalInfoDTO,
             @PathVariable int productId,
-            @RequestParam int pr_id,
-            @RequestParam int serviceId)
+            @RequestParam(required = false) Integer pr_id,
+            @RequestParam(required = false) Integer serviceId)
             throws ProductOfferingNotFoundException {
 
         return generalInfoService.updatePOSrvcPr(generalInfoDTO, productId, pr_id, serviceId);
     }
 
+
     @PutMapping("/eligibility/{Product_id}")
     public ProductOffering updateProductOfferingEligibility(
             @RequestBody GeneralInfoDTO generalInfoDTO,
             @PathVariable int Product_id,
-            @RequestParam int channelCode,
-            @RequestParam int entityCode,
-            @RequestParam int eligibility_id,
-            @RequestParam int productPriceGroupCode)
+            @RequestParam int eligibility_id)
             throws ProductOfferingNotFoundException {
         return generalInfoService.updatePOEligibility(
-                generalInfoDTO, Product_id, channelCode, entityCode, eligibility_id, productPriceGroupCode);
+                generalInfoDTO, Product_id, eligibility_id);
     }
 
     List<String> checkPO(GeneralInfoDTO generalInfoDTO) {

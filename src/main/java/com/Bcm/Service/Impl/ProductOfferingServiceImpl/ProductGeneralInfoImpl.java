@@ -183,27 +183,30 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     }
 
     @Override
-    public ProductOffering updatePOSrvcPr(GeneralInfoDTO generalInfoDTO, int product_id, int pr_id, int serviceId)
+    public ProductOffering updatePOSrvcPr(GeneralInfoDTO generalInfoDTO, int product_id, Integer pr_id, Integer serviceId)
             throws ProductOfferingNotFoundException {
         ProductOffering productOffering = getProductOfferingById(product_id);
         if (productOffering == null) {
             throw new ProductOfferingNotFoundException("Product Offering not found");
         }
 
-        PhysicalResource physicalResource =
-                physicalResourceRepository
-                        .findById(pr_id)
-                        .orElseThrow(() -> new ProductOfferingNotFoundException("Physical Resource not found"));
+        if (pr_id != null) {
+            PhysicalResource physicalResource =
+                    physicalResourceRepository
+                            .findById(pr_id)
+                            .orElseThrow(() -> new ProductOfferingNotFoundException("Physical Resource not found"));
+            productOffering.setPr_id(pr_id);
+        }
 
-        CustomerFacingServiceSpec cfs =
-                customerFacingServiceSpecRepository
-                        .findById(serviceId)
-                        .orElseThrow(() -> new ProductOfferingNotFoundException("CFS not found"));
+        if (serviceId != null) {
+            CustomerFacingServiceSpec cfs =
+                    customerFacingServiceSpecRepository
+                            .findById(serviceId)
+                            .orElseThrow(() -> new ProductOfferingNotFoundException("CFS not found"));
+            productOffering.setServiceId(serviceId);
+        }
 
         convertToEntity(generalInfoDTO, productOffering);
-
-        productOffering.setPr_id(pr_id);
-        productOffering.setServiceId(serviceId);
 
         // Ensure the status is not modified
         productOffering.setStatus(productOffering.getStatus());
@@ -217,43 +220,15 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     public ProductOffering updatePOEligibility(
             GeneralInfoDTO generalInfoDTO,
             int Product_id,
-            int channelCode,
-            int entityCode,
-            int eligibility_id,
-            int productPriceCode)
+            int eligibility_id)
             throws ProductOfferingNotFoundException {
         ProductOffering productOffering = getProductOfferingById(Product_id);
         if (productOffering == null) {
             throw new ProductOfferingNotFoundException("Product Offering not found.");
         }
 
-        Channel channel =
-                channelRepository
-                        .findById(channelCode)
-                        .orElseThrow(() -> new ProductOfferingNotFoundException("Channel not found"));
-
-        EligibilityEntity eligibilityEntity =
-                entityRepository
-                        .findById(entityCode)
-                        .orElseThrow(() -> new ProductOfferingNotFoundException("Entity not found"));
-
-        ProductPriceGroup productPriceGroup =
-                productPriceGroupRepository
-                        .findById(productPriceCode)
-                        .orElseThrow(() -> new ProductOfferingNotFoundException("Product Price Group not found"));
-
-        convertToEntity(generalInfoDTO, productOffering);
 
         productOffering.setEligibility_id(eligibility_id);
-
-        productOffering.getChannelCode().clear();
-        productOffering.getChannelCode().add(channel);
-
-        productOffering.getEntityCode().clear();
-        productOffering.getEntityCode().add(eligibilityEntity);
-
-        productOffering.getProductPriceGroups().clear();
-        productOffering.getProductPriceGroups().add(productPriceGroup);
 
         // Ensure the status is not modified
         productOffering.setStatus(productOffering.getStatus());

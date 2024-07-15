@@ -8,6 +8,9 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 
@@ -19,11 +22,17 @@ import javax.validation.constraints.Pattern;
 @Setter
 public class ProductOfferRelation {
 
-    @EmbeddedId
-    private PrimeryKeyProductRelation id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "productOfferRel_code")
+    private Integer productOfferRel_code;
+
+    @Column(name = "relatedProductId", nullable = false)
+    private int relatedProductId;
+
+    @Column(name = "product_id", nullable = false)
+    private int productId;
 
     @Column(name = "type")
     private String type;
-
-
 }

@@ -42,7 +42,7 @@ public class ProductOfferRelationController {
         String placeholders = relatedProductIds.stream().map(id -> "?").collect(Collectors.joining(", "));
 
         String sqlRelation =
-                "SELECT por.product_id, por.related_product_id, po.name, poff.po_type "
+                "SELECT distinct por.product_id, por.related_product_id, po.name, poff.po_type "
                         + "FROM public.product_offer_relation por "
                         + "JOIN public.product po ON po.product_id = por.product_id "
                         + "JOIN public.product_offering poff ON poff.product_id = por.product_id "
@@ -101,10 +101,10 @@ public class ProductOfferRelationController {
 
         // Query to fetch plans associated with the product
         String sqlSearchByProductId =
-                "SELECT p.product_id, po.name AS product_name, p.related_product_id "
+                "SELECT p.product_id, po.name AS product_name, p.related_product_id, p.type "
                         + "FROM product_offer_relation p "
                         + "JOIN product po ON p.related_product_id = po.product_id "
-                        + "WHERE p.product_id = ? AND p.type = 'Plan'";
+                        + "WHERE p.product_id = ? and type ='Plan' ";
 
         List<Map<String, Object>> result =
                 base.query(
@@ -117,6 +117,7 @@ public class ProductOfferRelationController {
                                 response.put("product_id", rs.getInt("product_id"));
                                 response.put("related_product_id", rs.getInt("related_product_id"));
                                 response.put("product_name", rs.getString("product_name"));
+                                response.put("type", rs.getString("type"));
                                 return response;
                             }
                         });
@@ -129,6 +130,64 @@ public class ProductOfferRelationController {
         }
         return ResponseEntity.ok(result);
     }
+
+
+    @GetMapping("/searchMandatoryOpt-ByProductId")
+    public ResponseEntity<List<Map<String, Object>>> searchMandatoryOptByProductId(@RequestParam Integer productId) {
+
+        // Check if product exists
+        String checkProductQuery = "SELECT COUNT(*) FROM product WHERE product_id = ?";
+        Integer productCount = base.queryForObject(checkProductQuery, new Object[]{productId}, Integer.class);
+
+        if (productCount == null || productCount == 0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonList(Map.of("message", "Product with ID " + productId + " does not exist")));
+        }
+
+        // Check if product has any associated MandatoryOpts
+        String checkMandatoryOptAssociationQuery =
+                "SELECT COUNT(*) FROM product_offer_relation WHERE (product_id = ?) AND (type = 'AutoInclude' OR type = 'Optional')";
+        Integer MandatoryOptCount = base.queryForObject(checkMandatoryOptAssociationQuery, new Object[]{productId}, Integer.class);
+
+        if (MandatoryOptCount == null || MandatoryOptCount == 0) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(
+                            Collections.singletonList(
+                                    Map.of("message", "Product with ID " + productId + " has no associated plans")));
+        }
+
+        // Query to fetch MandatoryOpts associated with the product
+        String sqlSearchByProductId =
+                "SELECT p.product_id, po.name AS product_name, p.related_product_id, p.type "
+                        + "FROM product_offer_relation p "
+                        + "JOIN product po ON p.related_product_id = po.product_id "
+                        + "WHERE (p.product_id = ?) AND (type = 'AutoInclude' OR type = 'Optional')";
+
+        List<Map<String, Object>> result =
+                base.query(
+                        sqlSearchByProductId,
+                        new Object[]{productId},
+                        new RowMapper<Map<String, Object>>() {
+                            @Override
+                            public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+                                Map<String, Object> response = new HashMap<>();
+                                response.put("product_id", rs.getInt("product_id"));
+                                response.put("related_product_id", rs.getInt("related_product_id"));
+                                response.put("product_name", rs.getString("product_name"));
+                                response.put("type", rs.getString("type"));
+                                return response;
+                            }
+                        });
+
+        if (result.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(
+                            Collections.singletonList(
+                                    Map.of("message", "Product with ID " + productId + " has no associated MandatoryOpts")));
+        }
+        return ResponseEntity.ok(result);
+    }
+
 
     @GetMapping("/searchByProductId")
     public List<Map<String, Object>> searchByProductID(@RequestParam Integer productId) {

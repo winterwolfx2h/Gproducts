@@ -88,13 +88,10 @@ public class GeneralInfoController {
     public ProductOffering updateProductOfferingEligibility(
             @RequestBody GeneralInfoDTO generalInfoDTO,
             @PathVariable int Product_id,
-            @RequestParam int channelCode,
-            @RequestParam int entityCode,
-            @RequestParam int eligibility_id,
-            @RequestParam int productPriceGroupCode)
+            @RequestParam int eligibility_id)
             throws ProductOfferingNotFoundException {
         return generalInfoService.updatePOEligibility(
-                generalInfoDTO, Product_id, channelCode, entityCode, eligibility_id, productPriceGroupCode);
+                generalInfoDTO, Product_id, eligibility_id);
     }
 
     List<String> checkPO(GeneralInfoDTO generalInfoDTO) {

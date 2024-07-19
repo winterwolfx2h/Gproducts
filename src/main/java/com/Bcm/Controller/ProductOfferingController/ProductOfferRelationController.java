@@ -102,9 +102,10 @@ public class ProductOfferRelationController {
 
         // Query to fetch plans associated with the product
         String sqlSearchByProductId =
-                "SELECT distinct p.product_id, po.name AS product_name, p.related_product_id, p.type "
+                "SELECT distinct p.product_id, po.name AS product_name,po.family_name, po. sub_family, p.related_product_id, p.type, p.sub_Type, pofo.markets, pofo.submarkets "
                         + "FROM product_offer_relation p "
                         + "JOIN product po ON p.related_product_id = po.product_id "
+                        + "JOIN product_offering pofo ON po.product_id = pofo.product_id "
                         + "WHERE p.product_id = ? and type ='Plan' ";
 
         List<Map<String, Object>> result =
@@ -119,6 +120,11 @@ public class ProductOfferRelationController {
                                 response.put("related_product_id", rs.getInt("related_product_id"));
                                 response.put("product_name", rs.getString("product_name"));
                                 response.put("type", rs.getString("type"));
+                                response.put("sub_Type", rs.getString("sub_Type"));
+                                response.put("family_name", rs.getString("family_name"));
+                                response.put("sub_family", rs.getString("sub_family"));
+                                response.put("markets", rs.getString("markets"));
+                                response.put("submarkets", rs.getString("submarkets"));
                                 return response;
                             }
                         });

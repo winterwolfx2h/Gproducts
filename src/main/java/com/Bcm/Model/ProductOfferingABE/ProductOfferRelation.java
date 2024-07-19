@@ -28,4 +28,7 @@ public class ProductOfferRelation {
 
     @Column(name = "type")
     private String type;
+
+    @Column(name = "subType")
+    private String subType;
 }

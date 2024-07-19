@@ -73,7 +73,7 @@ public class GeneralInfoController {
     }
 
     @PutMapping("/SrvcPr/{productId}")
-    public ProductOffering updatePOBusinessProc(
+    public ProductOffering updatePOSrvcPr(
             @RequestBody GeneralInfoDTO generalInfoDTO,
             @PathVariable int productId,
             @RequestParam(required = false) Integer pr_id,
@@ -83,16 +83,19 @@ public class GeneralInfoController {
         return generalInfoService.updatePOSrvcPr(generalInfoDTO, productId, pr_id, serviceId);
     }
 
-
-    @PutMapping("/eligibility/{Product_id}")
-    public ProductOffering updateProductOfferingEligibility(
+    @PutMapping("/StockInd/{productId}")
+    public ResponseEntity<ProductOffering> updatePOStockInd(
             @RequestBody GeneralInfoDTO generalInfoDTO,
-            @PathVariable int Product_id,
-            @RequestParam int eligibility_id)
-            throws ProductOfferingNotFoundException {
-        return generalInfoService.updatePOEligibility(
-                generalInfoDTO, Product_id, eligibility_id);
+            @PathVariable int productId,
+            @RequestParam(required = false) boolean stockInd) {
+        try {
+            ProductOffering productOffering = generalInfoService.updatePOStockInd(generalInfoDTO, productId, stockInd);
+            return ResponseEntity.ok(productOffering);
+        } catch (ProductOfferingNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
+
 
     List<String> checkPO(GeneralInfoDTO generalInfoDTO) {
         List<String> errors = new ArrayList<>();

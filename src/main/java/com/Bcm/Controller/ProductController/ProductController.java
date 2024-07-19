@@ -8,6 +8,7 @@ import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,9 +16,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -98,55 +97,44 @@ public class ProductController {
     }
 
     @GetMapping("/searchProductDetails")
-    public ResponseEntity<ProductDetailsResponse> searchProductDetails(@RequestParam Integer productId) {
+    public ResponseEntity<?> searchProductDetails(@RequestParam Integer productId) {
         try {
-            // Check if the productId exists in the database
-            String checkProductIdQuery =
-                    "SELECT COUNT(po.Product_id) FROM ProductOffering po WHERE po.Product_id = :productId";
-            Long count =
-                    entityManager
-                            .createQuery(checkProductIdQuery, Long.class)
-                            .setParameter("productId", productId)
-                            .getSingleResult();
+            String sql = "SELECT " +
+                    "  p.product_id, " +
+                    "  c.channel_code AS channelCode, " +
+                    "  c.name AS channelName, " +
+                    "  e.entity_code AS entityCode, " +
+                    "  e.name AS entityName, " +
+                    "  pg.product_price_group_code AS productPriceGroupCode, " +
+                    "  pg.name AS productPriceGroupName, " +
+                    "  p.stock_ind " +
+                    "FROM " +
+                    "  Product p " +
+                    "  LEFT JOIN Product_Channel pc ON p.product_id = pc.product_id " +
+                    "  LEFT JOIN Channel c ON pc.channel_code = c.channel_code " +
+                    "  LEFT JOIN Product_Entity pe ON p.product_id = pe.product_id " +
+                    "  LEFT JOIN Entity e ON pe.entity_code = e.entity_code " +
+                    "  LEFT JOIN Product_PriceGroup pp ON p.product_id = pp.product_id " +
+                    "  LEFT JOIN Product_Price_Group pg ON pp.product_price_group_code = pg.product_price_group_code " +
+                    "WHERE " +
+                    "  p.product_id = ?";
 
-            if (count == 0) {
-                throw new IllegalArgumentException("Product with ID " + productId + " does not exist.");
+            List<Map<String, Object>> productDetails = base.queryForList(sql, new Object[]{productId});
+
+            if (productDetails.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
             }
 
-            String jpqlQuery =
-                    "SELECT ch.channelCode AS channelCode, ch.name AS channelName,ee.entityCode AS entityCode, ee.name AS entityName, ppg.productPriceGroupCode AS productPriceGroupCode , ppg.name AS productPriceGroupName, e.stock_Indicator "
-                            + "FROM ProductOffering po "
-                            + "JOIN po.channelCode ch "
-                            + "JOIN po.entityCode ee "
-                            + "JOIN po.productPriceGroups ppg "
-                            + "LEFT JOIN po.eligibilities e "
-                            + "WHERE po.Product_id = :productId";
-
-            TypedQuery<Object[]> query =
-                    entityManager.createQuery(jpqlQuery, Object[].class).setParameter("productId", productId);
-
-            Object[] result = query.getSingleResult();
-
-            Integer channelCode = (Integer) result[0];
-            String channelName = (String) result[1];
-            Integer entityCode = (Integer) result[2];
-            String entityName = (String) result[3];
-            Integer productPriceGroupCode = (Integer) result[4];
-            String productPriceGroupName = (String) result[5];
-            Boolean stockIndicator = (Boolean) result[6]; // Fetch the stock_Indicator
-
-            // Create ProductDetailsResponse object with stockIndicator
-            ProductDetailsResponse response =
-                    new ProductDetailsResponse(channelCode, channelName, entityCode, entityName, productPriceGroupCode, productPriceGroupName, stockIndicator);
-
-            return ResponseEntity.ok(response);
-        } catch (NoResultException ex) {
-            return ResponseEntity.notFound().build(); // Handle if no results found
-        } catch (IllegalArgumentException ex) {
-            throw ex; // Re-throw the IllegalArgumentException for clarity
-        } catch (Exception ex) {
-            // Handle any unexpected exceptions
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // or handle differently
+            return ResponseEntity.ok(productDetails);
+        } catch (DataAccessException e) {
+            // Handle database-related exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error: " + e.getMessage());
+        } catch (RuntimeException e) {
+            // Handle runtime exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Runtime error: " + e.getMessage());
+        } catch (Exception e) {
+            // Handle any other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
         }
     }
 

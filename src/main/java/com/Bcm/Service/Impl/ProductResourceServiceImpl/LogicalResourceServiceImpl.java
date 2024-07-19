@@ -1,6 +1,5 @@
 package com.Bcm.Service.Impl.ProductResourceServiceImpl;
 
-import com.Bcm.Exception.DuplicateResourceException;
 import com.Bcm.Model.ProductResourceABE.LogicalResource;
 import com.Bcm.Repository.ProductResourceRepository.LogicalResourceRepository;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;

@@ -7,9 +7,6 @@ import com.Bcm.Model.Product.GeneralInfoMapper;
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.ProductPrice;
-import com.Bcm.Model.ProductOfferingABE.ProductPriceGroup;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
 import com.Bcm.Model.ProductResourceABE.PhysicalResource;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Repository.ProductOfferingRepo.*;
@@ -67,8 +64,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         productOffering.setBS_externalId(generalInfoDTO.getBS_externalId());
         productOffering.setCS_externalId(generalInfoDTO.getCS_externalId());
         productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
-        productOffering.setSellIndicator(generalInfoDTO.getSellIndicator());
-        productOffering.setQuantityIndicator(generalInfoDTO.getQuantityIndicator());
+        productOffering.setSellInd(generalInfoDTO.getSellIndicator());
+        productOffering.setQuantityInd(generalInfoDTO.getQuantityIndicator());
         productOffering.setStatus("Working state");
         productOffering.setWorkingStep("GeneralInfo");
 
@@ -106,11 +103,11 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         productOffering.setBS_externalId(generalInfoDTO.getBS_externalId());
         productOffering.setCS_externalId(generalInfoDTO.getCS_externalId());
         productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
-        productOffering.setSellIndicator(generalInfoDTO.getSellIndicator());
-        productOffering.setQuantityIndicator(generalInfoDTO.getQuantityIndicator());
+        productOffering.setSellInd(generalInfoDTO.getSellIndicator());
+        productOffering.setQuantityInd(generalInfoDTO.getQuantityIndicator());
         // productOffering.setStatus(generalInfoDTO.getStatus());
         productOffering.setWorkingStep(generalInfoDTO.getWorkingStep());
-        productOffering.setEligibility_id(productOffering.getEligibility_id());
+        productOffering.setStockInd(productOffering.getStockInd());
     }
 
     private GeneralInfoDTO convertToDTO(ProductOffering productOffering) {
@@ -128,11 +125,11 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         generalInfoDTO.setBS_externalId(productOffering.getBS_externalId());
         generalInfoDTO.setCS_externalId(productOffering.getCS_externalId());
         generalInfoDTO.setPoParent_Child(productOffering.getPoParent_Child());
-        generalInfoDTO.setSellIndicator(productOffering.getSellIndicator());
-        generalInfoDTO.setQuantityIndicator(productOffering.getQuantityIndicator());
+        generalInfoDTO.setSellIndicator(productOffering.getSellInd());
+        generalInfoDTO.setQuantityIndicator(productOffering.getQuantityInd());
         generalInfoDTO.setStatus(productOffering.getStatus());
         generalInfoDTO.setWorkingStep(productOffering.getWorkingStep());
-        productOffering.setEligibility_id(productOffering.getEligibility_id());
+        productOffering.setStockInd(productOffering.getStockInd());
         return generalInfoDTO;
     }
 
@@ -216,27 +213,6 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         return productOfferingRepository.save(productOffering);
     }
 
-    @Override
-    public ProductOffering updatePOEligibility(
-            GeneralInfoDTO generalInfoDTO,
-            int Product_id,
-            int eligibility_id)
-            throws ProductOfferingNotFoundException {
-        ProductOffering productOffering = getProductOfferingById(Product_id);
-        if (productOffering == null) {
-            throw new ProductOfferingNotFoundException("Product Offering not found.");
-        }
-
-
-        productOffering.setEligibility_id(eligibility_id);
-
-        // Ensure the status is not modified
-        productOffering.setStatus(productOffering.getStatus());
-
-        // Update the product's working step
-        productOffering.setWorkingStep("Eligibility");
-        return productOfferingRepository.save(productOffering);
-    }
 
     @Override
     public List<GeneralInfoDTO> getAllGeneralInfoDTOs() {
@@ -248,6 +224,22 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
             dtos.add(dto);
         }
         return dtos;
+    }
+
+
+    @Override
+    public ProductOffering updatePOStockInd(GeneralInfoDTO generalInfoDTO, int productId, boolean stockInd)
+            throws ProductOfferingNotFoundException {
+        ProductOffering productOffering = getProductOfferingById(productId);
+
+        // Update the stockInd field of the GeneralInfoDTO
+        generalInfoDTO.setStockInd(stockInd);
+
+        // Update the product offering with the new general info
+        productOffering.setStockInd(stockInd);
+
+        // Save the updated product offering
+        return productOfferingRepository.save(productOffering);
     }
 
     @Override
@@ -268,8 +260,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         productOffering.setCategory(generalInfoDTO.getCategory());
         productOffering.setBS_externalId(generalInfoDTO.getBS_externalId());
         productOffering.setCS_externalId(generalInfoDTO.getCS_externalId());
-        productOffering.setSellIndicator(generalInfoDTO.getSellIndicator());
-        productOffering.setQuantityIndicator(generalInfoDTO.getQuantityIndicator());
+        productOffering.setSellInd(generalInfoDTO.getSellIndicator());
+        productOffering.setQuantityInd(generalInfoDTO.getQuantityIndicator());
         productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
         productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
         productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());

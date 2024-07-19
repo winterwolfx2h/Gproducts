@@ -12,7 +12,6 @@ import com.Bcm.Repository.ProductOfferingRepo.ProductPriceGroupRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductRelationRepository;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.ChannelRepository;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.EntityRepository;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,7 +31,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
 
     final ProductOfferingRepository productOfferingRepository;
     final ProductRelationRepository productRelationRepository;
-    final EligibilityService eligibilityService;
+    //final EligibilityService eligibilityService;
     final ProductOfferRelationRepository productOfferRelationRepository;
     private final ChannelRepository channelRepository;
     private final EntityRepository entityRepository;
@@ -80,8 +79,9 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         productOffering.setDetailedDescription(dto.getDetailedDescription());
         productOffering.setFamilyName(dto.getFamilyName());
         productOffering.setSubFamily(dto.getSubFamily());
-        productOffering.setSellIndicator(dto.getSellIndicator());
-        productOffering.setQuantityIndicator(dto.getQuantityIndicator());
+        productOffering.setSellInd(dto.getSellIndicator());  // TODO
+        productOffering.setQuantityInd(dto.getQuantityIndicator());
+        productOffering.setStockInd(dto.getStockInd());
         productOffering.setMarkets(dto.getMarkets());
         productOffering.setSubmarkets(dto.getSubmarkets());
         productOffering.setExternalId(dto.getExternalId());
@@ -307,8 +307,9 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             existingProductOffering.setDetailedDescription(updatedDTO.getDetailedDescription());
             existingProductOffering.setFamilyName(updatedDTO.getFamilyName());
             existingProductOffering.setSubFamily(updatedDTO.getSubFamily());
-            existingProductOffering.setSellIndicator(updatedDTO.getSellIndicator());
-            existingProductOffering.setQuantityIndicator(updatedDTO.getQuantityIndicator());
+            existingProductOffering.setSellInd(updatedDTO.getSellIndicator());  // TODO
+            existingProductOffering.setStockInd(updatedDTO.getStockInd());
+            existingProductOffering.setQuantityInd(updatedDTO.getQuantityIndicator());
             existingProductOffering.setExternalId(updatedDTO.getExternalId());
             existingProductOffering.setGlobal(updatedDTO.isGlobal());
 
@@ -330,8 +331,9 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         dto.setDetailedDescription(productOffering.getDetailedDescription());
         dto.setFamilyName(productOffering.getFamilyName());
         dto.setSubFamily(productOffering.getSubFamily());
-        dto.setSellIndicator(productOffering.getSellIndicator());
-        dto.setQuantityIndicator(productOffering.getQuantityIndicator());
+        dto.setSellIndicator(productOffering.getSellInd());  // todo change name
+        dto.setQuantityIndicator(productOffering.getQuantityInd());
+        dto.setStockInd(productOffering.getStockInd());
         dto.setExternalId(productOffering.getExternalId());
         dto.setGlobal(productOffering.isGlobal());
         dto.setStatus(productOffering.getStatus());

@@ -1,4 +1,5 @@
 package com.Bcm.Model.Product;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 

@@ -30,11 +30,6 @@ public class ProductOffering extends Product {
     @Column(name = "workingStep")
     private String workingStep;
 
-    @Column(name = "sellIndicator")
-    private Boolean sellIndicator;
-
-    @Column(name = "quantity_Indicator")
-    private Boolean quantityIndicator;
 
     @Column(name = "category")
     private String category;
@@ -87,10 +82,4 @@ public class ProductOffering extends Product {
     @JsonIgnore
     private List<BusinessProcess> businessProcesses;
 
-    @Column(name = "eligibility_id", insertable = false, updatable = true)
-    private Integer eligibility_id;
-
-    @OneToMany(mappedBy = "productOffering", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Eligibility> eligibilities;
 }

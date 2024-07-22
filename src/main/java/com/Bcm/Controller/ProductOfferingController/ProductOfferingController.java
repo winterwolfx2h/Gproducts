@@ -1,7 +1,10 @@
 package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.BCMDrools.ProductOfferingDrools.ProductOfferingValidationService;
-import com.Bcm.Exception.*;
+import com.Bcm.Exception.ErrorMessage;
+import com.Bcm.Exception.InvalidInputException;
+import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
+import com.Bcm.Exception.ProductOfferingLogicException;
 import com.Bcm.Model.Product.ProductChannelDTO;
 import com.Bcm.Model.Product.ProductEntityDTO;
 import com.Bcm.Model.Product.ProductGroupDto;
@@ -37,7 +40,10 @@ import org.springframework.web.context.request.WebRequest;
 import javax.validation.Valid;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Tag(name = "Product Offering Controller", description = "All of the Product Offering's methods")
 @RestController
@@ -53,17 +59,16 @@ public class ProductOfferingController {
     final LogicalResourceService logicalResourceService;
     final PhysicalResourceService physicalResourceService;
     final BusinessProcessService businessProcessService;
-    final EligibilityService eligibilityService;
+    //final EligibilityService eligibilityService; // TODO
     final FamilyService familyService;
     final ChannelService channelService;
     final CustomerFacingServiceSpecService customerFacingServiceSpecService;
     final MarketService marketService;
     final ProductOfferingValidationService validationService;
+    final JdbcTemplate base;
     private final ProductOfferingRepository productOfferingRepository;
     private final ProductOfferRelationRepository productOfferRelationRepository;
     private final ProductOfferingServiceImpl productOfferingServiceImpl;
-
-    final JdbcTemplate base;
 
     @PostMapping("/addProdOff")
     @CacheEvict(value = "productOfferingsCache", allEntries = true)

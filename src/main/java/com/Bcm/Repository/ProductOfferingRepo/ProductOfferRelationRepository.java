@@ -1,6 +1,5 @@
 package com.Bcm.Repository.ProductOfferingRepo;
 
-import com.Bcm.Model.ProductOfferingABE.PrimeryKeyProductRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Model.ProductOfferingABE.RelationResponse;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -54,6 +54,15 @@ public class Product {
     @Column(name = "subFamily")
     private String subFamily;
 
+    @Column(name = "sellInd", nullable = true)  // TODO change to product (, nullable = true)
+    private Boolean sellInd;
+
+    @Column(name = "quantity_Ind", nullable = true) // TODO change to product
+    private Boolean quantityInd;
+
+    @Column(name = "stockInd")
+    private Boolean stockInd;
+
     @Column(name = "status", nullable = false)
     private String status;
 
@@ -72,7 +81,7 @@ public class Product {
     @JoinTable(
             name = "Product_entity",
             joinColumns = @JoinColumn(name = "Product_id"),
-            inverseJoinColumns = @JoinColumn(name = "entityCode"))
+            inverseJoinColumns = @JoinColumn(name = "entityCode")) // TODO
     private Set<EligibilityEntity> entityCode = new HashSet<>();
 
     @JsonIgnore
@@ -80,7 +89,7 @@ public class Product {
     @JoinTable(
             name = "Product_channel",
             joinColumns = @JoinColumn(name = "Product_id"),
-            inverseJoinColumns = @JoinColumn(name = "channelCode"))
+            inverseJoinColumns = @JoinColumn(name = "channelCode")) // TODO
     private Set<Channel> channelCode = new HashSet<>();
 
     @JsonIgnore
@@ -88,7 +97,7 @@ public class Product {
     @JoinTable(
             name = "Product_pricegroup",
             joinColumns = @JoinColumn(name = "Product_id"),
-            inverseJoinColumns = @JoinColumn(name = "productPriceGroupCode"))
+            inverseJoinColumns = @JoinColumn(name = "productPriceGroupCode")) // TODO
     private Set<ProductPriceGroup> productPriceGroups = new HashSet<>();
 
     public Product convertToProduct() {

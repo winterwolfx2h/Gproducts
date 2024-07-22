@@ -1,13 +1,11 @@
 package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Exception.NoRelationFoundException;
-import com.Bcm.Model.ProductOfferingABE.PrimeryKeyProductRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Model.ProductOfferingABE.RelationResponse;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityNotFoundException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Tag(name = "Product Offer Relations Controller", description = "All of the Product Offer Relation's methods")
@@ -101,9 +102,10 @@ public class ProductOfferRelationController {
 
         // Query to fetch plans associated with the product
         String sqlSearchByProductId =
-                "SELECT p.product_id, po.name AS product_name, p.related_product_id, p.type "
+                "SELECT distinct p.product_id, po.name AS product_name,po.family_name, po. sub_family, p.related_product_id, p.type, p.sub_Type, pofo.markets, pofo.submarkets "
                         + "FROM product_offer_relation p "
                         + "JOIN product po ON p.related_product_id = po.product_id "
+                        + "JOIN product_offering pofo ON po.product_id = pofo.product_id "
                         + "WHERE p.product_id = ? and type ='Plan' ";
 
         List<Map<String, Object>> result =
@@ -118,6 +120,11 @@ public class ProductOfferRelationController {
                                 response.put("related_product_id", rs.getInt("related_product_id"));
                                 response.put("product_name", rs.getString("product_name"));
                                 response.put("type", rs.getString("type"));
+                                response.put("sub_Type", rs.getString("sub_Type"));
+                                response.put("family_name", rs.getString("family_name"));
+                                response.put("sub_family", rs.getString("sub_family"));
+                                response.put("markets", rs.getString("markets"));
+                                response.put("submarkets", rs.getString("submarkets"));
                                 return response;
                             }
                         });
@@ -158,7 +165,7 @@ public class ProductOfferRelationController {
 
         // Query to fetch MandatoryOpts associated with the product
         String sqlSearchByProductId =
-                "SELECT p.product_id, po.name AS product_name, p.related_product_id, p.type "
+                "SELECT distinct p.product_id, po.name AS product_name, p.related_product_id, p.type "
                         + "FROM product_offer_relation p "
                         + "JOIN product po ON p.related_product_id = po.product_id "
                         + "WHERE (p.product_id = ?) AND (type = 'AutoInclude' OR type = 'Optional')";
@@ -201,7 +208,7 @@ public class ProductOfferRelationController {
 
         // Query to retrieve related products
         String sqlSearchByProductId =
-                "SELECT por.product_id AS product_id, por.related_product_id AS related_product_id, po.name AS product_name,"
+                "SELECT distinct por.product_id AS product_id, por.related_product_id AS related_product_id, po.name AS product_name,"
                         + " por.type FROM product_offer_relation por JOIN product po ON por.related_product_id = po.product_id"
                         + " WHERE por.product_id = ? AND por.type NOT LIKE 'Plan'";
 

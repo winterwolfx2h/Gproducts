@@ -49,11 +49,14 @@ public class ProductOfferingDTO {
     @Column(name = "subFamily", nullable = false)
     private String subFamily;
 
-    @Column(name = "sellIndicator", nullable = true)
+    @Column(name = "sellIndicator") // TODO change name
     private Boolean sellIndicator;
 
-    @Column(name = "quantity_Indicator", nullable = true)
+    @Column(name = "quantity_Indicator") // TODO change name
     private Boolean quantityIndicator;
+
+    @Column(name = "stockInd")
+    private Boolean stockInd;
 
     @Column(name = "externalId")
     private String externalId;

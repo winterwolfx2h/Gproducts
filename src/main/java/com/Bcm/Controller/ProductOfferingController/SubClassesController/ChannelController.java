@@ -4,7 +4,6 @@ import com.Bcm.Exception.ChannelAlreadyExistsException;
 import com.Bcm.Exception.FamilyAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ChannelService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,7 @@ import java.util.List;
 public class ChannelController {
 
     final ChannelService channelService;
-    final EligibilityService eligibilityService;
+    //final EligibilityService eligibilityService;
 
     @PostMapping("/addChannels")
     public ResponseEntity<?> createChannels(@RequestBody Channel channel) {

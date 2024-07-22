@@ -1,6 +1,5 @@
 package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
-import com.Bcm.Model.ProductOfferingABE.PrimeryKeyProductRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.RelationResponse;

@@ -4,7 +4,6 @@ import com.Bcm.Exception.EntityAlreadyExistsException;
 import com.Bcm.Exception.FamilyAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
-import com.Bcm.Service.Srvc.ProductOfferingSrvc.EligibilityService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.EntityService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,7 @@ import java.util.List;
 public class EntityController {
 
     final EntityService entityService;
-    final EligibilityService eligibilityService;
+    //final EligibilityService eligibilityService;
 
     @PostMapping("/addEntitys")
     public ResponseEntity<?> createEntity(@RequestBody EligibilityEntity entity) {

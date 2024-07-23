@@ -591,6 +591,96 @@ public class ProductOfferingController {
 
         return ResponseEntity.ok("Product channels inserted successfully");
     }
+
+    @PostMapping("/updateProductChannels")
+    public ResponseEntity<String> updateProductChannels(@RequestBody List<ProductChannelDTO> productChannelDTOs) {
+        if (productChannelDTOs.isEmpty()) {
+            throw new IllegalArgumentException("At least one productChannelDTO must be provided");
+        }
+
+        int productId = productChannelDTOs.get(0).getProductId();
+
+        // Delete existing product channels for the product
+        String deleteSql = "DELETE FROM product_channel WHERE product_id = ?";
+        base.update(deleteSql, productId);
+
+        // Insert new product channels
+        String insertSql = "INSERT INTO product_channel (product_id, channel_code) VALUES (?, ?)";
+        base.batchUpdate(insertSql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setInt(1, productChannelDTOs.get(i).getProductId());
+                ps.setInt(2, productChannelDTOs.get(i).getChannelCode());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return productChannelDTOs.size();
+            }
+        });
+
+        return ResponseEntity.ok("Product channels updated successfully");
+    }
+
+    @PostMapping("/updateProductEntity")
+    public ResponseEntity<String> updateProductEntity(@RequestBody List<ProductEntityDTO> productEntityDTOs) {
+        if (productEntityDTOs.isEmpty()) {
+            throw new IllegalArgumentException("At least one productEntityDTO must be provided");
+        }
+
+        int productId = productEntityDTOs.get(0).getProductId();
+
+        // Delete existing product entities for the product
+        String deleteSql = "DELETE FROM product_entity WHERE product_id = ?";
+        base.update(deleteSql, productId);
+
+        // Insert new product entities
+        String insertSql = "INSERT INTO product_entity (product_id, entity_code) VALUES (?, ?)";
+        base.batchUpdate(insertSql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setInt(1, productEntityDTOs.get(i).getProductId());
+                ps.setInt(2, productEntityDTOs.get(i).getEntityCode());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return productEntityDTOs.size();
+            }
+        });
+
+        return ResponseEntity.ok("Product entities updated successfully");
+    }
+
+    @PostMapping("/updateProductGroup")
+    public ResponseEntity<String> updateProductGroup(@RequestBody List<ProductGroupDto> productGroupDtos) {
+        if (productGroupDtos.isEmpty()) {
+            throw new IllegalArgumentException("At least one productGroupDtos must be provided");
+        }
+
+        int productId = productGroupDtos.get(0).getProductId();
+
+        // Delete existing product groups for the product
+        String deleteSql = "DELETE FROM product_pricegroup WHERE product_id = ?";
+        base.update(deleteSql, productId);
+
+        // Insert new product groups
+        String insertSql = "INSERT INTO product_pricegroup (product_id, product_price_group_code) VALUES (?, ?)";
+        base.batchUpdate(insertSql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setInt(1, productGroupDtos.get(i).getProductId());
+                ps.setInt(2, productGroupDtos.get(i).getProductPriceGroupCode());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return productGroupDtos.size();
+            }
+        });
+
+        return ResponseEntity.ok("Product groups updated successfully");
+    }
 }
 
 

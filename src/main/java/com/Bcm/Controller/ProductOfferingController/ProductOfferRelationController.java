@@ -76,6 +76,39 @@ public class ProductOfferRelationController {
         return relationResponses;
     }
 
+    @GetMapping("/allProductsExceptRelated")
+    public List<RelationResponse> getAllProductsExceptRelated(@RequestParam Integer selectedProductId) {
+        String sqlRelation =
+                "SELECT distinct p.product_id, p.name, poff.po_type "
+                        + "FROM public.product p "
+                        + "JOIN public.product_offering poff ON poff.product_id = p.product_id "
+                        + "WHERE poff.po_type <> 'PO-Plan' " // exclude product_offering with po_type = 'PO-Plan'
+                        + "AND p.product_id NOT IN ("
+                        + "  SELECT distinct por.related_product_id "
+                        + "  FROM public.product_offer_relation por "
+                        + "  WHERE por.product_id =?"
+                        + ") "
+                        + "AND p.product_id IN ("
+                        + "  SELECT distinct por.product_id "
+                        + "  FROM public.product_offer_relation por "
+                        + "  WHERE por.related_product_id = ("
+                        + "    SELECT distinct por2.related_product_id "
+                        + "    FROM public.product_offer_relation por2 "
+                        + "    WHERE por2.product_id =? "
+                        + "    AND por2.type = 'Plan'"
+                        + "  ) "
+                        + "  AND por.type = 'Plan'"
+                        + ") "
+                        + "ORDER BY p.product_id";
+
+        Object[] params = new Object[] { selectedProductId, selectedProductId };
+
+        List<RelationResponse> relationResponses =
+                base.query(sqlRelation, params, new BeanPropertyRowMapper<>(RelationResponse.class));
+
+        return relationResponses;
+    }
+
     @GetMapping("/searchPO-PlanByProductId")
     public ResponseEntity<List<Map<String, Object>>> searchPOPlanByProductId(@RequestParam Integer productId) {
 

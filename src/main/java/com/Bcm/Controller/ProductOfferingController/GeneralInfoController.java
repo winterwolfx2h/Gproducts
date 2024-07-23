@@ -103,10 +103,10 @@ public class GeneralInfoController {
         if (generalInfoDTO.getName() == null || generalInfoDTO.getName().isEmpty()) {
             errors.add("Name cannot be empty");
         } else {
-            if (!(generalInfoDTO.getName().startsWith("po_Basic-")
+            if (!(generalInfoDTO.getName().startsWith("po-basic-")
                     || generalInfoDTO.getName().startsWith("po-optional-")
-                    || generalInfoDTO.getName().startsWith("po-addon-"))) {
-                errors.add("Name must start with 'po_Basic-', 'po-optional-', or 'po-addon-'");
+                    || generalInfoDTO.getName().startsWith("po-add-"))) {
+                errors.add("Name must start with 'po-basic-', 'po-optional-', or 'po-add-'");
             }
         }
 
@@ -125,7 +125,7 @@ public class GeneralInfoController {
             errors.add(" Category cannot be empty");
         } else {
 
-            List<String> errorCategory = Arrays.asList("Billing System", "Charging System", "Both", "Internal");
+            List<String> errorCategory = Arrays.asList("Billing", "Charging", "Both", "Internal");
             if (!errorCategory.contains(generalInfoDTO.getCategory())) {
                 errors.add("category must be one of the following: " + String.join(", ", errorCategory));
             }

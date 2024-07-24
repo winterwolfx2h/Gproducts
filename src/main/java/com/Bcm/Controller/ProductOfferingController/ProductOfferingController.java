@@ -9,6 +9,7 @@ import com.Bcm.Model.Product.ProductChannelDTO;
 import com.Bcm.Model.Product.ProductEntityDTO;
 import com.Bcm.Model.Product.ProductGroupDto;
 import com.Bcm.Model.Product.ProductOfferingDTO;
+import com.Bcm.Model.ProductOfferingABE.DependentCfsDto;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.ProductRelation;
@@ -680,6 +681,30 @@ public class ProductOfferingController {
         });
 
         return ResponseEntity.ok("Product groups updated successfully");
+    }
+
+    @PostMapping("/insertDependentCfs")
+    public ResponseEntity<String> insertDependentCfs(@RequestBody List<DependentCfsDto> dependentCfsDtos) {
+        if (dependentCfsDtos.isEmpty()) {
+            throw new IllegalArgumentException("At least one dependentCfsDtos must be provided");
+        }
+
+        String sql = "INSERT INTO product_depend_cfs (product_id, dependent_cfs) VALUES (?, ?)";
+
+        base.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setInt(1, dependentCfsDtos.get(i).getProductId());
+                ps.setInt(2, dependentCfsDtos.get(i).getDependentCfs());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return dependentCfsDtos.size();
+            }
+        });
+
+        return ResponseEntity.ok("dependentCfs inserted successfully");
     }
 }
 

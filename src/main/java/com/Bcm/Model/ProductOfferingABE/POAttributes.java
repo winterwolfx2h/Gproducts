@@ -50,11 +50,11 @@ public class POAttributes {
     @Column(name = "maxSize", nullable = true)
     private String maxSize;
 
-    @Column(name = "service", nullable = true)
-    private String service;
+    @Column(name = "dependentCfs", nullable = true)
+    private String dependentCfs;
 
     @ElementCollection
-    @CollectionTable(name = "ValueDescription", joinColumns = @JoinColumn(name = "poAttribute_code"))
+    @CollectionTable(name = "AttributesValueDes", joinColumns = @JoinColumn(name = "poAttribute_code"))
     private List<ValueDescription> valueDescription;
 
     @Column(name = "Product_id", nullable = false)

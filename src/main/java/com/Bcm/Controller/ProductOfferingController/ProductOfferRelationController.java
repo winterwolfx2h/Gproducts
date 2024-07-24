@@ -6,6 +6,7 @@ import com.Bcm.Model.ProductOfferingABE.RelationResponse;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityNotFoundException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Tag(name = "Product Offer Relations Controller", description = "All of the Product Offer Relation's methods")
@@ -270,8 +268,15 @@ public class ProductOfferRelationController {
     }
 
     @PostMapping("/addProdOffRelations")
-    public List<ProductOfferRelation> create(@RequestBody List<ProductOfferRelation> productOfferRelation) {
-        return productOfferRelationService.create(productOfferRelation);
+    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
+    public ResponseEntity<List<ProductOfferRelation>> createProductOfferRelations(
+            @RequestBody List<ProductOfferRelation> productOfferRelations) {
+        List<ProductOfferRelation> createdProductOfferRelations = new ArrayList<>();
+        for (ProductOfferRelation productOfferRelation : productOfferRelations) {
+            createdProductOfferRelations.addAll(
+                    productOfferRelationService.create(Collections.singletonList(productOfferRelation)));
+        }
+        return ResponseEntity.ok(createdProductOfferRelations);
     }
 
     @GetMapping("/listProdOffrelations")

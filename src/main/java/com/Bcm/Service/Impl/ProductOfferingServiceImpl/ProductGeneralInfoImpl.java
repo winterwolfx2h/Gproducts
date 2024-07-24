@@ -195,13 +195,17 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
             productOffering.setPr_id(pr_id);
         }
 
-        if (serviceId != null) {
-            CustomerFacingServiceSpec cfs =
-                    customerFacingServiceSpecRepository
-                            .findById(serviceId)
-                            .orElseThrow(() -> new ProductOfferingNotFoundException("CFS not found"));
-            productOffering.setServiceId(serviceId);
+        if (serviceId!= null) {
+            CustomerFacingServiceSpec cfs = customerFacingServiceSpecRepository.findById(serviceId).orElseThrow(() -> new ProductOfferingNotFoundException("CFS not found"));
+            productOffering.getServiceId().add(cfs);
         }
+      //  if (serviceId != null) {
+        //    CustomerFacingServiceSpec cfs =
+        //          customerFacingServiceSpecRepository
+        //                   .findById(serviceId)
+        //                    .orElseThrow(() -> new ProductOfferingNotFoundException("CFS not found"));
+        //     productOffering.setServiceId(serviceId);
+        // }
 
         convertToEntity(generalInfoDTO, productOffering);
 

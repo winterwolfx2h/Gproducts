@@ -84,7 +84,7 @@ public class POAttributeController {
         // SQL query to get all columns from POAttributes where product_id matches
         String sqlSearchByProductId =
                 "SELECT po_attribute_code, name, category, bsexternal_id, csexternal_id, char_type, char_value, mandatory,"
-                        + " display_format, externalcfs, max_size, dependent_cfs, product_id FROM poattributes WHERE product_id = ?";
+                        + " display_format, externalcfs, dependent_cfs, product_id FROM poattributes WHERE product_id = ?";
 
         // Execute the query and map the result set to POAttributes objects
         List<POAttributes> poAttributesResponses;
@@ -106,7 +106,6 @@ public class POAttributeController {
                                 response.setMandatory(rs.getBoolean("mandatory"));
                                 response.setDisplayFormat(rs.getString("display_format"));
                                 response.setExternalcfs(rs.getBoolean("externalcfs"));
-                                response.setMaxSize(rs.getString("max_size"));
                                 response.setDependentCfs(rs.getString("dependent_cfs"));
                                 response.setProduct_id(rs.getInt("product_id"));
 
@@ -126,8 +125,26 @@ public class POAttributeController {
                                                         return valueDescription;
                                                     }
                                                 });
-
                                 response.setValueDescription(valueDescriptions);
+
+                                // Query for defaultMaxSize list
+                                String sqlDefaultMaxSize =
+                                        "SELECT max_size, defaultvalue FROM attributes_default_max_size WHERE po_attribute_code = ?";
+                                List<POAttributes.DefaultMaxSize> defaultMaxSizes =
+                                        base.query(
+                                                sqlDefaultMaxSize,
+                                                new Object[]{response.getPoAttribute_code()},
+                                                new RowMapper<POAttributes.DefaultMaxSize>() {
+                                                    @Override
+                                                    public POAttributes.DefaultMaxSize mapRow(ResultSet rs, int rowNum) throws SQLException {
+                                                        POAttributes.DefaultMaxSize defaultMaxSize = new POAttributes.DefaultMaxSize();
+                                                        defaultMaxSize.setMaxSize(rs.getString("maxSize"));
+                                                        defaultMaxSize.setDefaultvalue(rs.getString("defaultvalue"));
+                                                        return defaultMaxSize;
+                                                    }
+                                                });
+
+                                response.setDefaultMaxSize(defaultMaxSizes);
 
                                 return response;
                             }

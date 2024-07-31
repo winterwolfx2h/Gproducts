@@ -54,10 +54,10 @@ public class Product {
     @Column(name = "subFamily")
     private String subFamily;
 
-    @Column(name = "sellInd", nullable = true)  // TODO change to product (, nullable = true)
+    @Column(name = "sellInd", nullable = true)
     private Boolean sellInd;
 
-    @Column(name = "quantity_Ind", nullable = true) // TODO change to product
+    @Column(name = "quantity_Ind", nullable = true)
     private Boolean quantityInd;
 
     @Column(name = "stockInd")
@@ -65,6 +65,12 @@ public class Product {
 
     @Column(name = "status", nullable = false)
     private String status;
+
+    @Column(name = "type", nullable = true)
+    private String type;
+
+    @Column(name = "externalCode", nullable = true)
+    private String externalCode;
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = POAttributes.class)
     @JoinColumn(name = "Product_id")

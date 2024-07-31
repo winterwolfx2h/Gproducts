@@ -6,6 +6,7 @@ import com.Bcm.Model.ProductOfferingABE.RelationResponse;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityNotFoundException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Tag(name = "Product Offer Relations Controller", description = "All of the Product Offer Relation's methods")
@@ -73,6 +71,39 @@ public class ProductOfferRelationController {
                 throw new NoRelationFoundException("No relations found for the provided Product IDs");
             }
         }
+        return relationResponses;
+    }
+
+    @GetMapping("/allProductsExceptRelated")
+    public List<RelationResponse> getAllProductsExceptRelated(@RequestParam Integer selectedProductId) {
+        String sqlRelation =
+                "SELECT distinct p.product_id, p.name, poff.po_type "
+                        + "FROM public.product p "
+                        + "JOIN public.product_offering poff ON poff.product_id = p.product_id "
+                        + "WHERE poff.po_type <> 'PO-Plan' " // exclude product_offering with po_type = 'PO-Plan'
+                        + "AND p.product_id NOT IN ("
+                        + "  SELECT distinct por.related_product_id "
+                        + "  FROM public.product_offer_relation por "
+                        + "  WHERE por.product_id =?"
+                        + ") "
+                        + "AND p.product_id IN ("
+                        + "  SELECT distinct por.product_id "
+                        + "  FROM public.product_offer_relation por "
+                        + "  WHERE por.related_product_id = ("
+                        + "    SELECT distinct por2.related_product_id "
+                        + "    FROM public.product_offer_relation por2 "
+                        + "    WHERE por2.product_id =? "
+                        + "    AND por2.type = 'Plan'"
+                        + "  ) "
+                        + "  AND por.type = 'Plan'"
+                        + ") "
+                        + "ORDER BY p.product_id";
+
+        Object[] params = new Object[] { selectedProductId, selectedProductId };
+
+        List<RelationResponse> relationResponses =
+                base.query(sqlRelation, params, new BeanPropertyRowMapper<>(RelationResponse.class));
+
         return relationResponses;
     }
 
@@ -237,8 +268,15 @@ public class ProductOfferRelationController {
     }
 
     @PostMapping("/addProdOffRelations")
-    public List<ProductOfferRelation> create(@RequestBody List<ProductOfferRelation> productOfferRelation) {
-        return productOfferRelationService.create(productOfferRelation);
+    @CacheEvict(value = "ProdOfferRelationCache", allEntries = true)
+    public ResponseEntity<List<ProductOfferRelation>> createProductOfferRelations(
+            @RequestBody List<ProductOfferRelation> productOfferRelations) {
+        List<ProductOfferRelation> createdProductOfferRelations = new ArrayList<>();
+        for (ProductOfferRelation productOfferRelation : productOfferRelations) {
+            createdProductOfferRelations.addAll(
+                    productOfferRelationService.create(Collections.singletonList(productOfferRelation)));
+        }
+        return ResponseEntity.ok(createdProductOfferRelations);
     }
 
     @GetMapping("/listProdOffrelations")

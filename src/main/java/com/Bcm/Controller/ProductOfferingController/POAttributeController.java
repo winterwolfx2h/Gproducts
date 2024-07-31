@@ -47,10 +47,10 @@ public class POAttributeController {
             List<POAttributes> createdPOAttributesList = new ArrayList<>();
 
             for (POAttributes poAttribute : POAttributesList) {
-                // Validate service
-                String service = poAttribute.getService();
-                if (service != null && !service.isEmpty() && !customerFacingServiceSpecService.findByNameexist(service)) {
-                    return ResponseEntity.badRequest().body("Service with name '" + service + "' does not exist.");
+                // Validate dependentCfs
+                String dependentCfs = poAttribute.getDependentCfs();
+                if (dependentCfs != null && !dependentCfs.isEmpty() && !customerFacingServiceSpecService.findByNameexist(dependentCfs)) {
+                    return ResponseEntity.badRequest().body("Service with name '" + dependentCfs + "' does not exist.");
                 }
 
                 // Validate and create POAttributes
@@ -84,7 +84,7 @@ public class POAttributeController {
         // SQL query to get all columns from POAttributes where product_id matches
         String sqlSearchByProductId =
                 "SELECT po_attribute_code, name, category, bsexternal_id, csexternal_id, char_type, char_value, mandatory,"
-                        + " display_format, externalcfs, max_size, service, product_id FROM poattributes WHERE product_id = ?";
+                        + " display_format, externalcfs, dependent_cfs, product_id FROM poattributes WHERE product_id = ?";
 
         // Execute the query and map the result set to POAttributes objects
         List<POAttributes> poAttributesResponses;
@@ -106,13 +106,12 @@ public class POAttributeController {
                                 response.setMandatory(rs.getBoolean("mandatory"));
                                 response.setDisplayFormat(rs.getString("display_format"));
                                 response.setExternalcfs(rs.getBoolean("externalcfs"));
-                                response.setMaxSize(rs.getString("max_size"));
-                                response.setService(rs.getString("service"));
+                                response.setDependentCfs(rs.getString("dependent_cfs"));
                                 response.setProduct_id(rs.getInt("product_id"));
 
                                 // Query for ValueDescription list
                                 String sqlValueDescription =
-                                        "SELECT value, description FROM value_description WHERE po_attribute_code = ?";
+                                        "SELECT value, description FROM attributes_value_des WHERE po_attribute_code = ?";
                                 List<POAttributes.ValueDescription> valueDescriptions =
                                         base.query(
                                                 sqlValueDescription,
@@ -126,8 +125,26 @@ public class POAttributeController {
                                                         return valueDescription;
                                                     }
                                                 });
-
                                 response.setValueDescription(valueDescriptions);
+
+                                // Query for defaultMaxSize list
+                                String sqlDefaultMaxSize =
+                                        "SELECT max_size, defaultvalue FROM attributes_default_max_size WHERE po_attribute_code = ?";
+                                List<POAttributes.DefaultMaxSize> defaultMaxSizes =
+                                        base.query(
+                                                sqlDefaultMaxSize,
+                                                new Object[]{response.getPoAttribute_code()},
+                                                new RowMapper<POAttributes.DefaultMaxSize>() {
+                                                    @Override
+                                                    public POAttributes.DefaultMaxSize mapRow(ResultSet rs, int rowNum) throws SQLException {
+                                                        POAttributes.DefaultMaxSize defaultMaxSize = new POAttributes.DefaultMaxSize();
+                                                        defaultMaxSize.setMaxSize(rs.getString("maxSize"));
+                                                        defaultMaxSize.setDefaultvalue(rs.getString("defaultvalue"));
+                                                        return defaultMaxSize;
+                                                    }
+                                                });
+
+                                response.setDefaultMaxSize(defaultMaxSizes);
 
                                 return response;
                             }

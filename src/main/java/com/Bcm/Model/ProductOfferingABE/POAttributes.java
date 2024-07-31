@@ -47,15 +47,19 @@ public class POAttributes {
     @Column(name = "externalcfs", nullable = true)
     private Boolean externalcfs;
 
-    @Column(name = "maxSize", nullable = true)
-    private String maxSize;
+    @Column(name = "dependentCfs", nullable = true)
+    private String dependentCfs;
 
-    @Column(name = "service", nullable = true)
-    private String service;
+    @Column(name = "changeInd", nullable = true)
+    private Boolean changeInd;
 
     @ElementCollection
-    @CollectionTable(name = "ValueDescription", joinColumns = @JoinColumn(name = "poAttribute_code"))
+    @CollectionTable(name = "AttributesValueDes", joinColumns = @JoinColumn(name = "poAttribute_code"))
     private List<ValueDescription> valueDescription;
+
+    @ElementCollection
+    @CollectionTable(name = "AttributesDefaultMaxSize", joinColumns = @JoinColumn(name = "poAttribute_code"))
+    private List<DefaultMaxSize> defaultMaxSize;
 
     @Column(name = "Product_id", nullable = false)
     private int Product_id;
@@ -71,5 +75,21 @@ public class POAttributes {
 
         @Column(name = "description", nullable = false)
         public String description;
+
+        @Column(name = "defaultvalue", nullable = true)
+        private Boolean defaultvalue;
+    }
+
+    @Getter
+    @Setter
+    @Embeddable
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DefaultMaxSize {
+        @Column(name = "maxSize", nullable = false)
+        public String maxSize;
+
+        @Column(name = "defaultvalue", nullable = true)
+        private String defaultvalue;
     }
 }

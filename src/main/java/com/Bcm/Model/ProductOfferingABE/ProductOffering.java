@@ -1,6 +1,8 @@
 package com.Bcm.Model.ProductOfferingABE;
 
 import com.Bcm.Model.Product.Product;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
+import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -10,7 +12,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "ProductOffering")
@@ -57,8 +61,8 @@ public class ProductOffering extends Product {
     @Column(name = "businessProcess_id")
     private Integer businessProcess_id;
 
-    @Column(name = "serviceId", nullable = true)
-    private Integer serviceId;
+   // @Column(name = "serviceId", nullable = true)
+   // private Integer serviceId;
 
     @Column(name = "pr_id")
     private Integer pr_id;
@@ -81,5 +85,13 @@ public class ProductOffering extends Product {
     @JoinColumn(name = "Product_id")
     @JsonIgnore
     private List<BusinessProcess> businessProcesses;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            name = "Product_depend_cfs",
+            joinColumns = @JoinColumn(name = "Product_id"),
+            inverseJoinColumns = @JoinColumn(name = "dependentCfs"))
+    private Set<CustomerFacingServiceSpec> serviceId = new HashSet<>();
 
 }

@@ -1,12 +1,17 @@
 package com.Bcm.Controller.ProductController;
 
+import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.Product.Product;
+import com.Bcm.Model.Product.ProductDTO;
+import com.Bcm.Model.Product.ProductDtoID;
+import com.Bcm.Model.Product.ProductOfferingDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.Valid;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -229,6 +235,29 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    @PostMapping("/AddProductDTO")
+    public ResponseEntity<?> createProductDTO(@Valid @RequestBody ProductDTO dto) {
+        try {
+
+            // Check for duplicate product by name
+            if (productOfferingService.existsByName(dto.getName())) {
+                return ResponseEntity.badRequest().body("A Product with the same name already exists.");
+            }
+
+            // Convert DTO to entity and save
+            Product createdProduct = productService.createProductDTO(dto);
+
+            return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
+
+        } catch (ProductOfferingAlreadyExistsException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace(); // Print stack trace for debugging
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred while creating the Product . Error: " + e.getMessage());
         }
     }
 }

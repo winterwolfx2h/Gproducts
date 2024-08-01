@@ -66,8 +66,8 @@ public class Product {
     @Column(name = "status", nullable = false)
     private String status;
 
-    @Column(name = "type", nullable = true)
-    private String type;
+    @Column(name = "productType", nullable = true)
+    private String productType;
 
     @Column(name = "externalCode", nullable = true)
     private String externalCode;

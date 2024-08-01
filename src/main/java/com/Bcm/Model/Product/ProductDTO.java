@@ -10,24 +10,25 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.Date;
 
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Data
-public class ProductOfferingDTO {
+public class ProductDTO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Product_id", nullable = false)
     private int Product_id;
 
+    @Column(name = "productType", nullable = true)
+    private String productType;
+
     @Column(name = "name", nullable = false)
     private String name;
-
-    @Column(name = "poType", nullable = false)
-    private String poType;
 
     @Column(name = "effectiveFrom", nullable = false)
     @JsonFormat(pattern = "dd/MM/yyyy")
@@ -43,10 +44,10 @@ public class ProductOfferingDTO {
     @Column(name = "detailedDescription", nullable = false)
     private String detailedDescription;
 
-    @Column(name = "family_name", nullable = false)
+    @Column(name = "family_name")
     private String familyName;
 
-    @Column(name = "subFamily", nullable = false)
+    @Column(name = "subFamily")
     private String subFamily;
 
     @Column(name = "sellInd")
@@ -63,17 +64,4 @@ public class ProductOfferingDTO {
 
     @Column(name = "status", nullable = false)
     private String status;
-
-    @Column(name = "market", nullable = true)
-    private String markets;
-
-    @Column(name = "submarket", nullable = true)
-    private String submarkets;
-
-    // New field for relation type
-    @Column(name = "type", nullable = true)
-    private String type;
-
-    @Column(name = "global")
-    private boolean global;
 }

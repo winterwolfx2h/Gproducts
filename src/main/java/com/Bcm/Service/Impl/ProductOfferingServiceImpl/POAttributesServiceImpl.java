@@ -61,8 +61,8 @@ public class POAttributesServiceImpl implements POAttributesService {
             existingPOAttributes.setCategory(updatedPOAttributes.getCategory());
             existingPOAttributes.setBsexternalId(updatedPOAttributes.getBsexternalId());
             existingPOAttributes.setCsexternalId(updatedPOAttributes.getCsexternalId());
-            existingPOAttributes.setCharType(updatedPOAttributes.getCharType());
-            existingPOAttributes.setCharValue(updatedPOAttributes.getCharValue());
+            existingPOAttributes.setAttributeType(updatedPOAttributes.getAttributeType());
+            existingPOAttributes.setDataType(updatedPOAttributes.getDataType());
 
             if (updatedPOAttributes.getValueDescription() != null) {
                 existingPOAttributes.getValueDescription().clear();
@@ -108,8 +108,8 @@ public class POAttributesServiceImpl implements POAttributesService {
             existingPOAttributes.setCategory(poAttributes.getCategory());
             existingPOAttributes.setBsexternalId(poAttributes.getBsexternalId());
             existingPOAttributes.setCsexternalId(poAttributes.getCsexternalId());
-            existingPOAttributes.setCharType(poAttributes.getCharType());
-            existingPOAttributes.setCharValue(poAttributes.getCharValue());
+            existingPOAttributes.setAttributeType(poAttributes.getAttributeType());
+            existingPOAttributes.setDataType(poAttributes.getDataType());
             // Set other fields as necessary
             return poAttributesRepository.save(existingPOAttributes);
         } else {

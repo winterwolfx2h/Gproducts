@@ -674,7 +674,7 @@ public class ProductOfferingController {
         }
 
         // Vérification de l'existence des product_id dans la table product_offering
-        String query = "SELECT COUNT(*) FROM product_offering WHERE product_id = ?";
+        String query = "SELECT COUNT(*) FROM product WHERE product_id = ?";
         for (DependentCfsDto dto : dependentCfsDtos) {
             int count = base.queryForObject(query, new Object[] { dto.getProductId() }, Integer.class);
             if (count == 0) {

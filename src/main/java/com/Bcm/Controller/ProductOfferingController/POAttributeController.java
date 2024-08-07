@@ -91,7 +91,7 @@ public class POAttributeController {
     public List<POAttributes> searchByProductID(@RequestParam Integer productId) {
         // SQL query to get all columns from POAttributes where product_id matches
         String sqlSearchByProductId =
-                "SELECT po_attribute_code, name, category, bsexternal_id, csexternal_id, char_type, char_value, mandatory,"
+                "SELECT po_attribute_code, name, category, bsexternal_id, csexternal_id, attribute_type, data_type, mandatory,"
                         + " display_format, externalcfs, dependent_cfs, product_id FROM poattributes WHERE product_id = ?";
 
         // Execute the query and map the result set to POAttributes objects
@@ -109,8 +109,8 @@ public class POAttributeController {
                                 response.setCategory(rs.getString("category"));
                                 response.setBsexternalId(rs.getString("bsexternal_id"));
                                 response.setCsexternalId(rs.getString("csexternal_id"));
-                                response.setCharType(rs.getString("char_type"));
-                                response.setCharValue(rs.getString("char_value"));
+                                response.setAttributeType(rs.getString("attribute_type"));
+                                response.setDataType(rs.getString("data_type"));
                                 response.setMandatory(rs.getBoolean("mandatory"));
                                 response.setDisplayFormat(rs.getString("display_format"));
                                 response.setExternalcfs(rs.getBoolean("externalcfs"));
@@ -137,7 +137,7 @@ public class POAttributeController {
 
                                 // Query for defaultMaxSize list
                                 String sqlDefaultMaxSize =
-                                        "SELECT max_size, defaultvalue FROM attributes_default_max_size WHERE po_attribute_code = ?";
+                                        "SELECT max_size, defaultvalue FROM attributes_domaine WHERE po_attribute_code = ?";
                                 List<POAttributes.DefaultMaxSize> defaultMaxSizes =
                                         base.query(
                                                 sqlDefaultMaxSize,

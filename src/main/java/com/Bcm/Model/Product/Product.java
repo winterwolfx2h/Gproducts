@@ -5,6 +5,7 @@ import com.Bcm.Model.ProductOfferingABE.ProductPriceGroup;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
 import com.Bcm.Model.ProductOfferingABE.Type;
+import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -69,8 +70,8 @@ public class Product {
     @Column(name = "productType", nullable = true)
     private String productType;
 
-    @Column(name = "externalCode", nullable = true)
-    private String externalCode;
+    @Column(name = "externalId")
+    private String externalId;
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = POAttributes.class)
     @JoinColumn(name = "Product_id")
@@ -105,6 +106,14 @@ public class Product {
             joinColumns = @JoinColumn(name = "Product_id"),
             inverseJoinColumns = @JoinColumn(name = "productPriceGroupCode")) // TODO
     private Set<ProductPriceGroup> productPriceGroups = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            name = "Product_depend_cfs",
+            joinColumns = @JoinColumn(name = "Product_id"),
+            inverseJoinColumns = @JoinColumn(name = "dependentCfs"))
+    private Set<CustomerFacingServiceSpec> serviceId = new HashSet<>();
 
     public Product convertToProduct() {
         Product product = new Product();

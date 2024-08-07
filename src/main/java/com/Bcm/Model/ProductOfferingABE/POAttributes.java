@@ -33,11 +33,11 @@ public class POAttributes {
     @Column(name = "csexternalId", nullable = true)
     private String csexternalId;
 
-    @Column(name = "charType", nullable = false)
-    private String charType;
+    @Column(name = "attributeType", nullable = false)
+    private String attributeType;
 
-    @Column(name = "charValue", nullable = false)
-    private String charValue;
+    @Column(name = "dataType", nullable = false)
+    private String dataType;
 
     @Column(name = "mandatory", nullable = true)
     private Boolean mandatory;
@@ -59,7 +59,7 @@ public class POAttributes {
     private List<ValueDescription> valueDescription = new ArrayList<>();
 
     @ElementCollection
-    @CollectionTable(name = "AttributesDefaultMaxSize", joinColumns = @JoinColumn(name = "poAttribute_code"))
+    @CollectionTable(name = "AttributesDomaine", joinColumns = @JoinColumn(name = "poAttribute_code"))
     private List<DefaultMaxSize> defaultMaxSize = new ArrayList<>();
 
     @Column(name = "Product_id", nullable = false)

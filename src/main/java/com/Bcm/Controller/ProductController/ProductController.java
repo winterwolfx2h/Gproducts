@@ -1,11 +1,10 @@
 package com.Bcm.Controller.ProductController;
 
+import com.Bcm.Exception.ProductNotFoundException;
 import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
-import com.Bcm.Model.Product.Product;
-import com.Bcm.Model.Product.ProductDTO;
-import com.Bcm.Model.Product.ProductDtoID;
-import com.Bcm.Model.Product.ProductOfferingDTO;
+import com.Bcm.Model.Product.*;
+import com.Bcm.Model.ProductOfferingABE.DependentCfsDto;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
@@ -16,6 +15,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -259,5 +260,51 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An unexpected error occurred while creating the Product . Error: " + e.getMessage());
         }
+    }
+
+    @PutMapping("/StockInd/{productId}")
+    public ResponseEntity<Product> updateProdStockInd(
+            @RequestBody ProductDTO dto,
+            @PathVariable int productId,
+            @RequestParam(required = false) boolean stockInd) {
+        try {
+            Product product = productService.updateProdStockInd(dto, productId, stockInd);
+            return ResponseEntity.ok(product);
+        } catch (ProductNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/insertProdDependentCfs")
+    public ResponseEntity<String> insertDependentCfs(@RequestBody List<DependentCfsDto> dependentCfsDtos) {
+        if (dependentCfsDtos.isEmpty()) {
+            throw new IllegalArgumentException("At least one dependentCfsDtos must be provided");
+        }
+
+        // Vérification de l'existence des product_id dans la table product
+        String query = "SELECT COUNT(*) FROM product WHERE product_id = ?";
+        for (DependentCfsDto dto : dependentCfsDtos) {
+            int count = base.queryForObject(query, new Object[] { dto.getProductId() }, Integer.class);
+            if (count == 0) {
+                throw new IllegalArgumentException("Product with id " + dto.getProductId() + " does not exist");
+            }
+        }
+
+        String sql = "INSERT INTO product_depend_cfs (product_id, dependent_cfs) VALUES (?, ?)";
+
+        base.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setInt(1, dependentCfsDtos.get(i).getProductId());
+                ps.setInt(2, dependentCfsDtos.get(i).getDependentCfs());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return dependentCfsDtos.size();
+            }
+        });
+
+        return ResponseEntity.ok("dependentCfs inserted successfully");
     }
 }

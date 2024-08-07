@@ -1,7 +1,10 @@
 package com.Bcm.Service.Impl.Product;
 
+import com.Bcm.Exception.ProductNotFoundException;
 import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
+import com.Bcm.Exception.ProductOfferingNotFoundException;
 import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Model.Product.GeneralInfoDTO;
 import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.Product.ProductDTO;
 import com.Bcm.Model.Product.ProductOfferingDTO;
@@ -30,6 +33,14 @@ public class ProductServiceImpl implements ProductService {
         } catch (Exception e) {
             throw new RuntimeException("An unexpected error occurred while reading Product", e);
         }
+    }
+
+
+    @Override
+    public Product getProductById(int Product_id) throws ProductNotFoundException {
+        return productRepository
+                .findById(Product_id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + Product_id));
     }
 
     @Override
@@ -87,6 +98,21 @@ public class ProductServiceImpl implements ProductService {
         Product savedProduct = productRepository.save(product);
 
         return savedProduct;
+    }
+
+    @Override
+    public Product updateProdStockInd(ProductDTO dto, int productId, boolean stockInd)
+            throws ProductNotFoundException {
+        Product product = getProductById(productId);
+
+        // Update the stockInd field of the GeneralInfoDTO
+        product.setStockInd(stockInd);
+
+        // Update the product offering with the new general info
+        product.setStockInd(stockInd);
+
+        // Save the updated product offering
+        return productRepository.save(product);
     }
 
 

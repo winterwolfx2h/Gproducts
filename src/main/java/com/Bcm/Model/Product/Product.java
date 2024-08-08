@@ -5,6 +5,7 @@ import com.Bcm.Model.ProductOfferingABE.ProductPriceGroup;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
 import com.Bcm.Model.ProductOfferingABE.Type;
+import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -54,10 +55,10 @@ public class Product {
     @Column(name = "subFamily")
     private String subFamily;
 
-    @Column(name = "sellInd", nullable = true)  // TODO change to product (, nullable = true)
+    @Column(name = "sellInd", nullable = true)
     private Boolean sellInd;
 
-    @Column(name = "quantity_Ind", nullable = true) // TODO change to product
+    @Column(name = "quantity_Ind", nullable = true)
     private Boolean quantityInd;
 
     @Column(name = "stockInd")
@@ -65,6 +66,12 @@ public class Product {
 
     @Column(name = "status", nullable = false)
     private String status;
+
+    @Column(name = "productType", nullable = true)
+    private String productType;
+
+    @Column(name = "externalId")
+    private String externalId;
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = POAttributes.class)
     @JoinColumn(name = "Product_id")
@@ -99,6 +106,14 @@ public class Product {
             joinColumns = @JoinColumn(name = "Product_id"),
             inverseJoinColumns = @JoinColumn(name = "productPriceGroupCode")) // TODO
     private Set<ProductPriceGroup> productPriceGroups = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            name = "Product_depend_cfs",
+            joinColumns = @JoinColumn(name = "Product_id"),
+            inverseJoinColumns = @JoinColumn(name = "dependentCfs"))
+    private Set<CustomerFacingServiceSpec> serviceId = new HashSet<>();
 
     public Product convertToProduct() {
         Product product = new Product();

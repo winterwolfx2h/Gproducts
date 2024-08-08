@@ -49,11 +49,11 @@ public class GeneralInfoDTO {
     @Column(name = "workingStep", nullable = false)
     private String workingStep = "GeneralInfo";
 
-    @Column(name = "sellIndicator", nullable = true) //  name changed
-    private Boolean sellIndicator;
+    @Column(name = "sellInd")
+    private Boolean sellInd;
 
-    @Column(name = "quantity_Indicator", nullable = true) //  name changed
-    private Boolean quantityIndicator;
+    @Column(name = "quantity_Ind")
+    private Boolean quantityInd;
 
     @Column(name = "stockInd", nullable = true)
     private Boolean stockInd;

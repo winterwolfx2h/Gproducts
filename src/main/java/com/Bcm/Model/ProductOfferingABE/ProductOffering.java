@@ -44,10 +44,6 @@ public class ProductOffering extends Product {
     @Column(name = "CS_externalId")
     private String CS_externalId;
 
-    @Column(name = "externalId")
-    private String externalId;
-
-
     @Pattern(regexp = "^(PO-PARENT|PO-CHILD)$", message = "invalid code")
     @Column(name = "poParent_Child")
     private String poParent_Child;
@@ -60,9 +56,6 @@ public class ProductOffering extends Product {
 
     @Column(name = "businessProcess_id")
     private Integer businessProcess_id;
-
-   // @Column(name = "serviceId", nullable = true)
-   // private Integer serviceId;
 
     @Column(name = "pr_id")
     private Integer pr_id;
@@ -85,13 +78,5 @@ public class ProductOffering extends Product {
     @JoinColumn(name = "Product_id")
     @JsonIgnore
     private List<BusinessProcess> businessProcesses;
-
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            name = "Product_depend_cfs",
-            joinColumns = @JoinColumn(name = "Product_id"),
-            inverseJoinColumns = @JoinColumn(name = "dependentCfs"))
-    private Set<CustomerFacingServiceSpec> serviceId = new HashSet<>();
 
 }

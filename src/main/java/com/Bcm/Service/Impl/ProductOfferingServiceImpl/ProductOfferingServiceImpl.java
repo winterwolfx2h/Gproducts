@@ -79,8 +79,8 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         productOffering.setDetailedDescription(dto.getDetailedDescription());
         productOffering.setFamilyName(dto.getFamilyName());
         productOffering.setSubFamily(dto.getSubFamily());
-        productOffering.setSellInd(dto.getSellIndicator());  // TODO
-        productOffering.setQuantityInd(dto.getQuantityIndicator());
+        productOffering.setSellInd(dto.getSellInd());
+        productOffering.setQuantityInd(dto.getQuantityInd());
         productOffering.setStockInd(dto.getStockInd());
         productOffering.setMarkets(dto.getMarkets());
         productOffering.setSubmarkets(dto.getSubmarkets());
@@ -307,9 +307,9 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
             existingProductOffering.setDetailedDescription(updatedDTO.getDetailedDescription());
             existingProductOffering.setFamilyName(updatedDTO.getFamilyName());
             existingProductOffering.setSubFamily(updatedDTO.getSubFamily());
-            existingProductOffering.setSellInd(updatedDTO.getSellIndicator());  // TODO
+            existingProductOffering.setSellInd(updatedDTO.getSellInd());  // TODO
             existingProductOffering.setStockInd(updatedDTO.getStockInd());
-            existingProductOffering.setQuantityInd(updatedDTO.getQuantityIndicator());
+            existingProductOffering.setQuantityInd(updatedDTO.getQuantityInd());
             existingProductOffering.setExternalId(updatedDTO.getExternalId());
             existingProductOffering.setGlobal(updatedDTO.isGlobal());
 
@@ -331,8 +331,8 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
         dto.setDetailedDescription(productOffering.getDetailedDescription());
         dto.setFamilyName(productOffering.getFamilyName());
         dto.setSubFamily(productOffering.getSubFamily());
-        dto.setSellIndicator(productOffering.getSellInd());  // todo change name
-        dto.setQuantityIndicator(productOffering.getQuantityInd());
+        dto.setSellInd(productOffering.getSellInd());
+        dto.setQuantityInd(productOffering.getQuantityInd());
         dto.setStockInd(productOffering.getStockInd());
         dto.setExternalId(productOffering.getExternalId());
         dto.setGlobal(productOffering.isGlobal());

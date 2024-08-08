@@ -377,10 +377,6 @@ public class ProductOfferingController {
             errors.add("Sub Family cannot be empty");
         } else {
 
-//            List<String> errorSubFamily = Arrays.asList("offer PrePayed", "offer PostPayed");
-//            if (!errorSubFamily.contains(productOfferingDTO.getSubFamily())) {
-//                errors.add("SubFamily must be one of the following: " + String.join(", ", errorSubFamily));
-//            }
             var validSubFamilyNames = familyService.readSubFamilies();
             List<String> subFamilyNames = validSubFamilyNames.stream().map(e -> e.getSubFamilyName().toLowerCase()).toList();
             if (subFamilyNames.contains(productOfferingDTO.getFamilyName().toLowerCase())) {
@@ -506,18 +502,6 @@ public class ProductOfferingController {
                     .body("An unexpected error occurred while updating the Product Offering.");
         }
     }
-
-//    @PutMapping("/DTORelations/{Product_id}")
-//    public ProductOffering updateProductOfferingEligibility(
-//            @RequestBody ProductOfferingDTO productOfferingDTO,
-//            @PathVariable int Product_id,
-//            @RequestParam int channelCode,
-//            @RequestParam int entityCode,
-//            @RequestParam int productPriceGroupCode)
-//            throws ProductOfferingNotFoundException {
-//        return productOfferingService.updatePODTORelations(
-//                productOfferingDTO, Product_id, channelCode, entityCode, productPriceGroupCode);
-//    }
 
 
     @PostMapping("/insertProductChannels")
@@ -687,6 +671,15 @@ public class ProductOfferingController {
     public ResponseEntity<String> insertDependentCfs(@RequestBody List<DependentCfsDto> dependentCfsDtos) {
         if (dependentCfsDtos.isEmpty()) {
             throw new IllegalArgumentException("At least one dependentCfsDtos must be provided");
+        }
+
+        // Vérification de l'existence des product_id dans la table product_offering
+        String query = "SELECT COUNT(*) FROM product WHERE product_id = ?";
+        for (DependentCfsDto dto : dependentCfsDtos) {
+            int count = base.queryForObject(query, new Object[] { dto.getProductId() }, Integer.class);
+            if (count == 0) {
+                throw new IllegalArgumentException("Product offering with id " + dto.getProductId() + " does not exist");
+            }
         }
 
         String sql = "INSERT INTO product_depend_cfs (product_id, dependent_cfs) VALUES (?, ?)";

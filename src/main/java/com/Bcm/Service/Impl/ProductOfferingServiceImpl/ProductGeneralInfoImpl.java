@@ -64,8 +64,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         productOffering.setBS_externalId(generalInfoDTO.getBS_externalId());
         productOffering.setCS_externalId(generalInfoDTO.getCS_externalId());
         productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
-        productOffering.setSellInd(generalInfoDTO.getSellIndicator());
-        productOffering.setQuantityInd(generalInfoDTO.getQuantityIndicator());
+        productOffering.setSellInd(generalInfoDTO.getSellInd());
+        productOffering.setQuantityInd(generalInfoDTO.getQuantityInd());
         productOffering.setStatus("Working state");
         productOffering.setWorkingStep("GeneralInfo");
 
@@ -103,8 +103,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         productOffering.setBS_externalId(generalInfoDTO.getBS_externalId());
         productOffering.setCS_externalId(generalInfoDTO.getCS_externalId());
         productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
-        productOffering.setSellInd(generalInfoDTO.getSellIndicator());
-        productOffering.setQuantityInd(generalInfoDTO.getQuantityIndicator());
+        productOffering.setSellInd(generalInfoDTO.getSellInd());
+        productOffering.setQuantityInd(generalInfoDTO.getQuantityInd());
         // productOffering.setStatus(generalInfoDTO.getStatus());
         productOffering.setWorkingStep(generalInfoDTO.getWorkingStep());
         productOffering.setStockInd(productOffering.getStockInd());
@@ -125,8 +125,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         generalInfoDTO.setBS_externalId(productOffering.getBS_externalId());
         generalInfoDTO.setCS_externalId(productOffering.getCS_externalId());
         generalInfoDTO.setPoParent_Child(productOffering.getPoParent_Child());
-        generalInfoDTO.setSellIndicator(productOffering.getSellInd());
-        generalInfoDTO.setQuantityIndicator(productOffering.getQuantityInd());
+        generalInfoDTO.setSellInd(productOffering.getSellInd());
+        generalInfoDTO.setQuantityInd(productOffering.getQuantityInd());
         generalInfoDTO.setStatus(productOffering.getStatus());
         generalInfoDTO.setWorkingStep(productOffering.getWorkingStep());
         productOffering.setStockInd(productOffering.getStockInd());
@@ -264,8 +264,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         productOffering.setCategory(generalInfoDTO.getCategory());
         productOffering.setBS_externalId(generalInfoDTO.getBS_externalId());
         productOffering.setCS_externalId(generalInfoDTO.getCS_externalId());
-        productOffering.setSellInd(generalInfoDTO.getSellIndicator());
-        productOffering.setQuantityInd(generalInfoDTO.getQuantityIndicator());
+        productOffering.setSellInd(generalInfoDTO.getSellInd());
+        productOffering.setQuantityInd(generalInfoDTO.getQuantityInd());
         productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
         productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
         productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());

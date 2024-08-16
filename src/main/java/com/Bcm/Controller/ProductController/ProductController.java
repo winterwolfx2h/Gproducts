@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping("/Product")
+@RequestMapping("/api/Product")
 public class ProductController {
 
     final JdbcTemplate base;
@@ -46,7 +46,6 @@ public class ProductController {
     private EntityManager entityManager;
 
     @GetMapping("/ProductList")
-    @Cacheable(value = "productCache")
     public ResponseEntity<?> getAllProduct() {
         try {
             List<Product> product = productService.read();
@@ -54,6 +53,12 @@ public class ProductController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
+    }
+
+    @GetMapping("/{po_code}")
+    public ResponseEntity<Product> getProductById(@PathVariable("po_code") int po_code) {
+        Product product = productService.findById(po_code);
+        return ResponseEntity.ok(product);
     }
 
     @GetMapping("/searchProductResDetails")

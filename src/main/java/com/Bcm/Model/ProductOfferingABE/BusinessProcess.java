@@ -26,9 +26,4 @@ public class BusinessProcess {
 
     @Column(name = "action", nullable = true)
     private String action;
-
-    @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductOffering.class)
-    @JoinColumn(name = "businessProcess_id")
-    @JsonIgnore
-    private List<ProductOffering> productOfferings;
 }

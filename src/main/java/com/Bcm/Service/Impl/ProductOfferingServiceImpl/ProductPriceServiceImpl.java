@@ -2,8 +2,10 @@ package com.Bcm.Service.Impl.ProductOfferingServiceImpl;
 
 import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.ProductPrice;
+import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductPriceRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceService;
@@ -23,19 +25,19 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 
     final ProductPriceRepository productPriceRepository;
     final ProductOfferingRepository productOfferingRepository;
+    final ProductRepository productRepository;
 
     @Override
     public ProductPrice create(ProductPrice productPrice) {
         try {
             // Fetch the product by its Product_id
-            ProductOffering productOffering =
-                    productOfferingRepository
+            Product product =
+                    productRepository
                             .findById(productPrice.getProduct_id())
                             .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
             // Update the product's working step
-            productOffering.setWorkingStep("Product Price");
-            productOfferingRepository.save(productOffering);
+            productRepository.save(product);
             return productPriceRepository.save(productPrice);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseOperationException("Error creating ProductPrice", e);

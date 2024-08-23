@@ -1,12 +1,12 @@
 package com.Bcm.Controller.ProductController;
 
-import com.Bcm.Exception.ProductNotFoundException;
-import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
-import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Exception.*;
 import com.Bcm.Model.Product.*;
 import com.Bcm.Model.ProductOfferingABE.DependentCfsDto;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Family.FamilyRequestDTO;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
+import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +41,8 @@ public class ProductController {
     final JdbcTemplate base;
     final ProductService productService;
     final ProductOfferingService productOfferingService;
+    final FamilyService familyService;
+
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -111,7 +113,7 @@ public class ProductController {
     @GetMapping("/searchProductDetails")
     public ResponseEntity<?> searchProductDetails(@RequestParam Integer productId) {
         try {
-            String sql = "SELECT " +
+            String sql = "SELECT DISTINCT " +
                     "  p.product_id, " +
                     "  c.channel_code AS channelCode, " +
                     "  c.name AS channelName, " +
@@ -311,5 +313,35 @@ public class ProductController {
         });
 
         return ResponseEntity.ok("dependentCfs inserted successfully");
+    }
+
+    private void ensureRelatedEntitiesExist(Product product) {
+        ensureFamilyExists(product.getFamilyName());
+    }
+
+    private void ensureFamilyExists(String familyName) {
+        if (familyName != null && !familyName.isEmpty()) {
+
+            if (!familyService.findByNameexist(familyName)) {
+
+                FamilyRequestDTO family = new FamilyRequestDTO();
+                family.setName(familyName);
+                familyService.createOrUpdateFamily(family);
+            }
+        }
+    }
+
+    @PutMapping("update/{productId}")
+    public ResponseEntity<?> updateProduct(@RequestBody ProductDTO dto, @PathVariable int productId) {
+        try {
+            Product updatedProduct = productService.updateProductDTO(dto, productId);
+            return ResponseEntity.ok(updatedProduct);
+        } catch (ProductNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred: " + e.getMessage());
+        }
     }
 }

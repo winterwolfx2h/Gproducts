@@ -1,19 +1,18 @@
 package com.Bcm.Service.Impl.Product;
 
-import com.Bcm.Exception.ProductNotFoundException;
-import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
-import com.Bcm.Exception.ProductOfferingNotFoundException;
-import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Exception.*;
 import com.Bcm.Model.Product.GeneralInfoDTO;
 import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.Product.ProductDTO;
-import com.Bcm.Model.Product.ProductOfferingDTO;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,8 +45,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> searchByFamilyName(String familyName) {
         List<Product> products = productRepository.findByFamilyName(familyName);
-        boolean hasLinkedProductOffering = products.stream().anyMatch(product -> product instanceof ProductOffering);
-        if (!hasLinkedProductOffering) {
+        boolean hasLinkedProduct = products.stream().anyMatch(product -> product instanceof Product);
+        if (!hasLinkedProduct) {
             return Collections.emptyList();
         }
         return products;
@@ -75,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> existingProduct = productRepository.findByName(dto.getName());
         if (existingProduct.isPresent()) {
             throw new ProductOfferingAlreadyExistsException(
-                    "A product offering with the name '" + dto.getName() + "' already exists.");
+                    "A product with the name '" + dto.getName() + "' already exists.");
         }
 
         // Create new Product entity from DTO
@@ -108,13 +107,38 @@ public class ProductServiceImpl implements ProductService {
         // Update the stockInd field of the GeneralInfoDTO
         product.setStockInd(stockInd);
 
-        // Update the product offering with the new general info
+        // Update the product  with the new general info
         product.setStockInd(stockInd);
 
-        // Save the updated product offering
+        // Save the updated product
         return productRepository.save(product);
     }
 
+    @Override
+    public boolean existsByName(String name) {
+        return productRepository.findByName(name).isPresent();
+    }
+
+
+    @Override
+    public Product updateProductDTO(ProductDTO dto, int productId)
+            throws ProductNotFoundException {
+        Product product = getProductById(productId);
+        if (product == null) {
+            throw new ProductNotFoundException("Product not found");
+        }
+
+        product.setName(dto.getName());
+        product.setEffectiveFrom(dto.getEffectiveFrom());
+        product.setEffectiveTo(dto.getEffectiveTo());
+        product.setDescription(dto.getDescription());
+        product.setDetailedDescription(dto.getDetailedDescription());
+        product.setSellInd(dto.getSellInd());
+        product.setQuantityInd(dto.getQuantityInd());
+
+        // Save the updated Product
+        return productRepository.save(product);
+    }
 
 
 }

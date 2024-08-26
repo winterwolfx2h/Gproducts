@@ -21,11 +21,16 @@ public interface ProductService {
 
     List<Product> searchByKeyword(String name);
 
+    boolean existsByName(String name);
+
     Product createProductDTO(ProductDTO dto);
 
     Product getProductById(int Product_id) throws ProductNotFoundException;
 
     Product updateProdStockInd(ProductDTO dto, int productId, boolean stockInd)
+            throws ProductNotFoundException;
+
+    Product updateProductDTO(ProductDTO dto, int productId)
             throws ProductNotFoundException;
 
 }

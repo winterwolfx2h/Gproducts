@@ -26,4 +26,7 @@ public class BusinessProcess {
 
     @Column(name = "action", nullable = true)
     private String action;
+
+    @Column(name = "actionDescription", nullable = true)
+    private String actionDescription;
 }

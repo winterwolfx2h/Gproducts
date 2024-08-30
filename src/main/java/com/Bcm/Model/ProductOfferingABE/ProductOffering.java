@@ -74,9 +74,9 @@ public class ProductOffering extends Product {
     @JsonIgnore
     private List<ProductRelation> productRelations;
 
-    @OneToMany(cascade = CascadeType.ALL, targetEntity = BusinessProcess.class)
+    @OneToOne(cascade = CascadeType.ALL, targetEntity = BusinessProcess.class)
     @JoinColumn(name = "Product_id")
     @JsonIgnore
-    private List<BusinessProcess> businessProcesses;
+    private BusinessProcess businessProcesses;
 
 }

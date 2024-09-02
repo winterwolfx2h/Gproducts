@@ -62,9 +62,6 @@ public class ProductDTO {
     @Column(name = "externalId")
     private String externalId;
 
-    @Column(name = "externalCode", nullable = true)
-    private String externalCode;
-
     @Column(name = "status", nullable = false)
     private String status;
 }

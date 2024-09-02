@@ -75,10 +75,10 @@ public class BusinessProcessController {
             }
         } else {
             String jpqlQuery =
-                    "SELECT bp.businessProcess_id AS businessProcess_id, bp.businessProcess_name AS businessProcessName "
-                            + "FROM ProductOffering po "
-                            + "JOIN BusinessProcess bp "
-                            + "ON po.businessProcess_id = bp.businessProcess_id "
+                    "SELECT bp.business_process_id, bp.action, bp.action_description as actionDescription, bp.business_process as name "
+                            + "FROM product_offering po "
+                            + "JOIN business_process bp "
+                            + "ON po.business_process_id = bp.business_process_id "
                             + "WHERE po.Product_id = :productId";
 
             TypedQuery<Object[]> query = entityManager.createQuery(jpqlQuery, Object[].class);
@@ -97,9 +97,13 @@ public class BusinessProcessController {
             } else {
                 Object[] result = results.get(0);
                 Integer businessProcess_id = (Integer) result[0];
-                String businessProcessName = (String) result[1];
+                String action = (String) result[1];
+                String action_description = (String) result[2];
+                String business_process = (String) result[3];
                 responseJson.put("businessProcess_id", businessProcess_id);
-                responseJson.put("businessProcessName", businessProcessName);
+                responseJson.put("action", action);
+                responseJson.put("action_description", action_description);
+                responseJson.put("business_process", business_process);
 
                 ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
                 try {

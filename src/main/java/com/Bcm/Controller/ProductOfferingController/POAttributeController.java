@@ -92,7 +92,7 @@ public class POAttributeController {
         // SQL query to get all columns from POAttributes where product_id matches
         String sqlSearchByProductId =
                 "SELECT po_attribute_code, name, category, bsexternal_id, csexternal_id, attribute_type, data_type, mandatory,"
-                        + " display_format, externalcfs, dependent_cfs, product_id FROM poattributes WHERE product_id = ?";
+                        + " change_ind ,display_format, externalcfs, dependent_cfs, product_id FROM poattributes WHERE product_id = ?";
 
         // Execute the query and map the result set to POAttributes objects
         List<POAttributes> poAttributesResponses;
@@ -112,6 +112,7 @@ public class POAttributeController {
                                 response.setAttributeType(rs.getString("attribute_type"));
                                 response.setDataType(rs.getString("data_type"));
                                 response.setMandatory(rs.getBoolean("mandatory"));
+                                response.setChangeInd(rs.getBoolean("change_ind"));
                                 response.setDisplayFormat(rs.getString("display_format"));
                                 response.setExternalcfs(rs.getBoolean("externalcfs"));
                                 response.setDependentCfs(rs.getString("dependent_cfs"));
@@ -119,7 +120,7 @@ public class POAttributeController {
 
                                 // Query for ValueDescription list
                                 String sqlValueDescription =
-                                        "SELECT value, description FROM attributes_value_des WHERE po_attribute_code = ?";
+                                        "SELECT value, description, defaultvalue FROM attributes_value_des WHERE po_attribute_code = ?";
                                 List<POAttributes.ValueDescription> valueDescriptions =
                                         base.query(
                                                 sqlValueDescription,
@@ -130,6 +131,7 @@ public class POAttributeController {
                                                         POAttributes.ValueDescription valueDescription = new POAttributes.ValueDescription();
                                                         valueDescription.setValue(rs.getString("value"));
                                                         valueDescription.setDescription(rs.getString("description"));
+                                                        valueDescription.setDefaultvalue(rs.getBoolean("defaultvalue"));
                                                         return valueDescription;
                                                     }
                                                 });
@@ -137,7 +139,7 @@ public class POAttributeController {
 
                                 // Query for defaultMaxSize list
                                 String sqlDefaultMaxSize =
-                                        "SELECT max_size, defaultvalue FROM attributes_domaine WHERE po_attribute_code = ?";
+                                        "SELECT max_size, defaultvalue, value_des FROM attributes_domaine WHERE po_attribute_code = ?";
                                 List<POAttributes.DefaultMaxSize> defaultMaxSizes =
                                         base.query(
                                                 sqlDefaultMaxSize,
@@ -148,6 +150,7 @@ public class POAttributeController {
                                                         POAttributes.DefaultMaxSize defaultMaxSize = new POAttributes.DefaultMaxSize();
                                                         defaultMaxSize.setMaxSize(rs.getString("max_size"));
                                                         defaultMaxSize.setDefaultvalue(rs.getString("defaultvalue"));
+                                                        defaultMaxSize.setValueDes(rs.getString("value_des"));
                                                         return defaultMaxSize;
                                                     }
                                                 });

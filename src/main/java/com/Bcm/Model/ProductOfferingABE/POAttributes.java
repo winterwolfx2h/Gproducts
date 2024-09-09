@@ -77,7 +77,7 @@ public class POAttributes {
         @Column(name = "description", nullable = true)
         public String description;
 
-        @Column(name = "defaultvalue", nullable = true)
+        @Column(name = "defaultvalue")
         private Boolean defaultvalue;
     }
 
@@ -92,5 +92,8 @@ public class POAttributes {
 
         @Column(name = "defaultvalue", nullable = true)
         private String defaultvalue;
+
+        @Column(name = "valueDes", nullable = true)
+        public String valueDes;
     }
 }

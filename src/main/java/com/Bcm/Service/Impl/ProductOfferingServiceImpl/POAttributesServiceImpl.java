@@ -110,7 +110,10 @@ public class POAttributesServiceImpl implements POAttributesService {
             existingPOAttributes.setCsexternalId(poAttributes.getCsexternalId());
             existingPOAttributes.setAttributeType(poAttributes.getAttributeType());
             existingPOAttributes.setDataType(poAttributes.getDataType());
-            // Set other fields as necessary
+            existingPOAttributes.setValueDescription(poAttributes.getValueDescription());
+            existingPOAttributes.setDefaultMaxSize(poAttributes.getDefaultMaxSize());
+            existingPOAttributes.setMandatory(poAttributes.getMandatory());
+
             return poAttributesRepository.save(existingPOAttributes);
         } else {
             // Add new attribute

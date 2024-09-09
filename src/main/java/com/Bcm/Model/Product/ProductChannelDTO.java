@@ -1,6 +1,5 @@
 package com.Bcm.Model.Product;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
@@ -10,8 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 @Data
-
 public class ProductChannelDTO {
-    private Integer productId;
-    private Integer channelCode;
+  private Integer productId;
+  private Integer channelCode;
 }

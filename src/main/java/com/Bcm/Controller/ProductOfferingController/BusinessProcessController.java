@@ -20,6 +20,9 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Tag(name = "Business Process Controller", description = "All of the Business Process's methods")
 @RestController
 @RequiredArgsConstructor
@@ -29,6 +32,8 @@ public class BusinessProcessController {
 
     final JdbcTemplate base;
     final BusinessProcessService businessProcessService;
+
+    private static final Logger logger = LoggerFactory.getLogger(BusinessProcessController.class);
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -54,66 +59,31 @@ public class BusinessProcessController {
         }
     }
 
-    @GetMapping("/searchProductAndBusinessProcess")
-    public ResponseEntity<String> searchProductAndBusinessProcess(@RequestParam Integer productId) {
-        // Check if product exists
-        String checkProductQuery = "SELECT COUNT(po) FROM ProductOffering po WHERE po.Product_id = :productId";
-        TypedQuery<Long> checkProduct = entityManager.createQuery(checkProductQuery, Long.class);
-        checkProduct.setParameter("productId", productId);
+    @GetMapping("/business-process/{productId}")
+    public ResponseEntity<Object> getBusinessProcessByProductId(@PathVariable int productId) {
+        logger.info("Received request for Product ID: {}", productId);
 
-        Long productCount = checkProduct.getSingleResult();
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode responseJson = mapper.createObjectNode();
+        String sql =
+                "SELECT bp.business_process_id, bp.action, bp.action_description, "
+                        + "bp.business_process, po.product_id "
+                        + "FROM business_process bp "
+                        + "LEFT JOIN product_offering po ON bp.business_process_id = po.business_process_id "
+                        + "WHERE po.product_id = :productId AND bp.business_process_id IS NOT NULL "
+                        + "ORDER BY bp.business_process ASC";
 
-        if (productCount == 0) {
-            responseJson.put("message", "Product does not exist for Product ID: " + productId);
-            ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-            try {
-                return new ResponseEntity<>(writer.writeValueAsString(responseJson), HttpStatus.NOT_FOUND);
-            } catch (Exception e) {
-                return new ResponseEntity<>("{\"error\":\"Failed to generate JSON\"}", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            String jpqlQuery =
-                    "SELECT bp.business_process_id, bp.action, bp.action_description as actionDescription, bp.business_process as name "
-                            + "FROM product_offering po "
-                            + "JOIN business_process bp "
-                            + "ON po.business_process_id = bp.business_process_id "
-                            + "WHERE po.Product_id = :productId";
+        List<BusinessProcess> results =
+                entityManager
+                        .createNativeQuery(sql, BusinessProcess.class)
+                        .setParameter("productId", productId)
+                        .getResultList();
 
-            TypedQuery<Object[]> query = entityManager.createQuery(jpqlQuery, Object[].class);
-            query.setParameter("productId", productId);
-
-            List<Object[]> results = query.getResultList();
-
-            if (results.isEmpty()) {
-                responseJson.put("message", "No associated business processes found for Product ID: " + productId);
-                ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-                try {
-                    return new ResponseEntity<>(writer.writeValueAsString(responseJson), HttpStatus.NOT_FOUND);
-                } catch (Exception e) {
-                    return new ResponseEntity<>("{\"error\":\"Failed to generate JSON\"}", HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-            } else {
-                Object[] result = results.get(0);
-                Integer businessProcess_id = (Integer) result[0];
-                String action = (String) result[1];
-                String action_description = (String) result[2];
-                String business_process = (String) result[3];
-                responseJson.put("businessProcess_id", businessProcess_id);
-                responseJson.put("action", action);
-                responseJson.put("action_description", action_description);
-                responseJson.put("business_process", business_process);
-
-                ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-                try {
-                    return new ResponseEntity<>(writer.writeValueAsString(responseJson), HttpStatus.OK);
-                } catch (Exception e) {
-                    return new ResponseEntity<>("{\"error\":\"Failed to generate JSON\"}", HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-            }
+        if (results.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No BusinessProcess found for productId: " + productId);
         }
+
+        return ResponseEntity.ok(results);
     }
+
 
     @PutMapping("/{businessProcess_id}")
     public ResponseEntity<?> updateBusnissProcess(

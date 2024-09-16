@@ -29,13 +29,11 @@ public class TaxServiceImpl implements TaxService {
   @Override
   public Tax create(Tax tax) {
     try {
-      // Fetch the product by its Product_id
       Product product =
           productRepository
               .findById(tax.getProduct_id())
               .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
-      // Update the product's working step
       productRepository.save(product);
       return TaxRepository.save(tax);
     } catch (DataIntegrityViolationException e) {
@@ -52,7 +50,6 @@ public class TaxServiceImpl implements TaxService {
       if (!TaxRepository.existsById(Tax.getTaxCode())) {
         createdTaxes.add(TaxRepository.save(Tax));
 
-        // Fetch the ProductOffering by its Product_id
         int productId = Tax.getProduct_id();
         ProductOffering productOffering =
             productOfferingRepository
@@ -60,7 +57,6 @@ public class TaxServiceImpl implements TaxService {
                 .orElseThrow(
                     () -> new EntityNotFoundException("ProductOffering not found for Product_id: " + productId));
 
-        // Update the ProductOffering's working step
         productOffering.setWorkingStep("Product Price");
         productOfferingRepository.save(productOffering);
       }

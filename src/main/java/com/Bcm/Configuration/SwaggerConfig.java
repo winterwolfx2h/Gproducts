@@ -15,28 +15,28 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class SwaggerConfig implements WebMvcConfigurer {
 
-    /**
-     * Creates and returns a custom OpenAPI bean with the specified configurations.
-     *
-     * @return The custom OpenAPI bean.
-     */
-    @Bean
-    public OpenAPI customOpenAPI() {
+  /**
+   * Creates and returns a custom OpenAPI bean with the specified configurations.
+   *
+   * @return The custom OpenAPI bean.
+   */
+  @Bean
+  public OpenAPI customOpenAPI() {
 
-        License mitLicense = new License().name(Extern.SWAGGER_LICENSE).url(Extern.SWAGGER_LICENSE_URL);
+    License mitLicense = new License().name(Extern.SWAGGER_LICENSE).url(Extern.SWAGGER_LICENSE_URL);
 
-        Info info =
-                new Info()
-                        .title(Extern.SWAGGER_TITLE)
-                        .description(Extern.SWAGGER_DESCRIPTION)
-                        .license(mitLicense)
-                        .version(Extern.SWAGGER_VERSION);
-        return new OpenAPI().info(info);
-    }
+    Info info =
+        new Info()
+            .title(Extern.SWAGGER_TITLE)
+            .description(Extern.SWAGGER_DESCRIPTION)
+            .license(mitLicense)
+            .version(Extern.SWAGGER_VERSION);
+    return new OpenAPI().info(info);
+  }
 
-    @Override
-    public void addViewControllers(final ViewControllerRegistry registry) {
-        registry.addRedirectViewController("/", "/swagger-ui.html");
-        registry.addRedirectViewController("/swagger-ui", "billcom");
-    }
+  @Override
+  public void addViewControllers(final ViewControllerRegistry registry) {
+    registry.addRedirectViewController("/", "/swagger-ui.html");
+    registry.addRedirectViewController("/swagger-ui", "billcom");
+  }
 }

@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SubFamilyRequestDTO {
-    private Integer po_SubFamilyCode;
-    private String subFamilyName;
-    private String subFamilyDescription;
+  private Integer po_SubFamilyCode;
+  private String subFamilyName;
+  private String subFamilyDescription;
 }

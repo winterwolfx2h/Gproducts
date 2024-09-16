@@ -10,8 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResourceFacingServiceSpecDTO {
-    private int Rfss_code;
-    private int externalNPCode;
-    private int customerFacingServiceSpec;
-    private int logicalResource;
+  private int Rfss_code;
+  private int externalNPCode;
+  private int customerFacingServiceSpec;
+  private int logicalResource;
 }

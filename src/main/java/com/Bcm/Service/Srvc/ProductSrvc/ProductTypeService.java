@@ -1,24 +1,22 @@
 package com.Bcm.Service.Srvc.ProductSrvc;
 
 import com.Bcm.Model.Product.ProductType;
-import com.Bcm.Model.ProductOfferingABE.Type;
-
 import java.util.List;
 
 public interface ProductTypeService {
-    ProductType create(ProductType productType);
+  ProductType create(ProductType productType);
 
-    List<ProductType> read();
+  List<ProductType> read();
 
-    ProductType update(int productTypeCode, ProductType productType);
+  ProductType update(int productTypeCode, ProductType productType);
 
-    String delete(int productTypeCode);
+  String delete(int productTypeCode);
 
-    ProductType findById(int productTypeCode);
+  ProductType findById(int productTypeCode);
 
-    ProductType findByTypeName(String typeName);
+  ProductType findByTypeName(String typeName);
 
-    List<ProductType> searchByKeyword(String typeName);
+  List<ProductType> searchByKeyword(String typeName);
 
-    boolean existsById(int productTypeCode);
+  boolean existsById(int productTypeCode);
 }

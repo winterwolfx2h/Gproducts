@@ -96,7 +96,7 @@ public class TaxServiceImpl implements TaxService {
   @Override
   public String delete(int taxCode) {
     try {
-      Tax Tax = findById(taxCode);
+      Tax tax = findById(taxCode);
       TaxRepository.deleteById(taxCode);
       return ("Tax with ID " + taxCode + " was successfully deleted");
     } catch (IllegalArgumentException e) {

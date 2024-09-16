@@ -76,9 +76,9 @@ public class POAttributes {
     @Column(name = "description", nullable = true)
     public String description;
 
-    @Column(name = "defaultvalue", nullable = true)
-    private Boolean defaultvalue;
-  }
+        @Column(name = "defaultvalue")
+        private Boolean defaultvalue;
+    }
 
   @Getter
   @Setter
@@ -89,7 +89,10 @@ public class POAttributes {
     @Column(name = "maxSize", nullable = true)
     public String maxSize;
 
-    @Column(name = "defaultvalue", nullable = true)
-    private String defaultvalue;
-  }
+        @Column(name = "defaultvalue", nullable = true)
+        private String defaultvalue;
+
+        @Column(name = "valueDes", nullable = true)
+        public String valueDes;
+    }
 }

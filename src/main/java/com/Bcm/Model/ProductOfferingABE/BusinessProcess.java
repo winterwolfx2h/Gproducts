@@ -21,6 +21,9 @@ public class BusinessProcess {
   @Column(name = "businessProcess", nullable = false)
   private String name;
 
-  @Column(name = "action", nullable = true)
-  private String action;
+    @Column(name = "action", nullable = true)
+    private String action;
+
+    @Column(name = "actionDescription", nullable = true)
+    private String actionDescription;
 }

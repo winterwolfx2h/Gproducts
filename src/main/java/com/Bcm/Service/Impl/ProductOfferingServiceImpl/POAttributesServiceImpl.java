@@ -118,8 +118,32 @@ public class POAttributesServiceImpl implements POAttributesService {
     }
   }
 
-  @Override
-  public boolean existsById(int poAttribute_code) {
-    return poAttributesRepository.existsById(poAttribute_code);
-  }
+    public POAttributes saveOrUpdate(int poAttribute_code, POAttributes poAttributes) throws InvalidInputException {
+        Optional<POAttributes> existingAttribute = poAttributesRepository.findById(poAttribute_code);
+
+        if (existingAttribute.isPresent()) {
+            POAttributes existingPOAttributes = existingAttribute.get();
+            existingPOAttributes.setName(poAttributes.getName());
+            existingPOAttributes.setCategory(poAttributes.getCategory());
+            existingPOAttributes.setBsexternalId(poAttributes.getBsexternalId());
+            existingPOAttributes.setCsexternalId(poAttributes.getCsexternalId());
+            existingPOAttributes.setAttributeType(poAttributes.getAttributeType());
+            existingPOAttributes.setDataType(poAttributes.getDataType());
+            existingPOAttributes.setValueDescription(poAttributes.getValueDescription());
+            existingPOAttributes.setDefaultMaxSize(poAttributes.getDefaultMaxSize());
+            existingPOAttributes.setMandatory(poAttributes.getMandatory());
+
+            return poAttributesRepository.save(existingPOAttributes);
+        } else {
+            // Add new attribute
+            poAttributes.setPoAttribute_code(poAttribute_code);  // Ensure the ID is set correctly
+            return poAttributesRepository.save(poAttributes);
+        }
+    }
+
+
+    @Override
+    public boolean existsById(int poAttribute_code) {
+        return poAttributesRepository.existsById(poAttribute_code);
+    }
 }

@@ -11,6 +11,6 @@ import lombok.*;
 @Data
 public class ProductEntityDTO {
 
-  private Integer productId;
-  private Integer entityCode;
+    private Integer productId;
+    private Integer entityCode;
 }

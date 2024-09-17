@@ -16,37 +16,37 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-  @Value("${ms.username}")
-  String msUsername;
+    @Value("${ms.username}")
+    String msUsername;
 
-  @Value("${ms.password}")
-  String msPassword;
+    @Value("${ms.password}")
+    String msPassword;
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
-    http.cors()
-        .and()
-        .csrf()
-        .disable()
-        .authorizeRequests()
-        .anyRequest()
-        .authenticated()
-        .and()
-        .httpBasic()
-        .and()
-        .exceptionHandling();
-  }
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors()
+                .and()
+                .csrf()
+                .disable()
+                .authorizeRequests()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .httpBasic()
+                .and()
+                .exceptionHandling();
+    }
 
-  @Autowired
-  public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-    auth.inMemoryAuthentication()
-        .withUser(msUsername)
-        .password(new BCryptPasswordEncoder().encode(msPassword))
-        .roles("USER");
-  }
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication()
+                .withUser(msUsername)
+                .password(new BCryptPasswordEncoder().encode(msPassword))
+                .roles("USER");
+    }
 
-  @Bean
-  PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

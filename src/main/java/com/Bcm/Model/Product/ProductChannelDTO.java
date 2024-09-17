@@ -10,6 +10,6 @@ import lombok.*;
 @Setter
 @Data
 public class ProductChannelDTO {
-  private Integer productId;
-  private Integer channelCode;
+    private Integer productId;
+    private Integer channelCode;
 }

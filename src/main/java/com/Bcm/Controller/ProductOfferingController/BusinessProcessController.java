@@ -4,11 +4,10 @@ import com.Bcm.Exception.MethodsAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.BusinessProcessService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Tag(name = "Business Process Controller", description = "All of the Business Process's methods")
 @RestController
@@ -29,9 +25,9 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/api/BusinessProcess")
 public class BusinessProcessController {
 
+    private static final Logger logger = LoggerFactory.getLogger(BusinessProcessController.class);
     final JdbcTemplate base;
     final BusinessProcessService businessProcessService;
-    private static final Logger logger = LoggerFactory.getLogger(BusinessProcessController.class);
     @PersistenceContext
     private EntityManager entityManager;
 

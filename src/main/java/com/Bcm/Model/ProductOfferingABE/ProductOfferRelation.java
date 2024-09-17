@@ -1,10 +1,11 @@
 package com.Bcm.Model.ProductOfferingABE;
 
-import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "ProductOfferRelation")
@@ -14,20 +15,20 @@ import lombok.Setter;
 @Setter
 public class ProductOfferRelation {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "productOfferRel_code")
-  private Integer productOfferRel_code;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "productOfferRel_code")
+    private Integer productOfferRel_code;
 
-  @Column(name = "relatedProductId", nullable = false)
-  private int relatedProductId;
+    @Column(name = "relatedProductId", nullable = false)
+    private int relatedProductId;
 
-  @Column(name = "product_id", nullable = false)
-  private int productId;
+    @Column(name = "product_id", nullable = false)
+    private int productId;
 
-  @Column(name = "type")
-  private String type;
+    @Column(name = "type")
+    private String type;
 
-  @Column(name = "subType")
-  private String subType;
+    @Column(name = "subType")
+    private String subType;
 }

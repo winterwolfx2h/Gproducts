@@ -7,13 +7,14 @@ import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.POAttributesRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.POAttributesService;
-import java.util.List;
-import java.util.Optional;
-import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -27,9 +28,9 @@ public class POAttributesServiceImpl implements POAttributesService {
     try {
       // Fetch the product by its Product_id
       ProductOffering productOffering =
-          productOfferingRepository
-              .findById(poAttributes.getProduct_id())
-              .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+              productOfferingRepository
+                      .findById(poAttributes.getProduct_id())
+                      .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
       // Update the product's working step
       productOffering.setWorkingStep("PO-Attribute");
@@ -84,7 +85,7 @@ public class POAttributesServiceImpl implements POAttributesService {
   public POAttributes findById(int poAttribute_code) {
     Optional<POAttributes> optionalPlan = poAttributesRepository.findById(poAttribute_code);
     return optionalPlan.orElseThrow(
-        () -> new RuntimeException("POAttributes with ID " + poAttribute_code + " not found"));
+            () -> new RuntimeException("POAttributes with ID " + poAttribute_code + " not found"));
   }
 
   @Override
@@ -92,7 +93,7 @@ public class POAttributesServiceImpl implements POAttributesService {
     try {
       Optional<POAttributes> optionalPOAttributes = poAttributesRepository.findByValueDescription_Value(description);
       return optionalPOAttributes.orElseThrow(
-          () -> new RuntimeException("POAttributes with Description " + description + " not found"));
+              () -> new RuntimeException("POAttributes with Description " + description + " not found"));
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for finding POAttributes");
     }
@@ -109,41 +110,21 @@ public class POAttributesServiceImpl implements POAttributesService {
       existingPOAttributes.setCsexternalId(poAttributes.getCsexternalId());
       existingPOAttributes.setAttributeType(poAttributes.getAttributeType());
       existingPOAttributes.setDataType(poAttributes.getDataType());
-      // Set other fields as necessary
+      existingPOAttributes.setValueDescription(poAttributes.getValueDescription());
+      existingPOAttributes.setDefaultMaxSize(poAttributes.getDefaultMaxSize());
+      existingPOAttributes.setMandatory(poAttributes.getMandatory());
+
       return poAttributesRepository.save(existingPOAttributes);
     } else {
       // Add new attribute
-      poAttributes.setPoAttribute_code(poAttribute_code); // Ensure the ID is set correctly
+      poAttributes.setPoAttribute_code(poAttribute_code);  // Ensure the ID is set correctly
       return poAttributesRepository.save(poAttributes);
     }
   }
 
-    public POAttributes saveOrUpdate(int poAttribute_code, POAttributes poAttributes) throws InvalidInputException {
-        Optional<POAttributes> existingAttribute = poAttributesRepository.findById(poAttribute_code);
 
-        if (existingAttribute.isPresent()) {
-            POAttributes existingPOAttributes = existingAttribute.get();
-            existingPOAttributes.setName(poAttributes.getName());
-            existingPOAttributes.setCategory(poAttributes.getCategory());
-            existingPOAttributes.setBsexternalId(poAttributes.getBsexternalId());
-            existingPOAttributes.setCsexternalId(poAttributes.getCsexternalId());
-            existingPOAttributes.setAttributeType(poAttributes.getAttributeType());
-            existingPOAttributes.setDataType(poAttributes.getDataType());
-            existingPOAttributes.setValueDescription(poAttributes.getValueDescription());
-            existingPOAttributes.setDefaultMaxSize(poAttributes.getDefaultMaxSize());
-            existingPOAttributes.setMandatory(poAttributes.getMandatory());
-
-            return poAttributesRepository.save(existingPOAttributes);
-        } else {
-            // Add new attribute
-            poAttributes.setPoAttribute_code(poAttribute_code);  // Ensure the ID is set correctly
-            return poAttributesRepository.save(poAttributes);
-        }
-    }
-
-
-    @Override
-    public boolean existsById(int poAttribute_code) {
-        return poAttributesRepository.existsById(poAttribute_code);
-    }
+  @Override
+  public boolean existsById(int poAttribute_code) {
+    return poAttributesRepository.existsById(poAttribute_code);
+  }
 }

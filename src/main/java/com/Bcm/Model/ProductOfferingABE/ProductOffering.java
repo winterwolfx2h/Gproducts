@@ -1,15 +1,20 @@
 package com.Bcm.Model.ProductOfferingABE;
 
 import com.Bcm.Model.Product.Product;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
+import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.util.List;
-import javax.persistence.*;
-import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
+import javax.validation.constraints.Pattern;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "ProductOffering")
@@ -28,6 +33,7 @@ public class ProductOffering extends Product {
 
   @Column(name = "workingStep")
   private String workingStep;
+
 
   @Column(name = "category")
   private String category;
@@ -54,6 +60,7 @@ public class ProductOffering extends Product {
   @Column(name = "pr_id")
   private Integer pr_id;
 
+
   @Column(name = "global")
   private boolean global;
 
@@ -62,13 +69,14 @@ public class ProductOffering extends Product {
   @JsonIgnore
   private List<ProductOfferRelation> productOfferRelations;
 
-    @OneToOne(cascade = CascadeType.ALL, targetEntity = BusinessProcess.class)
-    @JoinColumn(name = "Product_id")
-    @JsonIgnore
-    private BusinessProcess businessProcesses;
-
-  @OneToMany(cascade = CascadeType.ALL, targetEntity = BusinessProcess.class)
+  @OneToMany(cascade = CascadeType.ALL, targetEntity = ProductRelation.class)
   @JoinColumn(name = "Product_id")
   @JsonIgnore
-  private List<BusinessProcess> businessProcesses;
+  private List<ProductRelation> productRelations;
+
+  @OneToOne(cascade = CascadeType.ALL, targetEntity = BusinessProcess.class)
+  @JoinColumn(name = "Product_id")
+  @JsonIgnore
+  private BusinessProcess businessProcesses;
+
 }

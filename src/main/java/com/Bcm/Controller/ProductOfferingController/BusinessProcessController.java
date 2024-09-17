@@ -4,12 +4,11 @@ import com.Bcm.Exception.MethodsAlreadyExistsException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.BusinessProcessService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import javax.persistence.*;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +31,6 @@ public class BusinessProcessController {
 
     final JdbcTemplate base;
     final BusinessProcessService businessProcessService;
-
     private static final Logger logger = LoggerFactory.getLogger(BusinessProcessController.class);
     @PersistenceContext
     private EntityManager entityManager;
@@ -49,15 +46,15 @@ public class BusinessProcessController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
-  }
 
-  @GetMapping("/listbusinessProcess")
-  public ResponseEntity<List<BusinessProcess>> getAllBusnissProcess() {
-    try {
-      List<BusinessProcess> businessProcesses = businessProcessService.read();
-      return ResponseEntity.ok(businessProcesses);
-    } catch (RuntimeException e) {
-      return ResponseEntity.status(500).body(null);
+    @GetMapping("/listbusinessProcess")
+    public ResponseEntity<List<BusinessProcess>> getAllBusnissProcess() {
+        try {
+            List<BusinessProcess> businessProcesses = businessProcessService.read();
+            return ResponseEntity.ok(businessProcesses);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/business-process/{productId}")
@@ -100,29 +97,28 @@ public class BusinessProcessController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
         }
     }
-  }
 
-  @DeleteMapping("/{businessProcess_id}")
-  public ResponseEntity<String> deleteBusnissProcess(@PathVariable("businessProcess_id") int businessProcess_id) {
-    try {
-      String resultMessage = businessProcessService.delete(businessProcess_id);
-      return ResponseEntity.ok(resultMessage);
-    } catch (RuntimeException e) {
-      return ResponseEntity.status(500).body(null);
+    @DeleteMapping("/{businessProcess_id}")
+    public ResponseEntity<String> deleteBusnissProcess(@PathVariable("businessProcess_id") int businessProcess_id) {
+        try {
+            String resultMessage = businessProcessService.delete(businessProcess_id);
+            return ResponseEntity.ok(resultMessage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
-  }
 
-  @GetMapping("/search")
-  public ResponseEntity<List<BusinessProcess>> searchMethodsByKeyword(
-      @RequestParam("businessProcess_name") String businessProcess_name) {
-    try {
-      List<BusinessProcess> searchResults = businessProcessService.searchByKeyword(businessProcess_name);
-      return ResponseEntity.ok(searchResults);
-    } catch (RuntimeException e) {
-      return ResponseEntity.status(500).body(null);
+    @GetMapping("/search")
+    public ResponseEntity<List<BusinessProcess>> searchMethodsByKeyword(@RequestParam("businessProcess_name") String businessProcess_name) {
+        try {
+            List<BusinessProcess> searchResults = businessProcessService.searchByKeyword(businessProcess_name);
+            return ResponseEntity.ok(searchResults);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
-  }
 
-  @CacheEvict(value = "BusinessProcesssCache", allEntries = true)
-  public void invalidateBusinessProcesssCache() {}
+    @CacheEvict(value = "BusinessProcesssCache", allEntries = true)
+    public void invalidateBusinessProcesssCache() {
+    }
 }

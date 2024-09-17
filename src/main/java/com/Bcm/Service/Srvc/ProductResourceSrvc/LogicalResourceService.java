@@ -1,29 +1,30 @@
 package com.Bcm.Service.Srvc.ProductResourceSrvc;
 
 import com.Bcm.Model.ProductResourceABE.LogicalResource;
-import java.util.List;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public interface LogicalResourceService {
 
-  LogicalResource create(LogicalResource LogicalResource);
+    LogicalResource create(LogicalResource LogicalResource);
 
-  List<LogicalResource> read();
+    List<LogicalResource> read();
 
-  LogicalResource update(int logResourceId, LogicalResource LogicalResource);
+    LogicalResource update(int logResourceId, LogicalResource LogicalResource);
 
-  String delete(int logResourceId);
+    String delete(int logResourceId);
 
-  LogicalResource findById(int logResourceId);
+    LogicalResource findById(int logResourceId);
 
-  List<LogicalResource> searchByKeyword(String logicalResourceType);
+    List<LogicalResource> searchByKeyword(String logicalResourceType);
 
-  LogicalResource findByLogicalResourceType(String logicalResourceType);
+    LogicalResource findByLogicalResourceType(String logicalResourceType);
 
-  boolean existsById(int logResourceId);
+    boolean existsById(int logResourceId);
 
-  LogicalResource findByName(String name);
+    LogicalResource findByName(String name);
 
-  boolean findByNameExist(String name);
+    boolean findByNameExist(String name);
 }

@@ -20,111 +20,111 @@ import java.util.Optional;
 @Service
 public class POAttributesServiceImpl implements POAttributesService {
 
-  final POAttributesRepository poAttributesRepository;
-  private final ProductOfferingRepository productOfferingRepository;
+    final POAttributesRepository poAttributesRepository;
+    private final ProductOfferingRepository productOfferingRepository;
 
-  @Transactional
-  public POAttributes create(POAttributes poAttributes) {
-    try {
-      // Fetch the product by its Product_id
-      ProductOffering productOffering =
-              productOfferingRepository
-                      .findById(poAttributes.getProduct_id())
-                      .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+    @Transactional
+    public POAttributes create(POAttributes poAttributes) {
+        try {
+            // Fetch the product by its Product_id
+            ProductOffering productOffering =
+                    productOfferingRepository
+                            .findById(poAttributes.getProduct_id())
+                            .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
-      // Update the product's working step
-      productOffering.setWorkingStep("PO-Attribute");
-      productOfferingRepository.save(productOffering);
+            // Update the product's working step
+            productOffering.setWorkingStep("PO-Attribute");
+            productOfferingRepository.save(productOffering);
 
-      // Save the POAttributes
-      return poAttributesRepository.save(poAttributes);
-    } catch (DataIntegrityViolationException e) {
-      throw new DatabaseOperationException("Error creating product offering Attribute", e);
-    } catch (Exception e) {
-      throw new RuntimeException("An unexpected error occurred while creating product offering Attribute", e);
+            // Save the POAttributes
+            return poAttributesRepository.save(poAttributes);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseOperationException("Error creating product offering Attribute", e);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while creating product offering Attribute", e);
+        }
     }
-  }
 
-  @Override
-  public List<POAttributes> read() {
-    return poAttributesRepository.findAll();
-  }
-
-  @Override
-  public POAttributes update(int poAttribute_code, POAttributes updatedPOAttributes) {
-    Optional<POAttributes> existingPOAttributesOptional = poAttributesRepository.findById(poAttribute_code);
-
-    if (existingPOAttributesOptional.isPresent()) {
-      POAttributes existingPOAttributes = existingPOAttributesOptional.get();
-
-      existingPOAttributes.setName(updatedPOAttributes.getName());
-      existingPOAttributes.setCategory(updatedPOAttributes.getCategory());
-      existingPOAttributes.setBsexternalId(updatedPOAttributes.getBsexternalId());
-      existingPOAttributes.setCsexternalId(updatedPOAttributes.getCsexternalId());
-      existingPOAttributes.setAttributeType(updatedPOAttributes.getAttributeType());
-      existingPOAttributes.setDataType(updatedPOAttributes.getDataType());
-
-      if (updatedPOAttributes.getValueDescription() != null) {
-        existingPOAttributes.getValueDescription().clear();
-        existingPOAttributes.getValueDescription().addAll(updatedPOAttributes.getValueDescription());
-      }
-
-      return poAttributesRepository.save(existingPOAttributes);
-    } else {
-      throw new RuntimeException("POAttributes with ID: " + poAttribute_code + " not found");
+    @Override
+    public List<POAttributes> read() {
+        return poAttributesRepository.findAll();
     }
-  }
 
-  @Override
-  public String delete(int poAttribute_code) {
-    poAttributesRepository.deleteById(poAttribute_code);
-    return ("POAttributes was successfully deleted");
-  }
+    @Override
+    public POAttributes update(int poAttribute_code, POAttributes updatedPOAttributes) {
+        Optional<POAttributes> existingPOAttributesOptional = poAttributesRepository.findById(poAttribute_code);
 
-  @Override
-  public POAttributes findById(int poAttribute_code) {
-    Optional<POAttributes> optionalPlan = poAttributesRepository.findById(poAttribute_code);
-    return optionalPlan.orElseThrow(
-            () -> new RuntimeException("POAttributes with ID " + poAttribute_code + " not found"));
-  }
+        if (existingPOAttributesOptional.isPresent()) {
+            POAttributes existingPOAttributes = existingPOAttributesOptional.get();
 
-  @Override
-  public POAttributes findByDescription(String description) {
-    try {
-      Optional<POAttributes> optionalPOAttributes = poAttributesRepository.findByValueDescription_Value(description);
-      return optionalPOAttributes.orElseThrow(
-              () -> new RuntimeException("POAttributes with Description " + description + " not found"));
-    } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding POAttributes");
+            existingPOAttributes.setName(updatedPOAttributes.getName());
+            existingPOAttributes.setCategory(updatedPOAttributes.getCategory());
+            existingPOAttributes.setBsexternalId(updatedPOAttributes.getBsexternalId());
+            existingPOAttributes.setCsexternalId(updatedPOAttributes.getCsexternalId());
+            existingPOAttributes.setAttributeType(updatedPOAttributes.getAttributeType());
+            existingPOAttributes.setDataType(updatedPOAttributes.getDataType());
+
+            if (updatedPOAttributes.getValueDescription() != null) {
+                existingPOAttributes.getValueDescription().clear();
+                existingPOAttributes.getValueDescription().addAll(updatedPOAttributes.getValueDescription());
+            }
+
+            return poAttributesRepository.save(existingPOAttributes);
+        } else {
+            throw new RuntimeException("POAttributes with ID: " + poAttribute_code + " not found");
+        }
     }
-  }
 
-  public POAttributes saveOrUpdate(int poAttribute_code, POAttributes poAttributes) throws InvalidInputException {
-    Optional<POAttributes> existingAttribute = poAttributesRepository.findById(poAttribute_code);
-
-    if (existingAttribute.isPresent()) {
-      POAttributes existingPOAttributes = existingAttribute.get();
-      existingPOAttributes.setName(poAttributes.getName());
-      existingPOAttributes.setCategory(poAttributes.getCategory());
-      existingPOAttributes.setBsexternalId(poAttributes.getBsexternalId());
-      existingPOAttributes.setCsexternalId(poAttributes.getCsexternalId());
-      existingPOAttributes.setAttributeType(poAttributes.getAttributeType());
-      existingPOAttributes.setDataType(poAttributes.getDataType());
-      existingPOAttributes.setValueDescription(poAttributes.getValueDescription());
-      existingPOAttributes.setDefaultMaxSize(poAttributes.getDefaultMaxSize());
-      existingPOAttributes.setMandatory(poAttributes.getMandatory());
-
-      return poAttributesRepository.save(existingPOAttributes);
-    } else {
-      // Add new attribute
-      poAttributes.setPoAttribute_code(poAttribute_code);  // Ensure the ID is set correctly
-      return poAttributesRepository.save(poAttributes);
+    @Override
+    public String delete(int poAttribute_code) {
+        poAttributesRepository.deleteById(poAttribute_code);
+        return ("POAttributes was successfully deleted");
     }
-  }
+
+    @Override
+    public POAttributes findById(int poAttribute_code) {
+        Optional<POAttributes> optionalPlan = poAttributesRepository.findById(poAttribute_code);
+        return optionalPlan.orElseThrow(
+                () -> new RuntimeException("POAttributes with ID " + poAttribute_code + " not found"));
+    }
+
+    @Override
+    public POAttributes findByDescription(String description) {
+        try {
+            Optional<POAttributes> optionalPOAttributes = poAttributesRepository.findByValueDescription_Value(description);
+            return optionalPOAttributes.orElseThrow(
+                    () -> new RuntimeException("POAttributes with Description " + description + " not found"));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid argument provided for finding POAttributes");
+        }
+    }
+
+    public POAttributes saveOrUpdate(int poAttribute_code, POAttributes poAttributes) throws InvalidInputException {
+        Optional<POAttributes> existingAttribute = poAttributesRepository.findById(poAttribute_code);
+
+        if (existingAttribute.isPresent()) {
+            POAttributes existingPOAttributes = existingAttribute.get();
+            existingPOAttributes.setName(poAttributes.getName());
+            existingPOAttributes.setCategory(poAttributes.getCategory());
+            existingPOAttributes.setBsexternalId(poAttributes.getBsexternalId());
+            existingPOAttributes.setCsexternalId(poAttributes.getCsexternalId());
+            existingPOAttributes.setAttributeType(poAttributes.getAttributeType());
+            existingPOAttributes.setDataType(poAttributes.getDataType());
+            existingPOAttributes.setValueDescription(poAttributes.getValueDescription());
+            existingPOAttributes.setDefaultMaxSize(poAttributes.getDefaultMaxSize());
+            existingPOAttributes.setMandatory(poAttributes.getMandatory());
+
+            return poAttributesRepository.save(existingPOAttributes);
+        } else {
+            // Add new attribute
+            poAttributes.setPoAttribute_code(poAttribute_code);  // Ensure the ID is set correctly
+            return poAttributesRepository.save(poAttributes);
+        }
+    }
 
 
-  @Override
-  public boolean existsById(int poAttribute_code) {
-    return poAttributesRepository.existsById(poAttribute_code);
-  }
+    @Override
+    public boolean existsById(int poAttribute_code) {
+        return poAttributesRepository.existsById(poAttribute_code);
+    }
 }

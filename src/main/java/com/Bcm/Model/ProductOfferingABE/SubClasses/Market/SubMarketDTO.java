@@ -10,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SubMarketDTO {
-  private String subMarketName;
-  private String subMarketDescription;
+    private String subMarketName;
+    private String subMarketDescription;
 }

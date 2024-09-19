@@ -1,40 +1,39 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc;
 
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market.*;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public interface MarketService {
 
-    @Transactional
-    MarketResponseDTO createOrUpdateMarket(MarketRequestDTO MarketRequestDTO);
+  @Transactional
+  MarketResponseDTO createOrUpdateMarket(MarketRequestDTO MarketRequestDTO);
 
-    List<Market> read();
+  List<Market> read();
 
-    MarketResponseDTO update(int po_MarketCode, MarketRequestDTOUpdate MarketRequestDTO);
+  MarketResponseDTO update(int po_MarketCode, MarketRequestDTOUpdate MarketRequestDTO);
 
-    String delete(int po_MarketCode);
+  String delete(int po_MarketCode);
 
-    Market findById(int po_MarketCode);
+  Market findById(int po_MarketCode);
 
-    List<Market> searchByKeyword(String name);
+  List<Market> searchByKeyword(String name);
 
-    Market findByName(String name);
+  Market findByName(String name);
 
-    boolean findByNameexist(String name);
+  boolean findByNameexist(String name);
 
-    boolean existsById(int po_MarketCode);
+  boolean existsById(int po_MarketCode);
 
-    List<MarketResponseDTO> getAllMarkets();
+  List<MarketResponseDTO> getAllMarkets();
 
-    List<SubMarket> readSubMarkets();
+  List<SubMarket> readSubMarkets();
 
-    boolean findBySubMarketNameExist(String subMarketName);
+  boolean findBySubMarketNameExist(String subMarketName);
 
-    void deleteSubMarket(int po_SubMarketCode);
+  void deleteSubMarket(int po_SubMarketCode);
 
-    void unlinkSubMarketFromMarket(int MarketId, int subMarketId);
+  void unlinkSubMarketFromMarket(int MarketId, int subMarketId);
 }

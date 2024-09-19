@@ -10,8 +10,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SubMarketListResponseDTO {
-    private int po_SubMarketCode;
-    private String subMarketName;
-    private String subMarketDescription;
-    private Integer po_MarketCode;
+  private int po_SubMarketCode;
+  private String subMarketName;
+  private String subMarketDescription;
+  private Integer po_MarketCode;
 }

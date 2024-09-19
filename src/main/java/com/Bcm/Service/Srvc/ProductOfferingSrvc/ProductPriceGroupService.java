@@ -1,28 +1,27 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 
 import com.Bcm.Model.ProductOfferingABE.ProductPriceGroup;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public interface ProductPriceGroupService {
 
-    ProductPriceGroup create(ProductPriceGroup productPriceGroup);
+  ProductPriceGroup create(ProductPriceGroup productPriceGroup);
 
-    List<ProductPriceGroup> read();
+  List<ProductPriceGroup> read();
 
-    ProductPriceGroup update(int productPriceGroupCode, ProductPriceGroup productPriceGroup);
+  ProductPriceGroup update(int productPriceGroupCode, ProductPriceGroup productPriceGroup);
 
-    String delete(int productPriceGroupCode);
+  String delete(int productPriceGroupCode);
 
-    ProductPriceGroup findById(int productPriceGroupCode);
+  ProductPriceGroup findById(int productPriceGroupCode);
 
-    List<ProductPriceGroup> searchByKeyword(String name);
+  List<ProductPriceGroup> searchByKeyword(String name);
 
-    ProductPriceGroup findByName(String name);
+  ProductPriceGroup findByName(String name);
 
-    boolean findByNameexist(String name);
+  boolean findByNameexist(String name);
 
-    boolean existsById(int productPriceGroupCode);
+  boolean existsById(int productPriceGroupCode);
 }

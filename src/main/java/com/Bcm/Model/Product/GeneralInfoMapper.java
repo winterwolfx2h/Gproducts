@@ -4,27 +4,27 @@ import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 
 public class GeneralInfoMapper {
 
-    public static GeneralInfoDTO toDTO(ProductOffering productOffering) {
-        if (productOffering == null) {
-            return null;
-        }
-        GeneralInfoDTO dto = new GeneralInfoDTO();
-        dto.setProduct_id(productOffering.getProduct_id());
-        dto.setName(productOffering.getName());
-        dto.setEffectiveFrom(productOffering.getEffectiveFrom());
-        dto.setEffectiveTo(productOffering.getEffectiveTo());
-        dto.setDescription(productOffering.getDescription());
-        dto.setDetailedDescription(productOffering.getDetailedDescription());
-        dto.setPoType(productOffering.getPoType());
-        dto.setParent(productOffering.getParent());
-        dto.setWorkingStep(productOffering.getWorkingStep());
-        dto.setSellInd(productOffering.getSellInd()); // name changed
-        dto.setQuantityInd(productOffering.getQuantityInd()); // name changed
-        dto.setCategory(productOffering.getCategory());
-        dto.setBS_externalId(productOffering.getBS_externalId());
-        dto.setCS_externalId(productOffering.getCS_externalId());
-        dto.setStatus(productOffering.getStatus());
-        dto.setPoParent_Child(productOffering.getPoParent_Child());
-        return dto;
+  public static GeneralInfoDTO toDTO(ProductOffering productOffering) {
+    if (productOffering == null) {
+      return null;
     }
+    GeneralInfoDTO dto = new GeneralInfoDTO();
+    dto.setProduct_id(productOffering.getProduct_id());
+    dto.setName(productOffering.getName());
+    dto.setEffectiveFrom(productOffering.getEffectiveFrom());
+    dto.setEffectiveTo(productOffering.getEffectiveTo());
+    dto.setDescription(productOffering.getDescription());
+    dto.setDetailedDescription(productOffering.getDetailedDescription());
+    dto.setPoType(productOffering.getPoType());
+    dto.setParent(productOffering.getParent());
+    dto.setWorkingStep(productOffering.getWorkingStep());
+    dto.setSellInd(productOffering.getSellInd()); // name changed
+    dto.setQuantityInd(productOffering.getQuantityInd()); // name changed
+    dto.setCategory(productOffering.getCategory());
+    dto.setBS_externalId(productOffering.getBS_externalId());
+    dto.setCS_externalId(productOffering.getCS_externalId());
+    dto.setStatus(productOffering.getStatus());
+    dto.setPoParent_Child(productOffering.getPoParent_Child());
+    return dto;
+  }
 }

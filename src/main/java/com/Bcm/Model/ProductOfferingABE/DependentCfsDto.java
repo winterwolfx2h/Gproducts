@@ -11,6 +11,6 @@ import lombok.*;
 @Data
 public class DependentCfsDto {
 
-    private Integer productId;
-    private Integer dependentCfs;
+  private Integer productId;
+  private Integer dependentCfs;
 }

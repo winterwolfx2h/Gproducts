@@ -7,17 +7,17 @@ import org.springframework.stereotype.Service;
 @Service
 public interface TaxService {
 
-    Tax create(Tax tax);
+  Tax create(Tax tax);
 
-    List<Tax> read();
+  List<Tax> read();
 
-    Tax update(int taxCode, Tax tax);
+  Tax update(int taxCode, Tax tax);
 
-    String delete(int taxCode);
+  String delete(int taxCode);
 
-    Tax findById(int taxCode);
+  Tax findById(int taxCode);
 
-    boolean existsById(int taxCode);
+  boolean existsById(int taxCode);
 
-    List<Tax> searchByName(String name);
+  List<Tax> searchByName(String name);
 }

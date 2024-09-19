@@ -9,8 +9,8 @@ import lombok.*;
 @Getter
 @Setter
 @Data
-public class ProductGroupDto {
+public class ProductTaxDTO {
 
   private Integer productId;
-  private Integer productPriceGroupCode;
+  private Integer taxCode;
 }

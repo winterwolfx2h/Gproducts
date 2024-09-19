@@ -5,19 +5,19 @@ import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.Tax;
+import com.Bcm.Model.ProductOfferingABE.Type;
 import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Repository.ProductOfferingRepo.TaxRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.TaxService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -26,44 +26,14 @@ public class TaxServiceImpl implements TaxService {
     final TaxRepository TaxRepository;
     final ProductOfferingRepository productOfferingRepository;
     final ProductRepository productRepository;
+    private final TaxRepository taxRepository;
 
     @Override
     public Tax create(Tax tax) {
-        try {
-            Product product =
-                    productRepository
-                            .findById(tax.getProduct_id())
-                            .orElseThrow(() -> new EntityNotFoundException("Product not found"));
-
-            productRepository.save(product);
-            return TaxRepository.save(tax);
-        } catch (DataIntegrityViolationException e) {
-            throw new DatabaseOperationException("Error creating Tax", e);
+        if (tax.getTaxCode() != 0 && !taxRepository.existsById(tax.getTaxCode())) {
+            throw new RuntimeException("Tax with the ID: " + tax.getTaxCode() + " does not exist");
         }
-    }
-
-    @Override
-    @Transactional
-    public List<Tax> create(List<Tax> taxes) {
-        List<Tax> createdTaxes = new ArrayList<>();
-
-        for (Tax Tax : taxes) {
-            if (!TaxRepository.existsById(Tax.getTaxCode())) {
-                createdTaxes.add(TaxRepository.save(Tax));
-
-                int productId = Tax.getProduct_id();
-                ProductOffering productOffering =
-                        productOfferingRepository
-                                .findById(productId)
-                                .orElseThrow(
-                                        () -> new EntityNotFoundException("ProductOffering not found for Product_id: " + productId));
-
-                productOffering.setWorkingStep("Product Price");
-                productOfferingRepository.save(productOffering);
-            }
-        }
-
-        return createdTaxes;
+        return taxRepository.save(tax);
     }
 
     @Override

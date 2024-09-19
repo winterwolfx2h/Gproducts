@@ -2,13 +2,12 @@ package com.Bcm.Model.ProductOfferingABE;
 
 import com.Bcm.Model.Product.Product;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "Tax")
@@ -36,11 +35,9 @@ public class Tax {
     @Column(name = "customerCategory", nullable = true)
     private String customerCategory;
 
-    @Column(name = "Product_id", nullable = false)
-    private int Product_id;
-
     @OneToMany(cascade = CascadeType.ALL, targetEntity = Product.class)
-    @JoinColumn(name = "TaxCode")
+    @JoinColumn(name = "tax_code")
     @JsonIgnore
     private List<Product> products;
+
 }

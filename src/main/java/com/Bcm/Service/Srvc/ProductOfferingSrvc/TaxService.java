@@ -1,16 +1,13 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 
 import com.Bcm.Model.ProductOfferingABE.Tax;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public interface TaxService {
 
     Tax create(Tax tax);
-
-    List<Tax> create(List<Tax> taxes);
 
     List<Tax> read();
 

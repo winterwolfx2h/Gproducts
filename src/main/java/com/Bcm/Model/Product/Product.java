@@ -73,6 +73,9 @@ public class Product {
     @Column(name = "externalId")
     private String externalId;
 
+    @Column(name = "tax_code")
+    private Integer tax_code;
+
     @OneToMany(cascade = CascadeType.ALL, targetEntity = POAttributes.class)
     @JoinColumn(name = "Product_id")
     @JsonIgnore

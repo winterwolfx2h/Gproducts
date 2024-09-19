@@ -3,6 +3,7 @@ package com.Bcm.Controller.ProductOfferingController;
 import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
 import com.Bcm.Exception.ProductOfferingNotFoundException;
 import com.Bcm.Model.Product.GeneralInfoDTO;
+import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.GeneralInfoService;
@@ -62,6 +63,24 @@ public class GeneralInfoController {
             throws ProductOfferingNotFoundException {
 
         return generalInfoService.updatePOPrice(generalInfoDTO, productId, productPriceCode);
+    }
+
+    @PutMapping("/Tax/{productId}")
+    public ResponseEntity<?> updateTax(
+            @RequestBody GeneralInfoDTO generalInfoDTO,
+            @PathVariable int productId,
+            @RequestParam int tax_code) {
+
+        try {
+            Product updatedProduct = generalInfoService.updatePOTax(generalInfoDTO, productId, tax_code);
+            return ResponseEntity.ok(updatedProduct);
+        } catch (ProductOfferingNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred while updating the product. Error: " + e.getMessage());
+        }
     }
 
     @PutMapping("/BusinessProc/{productId}")

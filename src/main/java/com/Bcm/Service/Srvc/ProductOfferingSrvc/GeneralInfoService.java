@@ -2,6 +2,7 @@ package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 
 import com.Bcm.Exception.ProductOfferingNotFoundException;
 import com.Bcm.Model.Product.GeneralInfoDTO;
+import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,9 @@ public interface GeneralInfoService {
     ProductOffering getProductOfferingById(int Product_id) throws ProductOfferingNotFoundException;
 
     ProductOffering updatePOPrice(GeneralInfoDTO generalInfoDTO, int Product_id, int productPriceCode)
+            throws ProductOfferingNotFoundException;
+
+    Product updatePOTax(GeneralInfoDTO generalInfoDTO, int Product_id, int tax_code)
             throws ProductOfferingNotFoundException;
 
     ProductOffering updatePOBusinessProc(GeneralInfoDTO generalInfoDTO, int Product_id, int businessProcess_id)

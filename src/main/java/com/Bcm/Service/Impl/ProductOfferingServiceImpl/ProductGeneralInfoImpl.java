@@ -4,9 +4,11 @@ import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
 import com.Bcm.Exception.ProductOfferingNotFoundException;
 import com.Bcm.Model.Product.GeneralInfoDTO;
 import com.Bcm.Model.Product.GeneralInfoMapper;
+import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.ProductPrice;
+import com.Bcm.Model.ProductOfferingABE.Tax;
 import com.Bcm.Model.ProductResourceABE.PhysicalResource;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Repository.ProductOfferingRepo.*;
@@ -35,6 +37,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     final ProductPriceGroupRepository productPriceGroupRepository;
     private final BusinessProcessRepository businessProcessRepository;
     private final ProductPriceRepository productPriceRepository;
+    private final TaxRepository taxRepository;
+
 
     @Override
     public ProductOffering createGeneralInfoDTO(GeneralInfoDTO generalInfoDTO) {
@@ -149,6 +153,24 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
         convertToEntity(generalInfoDTO, productOffering);
 
         // Ensure the status is not modified
+        productOffering.setStatus(productOffering.getStatus());
+
+        return productOfferingRepository.save(productOffering);
+    }
+
+    @Override
+    public Product updatePOTax(GeneralInfoDTO generalInfoDTO, int product_id, int tax_code) throws ProductOfferingNotFoundException {
+        ProductOffering productOffering = getProductOfferingById(product_id);
+        if (productOffering == null) {
+            throw new ProductOfferingNotFoundException("Product Offering not found");
+        }
+
+        Tax tax = taxRepository.findById(tax_code)
+                .orElseThrow(() -> new ProductOfferingNotFoundException("Tax not found"));
+
+        convertToEntity(generalInfoDTO, productOffering);
+
+        productOffering.setTax_code(tax.getTaxCode());
         productOffering.setStatus(productOffering.getStatus());
 
         return productOfferingRepository.save(productOffering);

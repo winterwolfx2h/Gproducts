@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MethodsServiceImpl implements MethodsService {
 
+  private static final String MID = "Methods with ID ";
   final MethodsRepository methodsRepository;
 
   @Override
@@ -47,7 +48,6 @@ public class MethodsServiceImpl implements MethodsService {
       Methods existingMethods = existingMethodsOptional.get();
 
       String newName = updatedMethods.getName();
-      // Check if there's another Methods with the same name
       if (!existingMethods.getName().equals(newName) && methodsRepository.existsByName(newName)) {
         throw new MethodsAlreadyExistsException("Methods with name '" + newName + "' already exists.");
       }
@@ -55,16 +55,15 @@ public class MethodsServiceImpl implements MethodsService {
       existingMethods.setUrl(updatedMethods.getUrl());
       return methodsRepository.save(existingMethods);
     } else {
-      throw new ResourceNotFoundException("Methods with ID " + method_Id + " not found.");
+      throw new ResourceNotFoundException(MID + method_Id + " not found.");
     }
   }
 
   @Override
   public String delete(int method_Id) {
     try {
-      Methods methods = findById(method_Id);
       methodsRepository.deleteById(method_Id);
-      return ("Methods with ID " + method_Id + " was successfully deleted");
+      return (MID + method_Id + " was successfully deleted");
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for deleting Methods");
     }
@@ -74,7 +73,7 @@ public class MethodsServiceImpl implements MethodsService {
   public Methods findById(int method_Id) {
     try {
       Optional<Methods> optionalMethods = methodsRepository.findById(method_Id);
-      return optionalMethods.orElseThrow(() -> new RuntimeException("Methods with ID " + method_Id + " not found"));
+      return optionalMethods.orElseThrow(() -> new RuntimeException(MID + method_Id + " not found"));
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for finding Methods");
     }

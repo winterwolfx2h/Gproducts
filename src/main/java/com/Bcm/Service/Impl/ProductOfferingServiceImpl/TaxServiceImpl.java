@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class TaxServiceImpl implements TaxService {
 
-  final TaxRepository TaxRepository;
+  private static final String TID = "Tax with ID ";
+  final TaxRepository taxRepository;
   final ProductOfferingRepository productOfferingRepository;
   final ProductRepository productRepository;
-  private final TaxRepository taxRepository;
 
   @Override
   public Tax create(Tax tax) {
@@ -55,7 +55,7 @@ public class TaxServiceImpl implements TaxService {
   @Override
   public List<Tax> read() {
     try {
-      return TaxRepository.findAll();
+      return taxRepository.findAll();
     } catch (Exception e) {
       throw new RuntimeException("Error occurred while retrieving Taxes");
     }
@@ -98,16 +98,15 @@ public class TaxServiceImpl implements TaxService {
       existingTax.setValidTo(updatedTax.getValidTo());
       return taxRepository.save(existingTax);
     } else {
-      throw new ResourceNotFoundException("Tax with ID " + taxCode + " not found.");
+      throw new ResourceNotFoundException(TID + taxCode + " not found.");
     }
   }
 
   @Override
   public String delete(int taxCode) {
     try {
-      Tax tax = findById(taxCode);
-      TaxRepository.deleteById(taxCode);
-      return ("Tax with ID " + taxCode + " was successfully deleted");
+      taxRepository.deleteById(taxCode);
+      return (TID + taxCode + " was successfully deleted");
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for deleting Tax");
     }
@@ -116,8 +115,8 @@ public class TaxServiceImpl implements TaxService {
   @Override
   public Tax findById(int taxCode) {
     try {
-      Optional<Tax> optionalTax = TaxRepository.findById(taxCode);
-      return optionalTax.orElseThrow(() -> new RuntimeException("Tax with ID " + taxCode + " not found"));
+      Optional<Tax> optionalTax = taxRepository.findById(taxCode);
+      return optionalTax.orElseThrow(() -> new RuntimeException(TID + taxCode + " not found"));
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for finding Tax");
     }
@@ -125,13 +124,13 @@ public class TaxServiceImpl implements TaxService {
 
   @Override
   public boolean existsById(int taxCode) {
-    return TaxRepository.existsById(taxCode);
+    return taxRepository.existsById(taxCode);
   }
 
   @Override
   public List<Tax> searchByName(String name) {
     try {
-      return TaxRepository.searchByName(name);
+      return taxRepository.searchByName(name);
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for searching Tax by keyword");
     }

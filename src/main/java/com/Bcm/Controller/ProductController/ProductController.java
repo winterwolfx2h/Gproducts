@@ -1,10 +1,13 @@
 package com.Bcm.Controller.ProductController;
 
-import com.Bcm.Exception.*;
-import com.Bcm.Model.Product.*;
+import com.Bcm.Exception.ProductNotFoundException;
+import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
+import com.Bcm.Exception.ResourceNotFoundException;
+import com.Bcm.Model.Product.Product;
+import com.Bcm.Model.Product.ProductDTO;
+import com.Bcm.Model.Product.ProductTaxDTO;
 import com.Bcm.Model.ProductOfferingABE.DependentCfsDto;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
-import com.Bcm.Model.ProductOfferingABE.SubClasses.Family.FamilyRequestDTO;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
@@ -35,11 +38,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/Product")
 public class ProductController {
 
+  private static final String error = "An unexpected error occurred";
   final JdbcTemplate base;
   final ProductService productService;
   final ProductOfferingService productOfferingService;
   final FamilyService familyService;
-
   @PersistenceContext private EntityManager entityManager;
 
   @GetMapping("/ProductList")
@@ -48,7 +51,7 @@ public class ProductController {
       List<Product> product = productService.read();
       return ResponseEntity.ok(product);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -62,7 +65,6 @@ public class ProductController {
   public Map<String, String> searchProductResDetails(@RequestParam Integer productId) {
     Map<String, String> response = new HashMap<>();
 
-    // SQL query to check if the product exists
     String checkProductSql = "SELECT COUNT(*) FROM product_offering WHERE product_id = ?";
     int productCount = base.queryForObject(checkProductSql, new Object[] {productId}, Integer.class);
 
@@ -71,7 +73,6 @@ public class ProductController {
       return response;
     }
 
-    // SQL query to get the names of the PhysicalResource and CustomerFacingServiceSpec for the specified product_id
     String sql =
         "SELECT pr.name AS physical_resource_name, cfss.name AS service_spec_name "
             + "FROM product_offering po "
@@ -79,7 +80,6 @@ public class ProductController {
             + "LEFT JOIN customer_facing_service_spec cfss ON po.service_id = cfss.service_id "
             + "WHERE po.product_id = ?";
 
-    // Execute the query and map the result set to a Map
     Map<String, String> productDetails;
     productDetails =
         base.queryForObject(
@@ -137,13 +137,10 @@ public class ProductController {
 
       return ResponseEntity.ok(productDetails);
     } catch (DataAccessException e) {
-      // Handle database-related exceptions
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error: " + e.getMessage());
     } catch (RuntimeException e) {
-      // Handle runtime exceptions
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Runtime error: " + e.getMessage());
     } catch (Exception e) {
-      // Handle any other exceptions
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An unexpected error occurred: " + e.getMessage());
     }
@@ -191,7 +188,7 @@ public class ProductController {
     } catch (ResourceNotFoundException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -239,7 +236,7 @@ public class ProductController {
     } catch (ResourceNotFoundException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -247,12 +244,10 @@ public class ProductController {
   public ResponseEntity<?> createProductDTO(@Valid @RequestBody ProductDTO dto) {
     try {
 
-      // Check for duplicate product by name
       if (productOfferingService.existsByName(dto.getName())) {
         return ResponseEntity.badRequest().body("A Product with the same name already exists.");
       }
 
-      // Convert DTO to entity and save
       Product createdProduct = productService.createProductDTO(dto);
 
       return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
@@ -260,7 +255,7 @@ public class ProductController {
     } catch (ProductOfferingAlreadyExistsException ex) {
       return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     } catch (Exception e) {
-      e.printStackTrace(); // Print stack trace for debugging
+      e.printStackTrace();
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An unexpected error occurred while creating the Product . Error: " + e.getMessage());
     }
@@ -283,7 +278,6 @@ public class ProductController {
       throw new IllegalArgumentException("At least one dependentCfsDtos must be provided");
     }
 
-    // Vérification de l'existence des product_id dans la table product
     String query = "SELECT COUNT(*) FROM product WHERE product_id = ?";
     for (DependentCfsDto dto : dependentCfsDtos) {
       int count = base.queryForObject(query, new Object[] {dto.getProductId()}, Integer.class);
@@ -310,22 +304,6 @@ public class ProductController {
         });
 
     return ResponseEntity.ok("dependentCfs inserted successfully");
-  }
-
-  private void ensureRelatedEntitiesExist(Product product) {
-    ensureFamilyExists(product.getFamilyName());
-  }
-
-  private void ensureFamilyExists(String familyName) {
-    if (familyName != null && !familyName.isEmpty()) {
-
-      if (!familyService.findByNameexist(familyName)) {
-
-        FamilyRequestDTO family = new FamilyRequestDTO();
-        family.setName(familyName);
-        familyService.createOrUpdateFamily(family);
-      }
-    }
   }
 
   @PutMapping("update/{productId}")

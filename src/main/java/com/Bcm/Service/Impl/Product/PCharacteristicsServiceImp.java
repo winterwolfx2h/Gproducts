@@ -28,15 +28,13 @@ public class PCharacteristicsServiceImp implements PCharacteristicsService {
     }
 
     try {
-      // Fetch the product by its Product_id
       Product product =
           productRepository
               .findById(productCharacteristics.getProduct_id())
-              .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+              .orElseThrow(() -> new EntityNotFoundException("Product haven't been found"));
 
       productRepository.save(product);
 
-      // Save the ProductCharacteristics
       return pCharacteristicsRepository.save(productCharacteristics);
     } catch (DataIntegrityViolationException e) {
       throw new DatabaseOperationException("Error creating product  Characteristic", e);
@@ -69,7 +67,7 @@ public class PCharacteristicsServiceImp implements PCharacteristicsService {
 
       return pCharacteristicsRepository.save(existingProductCharacteristics);
     } else {
-      throw new RuntimeException("ProductCharacteristics with ID: " + pCharacteristic_code + " not found");
+      throw new RuntimeException("ProductCharacteristics with ID: " + pCharacteristic_code + " was not found");
     }
   }
 
@@ -83,7 +81,7 @@ public class PCharacteristicsServiceImp implements PCharacteristicsService {
   public ProductCharacteristics findById(int pCharacteristic_code) {
     Optional<ProductCharacteristics> optionalPlan = pCharacteristicsRepository.findById(pCharacteristic_code);
     return optionalPlan.orElseThrow(
-        () -> new RuntimeException("ProductCharacteristics with ID " + pCharacteristic_code + " not found"));
+        () -> new RuntimeException("ProductCharacteristics with ID " + pCharacteristic_code + " Wasn't found"));
   }
 
   @Override
@@ -92,7 +90,7 @@ public class PCharacteristicsServiceImp implements PCharacteristicsService {
       Optional<ProductCharacteristics> optionalProductCharacteristics =
           pCharacteristicsRepository.findByValueDescription_Value(description);
       return optionalProductCharacteristics.orElseThrow(
-          () -> new RuntimeException("ProductCharacteristics with Description " + description + " not found"));
+          () -> new RuntimeException("ProductCharacteristics with Description " + description + " couldn't be found"));
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for finding ProductCharacteristics");
     }
@@ -105,11 +103,9 @@ public class PCharacteristicsServiceImp implements PCharacteristicsService {
     if (existingCharacteristic.isPresent()) {
       ProductCharacteristics existingProductCharacteristics = existingCharacteristic.get();
       existingProductCharacteristics.setName(productCharacteristics.getName());
-      // Set other fields as necessary
       return pCharacteristicsRepository.save(existingProductCharacteristics);
     } else {
-      // Add new Characteristic
-      productCharacteristics.setPCharacteristic_code(pCharacteristic_code); // Ensure the ID is set correctly
+      productCharacteristics.setPCharacteristic_code(pCharacteristic_code);
       return pCharacteristicsRepository.save(productCharacteristics);
     }
   }

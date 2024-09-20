@@ -18,8 +18,8 @@ public class GeneralInfoMapper {
     dto.setPoType(productOffering.getPoType());
     dto.setParent(productOffering.getParent());
     dto.setWorkingStep(productOffering.getWorkingStep());
-    dto.setSellInd(productOffering.getSellInd()); // name changed
-    dto.setQuantityInd(productOffering.getQuantityInd()); // name changed
+    dto.setSellInd(productOffering.getSellInd());
+    dto.setQuantityInd(productOffering.getQuantityInd());
     dto.setCategory(productOffering.getCategory());
     dto.setBS_externalId(productOffering.getBS_externalId());
     dto.setCS_externalId(productOffering.getCS_externalId());

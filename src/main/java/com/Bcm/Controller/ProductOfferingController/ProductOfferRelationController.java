@@ -29,6 +29,9 @@ public class ProductOfferRelationController {
 
   final JdbcTemplate base;
   final ProductOfferRelationService productOfferRelationService;
+  private static final String MSG = "message";
+  private static final String PID = "Product with ID ";
+  private static final String query = "SELECT COUNT(*) FROM product WHERE product_id = ?";
 
   @GetMapping("/searchRelationName")
   public List<RelationResponse> searchRelationName(@RequestParam List<Integer> relatedProductIds) {
@@ -36,7 +39,6 @@ public class ProductOfferRelationController {
       throw new IllegalArgumentException("At least one relatedProductId must be provided");
     }
 
-    // Construct placeholders for the IN clause
     String placeholders = relatedProductIds.stream().map(id -> "?").collect(Collectors.joining(", "));
 
     String sqlRelation =
@@ -49,20 +51,17 @@ public class ProductOfferRelationController {
             + ")"
             + "ORDER BY por.product_id";
 
-    // Convert List<Integer> to Object[] for query parameters
     Object[] params = relatedProductIds.toArray();
 
     List<RelationResponse> relationResponses =
         base.query(sqlRelation, params, new BeanPropertyRowMapper<>(RelationResponse.class));
 
     if (relationResponses.isEmpty()) {
-      // Check if the provided IDs exist in the product table
       String sqlProductCheck = "SELECT product_id FROM public.product WHERE product_id IN (" + placeholders + ")";
       List<Integer> existingProductIds = base.queryForList(sqlProductCheck, params, Integer.class);
 
-      // Determine missing product IDs
       List<Integer> missingProductIds =
-          relatedProductIds.stream().filter(id -> !existingProductIds.contains(id)).collect(Collectors.toList());
+          relatedProductIds.stream().filter(id -> !existingProductIds.contains(id)).toList();
 
       if (!missingProductIds.isEmpty()) {
         throw new EntityNotFoundException("Product IDs not found: " + missingProductIds);
@@ -79,7 +78,7 @@ public class ProductOfferRelationController {
         "SELECT distinct p.product_id, p.name, poff.po_type "
             + "FROM public.product p "
             + "JOIN public.product_offering poff ON poff.product_id = p.product_id "
-            + "WHERE poff.po_type <> 'PO-Plan' " // exclude product_offering with po_type = 'PO-Plan'
+            + "WHERE poff.po_type <> 'PO-Plan' "
             + "AND p.product_id NOT IN ("
             + "  SELECT distinct por.related_product_id "
             + "  FROM public.product_offer_relation por "
@@ -109,28 +108,23 @@ public class ProductOfferRelationController {
   @GetMapping("/searchPO-PlanByProductId")
   public ResponseEntity<List<Map<String, Object>>> searchPOPlanByProductId(@RequestParam Integer productId) {
 
-    // Check if product exists
-    String checkProductQuery = "SELECT COUNT(*) FROM product WHERE product_id = ?";
+    String checkProductQuery = query;
     Integer productCount = base.queryForObject(checkProductQuery, new Object[] {productId}, Integer.class);
 
     if (productCount == null || productCount == 0) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body(Collections.singletonList(Map.of("message", "Product with ID " + productId + " does not exist")));
+          .body(Collections.singletonList(Map.of(MSG, PID + productId + " does not exist")));
     }
 
-    // Check if product has any associated plans
     String checkPlanAssociationQuery =
         "SELECT COUNT(*) FROM product_offer_relation WHERE product_id = ? AND type = 'Plan'";
     Integer planCount = base.queryForObject(checkPlanAssociationQuery, new Object[] {productId}, Integer.class);
 
     if (planCount == null || planCount == 0) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT)
-          .body(
-              Collections.singletonList(
-                  Map.of("message", "Product with ID " + productId + " has no associated plans")));
+          .body(Collections.singletonList(Map.of(MSG, PID + productId + " has no associated plans")));
     }
 
-    // Query to fetch plans associated with the product
     String sqlSearchByProductId =
         "SELECT distinct p.product_id, po.name AS product_name,po.family_name, po. sub_family, p.related_product_id,"
             + " p.type, p.sub_Type, pofo.markets, pofo.submarkets FROM product_offer_relation p JOIN product po ON"
@@ -160,9 +154,7 @@ public class ProductOfferRelationController {
 
     if (result.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT)
-          .body(
-              Collections.singletonList(
-                  Map.of("message", "Product with ID " + productId + " has no associated plans")));
+          .body(Collections.singletonList(Map.of(MSG, PID + productId + " has no associated plans")));
     }
     return ResponseEntity.ok(result);
   }
@@ -170,16 +162,14 @@ public class ProductOfferRelationController {
   @GetMapping("/searchMandatoryOpt-ByProductId")
   public ResponseEntity<List<Map<String, Object>>> searchMandatoryOptByProductId(@RequestParam Integer productId) {
 
-    // Check if product exists
-    String checkProductQuery = "SELECT COUNT(*) FROM product WHERE product_id = ?";
+    String checkProductQuery = query;
     Integer productCount = base.queryForObject(checkProductQuery, new Object[] {productId}, Integer.class);
 
     if (productCount == null || productCount == 0) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body(Collections.singletonList(Map.of("message", "Product with ID " + productId + " does not exist")));
+          .body(Collections.singletonList(Map.of(MSG, PID + productId + " does not exist")));
     }
 
-    // Check if product has any associated MandatoryOpts
     String checkMandatoryOptAssociationQuery =
         "SELECT COUNT(*) FROM product_offer_relation WHERE (product_id = ?) AND (type = 'AutoInclude' OR type ="
             + " 'Optional')";
@@ -188,12 +178,9 @@ public class ProductOfferRelationController {
 
     if (MandatoryOptCount == null || MandatoryOptCount == 0) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT)
-          .body(
-              Collections.singletonList(
-                  Map.of("message", "Product with ID " + productId + " has no associated plans")));
+          .body(Collections.singletonList(Map.of(MSG, PID + productId + " has no associated plans")));
     }
 
-    // Query to fetch MandatoryOpts associated with the product
     String sqlSearchByProductId =
         "SELECT distinct p.product_id, po.name AS product_name, p.related_product_id, p.type "
             + "FROM product_offer_relation p "
@@ -218,24 +205,20 @@ public class ProductOfferRelationController {
 
     if (result.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT)
-          .body(
-              Collections.singletonList(
-                  Map.of("message", "Product with ID " + productId + " has no associated MandatoryOpts")));
+          .body(Collections.singletonList(Map.of(MSG, PID + productId + " has no associated MandatoryOpts")));
     }
     return ResponseEntity.ok(result);
   }
 
   @GetMapping("/searchByProductId")
   public List<Map<String, Object>> searchByProductID(@RequestParam Integer productId) {
-    // Check if the productId exists in the database
-    String sqlCheckProductId = "SELECT COUNT(*) FROM product WHERE product_id = ?";
+    String sqlCheckProductId = query;
     int count = base.queryForObject(sqlCheckProductId, Integer.class, productId);
 
     if (count == 0) {
-      throw new IllegalArgumentException("Product with ID " + productId + " does not exist.");
+      throw new IllegalArgumentException(PID + productId + " does not exist.");
     }
 
-    // Query to retrieve related products
     String sqlSearchByProductId =
         "SELECT distinct por.product_id AS product_id, por.related_product_id AS related_product_id, po.name AS"
             + " product_name, por.type FROM product_offer_relation por JOIN product po ON por.related_product_id ="
@@ -257,9 +240,8 @@ public class ProductOfferRelationController {
               }
             });
 
-    // Check if any results were found
     if (result.isEmpty()) {
-      throw new IllegalArgumentException("Product with ID " + productId + " has no associations.");
+      throw new IllegalArgumentException(PID + productId + " has no associations.");
     }
 
     return result;

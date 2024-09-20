@@ -46,15 +46,12 @@ public class POAttributeController {
       List<POAttributes> createdPOAttributesList = new ArrayList<>();
 
       for (POAttributes poAttribute : POAttributesList) {
-        // Validate dependentCfs
         String dependentCfs = poAttribute.getDependentCfs();
         if (dependentCfs != null
             && !dependentCfs.isEmpty()
             && !customerFacingServiceSpecService.findByNameexist(dependentCfs)) {
           return ResponseEntity.badRequest().body("Service with name '" + dependentCfs + "' does not exist.");
         }
-
-        // Validate and create POAttributes
         String attributeCategoryName = poAttribute.getCategory();
         if (attributeCategoryName != null && !attributeCategoryName.isEmpty()) {
           for (POAttributes.ValueDescription valueDescription :
@@ -92,13 +89,11 @@ public class POAttributeController {
 
   @GetMapping("/searchByProductId")
   public List<POAttributes> searchByProductID(@RequestParam Integer productId) {
-    // SQL query to get all columns from POAttributes where product_id matches
     String sqlSearchByProductId =
         "SELECT po_attribute_code, name, category, bsexternal_id, csexternal_id, attribute_type, data_type, mandatory,"
             + " change_ind ,display_format, externalcfs, dependent_cfs, product_id FROM poattributes WHERE product_id ="
             + " ?";
 
-    // Execute the query and map the result set to POAttributes objects
     List<POAttributes> poAttributesResponses;
     poAttributesResponses =
         base.query(
@@ -122,7 +117,6 @@ public class POAttributeController {
                 response.setDependentCfs(rs.getString("dependent_cfs"));
                 response.setProduct_id(rs.getInt("product_id"));
 
-                // Query for ValueDescription list
                 String sqlValueDescription =
                     "SELECT value, description, defaultvalue FROM attributes_value_des WHERE po_attribute_code = ?";
                 List<POAttributes.ValueDescription> valueDescriptions =
@@ -141,7 +135,6 @@ public class POAttributeController {
                         });
                 response.setValueDescription(valueDescriptions);
 
-                // Query for defaultMaxSize list
                 String sqlDefaultMaxSize =
                     "SELECT max_size, defaultvalue, value_des FROM attributes_domaine WHERE po_attribute_code = ?";
                 List<POAttributes.DefaultMaxSize> defaultMaxSizes =
@@ -220,7 +213,4 @@ public class POAttributeController {
             "There was an error processing the request.");
     return new RuntimeException(errorMessage.toString(), e);
   }
-
-  @CacheEvict(value = "AttributesCache", allEntries = true)
-  public void invalidateAttributesCache() {}
 }

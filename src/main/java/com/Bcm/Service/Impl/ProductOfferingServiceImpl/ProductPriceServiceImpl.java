@@ -25,17 +25,15 @@ public class ProductPriceServiceImpl implements ProductPriceService {
   final ProductPriceRepository productPriceRepository;
   final ProductOfferingRepository productOfferingRepository;
   final ProductRepository productRepository;
+  private static final String PPID = "ProductPrice with ID ";
 
   @Override
   public ProductPrice create(ProductPrice productPrice) {
     try {
-      // Fetch the product by its Product_id
       Product product =
           productRepository
               .findById(productPrice.getProduct_id())
               .orElseThrow(() -> new EntityNotFoundException("Product not found"));
-
-      // Update the product's working step
       productRepository.save(product);
       return productPriceRepository.save(productPrice);
     } catch (DataIntegrityViolationException e) {
@@ -52,7 +50,6 @@ public class ProductPriceServiceImpl implements ProductPriceService {
       if (!productPriceRepository.existsById(productPrice.getProductPriceCode())) {
         createdProductPrices.add(productPriceRepository.save(productPrice));
 
-        // Fetch the ProductOffering by its Product_id
         int productId = productPrice.getProduct_id();
         ProductOffering productOffering =
             productOfferingRepository
@@ -60,7 +57,6 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                 .orElseThrow(
                     () -> new EntityNotFoundException("ProductOffering not found for Product_id: " + productId));
 
-        // Update the ProductOffering's working step
         productOffering.setWorkingStep("Product Price");
         productOfferingRepository.save(productOffering);
       }
@@ -88,16 +84,15 @@ public class ProductPriceServiceImpl implements ProductPriceService {
       existingProductPrice.setRecuringAmount(updatedProductPrice.getRecuringAmount());
       return productPriceRepository.save(existingProductPrice);
     } else {
-      throw new ResourceNotFoundException("ProductPrice with ID " + productPriceCode + " not found.");
+      throw new ResourceNotFoundException(PPID + productPriceCode + " not found.");
     }
   }
 
   @Override
   public String delete(int productPriceCode) {
     try {
-      ProductPrice productPrice = findById(productPriceCode);
       productPriceRepository.deleteById(productPriceCode);
-      return ("ProductPrice with ID " + productPriceCode + " was successfully deleted");
+      return (PPID + productPriceCode + " was successfully deleted");
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for deleting ProductPrice");
     }
@@ -107,8 +102,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
   public ProductPrice findById(int productPriceCode) {
     try {
       Optional<ProductPrice> optionalProductPrice = productPriceRepository.findById(productPriceCode);
-      return optionalProductPrice.orElseThrow(
-          () -> new RuntimeException("ProductPrice with ID " + productPriceCode + " not found"));
+      return optionalProductPrice.orElseThrow(() -> new RuntimeException(PPID + productPriceCode + " not found"));
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for finding ProductPrice");
     }

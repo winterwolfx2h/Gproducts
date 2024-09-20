@@ -20,10 +20,6 @@ public class PoBusinessProcessController {
   @Value("${insertRelation}")
   String sqlInsertPOBusiness;
 
-  //    String sqlInsertPOBusiness = "INSERT INTO public.po_business_process(" +
-  //            "product_id, business_process_id)" +
-  //            "VALUES (?, ?)";
-
   String sqlAllPOBusiness = "SELECT product_id, business_process_id " + "FROM public.po_business_process";
 
   @PostMapping("/addPo_BusinessProcess")

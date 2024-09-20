@@ -64,7 +64,6 @@ public class BusinessProcessServiceImpl implements BusinessProcessService {
   @Override
   public String delete(int businessProcess_id) {
     try {
-      BusinessProcess businessProcess = findById(businessProcess_id);
       businessProcessRepository.deleteById(businessProcess_id);
       return ("businessProcess with ID " + businessProcess_id + " was successfully deleted");
     } catch (IllegalArgumentException e) {

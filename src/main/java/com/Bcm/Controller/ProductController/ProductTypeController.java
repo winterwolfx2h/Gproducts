@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProductTypeController {
 
   final ProductTypeService productTypeService;
+  private static final String error = "An unexpected error occurred";
 
   @PostMapping("/addProductType")
   @CacheEvict(value = "TypesCache", allEntries = true)
@@ -38,7 +39,7 @@ public class ProductTypeController {
       List<ProductType> types = productTypeService.read();
       return ResponseEntity.ok(types);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -48,7 +49,7 @@ public class ProductTypeController {
       ProductType ProductType = productTypeService.findById(productTypeCode);
       return ResponseEntity.ok(ProductType);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -60,7 +61,7 @@ public class ProductTypeController {
       ProductType updatedGroup = productTypeService.update(productTypeCode, updatedProductType);
       return ResponseEntity.ok(updatedGroup);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -71,7 +72,7 @@ public class ProductTypeController {
       String resultMessage = productTypeService.delete(productTypeCode);
       return ResponseEntity.ok(resultMessage);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -81,10 +82,7 @@ public class ProductTypeController {
       List<ProductType> searchResults = productTypeService.searchByKeyword(typeName);
       return ResponseEntity.ok(searchResults);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
-
-  @CacheEvict(value = "TypesCache", allEntries = true)
-  public void invalidateTypesCache() {}
 }

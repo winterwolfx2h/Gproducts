@@ -84,9 +84,7 @@ public class ProductPriceController {
                 }
               });
 
-      // Check if the list is empty (productId does not exist in product_price table)
       if (productPricesResponses.isEmpty()) {
-        // Check if the productId exists in the product table
         String checkProductExistsQuery = "SELECT COUNT(*) FROM product WHERE product_id = ?";
         int productCount = base.queryForObject(checkProductExistsQuery, Integer.class, productId);
 
@@ -101,7 +99,7 @@ public class ProductPriceController {
       return ResponseEntity.ok(productPricesResponses);
 
     } catch (DataAccessException e) {
-      // Handle database access exceptions
+
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("Error occurred while fetching product prices for productId: " + productId);
     }

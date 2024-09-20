@@ -19,6 +19,8 @@ public class EntityServiceImpl implements EntityService {
 
   final EntityRepository entityRepository;
   final ProductOfferingService productOfferingService;
+  private static final String EID = "Entity with ID ";
+  private static final String invArg = "Invalid argument provided for finding Entity";
 
   @Override
   public EligibilityEntity create(EligibilityEntity Entity) {
@@ -48,7 +50,6 @@ public class EntityServiceImpl implements EntityService {
       EligibilityEntity existingEntity = existingEntityOptional.get();
 
       String newName = updatedEntity.getName();
-      // Check if there's another Entity with the same name
       if (!existingEntity.getName().equals(newName) && entityRepository.existsByName(newName)) {
         throw new EntityAlreadyExistsException("Entity with name '" + newName + "' already exists.");
       }
@@ -58,17 +59,15 @@ public class EntityServiceImpl implements EntityService {
       existingEntity.setChannelCode(updatedEntity.getChannelCode());
       return entityRepository.save(existingEntity);
     } else {
-      throw new ResourceNotFoundException("Entity with ID " + entityCode + " not found.");
+      throw new ResourceNotFoundException(EID + entityCode + " not found.");
     }
   }
 
   @Override
   public String delete(int entityCode) {
     try {
-      EligibilityEntity Entity = findById(entityCode);
       entityRepository.deleteById(entityCode);
-      // updateProductOfferingsWithDeletedEntity(Entity.getName());
-      return ("Entity with ID " + entityCode + " was successfully deleted");
+      return (EID + entityCode + " was successfully deleted");
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for deleting Entity");
     }
@@ -86,9 +85,9 @@ public class EntityServiceImpl implements EntityService {
   public EligibilityEntity findById(int entityCode) {
     try {
       Optional<EligibilityEntity> optionalEntity = entityRepository.findById(entityCode);
-      return optionalEntity.orElseThrow(() -> new RuntimeException("Entity with ID " + entityCode + " not found"));
+      return optionalEntity.orElseThrow(() -> new RuntimeException(EID + entityCode + " not found"));
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding Entity");
+      throw new RuntimeException(invArg);
     }
   }
 
@@ -105,9 +104,9 @@ public class EntityServiceImpl implements EntityService {
   public EligibilityEntity findByName(String name) {
     try {
       Optional<EligibilityEntity> optionalEntity = entityRepository.findByName(name);
-      return optionalEntity.orElseThrow(() -> new RuntimeException("Entity with ID " + name + " not found"));
+      return optionalEntity.orElseThrow(() -> new RuntimeException(EID + name + " not found"));
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding Entity");
+      throw new RuntimeException(invArg);
     }
   }
 
@@ -115,9 +114,9 @@ public class EntityServiceImpl implements EntityService {
   public boolean findByNameexist(String name) {
     try {
       Optional<EligibilityEntity> optionalEntity = entityRepository.findByName(name);
-      return optionalEntity.isPresent(); // Return true if Entity exists, false otherwise
+      return optionalEntity.isPresent();
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding Entity");
+      throw new RuntimeException(invArg);
     }
   }
 

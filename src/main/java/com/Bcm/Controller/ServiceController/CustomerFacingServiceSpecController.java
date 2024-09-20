@@ -30,13 +30,13 @@ public class CustomerFacingServiceSpecController {
 
   final CustomerFacingServiceSpecService customerFacingServiceSpecService;
   final LogicalResourceService logicalResourceService;
+  private static final String error = "An unexpected error occurred";
 
   @PostMapping("/addCustomerFacingServiceSpec")
   public ResponseEntity<?> createCustomerFacingServiceSpec(
       @RequestBody CustomerFacingServiceSpec customerFacingServiceSpec) {
     try {
 
-      // Check if customerFacingServiceSpec with the same name exists
       if (customerFacingServiceSpecService.existsByName(customerFacingServiceSpec.getName())) {
         return ResponseEntity.badRequest()
             .body("A product CustomerFacingServiceSpec with the same name already exists.");
@@ -51,7 +51,6 @@ public class CustomerFacingServiceSpecController {
     } catch (InvalidInputException e) {
       return ResponseEntity.badRequest().body(e.getMessage());
     } catch (RuntimeException e) {
-      // Log the exception message for debugging
       e.printStackTrace();
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
     }
@@ -63,7 +62,7 @@ public class CustomerFacingServiceSpecController {
       List<CustomerFacingServiceSpec> customerFacingServiceSpecs = customerFacingServiceSpecService.read();
       return ResponseEntity.ok(customerFacingServiceSpecs);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -73,7 +72,7 @@ public class CustomerFacingServiceSpecController {
       CustomerFacingServiceSpec customerFacingServiceSpec = customerFacingServiceSpecService.findById(serviceId);
       return ResponseEntity.ok(customerFacingServiceSpec);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -88,7 +87,7 @@ public class CustomerFacingServiceSpecController {
     } catch (ServiceAlreadyExistsException e) {
       return ResponseEntity.badRequest().body("Service with the same type already exists");
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -98,7 +97,7 @@ public class CustomerFacingServiceSpecController {
       String resultMessage = customerFacingServiceSpecService.delete(serviceId);
       return ResponseEntity.ok(resultMessage);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -112,7 +111,7 @@ public class CustomerFacingServiceSpecController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -154,7 +153,6 @@ public class CustomerFacingServiceSpecController {
               }
             });
 
-    // Check if any results were found
     if (result.isEmpty()) {
       throw new IllegalArgumentException("No data found for market " + marketName + " and sub-market " + subMarketName);
     }

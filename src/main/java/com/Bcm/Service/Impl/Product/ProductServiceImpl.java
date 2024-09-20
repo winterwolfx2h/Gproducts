@@ -40,7 +40,7 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public List<Product> searchByFamilyName(String familyName) {
     List<Product> products = productRepository.findByFamilyName(familyName);
-    boolean hasLinkedProduct = products.stream().anyMatch(product -> product instanceof Product);
+    boolean hasLinkedProduct = products.stream().anyMatch(Product.class::isInstance);
     if (!hasLinkedProduct) {
       return Collections.emptyList();
     }
@@ -65,14 +65,12 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public Product createProductDTO(ProductDTO dto) {
-    // Check if an existing product with the same name already exists
     Optional<Product> existingProduct = productRepository.findByName(dto.getName());
     if (existingProduct.isPresent()) {
       throw new ProductOfferingAlreadyExistsException(
           "A product with the name '" + dto.getName() + "' already exists.");
     }
 
-    // Create new Product entity from DTO
     Product product = new Product();
     product.setName(dto.getName());
     product.setProductType(dto.getProductType());
@@ -85,26 +83,17 @@ public class ProductServiceImpl implements ProductService {
     product.setStockInd(dto.getStockInd());
     product.setFamilyName(dto.getFamilyName());
     product.setSubFamily(dto.getSubFamily());
-    // product.setExternalId(dto.getExternalId()); to update
     product.setStatus("Working state");
 
-    // Save the new Product
-    Product savedProduct = productRepository.save(product);
-
-    return savedProduct;
+    return productRepository.save(product);
   }
 
   @Override
   public Product updateProdStockInd(ProductDTO dto, int productId, boolean stockInd) throws ProductNotFoundException {
     Product product = getProductById(productId);
 
-    // Update the stockInd field of the GeneralInfoDTO
     product.setStockInd(stockInd);
-
-    // Update the product  with the new general info
     product.setStockInd(stockInd);
-
-    // Save the updated product
     return productRepository.save(product);
   }
 
@@ -128,7 +117,6 @@ public class ProductServiceImpl implements ProductService {
     product.setSellInd(dto.getSellInd());
     product.setQuantityInd(dto.getQuantityInd());
 
-    // Save the updated Product
     return productRepository.save(product);
   }
 }

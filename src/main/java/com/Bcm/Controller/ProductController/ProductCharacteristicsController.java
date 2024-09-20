@@ -47,7 +47,6 @@ public class ProductCharacteristicsController {
               .body("Product Characteristic is missing for one or more ProductCharacteristics.");
         }
 
-        // Validate and create ProductCharacteristics
         if (pCharacteristic.getValueDescription() == null) {
           pCharacteristic.setValueDescription(new ArrayList<>());
         }
@@ -72,12 +71,10 @@ public class ProductCharacteristicsController {
 
   @GetMapping("/searchByProductId")
   public List<ProductCharacteristics> searchByProductID(@RequestParam Integer productId) {
-    // SQL query to get all columns from ProductCharacteristics where product_id matches
     String sqlSearchByProductId =
         "SELECT p_characteristic_code, name, mandatory,"
             + " display_format, product_id FROM product_characteristics WHERE product_id = ?";
 
-    // Execute the query and map the result set to ProductCharacteristics objects
     List<ProductCharacteristics> PCharacteristicsResponses;
     PCharacteristicsResponses =
         base.query(
@@ -93,7 +90,6 @@ public class ProductCharacteristicsController {
                 response.setDisplayFormat(rs.getString("display_format"));
                 response.setProduct_id(rs.getInt("product_id"));
 
-                // Query for CharacteristicValueDes list
                 String sqlValueDescription =
                     "SELECT value, description FROM characteristic_value_des WHERE p_characteristic_code = ?";
                 List<ProductCharacteristics.CharacteristicValueDes> valueDescriptions =
@@ -158,7 +154,4 @@ public class ProductCharacteristicsController {
             "There was an error processing the request.");
     return new RuntimeException(errorMessage.toString(), e);
   }
-
-  @CacheEvict(value = "CharacteristicsCache", allEntries = true)
-  public void invalidateCharacteristicsCache() {}
 }

@@ -22,6 +22,7 @@ import org.springframework.web.context.request.WebRequest;
 public class ProductRelationController {
 
   final ProductRelationService productRelationService;
+  private static final String error = "An unexpected error occurred";
 
   @PostMapping("/addProdRelation")
   @CacheEvict(value = "ProdRelationCache", allEntries = true)
@@ -37,7 +38,7 @@ public class ProductRelationController {
       List<ProductRelation> productRelations = productRelationService.read();
       return ResponseEntity.ok(productRelations);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -47,7 +48,7 @@ public class ProductRelationController {
       ProductRelation productRelation = productRelationService.findById(poRelation_Code);
       return ResponseEntity.ok(productRelation);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -59,7 +60,7 @@ public class ProductRelationController {
       ProductRelation updatedGroup = productRelationService.update(poRelation_Code, updatedproductRelation);
       return ResponseEntity.ok(updatedGroup);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -70,7 +71,7 @@ public class ProductRelationController {
       String resultMessage = productRelationService.delete(poRelation_Code);
       return ResponseEntity.ok(resultMessage);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -88,7 +89,4 @@ public class ProductRelationController {
 
     return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
-
-  @CacheEvict(value = "ProdRelationCache", allEntries = true)
-  public void invalidateProdRelationCache() {}
 }

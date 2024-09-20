@@ -21,6 +21,7 @@ import org.springframework.web.context.request.WebRequest;
 public class LogicalResourceController {
 
   final LogicalResourceService logicalResourceService;
+  private static final String error = "An unexpected error occurred";
 
   @PostMapping("/addLogicalResource")
   public ResponseEntity<?> createLogicalResource(@RequestBody LogicalResource logicalResource) {
@@ -41,7 +42,7 @@ public class LogicalResourceController {
       List<LogicalResource> LogicalResources = logicalResourceService.read();
       return ResponseEntity.ok(LogicalResources);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -51,7 +52,7 @@ public class LogicalResourceController {
       LogicalResource LogicalResource = logicalResourceService.findById(logResourceId);
       return ResponseEntity.ok(LogicalResource);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -62,7 +63,7 @@ public class LogicalResourceController {
       LogicalResource updatedGroup = logicalResourceService.update(logResourceId, updatedLogicalResource);
       return ResponseEntity.ok(updatedGroup);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -72,7 +73,7 @@ public class LogicalResourceController {
       String resultMessage = logicalResourceService.delete(logResourceId);
       return ResponseEntity.ok(resultMessage);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 

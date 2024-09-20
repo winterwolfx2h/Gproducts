@@ -28,6 +28,7 @@ import org.springframework.web.context.request.WebRequest;
 public class PhysicalResourceController {
   final JdbcTemplate base;
   final PhysicalResourceService physicalResourceService;
+  private static final String error = "An unexpected error occurred";
 
   @PostMapping("/addPhysicalResource")
   public ResponseEntity<?> createPhysicalResource(@RequestBody PhysicalResource physicalResource) {
@@ -37,7 +38,7 @@ public class PhysicalResourceController {
     } catch (ServiceAlreadyExistsException e) {
       return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     } catch (Exception e) {
-      return new ResponseEntity<>("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -47,7 +48,7 @@ public class PhysicalResourceController {
       List<PhysicalResource> PhysicalResources = physicalResourceService.read();
       return ResponseEntity.ok(PhysicalResources);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -57,7 +58,7 @@ public class PhysicalResourceController {
       PhysicalResource PhysicalResource = physicalResourceService.findById(PR_id);
       return ResponseEntity.ok(PhysicalResource);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -68,7 +69,7 @@ public class PhysicalResourceController {
       PhysicalResource updatedGroup = physicalResourceService.update(PR_id, updatedPhysicalResource);
       return ResponseEntity.ok(updatedGroup);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -78,7 +79,7 @@ public class PhysicalResourceController {
       String resultMessage = physicalResourceService.delete(PR_id);
       return ResponseEntity.ok(resultMessage);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -108,7 +109,7 @@ public class PhysicalResourceController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -125,10 +126,8 @@ public class PhysicalResourceController {
             + "    sub_market.sub_market_name, "
             + "    lr.pr_id AS pr_id, "
             + "    lr.physical_resource_format, "
-            + // Include physical_resource_format
-            "    lr.physical_resource_type "
-            + // Include physical_resource_type
-            "FROM public.physical_resource lr "
+            + "    lr.physical_resource_type "
+            + "FROM public.physical_resource lr "
             + "JOIN public.market market ON lr.po_market_code = market.po_market_code "
             + "JOIN public.sub_market sub_market ON lr.po_sub_market_code = sub_market.po_sub_market_code "
             + "WHERE market.name = ? AND sub_market.sub_market_name = ? "
@@ -144,20 +143,16 @@ public class PhysicalResourceController {
                 Map<String, Object> response = new HashMap<>();
                 response.put("resource_name", rs.getString("resource_name"));
                 response.put("po_market_code", rs.getInt("po_market_code"));
-                response.put("market_name", rs.getString("market_name")); // corrected key name
+                response.put("market_name", rs.getString("market_name"));
                 response.put("po_sub_market_code", rs.getInt("po_sub_market_code"));
                 response.put("sub_market_name", rs.getString("sub_market_name"));
                 response.put("pr_id", rs.getString("pr_id"));
-                response.put(
-                    "physical_resource_format",
-                    rs.getString("physical_resource_format")); // Add physical_resource_format
-                response.put(
-                    "physical_resource_type", rs.getString("physical_resource_type")); // Add physical_resource_type
+                response.put("physical_resource_format", rs.getString("physical_resource_format"));
+                response.put("physical_resource_type", rs.getString("physical_resource_type"));
                 return response;
               }
             });
 
-    // Check if any results were found
     if (result.isEmpty()) {
       throw new IllegalArgumentException("No data found for market " + marketName + " and sub-market " + subMarketName);
     }

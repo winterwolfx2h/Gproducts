@@ -5,11 +5,7 @@ import com.Bcm.Exception.ProductOfferingNotFoundException;
 import com.Bcm.Model.Product.GeneralInfoDTO;
 import com.Bcm.Model.Product.GeneralInfoMapper;
 import com.Bcm.Model.Product.Product;
-import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
-import com.Bcm.Model.ProductOfferingABE.ProductPrice;
-import com.Bcm.Model.ProductOfferingABE.Tax;
-import com.Bcm.Model.ProductResourceABE.PhysicalResource;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Repository.ProductOfferingRepo.*;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.ChannelRepository;
@@ -36,11 +32,10 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
   final ProductPriceGroupRepository productPriceGroupRepository;
   private final BusinessProcessRepository businessProcessRepository;
   private final ProductPriceRepository productPriceRepository;
-  private final TaxRepository taxRepository;
+  private static final String NTF = "Product Offering not found";
 
   @Override
   public ProductOffering createGeneralInfoDTO(GeneralInfoDTO generalInfoDTO) {
-    // Check if an existing product offering with the same name already exists
     generalInfoRepository
         .findByName(generalInfoDTO.getName())
         .ifPresent(
@@ -52,7 +47,6 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     generalInfoDTO.setStatus("Working state");
     generalInfoDTO.setWorkingStep("General Info");
 
-    // Create new ProductOffering entity from DTO
     ProductOffering productOffering = new ProductOffering();
     productOffering.setName(generalInfoDTO.getName());
     productOffering.setPoType(generalInfoDTO.getPoType());
@@ -71,7 +65,6 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     productOffering.setStatus("Working state");
     productOffering.setWorkingStep("GeneralInfo");
 
-    // Save the new ProductOffering
     return productOfferingRepository.save(productOffering);
   }
 
@@ -79,7 +72,7 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
   public ProductOffering getProductOfferingById(int Product_id) throws ProductOfferingNotFoundException {
     return productOfferingRepository
         .findById(Product_id)
-        .orElseThrow(() -> new ProductOfferingNotFoundException("Product Offering not found with id: " + Product_id));
+        .orElseThrow(() -> new ProductOfferingNotFoundException(NTF + " with id: " + Product_id));
   }
 
   @Override
@@ -107,7 +100,6 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
     productOffering.setSellInd(generalInfoDTO.getSellInd());
     productOffering.setQuantityInd(generalInfoDTO.getQuantityInd());
-    // productOffering.setStatus(generalInfoDTO.getStatus());
     productOffering.setWorkingStep(generalInfoDTO.getWorkingStep());
     productOffering.setStockInd(productOffering.getStockInd());
   }
@@ -140,17 +132,11 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
       throws ProductOfferingNotFoundException {
     ProductOffering productOffering = getProductOfferingById(product_id);
     if (productOffering == null) {
-      throw new ProductOfferingNotFoundException("Product Offering not found");
+      throw new ProductOfferingNotFoundException(NTF);
     }
-
-    ProductPrice productPrice =
-        productPriceRepository
-            .findById(productPriceCode)
-            .orElseThrow(() -> new ProductOfferingNotFoundException("Product Price not found"));
 
     convertToEntity(generalInfoDTO, productOffering);
 
-    // Ensure the status is not modified
     productOffering.setStatus(productOffering.getStatus());
 
     return productOfferingRepository.save(productOffering);
@@ -161,10 +147,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
       throws ProductOfferingNotFoundException {
     ProductOffering productOffering = getProductOfferingById(product_id);
     if (productOffering == null) {
-      throw new ProductOfferingNotFoundException("Product Offering not found");
+      throw new ProductOfferingNotFoundException(NTF);
     }
-
-    Tax tax = taxRepository.findById(tax_code).orElseThrow(() -> new ProductOfferingNotFoundException("Tax not found"));
 
     convertToEntity(generalInfoDTO, productOffering);
 
@@ -178,22 +162,13 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
       throws ProductOfferingNotFoundException {
     ProductOffering productOffering = getProductOfferingById(product_id);
     if (productOffering == null) {
-      throw new ProductOfferingNotFoundException("Product Offering not found");
+      throw new ProductOfferingNotFoundException(NTF);
     }
-
-    BusinessProcess businessProcess =
-        businessProcessRepository
-            .findById(businessProcess_id)
-            .orElseThrow(() -> new ProductOfferingNotFoundException("Business Process not found"));
 
     convertToEntity(generalInfoDTO, productOffering);
 
     productOffering.setBusinessProcess_id(businessProcess_id);
-
-    // Ensure the status is not modified
     productOffering.setStatus(productOffering.getStatus());
-
-    // Update the product's working step
     productOffering.setWorkingStep("Business Process");
     return productOfferingRepository.save(productOffering);
   }
@@ -203,14 +178,11 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
       throws ProductOfferingNotFoundException {
     ProductOffering productOffering = getProductOfferingById(product_id);
     if (productOffering == null) {
-      throw new ProductOfferingNotFoundException("Product Offering not found");
+      throw new ProductOfferingNotFoundException(NTF);
     }
 
     if (pr_id != null) {
-      PhysicalResource physicalResource =
-          physicalResourceRepository
-              .findById(pr_id)
-              .orElseThrow(() -> new ProductOfferingNotFoundException("Physical Resource not found"));
+
       productOffering.setPr_id(pr_id);
     }
 
@@ -221,20 +193,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
               .orElseThrow(() -> new ProductOfferingNotFoundException("CFS not found"));
       productOffering.getServiceId().add(cfs);
     }
-    //  if (serviceId != null) {
-    //    CustomerFacingServiceSpec cfs =
-    //          customerFacingServiceSpecRepository
-    //                   .findById(serviceId)
-    //                    .orElseThrow(() -> new ProductOfferingNotFoundException("CFS not found"));
-    //     productOffering.setServiceId(serviceId);
-    // }
-
     convertToEntity(generalInfoDTO, productOffering);
-
-    // Ensure the status is not modified
     productOffering.setStatus(productOffering.getStatus());
-
-    // Update the product's working step
     productOffering.setWorkingStep("Product Resource");
     return productOfferingRepository.save(productOffering);
   }
@@ -256,13 +216,8 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
       throws ProductOfferingNotFoundException {
     ProductOffering productOffering = getProductOfferingById(productId);
 
-    // Update the stockInd field of the GeneralInfoDTO
     generalInfoDTO.setStockInd(stockInd);
-
-    // Update the product offering with the new general info
     productOffering.setStockInd(stockInd);
-
-    // Save the updated product offering
     return productOfferingRepository.save(productOffering);
   }
 
@@ -271,7 +226,7 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
       throws ProductOfferingNotFoundException {
     ProductOffering productOffering = getProductOfferingById(productId);
     if (productOffering == null) {
-      throw new ProductOfferingNotFoundException("Product Offering not found");
+      throw new ProductOfferingNotFoundException(NTF);
     }
 
     productOffering.setName(generalInfoDTO.getName());
@@ -290,7 +245,6 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
     productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
     productOffering.setPoParent_Child(generalInfoDTO.getPoParent_Child());
 
-    // Save the updated ProductOffering
     return productOfferingRepository.save(productOffering);
   }
 }

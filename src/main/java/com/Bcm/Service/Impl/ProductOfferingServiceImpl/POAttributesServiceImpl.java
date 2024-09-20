@@ -21,21 +21,20 @@ public class POAttributesServiceImpl implements POAttributesService {
 
   final POAttributesRepository poAttributesRepository;
   private final ProductOfferingRepository productOfferingRepository;
+  private static final String PID = "POAttributes with ID: ";
+  private static final String NTF = " not found";
 
   @Transactional
   public POAttributes create(POAttributes poAttributes) {
     try {
-      // Fetch the product by its Product_id
       ProductOffering productOffering =
           productOfferingRepository
               .findById(poAttributes.getProduct_id())
               .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
-      // Update the product's working step
       productOffering.setWorkingStep("PO-Attribute");
       productOfferingRepository.save(productOffering);
 
-      // Save the POAttributes
       return poAttributesRepository.save(poAttributes);
     } catch (DataIntegrityViolationException e) {
       throw new DatabaseOperationException("Error creating product offering Attribute", e);
@@ -70,7 +69,7 @@ public class POAttributesServiceImpl implements POAttributesService {
 
       return poAttributesRepository.save(existingPOAttributes);
     } else {
-      throw new RuntimeException("POAttributes with ID: " + poAttribute_code + " not found");
+      throw new RuntimeException(PID + poAttribute_code + NTF);
     }
   }
 
@@ -83,8 +82,7 @@ public class POAttributesServiceImpl implements POAttributesService {
   @Override
   public POAttributes findById(int poAttribute_code) {
     Optional<POAttributes> optionalPlan = poAttributesRepository.findById(poAttribute_code);
-    return optionalPlan.orElseThrow(
-        () -> new RuntimeException("POAttributes with ID " + poAttribute_code + " not found"));
+    return optionalPlan.orElseThrow(() -> new RuntimeException(PID + poAttribute_code + NTF));
   }
 
   @Override
@@ -92,7 +90,7 @@ public class POAttributesServiceImpl implements POAttributesService {
     try {
       Optional<POAttributes> optionalPOAttributes = poAttributesRepository.findByValueDescription_Value(description);
       return optionalPOAttributes.orElseThrow(
-          () -> new RuntimeException("POAttributes with Description " + description + " not found"));
+          () -> new RuntimeException("POAttributes with Description " + description + NTF));
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for finding POAttributes");
     }
@@ -115,8 +113,7 @@ public class POAttributesServiceImpl implements POAttributesService {
 
       return poAttributesRepository.save(existingPOAttributes);
     } else {
-      // Add new attribute
-      poAttributes.setPoAttribute_code(poAttribute_code); // Ensure the ID is set correctly
+      poAttributes.setPoAttribute_code(poAttribute_code);
       return poAttributesRepository.save(poAttributes);
     }
   }

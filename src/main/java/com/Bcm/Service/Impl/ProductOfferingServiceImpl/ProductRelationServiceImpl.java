@@ -23,18 +23,15 @@ public class ProductRelationServiceImpl implements ProductRelationService {
   @Transactional
   public ProductRelation create(ProductRelation productRelation) {
 
-    // Fetch the ProductOffering by its Product_id
     int productId = productRelation.getProductId();
     ProductOffering productOffering =
         productOfferingRepository
             .findById(productId)
             .orElseThrow(() -> new EntityNotFoundException("ProductOffering not found for Product_id: " + productId));
 
-    // Update the ProductOffering's working step
     productOffering.setWorkingStep("Product Relation");
     productOfferingRepository.save(productOffering);
 
-    // Save the ProductRelation
     return ProductRelationRepository.save(productRelation);
   }
 

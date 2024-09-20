@@ -15,7 +15,7 @@ public class ControllerExceptionHandler {
     ErrorMessage message =
         new ErrorMessage(HttpStatus.NOT_FOUND.value(), new Date(), ex.getMessage(), request.getDescription(false));
 
-    return new ResponseEntity<ErrorMessage>(message, HttpStatus.NOT_FOUND);
+    return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(Exception.class)
@@ -24,6 +24,6 @@ public class ControllerExceptionHandler {
         new ErrorMessage(
             HttpStatus.INTERNAL_SERVER_ERROR.value(), new Date(), ex.getMessage(), request.getDescription(false));
 
-    return new ResponseEntity<ErrorMessage>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+    return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

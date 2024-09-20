@@ -27,6 +27,7 @@ public class ResourceFacingServiceSpecController {
   final ResourceFacingServiceSpecService resourceFacingServiceSpecService;
   final LogicalResourceRepository logicalResourceRepository;
   final CustomerFacingServiceSpecRepository customerFacingServiceSpecRepository;
+  private static final String error = "An unexpected error occurred";
 
   @PostMapping("/addResourceFacingServiceSpec")
   public ResponseEntity<?> createResourceFacingServiceSpec(
@@ -66,7 +67,7 @@ public class ResourceFacingServiceSpecController {
     } catch (InvalidInputException e) {
       return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     } catch (Exception e) {
-      return new ResponseEntity<>("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -76,7 +77,7 @@ public class ResourceFacingServiceSpecController {
       List<ResourceFacingServiceSpec> resourceFacingServiceSpecs = resourceFacingServiceSpecService.read();
       return ResponseEntity.ok(resourceFacingServiceSpecs);
     } catch (Exception e) {
-      return new ResponseEntity<>("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -88,7 +89,7 @@ public class ResourceFacingServiceSpecController {
     } catch (ResourceNotFoundException e) {
       return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     } catch (Exception e) {
-      return new ResponseEntity<>("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -104,7 +105,7 @@ public class ResourceFacingServiceSpecController {
     } catch (ResourceNotFoundException e) {
       return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     } catch (Exception e) {
-      return new ResponseEntity<>("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -116,7 +117,7 @@ public class ResourceFacingServiceSpecController {
     } catch (ResourceNotFoundException e) {
       return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     } catch (Exception e) {
-      return new ResponseEntity<>("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

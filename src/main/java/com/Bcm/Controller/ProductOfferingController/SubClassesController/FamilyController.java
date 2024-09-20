@@ -8,10 +8,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -152,15 +152,13 @@ public class FamilyController {
   public ResponseEntity<List<SubFamilyResponseDTO>> getAllSubFamilies() {
     try {
       List<SubFamily> subFamilies = familyService.readSubFamilies();
-      List<SubFamilyResponseDTO> subFamilyResponseDTOs =
-          subFamilies.stream()
-              .map(
-                  subFamily ->
-                      new SubFamilyResponseDTO(
-                          subFamily.getPo_SubFamilyCode(),
-                          subFamily.getSubFamilyName(),
-                          subFamily.getSubFamilyDescription()))
-              .collect(Collectors.toList());
+      List<SubFamilyResponseDTO> subFamilyResponseDTOs = new ArrayList<>();
+      for (SubFamily subFamily : subFamilies) {
+        SubFamilyResponseDTO subFamilyResponseDTO =
+            new SubFamilyResponseDTO(
+                subFamily.getPo_SubFamilyCode(), subFamily.getSubFamilyName(), subFamily.getSubFamilyDescription());
+        subFamilyResponseDTOs.add(subFamilyResponseDTO);
+      }
       return ResponseEntity.ok(subFamilyResponseDTOs);
     } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);

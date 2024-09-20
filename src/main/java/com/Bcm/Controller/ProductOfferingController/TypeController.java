@@ -3,13 +3,14 @@ package com.Bcm.Controller.ProductOfferingController;
 import com.Bcm.Model.ProductOfferingABE.Type;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.TypeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Type Controller", description = "All of the Type's methods")
 @RestController
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class TypeController {
 
   final TypeService typeService;
+  private static final String error = "An unexpected error occurred";
 
   @PostMapping("/addType")
   @CacheEvict(value = "TypesCache", allEntries = true)
@@ -38,7 +40,7 @@ public class TypeController {
       List<Type> types = typeService.read();
       return ResponseEntity.ok(types);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -48,7 +50,7 @@ public class TypeController {
       Type Type = typeService.findById(type_id);
       return ResponseEntity.ok(Type);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -59,7 +61,7 @@ public class TypeController {
       Type updatedGroup = typeService.update(type_id, updatedType);
       return ResponseEntity.ok(updatedGroup);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -70,7 +72,7 @@ public class TypeController {
       String resultMessage = typeService.delete(type_id);
       return ResponseEntity.ok(resultMessage);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
@@ -80,10 +82,7 @@ public class TypeController {
       List<Type> searchResults = typeService.searchByKeyword(typeName);
       return ResponseEntity.ok(searchResults);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
-
-  @CacheEvict(value = "TypesCache", allEntries = true)
-  public void invalidateTypesCache() {}
 }

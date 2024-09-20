@@ -23,6 +23,10 @@ public class MarketServiceImpl implements MarketService {
   final MarketRepository marketRepository;
   final ProductOfferingService productOfferingService;
   private final SubMarketRepository subMarketRepository;
+  private static final String SID = "SubMarket with ID ";
+  private static final String MID = "Market with ID ";
+  private static final String NTF = " not found.";
+  private static final String invArg = "Invalid argument provided for finding Market";
 
   @Transactional
   @Override
@@ -56,13 +60,13 @@ public class MarketServiceImpl implements MarketService {
 
     market = marketRepository.save(market);
 
-    List<SubMarketResponseDTO> subMarketResponseDTOs =
-        market.getSubMarkets().stream()
-            .map(
-                subMkt ->
-                    new SubMarketResponseDTO(
-                        subMkt.getPo_SubMarketCode(), subMkt.getSubMarketName(), subMkt.getSubMarketDescription()))
-            .collect(Collectors.toList());
+    List<SubMarketResponseDTO> subMarketResponseDTOs = new ArrayList<>();
+    for (SubMarket subMkt : market.getSubMarkets()) {
+      SubMarketResponseDTO subMarketResponseDTO =
+          new SubMarketResponseDTO(
+              subMkt.getPo_SubMarketCode(), subMkt.getSubMarketName(), subMkt.getSubMarketDescription());
+      subMarketResponseDTOs.add(subMarketResponseDTO);
+    }
 
     return new MarketResponseDTO(
         market.getPo_MarketCode(), market.getName(), market.getDescription(), subMarketResponseDTOs);
@@ -101,8 +105,7 @@ public class MarketServiceImpl implements MarketService {
         if (subMarketRequestDTO.getPo_SubMarketCode() != null) {
           SubMarket subMarket = existingSubMarketsMap.get(subMarketRequestDTO.getPo_SubMarketCode());
           if (subMarket == null) {
-            throw new ResourceNotFoundException(
-                "SubMarket with ID " + subMarketRequestDTO.getPo_SubMarketCode() + " not found.");
+            throw new ResourceNotFoundException(SID + subMarketRequestDTO.getPo_SubMarketCode() + NTF);
           }
           subMarket.setSubMarketName(subMarketRequestDTO.getSubMarketName());
           subMarket.setSubMarketDescription(subMarketRequestDTO.getSubMarketDescription());
@@ -130,13 +133,13 @@ public class MarketServiceImpl implements MarketService {
 
       existingMarket = marketRepository.save(existingMarket);
 
-      List<SubMarketResponseDTO> subMarketResponseDTOs =
-          existingMarket.getSubMarkets().stream()
-              .map(
-                  subMkt ->
-                      new SubMarketResponseDTO(
-                          subMkt.getPo_SubMarketCode(), subMkt.getSubMarketName(), subMkt.getSubMarketDescription()))
-              .collect(Collectors.toList());
+      List<SubMarketResponseDTO> subMarketResponseDTOs = new ArrayList<>();
+      for (SubMarket subMkt : existingMarket.getSubMarkets()) {
+        SubMarketResponseDTO subMarketResponseDTO =
+            new SubMarketResponseDTO(
+                subMkt.getPo_SubMarketCode(), subMkt.getSubMarketName(), subMkt.getSubMarketDescription());
+        subMarketResponseDTOs.add(subMarketResponseDTO);
+      }
 
       return new MarketResponseDTO(
           existingMarket.getPo_MarketCode(),
@@ -144,16 +147,16 @@ public class MarketServiceImpl implements MarketService {
           existingMarket.getDescription(),
           subMarketResponseDTOs);
     } else {
-      throw new ResourceNotFoundException("Market with ID " + po_MarketCode + " not found.");
+      throw new ResourceNotFoundException(MID + po_MarketCode + NTF);
     }
   }
 
   @Override
   public String delete(int po_MarketCode) {
     try {
-      Market market = findById(po_MarketCode);
+
       marketRepository.deleteById(po_MarketCode);
-      return ("Market with ID " + po_MarketCode + " was successfully deleted");
+      return (MID + po_MarketCode + " was successfully deleted");
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for deleting Market");
     }
@@ -163,9 +166,9 @@ public class MarketServiceImpl implements MarketService {
   public Market findById(int po_MarketCode) {
     try {
       Optional<Market> optionalMarket = marketRepository.findById(po_MarketCode);
-      return optionalMarket.orElseThrow(() -> new RuntimeException("Market with ID " + po_MarketCode + " not found"));
+      return optionalMarket.orElseThrow(() -> new RuntimeException(MID + po_MarketCode + " not found"));
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding Market");
+      throw new RuntimeException(invArg);
     }
   }
 
@@ -182,9 +185,9 @@ public class MarketServiceImpl implements MarketService {
   public Market findByName(String name) {
     try {
       Optional<Market> optionalMarket = marketRepository.findByName(name);
-      return optionalMarket.orElseThrow(() -> new RuntimeException("Market with ID " + name + " not found"));
+      return optionalMarket.orElseThrow(() -> new RuntimeException(MID + name + " not found"));
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding Market");
+      throw new RuntimeException(invArg);
     }
   }
 
@@ -194,7 +197,7 @@ public class MarketServiceImpl implements MarketService {
       Optional<Market> optionalMarket = marketRepository.findByName(name);
       return optionalMarket.isPresent();
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding Market");
+      throw new RuntimeException(invArg);
     }
   }
 
@@ -206,22 +209,21 @@ public class MarketServiceImpl implements MarketService {
   @Override
   public List<MarketResponseDTO> getAllMarkets() {
     List<Market> markets = marketRepository.findAll();
-    return markets.stream()
-        .map(
-            market -> {
-              List<SubMarketResponseDTO> subMarketResponseDTOs =
-                  market.getSubMarkets().stream()
-                      .map(
-                          subMkt ->
-                              new SubMarketResponseDTO(
-                                  subMkt.getPo_SubMarketCode(),
-                                  subMkt.getSubMarketName(),
-                                  subMkt.getSubMarketDescription()))
-                      .collect(Collectors.toList());
-              return new MarketResponseDTO(
-                  market.getPo_MarketCode(), market.getName(), market.getDescription(), subMarketResponseDTOs);
-            })
-        .collect(Collectors.toList());
+    List<MarketResponseDTO> list = new ArrayList<>();
+    for (Market market1 : markets) {
+      List<SubMarketResponseDTO> subMarketResponseDTOs =
+          market1.getSubMarkets().stream()
+              .map(
+                  subMkt ->
+                      new SubMarketResponseDTO(
+                          subMkt.getPo_SubMarketCode(), subMkt.getSubMarketName(), subMkt.getSubMarketDescription()))
+              .collect(Collectors.toList());
+      MarketResponseDTO apply =
+          new MarketResponseDTO(
+              market1.getPo_MarketCode(), market1.getName(), market1.getDescription(), subMarketResponseDTOs);
+      list.add(apply);
+    }
+    return list;
   }
 
   @Override
@@ -250,7 +252,7 @@ public class MarketServiceImpl implements MarketService {
     if (subMarketOptional.isPresent()) {
       subMarketRepository.delete(subMarketOptional.get());
     } else {
-      throw new ResourceNotFoundException("SubMarket with ID " + po_SubMarketCode + " not found.");
+      throw new ResourceNotFoundException(SID + po_SubMarketCode + NTF);
     }
   }
 
@@ -259,19 +261,18 @@ public class MarketServiceImpl implements MarketService {
   public void unlinkSubMarketFromMarket(int MarketId, int subMarketId) {
     Optional<Market> MarketOptional = marketRepository.findById(MarketId);
     if (MarketOptional.isEmpty()) {
-      throw new ResourceNotFoundException("Market with ID " + MarketId + " not found.");
+      throw new ResourceNotFoundException(MID + MarketId + NTF);
     }
 
     Market Market = MarketOptional.get();
     Optional<SubMarket> subMarketOptional = subMarketRepository.findById(subMarketId);
     if (subMarketOptional.isEmpty()) {
-      throw new ResourceNotFoundException("SubMarket with ID " + subMarketId + " not found.");
+      throw new ResourceNotFoundException(SID + subMarketId + NTF);
     }
 
     SubMarket subMarket = subMarketOptional.get();
     if (!Market.getSubMarkets().contains(subMarket)) {
-      throw new IllegalArgumentException(
-          "SubMarket with ID " + subMarketId + " is not linked to Market with ID " + MarketId);
+      throw new IllegalArgumentException(SID + subMarketId + " is not linked to Market with ID " + MarketId);
     }
 
     Market.removeSubMarket(subMarket);

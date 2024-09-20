@@ -19,6 +19,8 @@ public class ProductPriceGroupServiceImpl implements ProductPriceGroupService {
 
   final ProductPriceGroupRepository productPriceGroupRepository;
   final ProductOfferingService productOfferingService;
+  private static final String PGID = "ProductPriceGroup with ID ";
+  private static final String invArg = "Invalid argument provided for finding ProductPriceGroup";
 
   @Override
   public ProductPriceGroup create(ProductPriceGroup productPriceGroup) {
@@ -49,7 +51,6 @@ public class ProductPriceGroupServiceImpl implements ProductPriceGroupService {
       ProductPriceGroup existingProductPriceGroup = existingProductPriceGroupOptional.get();
 
       String newName = updatedProductPriceGroup.getName();
-      // Check if there's another ProductPriceGroup with the same name
       if (!existingProductPriceGroup.getName().equals(newName) && productPriceGroupRepository.existsByName(newName)) {
         throw new ProductPriceGroupAlreadyExistsException(
             "ProductPriceGroup with name '" + newName + "' already exists.");
@@ -59,16 +60,15 @@ public class ProductPriceGroupServiceImpl implements ProductPriceGroupService {
       existingProductPriceGroup.setDescription(updatedProductPriceGroup.getDescription());
       return productPriceGroupRepository.save(existingProductPriceGroup);
     } else {
-      throw new ResourceNotFoundException("ProductPriceGroup with ID " + productPriceGroupCode + " not found.");
+      throw new ResourceNotFoundException(PGID + productPriceGroupCode + " not found.");
     }
   }
 
   @Override
   public String delete(int productPriceGroupCode) {
     try {
-      ProductPriceGroup ProductPriceGroup = findById(productPriceGroupCode);
       productPriceGroupRepository.deleteById(productPriceGroupCode);
-      return ("ProductPriceGroup with ID " + productPriceGroupCode + " was successfully deleted");
+      return (PGID + productPriceGroupCode + " was successfully deleted");
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for deleting ProductPriceGroup");
     }
@@ -80,9 +80,9 @@ public class ProductPriceGroupServiceImpl implements ProductPriceGroupService {
       Optional<ProductPriceGroup> optionalProductPriceGroup =
           productPriceGroupRepository.findById(productPriceGroupCode);
       return optionalProductPriceGroup.orElseThrow(
-          () -> new RuntimeException("ProductPriceGroup with ID " + productPriceGroupCode + " not found"));
+          () -> new RuntimeException(PGID + productPriceGroupCode + " not found"));
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding ProductPriceGroup");
+      throw new RuntimeException(invArg);
     }
   }
 
@@ -99,10 +99,9 @@ public class ProductPriceGroupServiceImpl implements ProductPriceGroupService {
   public ProductPriceGroup findByName(String name) {
     try {
       Optional<ProductPriceGroup> optionalProductPriceGroup = productPriceGroupRepository.findByName(name);
-      return optionalProductPriceGroup.orElseThrow(
-          () -> new RuntimeException("ProductPriceGroup with ID " + name + " not found"));
+      return optionalProductPriceGroup.orElseThrow(() -> new RuntimeException(PGID + name + " not found"));
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding ProductPriceGroup");
+      throw new RuntimeException(invArg);
     }
   }
 
@@ -110,9 +109,9 @@ public class ProductPriceGroupServiceImpl implements ProductPriceGroupService {
   public boolean findByNameexist(String name) {
     try {
       Optional<ProductPriceGroup> optionalProductPriceGroup = productPriceGroupRepository.findByName(name);
-      return optionalProductPriceGroup.isPresent(); // Return true if ProductPriceGroup exists, false otherwise
+      return optionalProductPriceGroup.isPresent();
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding ProductPriceGroup");
+      throw new RuntimeException(invArg);
     }
   }
 

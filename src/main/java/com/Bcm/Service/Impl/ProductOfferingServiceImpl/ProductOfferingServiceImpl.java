@@ -29,9 +29,12 @@ import java.util.Optional;
 @Service
 public class ProductOfferingServiceImpl implements ProductOfferingService {
 
+  private static final String NTF = " not found";
+  private static final String WS = "Working state";
+  private static final String VD = "Validated";
+  private static final String SP = "Suspended";
   final ProductOfferingRepository productOfferingRepository;
   final ProductRelationRepository productRelationRepository;
-  // final EligibilityService eligibilityService;
   final ProductOfferRelationRepository productOfferRelationRepository;
   private final ChannelRepository channelRepository;
   private final EntityRepository entityRepository;
@@ -49,7 +52,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
       throw new ProductOfferingAlreadyExistsException("A product offering with the same name already exists.");
     }
 
-    productOffering.setStatus("Working state");
+    productOffering.setStatus(WS);
 
     try {
       return productOfferingRepository.save(productOffering);
@@ -62,14 +65,12 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
 
   @Override
   public ProductOffering createProductOfferingDTO(ProductOfferingDTO dto) {
-    // Check if an existing product offering with the same name already exists
     Optional<ProductOffering> existingProduct = productOfferingRepository.findByName(dto.getName());
     if (existingProduct.isPresent()) {
       throw new ProductOfferingAlreadyExistsException(
           "A product offering with the name '" + dto.getName() + "' already exists.");
     }
 
-    // Create new ProductOffering entity from DTO
     ProductOffering productOffering = new ProductOffering();
     productOffering.setName(dto.getName());
     productOffering.setPoType(dto.getPoType());
@@ -85,12 +86,9 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
     productOffering.setMarkets(dto.getMarkets());
     productOffering.setSubmarkets(dto.getSubmarkets());
     productOffering.setExternalId(dto.getExternalId());
-    productOffering.setStatus("Working state");
+    productOffering.setStatus(WS);
 
-    // Save the new ProductOffering
-    ProductOffering savedProductOffering = productOfferingRepository.save(productOffering);
-
-    return savedProductOffering;
+    return productOfferingRepository.save(productOffering);
   }
 
   @Override
@@ -124,9 +122,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
       } catch (ObjectOptimisticLockingFailureException e) {
         throw new ConcurrentModificationException(
             "Another user has modified the product offering with ID: " + po_code + ". Please try again.");
-      } catch (InputException e) {
-        throw e;
-      } catch (InvalidInput e) {
+      } catch (InputException | InvalidInput e) {
         throw e;
       } catch (Exception e) {
         throw new RuntimeException(
@@ -140,7 +136,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
   @Override
   public String delete(int po_code) {
     if (!productOfferingRepository.existsById(po_code)) {
-      throw new ResourceNotFoundException("Product offering with ID " + po_code + " not found");
+      throw new ResourceNotFoundException("Product offering with ID " + po_code + NTF);
     }
 
     try {
@@ -161,7 +157,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
                   new ResourceNotFoundException(
                       " An unexpected error occurred while finding product offering with ID:" + po_code));
     } catch (ResourceNotFoundException e) {
-      throw new RuntimeException("Product offering with ID \"" + po_code + "\" not found", e);
+      throw new RuntimeException("Product offering with ID \"" + po_code + NTF, e);
     }
   }
 
@@ -179,8 +175,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
   public ProductOffering findByName(String name) {
     try {
       Optional<ProductOffering> optionalProductOffering = productOfferingRepository.findByname(name);
-      return optionalProductOffering.orElseThrow(
-          () -> new RuntimeException("Product Offering with ID " + name + " not found"));
+      return optionalProductOffering.orElseThrow(() -> new RuntimeException("Product Offering with ID " + name + NTF));
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for finding Product Offering");
     }
@@ -218,19 +213,18 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
       ProductOffering existingProduct =
           productOfferingRepository
               .findById(po_code)
-              .orElseThrow(
-                  () -> new ResourceNotFoundException("Product Offering with ID \"" + po_code + "\" not found"));
+              .orElseThrow(() -> new ResourceNotFoundException("Product Offering with ID \"" + po_code + NTF));
 
       switch (existingProduct.getStatus()) {
-        case "Working state":
-          existingProduct.setStatus("Validated");
+        case WS:
+          existingProduct.setStatus(VD);
           break;
 
-        case "Validated":
-          existingProduct.setStatus("Suspended");
+        case VD:
+          existingProduct.setStatus(SP);
           break;
 
-        case "Suspended":
+        case SP:
           throw new ProductOfferingLogicException(
               "Product " + existingProduct.getName() + " isn't fit to be offered for sale anymore.");
 
@@ -241,7 +235,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
       return productOfferingRepository.save(existingProduct);
 
     } catch (ResourceNotFoundException e) {
-      throw new RuntimeException("Product Offering with ID \"" + po_code + "\" not found", e);
+      throw new RuntimeException("Product Offering with ID \"" + po_code + NTF, e);
     } catch (ProductOfferingLogicException e) {
       throw new ProductOfferingLogicException(e.getMessage());
     } catch (Exception e) {
@@ -257,13 +251,13 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
       ProductOffering existingProduct = findById(po_code);
 
       switch (existingProduct.getStatus()) {
-        case "Working state":
-          existingProduct.setStatus("Validated");
+        case WS:
+          existingProduct.setStatus(VD);
           break;
-        case "Validated":
-          existingProduct.setStatus("Suspended");
+        case VD:
+          existingProduct.setStatus(SP);
           break;
-        case "Suspended":
+        case SP:
           throw new ProductOfferingLogicException(
               "Product " + existingProduct.getName() + " isn't fit to be offered for sale anymore.");
         default:
@@ -316,13 +310,13 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
       ProductOffering updatedProductOffering = productOfferingRepository.save(existingProductOffering);
       return convertToDTO(updatedProductOffering);
     } else {
-      throw new EntityNotFoundException("ProductOffering with ID " + po_code + " not found");
+      throw new EntityNotFoundException("ProductOffering with ID " + po_code + NTF);
     }
   }
 
   private ProductOfferingDTO convertToDTO(ProductOffering productOffering) {
     ProductOfferingDTO dto = new ProductOfferingDTO();
-    dto.setProduct_id(productOffering.getProduct_id()); // Ensure the ID is set
+    dto.setProduct_id(productOffering.getProduct_id());
     dto.setName(productOffering.getName());
     dto.setPoType(productOffering.getPoType());
     dto.setEffectiveFrom(productOffering.getEffectiveFrom());

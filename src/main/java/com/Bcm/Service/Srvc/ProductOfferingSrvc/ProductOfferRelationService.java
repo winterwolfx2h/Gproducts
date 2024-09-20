@@ -14,9 +14,9 @@ public interface ProductOfferRelationService {
 
   List<ProductOfferRelation> searchByKeyword(String type);
 
-  ProductOfferRelation findById(Integer productOfferRel_code); // Modification pour utiliser l'ID primaire
+  ProductOfferRelation findById(Integer productOfferRel_code);
 
-  void deleteById(Integer productOfferRel_code); // Modification pour utiliser l'ID primaire
+  void deleteById(Integer productOfferRel_code);
 
   List<RelationResponse> searchByProductID(Integer productId);
 }

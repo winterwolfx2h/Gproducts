@@ -24,23 +24,19 @@ public class ResourceFacingServiceSpecServiceImpl implements ResourceFacingServi
   final ResourceFacingServiceSpecRepository resourceFacingServiceSpecRepository;
   final CustomerFacingServiceSpecRepository customerFacingServiceSpecRepository;
   final LogicalResourceRepository logicalResourceRepository;
+  private static final String NTF = " not found";
 
   @Override
   public ResourceFacingServiceSpec create(ResourceFacingServiceSpec resourceFacingServiceSpec) {
     validateNotNullFields(resourceFacingServiceSpec);
-
-    // Check if LogicalResource exists
     LogicalResource logicalResource =
         logicalResourceRepository
             .findById(resourceFacingServiceSpec.getLogicalResource().getLR_id())
             .orElseThrow(
                 () ->
                     new ResourceNotFoundException(
-                        "LogicalResource with ID "
-                            + resourceFacingServiceSpec.getLogicalResource().getLR_id()
-                            + " not found"));
+                        "LogicalResource with ID " + resourceFacingServiceSpec.getLogicalResource().getLR_id() + NTF));
 
-    // Check if CustomerFacingServiceSpec exists
     CustomerFacingServiceSpec customerFacingServiceSpec =
         customerFacingServiceSpecRepository
             .findById(resourceFacingServiceSpec.getCustomerFacingServiceSpec().getServiceId())
@@ -49,9 +45,8 @@ public class ResourceFacingServiceSpecServiceImpl implements ResourceFacingServi
                     new ResourceNotFoundException(
                         "CustomerFacingServiceSpec with ID "
                             + resourceFacingServiceSpec.getCustomerFacingServiceSpec().getServiceId()
-                            + " not found"));
+                            + NTF));
 
-    // Set the associated entities
     resourceFacingServiceSpec.setLogicalResource(logicalResource);
     resourceFacingServiceSpec.setCustomerFacingServiceSpec(customerFacingServiceSpec);
 
@@ -81,14 +76,14 @@ public class ResourceFacingServiceSpecServiceImpl implements ResourceFacingServi
     if (existingResourceFacingServiceSpecOptional.isPresent()) {
       ResourceFacingServiceSpec existingResourceFacingServiceSpec = existingResourceFacingServiceSpecOptional.get();
       if (!existingResourceFacingServiceSpec
-          .getExternalNPCode()
-          .equals(updatedResourceFacingServiceSpec.getExternalNPCode())) {
-        if (resourceFacingServiceSpecRepository
-            .findByexternalNPCode(updatedResourceFacingServiceSpec.getExternalNPCode())
-            .isPresent()) {
-          throw new ServiceAlreadyExistsException("Resource with the same name already exists");
-        }
+              .getExternalNPCode()
+              .equals(updatedResourceFacingServiceSpec.getExternalNPCode())
+          && resourceFacingServiceSpecRepository
+              .findByexternalNPCode(updatedResourceFacingServiceSpec.getExternalNPCode())
+              .isPresent()) {
+        throw new ServiceAlreadyExistsException("Resource with the same name already exists");
       }
+
       existingResourceFacingServiceSpec.setExternalNPCode(updatedResourceFacingServiceSpec.getExternalNPCode());
       existingResourceFacingServiceSpec.setCustomerFacingServiceSpec(
           updatedResourceFacingServiceSpec.getCustomerFacingServiceSpec());
@@ -103,7 +98,7 @@ public class ResourceFacingServiceSpecServiceImpl implements ResourceFacingServi
   @Override
   public String delete(int Rfss_code) {
     if (!resourceFacingServiceSpecRepository.existsById(Rfss_code)) {
-      throw new ResourceNotFoundException("ResourceFacingServiceSpec with ID " + Rfss_code + " not found");
+      throw new ResourceNotFoundException("ResourceFacingServiceSpec with ID " + Rfss_code + NTF);
     }
 
     try {
@@ -120,10 +115,9 @@ public class ResourceFacingServiceSpecServiceImpl implements ResourceFacingServi
     try {
       return resourceFacingServiceSpecRepository
           .findById(Rfss_code)
-          .orElseThrow(
-              () -> new ResourceNotFoundException("ResourceFacingServiceSpec  with ID " + Rfss_code + " not found"));
+          .orElseThrow(() -> new ResourceNotFoundException("ResourceFacingServiceSpec  with ID " + Rfss_code + NTF));
     } catch (ResourceNotFoundException e) {
-      throw new RuntimeException("ResourceFacingServiceSpec  with ID \"" + Rfss_code + "\" not found", e);
+      throw new RuntimeException("ResourceFacingServiceSpec  with ID \"" + Rfss_code + NTF, e);
     }
   }
 

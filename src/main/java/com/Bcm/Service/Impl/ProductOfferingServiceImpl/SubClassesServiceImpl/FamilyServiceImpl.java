@@ -24,6 +24,9 @@ public class FamilyServiceImpl implements FamilyService {
   final FamilyRepository familyRepository;
   final ProductOfferingService productOfferingService;
   private final SubFamilyRepository subFamilyRepository;
+  private static final String SID = "SubFamily with ID ";
+  private static final String FID = "Family with ID ";
+  private static final String invArg = "Invalid argument provided for finding Family";
 
   @Transactional
   @Override
@@ -57,13 +60,13 @@ public class FamilyServiceImpl implements FamilyService {
 
     family = familyRepository.save(family);
 
-    List<SubFamilyResponseDTO> subFamilyResponseDTOs =
-        family.getSubFamilies().stream()
-            .map(
-                subFml ->
-                    new SubFamilyResponseDTO(
-                        subFml.getPo_SubFamilyCode(), subFml.getSubFamilyName(), subFml.getSubFamilyDescription()))
-            .collect(Collectors.toList());
+    List<SubFamilyResponseDTO> subFamilyResponseDTOs = new ArrayList<>();
+    for (SubFamily subFml : family.getSubFamilies()) {
+      SubFamilyResponseDTO subFamilyResponseDTO =
+          new SubFamilyResponseDTO(
+              subFml.getPo_SubFamilyCode(), subFml.getSubFamilyName(), subFml.getSubFamilyDescription());
+      subFamilyResponseDTOs.add(subFamilyResponseDTO);
+    }
 
     return new FamilyResponseDTO(
         family.getPo_FamilyCode(), family.getName(), family.getDescription(), subFamilyResponseDTOs);
@@ -102,14 +105,12 @@ public class FamilyServiceImpl implements FamilyService {
         if (subFamilyRequestDTO.getPo_SubFamilyCode() != null) {
           SubFamily subFamily = existingSubFamiliesMap.get(subFamilyRequestDTO.getPo_SubFamilyCode());
           if (subFamily == null) {
-            throw new ResourceNotFoundException(
-                "SubFamily with ID " + subFamilyRequestDTO.getPo_SubFamilyCode() + " not found.");
+            throw new ResourceNotFoundException(SID + subFamilyRequestDTO.getPo_SubFamilyCode() + " not found.");
           }
           subFamily.setSubFamilyName(subFamilyRequestDTO.getSubFamilyName());
           subFamily.setSubFamilyDescription(subFamilyRequestDTO.getSubFamilyDescription());
           updatedSubFamilies.add(subFamily);
         } else {
-          // Create new subfamily only if it doesn't already exist in the updated subfamilies list
           boolean existsInUpdatedList =
               updatedSubFamilies.stream()
                   .anyMatch(sf -> sf.getSubFamilyName().equals(subFamilyRequestDTO.getSubFamilyName()));
@@ -132,13 +133,13 @@ public class FamilyServiceImpl implements FamilyService {
 
       existingFamily = familyRepository.save(existingFamily);
 
-      List<SubFamilyResponseDTO> subFamilyResponseDTOs =
-          existingFamily.getSubFamilies().stream()
-              .map(
-                  subFam ->
-                      new SubFamilyResponseDTO(
-                          subFam.getPo_SubFamilyCode(), subFam.getSubFamilyName(), subFam.getSubFamilyDescription()))
-              .collect(Collectors.toList());
+      List<SubFamilyResponseDTO> subFamilyResponseDTOs = new ArrayList<>();
+      for (SubFamily subFam : existingFamily.getSubFamilies()) {
+        SubFamilyResponseDTO subFamilyResponseDTO =
+            new SubFamilyResponseDTO(
+                subFam.getPo_SubFamilyCode(), subFam.getSubFamilyName(), subFam.getSubFamilyDescription());
+        subFamilyResponseDTOs.add(subFamilyResponseDTO);
+      }
 
       return new FamilyResponseDTO(
           existingFamily.getPo_FamilyCode(),
@@ -146,7 +147,7 @@ public class FamilyServiceImpl implements FamilyService {
           existingFamily.getDescription(),
           subFamilyResponseDTOs);
     } else {
-      throw new ResourceNotFoundException("Family with ID " + po_FamilyCode + " not found.");
+      throw new ResourceNotFoundException(FID + po_FamilyCode + " not found.");
     }
   }
 
@@ -156,7 +157,7 @@ public class FamilyServiceImpl implements FamilyService {
       Family family = findById(po_FamilyCode);
       familyRepository.deleteById(po_FamilyCode);
       updateProductOfferingsWithDeletedFamily(family.getName());
-      return ("Family with ID " + po_FamilyCode + " was successfully deleted");
+      return (FID + po_FamilyCode + " was successfully deleted");
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for deleting Family");
     }
@@ -174,9 +175,9 @@ public class FamilyServiceImpl implements FamilyService {
   public Family findById(int po_FamilyCode) {
     try {
       Optional<Family> optionalFamily = familyRepository.findById(po_FamilyCode);
-      return optionalFamily.orElseThrow(() -> new RuntimeException("Family with ID " + po_FamilyCode + " not found"));
+      return optionalFamily.orElseThrow(() -> new RuntimeException(FID + po_FamilyCode + " not found"));
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding Family");
+      throw new RuntimeException(invArg);
     }
   }
 
@@ -193,9 +194,9 @@ public class FamilyServiceImpl implements FamilyService {
   public Family findByName(String name) {
     try {
       Optional<Family> optionalFamily = familyRepository.findByName(name);
-      return optionalFamily.orElseThrow(() -> new RuntimeException("Family with ID " + name + " not found"));
+      return optionalFamily.orElseThrow(() -> new RuntimeException(FID + name + " not found"));
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding Family");
+      throw new RuntimeException(invArg);
     }
   }
 
@@ -205,7 +206,7 @@ public class FamilyServiceImpl implements FamilyService {
       Optional<Family> optionalFamily = familyRepository.findByName(name);
       return optionalFamily.isPresent();
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding Family");
+      throw new RuntimeException(invArg);
     }
   }
 
@@ -217,22 +218,21 @@ public class FamilyServiceImpl implements FamilyService {
   @Override
   public List<FamilyResponseDTO> getAllFamilies() {
     List<Family> families = familyRepository.findAll();
-    return families.stream()
-        .map(
-            family -> {
-              List<SubFamilyResponseDTO> subFamilyResponseDTOs =
-                  family.getSubFamilies().stream()
-                      .map(
-                          subFamily ->
-                              new SubFamilyResponseDTO(
-                                  subFamily.getPo_SubFamilyCode(),
-                                  subFamily.getSubFamilyName(),
-                                  subFamily.getSubFamilyDescription()))
-                      .collect(Collectors.toList());
-              return new FamilyResponseDTO(
-                  family.getPo_FamilyCode(), family.getName(), family.getDescription(), subFamilyResponseDTOs);
-            })
-        .collect(Collectors.toList());
+    List<FamilyResponseDTO> list = new ArrayList<>();
+    for (Family family1 : families) {
+      List<SubFamilyResponseDTO> subFamilyResponseDTOs = new ArrayList<>();
+      for (SubFamily subFamily : family1.getSubFamilies()) {
+        SubFamilyResponseDTO subFamilyResponseDTO =
+            new SubFamilyResponseDTO(
+                subFamily.getPo_SubFamilyCode(), subFamily.getSubFamilyName(), subFamily.getSubFamilyDescription());
+        subFamilyResponseDTOs.add(subFamilyResponseDTO);
+      }
+      FamilyResponseDTO apply =
+          new FamilyResponseDTO(
+              family1.getPo_FamilyCode(), family1.getName(), family1.getDescription(), subFamilyResponseDTOs);
+      list.add(apply);
+    }
+    return list;
   }
 
   @Transactional
@@ -240,19 +240,18 @@ public class FamilyServiceImpl implements FamilyService {
   public void unlinkSubFamilyFromFamily(int familyId, int subFamilyId) {
     Optional<Family> familyOptional = familyRepository.findById(familyId);
     if (familyOptional.isEmpty()) {
-      throw new ResourceNotFoundException("Family with ID " + familyId + " not found.");
+      throw new ResourceNotFoundException(FID + familyId + " not found.");
     }
 
     Family family = familyOptional.get();
     Optional<SubFamily> subFamilyOptional = subFamilyRepository.findById(subFamilyId);
     if (subFamilyOptional.isEmpty()) {
-      throw new ResourceNotFoundException("SubFamily with ID " + subFamilyId + " not found.");
+      throw new ResourceNotFoundException(SID + subFamilyId + " not found.");
     }
 
     SubFamily subFamily = subFamilyOptional.get();
     if (!family.getSubFamilies().contains(subFamily)) {
-      throw new IllegalArgumentException(
-          "SubFamily with ID " + subFamilyId + " is not linked to Family with ID " + familyId);
+      throw new IllegalArgumentException(SID + subFamilyId + " is not linked to Family with ID " + familyId);
     }
 
     family.removeSubFamily(subFamily);
@@ -288,7 +287,7 @@ public class FamilyServiceImpl implements FamilyService {
     if (subFamilyOptional.isPresent()) {
       subFamilyRepository.delete(subFamilyOptional.get());
     } else {
-      throw new ResourceNotFoundException("SubFamily with ID " + po_SubFamilyCode + " not found.");
+      throw new ResourceNotFoundException(SID + po_SubFamilyCode + " not found.");
     }
   }
 }

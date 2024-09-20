@@ -21,8 +21,6 @@ public class ChannelController {
 
   final ChannelService channelService;
 
-  // final EligibilityService eligibilityService;
-
   @PostMapping("/addChannels")
   public ResponseEntity<?> createChannels(@RequestBody Channel channel) {
     try {

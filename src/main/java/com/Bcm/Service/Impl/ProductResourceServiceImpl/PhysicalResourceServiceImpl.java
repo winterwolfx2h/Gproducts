@@ -25,13 +25,6 @@ public class PhysicalResourceServiceImpl implements PhysicalResourceService {
     physicalResource.setStatus("Working state");
 
     validateNotNullFields(physicalResource);
-    List<PhysicalResource> existingResource = physicalResourceRepository.findByName(physicalResource.getName());
-
-    //        if (!existingResource.isEmpty()) {
-    //            throw new ServiceAlreadyExistsException(
-    //                    "Physical resource with name '" + physicalResource.getName() + "' already exists.");
-    //        }
-
     try {
       return physicalResourceRepository.save(physicalResource);
     } catch (DataIntegrityViolationException e) {

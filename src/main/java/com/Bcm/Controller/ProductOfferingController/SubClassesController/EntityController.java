@@ -21,8 +21,6 @@ public class EntityController {
 
   final EntityService entityService;
 
-  // final EligibilityService eligibilityService;
-
   @PostMapping("/addEntitys")
   public ResponseEntity<?> createEntity(@RequestBody EligibilityEntity entity) {
     try {

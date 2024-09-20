@@ -8,8 +8,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -102,16 +102,16 @@ public class MarketController {
   public ResponseEntity<List<SubMarketListResponseDTO>> getAllSubMarkets() {
     try {
       List<SubMarket> subMarkets = marketService.readSubMarkets();
-      List<SubMarketListResponseDTO> subMarketResponseDTOs =
-          subMarkets.stream()
-              .map(
-                  subMarket ->
-                      new SubMarketListResponseDTO(
-                          subMarket.getPo_SubMarketCode(),
-                          subMarket.getSubMarketName(),
-                          subMarket.getSubMarketDescription(),
-                          subMarket.getMarket() != null ? subMarket.getMarket().getPo_MarketCode() : null))
-              .collect(Collectors.toList());
+      List<SubMarketListResponseDTO> subMarketResponseDTOs = new ArrayList<>();
+      for (SubMarket subMarket : subMarkets) {
+        SubMarketListResponseDTO subMarketListResponseDTO =
+            new SubMarketListResponseDTO(
+                subMarket.getPo_SubMarketCode(),
+                subMarket.getSubMarketName(),
+                subMarket.getSubMarketDescription(),
+                subMarket.getMarket() != null ? subMarket.getMarket().getPo_MarketCode() : null);
+        subMarketResponseDTOs.add(subMarketListResponseDTO);
+      }
       return ResponseEntity.ok(subMarketResponseDTOs);
     } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);

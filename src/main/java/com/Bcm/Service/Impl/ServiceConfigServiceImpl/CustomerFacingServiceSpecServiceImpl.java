@@ -22,17 +22,11 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
   final ResourceFacingServiceSpecRepository resourceFacingServiceSpecRepository;
 
   @Override
-  public CustomerFacingServiceSpec create(CustomerFacingServiceSpec customerFacingServiceSpec) {
+  public CustomerFacingServiceSpec create(CustomerFacingServiceSpec customerFacingServiceSpec)
+      throws DataIntegrityViolationException {
     try {
       validateNotNullFields(customerFacingServiceSpec);
 
-      List<CustomerFacingServiceSpec> existingServiceSpecs =
-          customerFacingServiceSpecRepository.findByName(customerFacingServiceSpec.getName());
-      //            if (!existingServiceSpecs.isEmpty()) {
-      //                throw new ServiceAlreadyExistsException(
-      //                        "CustomerFacingServiceSpec with name '" + customerFacingServiceSpec.getName() + "'
-      // already exists.");
-      //            }
       customerFacingServiceSpec.setStatus("Working state");
       return customerFacingServiceSpecRepository.save(customerFacingServiceSpec);
 
@@ -40,10 +34,7 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
       throw e;
     } catch (InvalidInputException e) {
       throw new InvalidInputException("Invalid input: " + e.getMessage());
-    } catch (DataIntegrityViolationException e) {
-      throw new RuntimeException("Database error: " + e.getRootCause().getMessage(), e);
     } catch (Exception e) {
-      // Log the exception for debugging
       e.printStackTrace();
       throw new RuntimeException("An unexpected error occurred: " + e.getMessage(), e);
     }
@@ -67,14 +58,8 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
       CustomerFacingServiceSpec existingCustomerFacingServiceSpec = existingCustomerFacingServiceSpecOptional.get();
       if (!existingCustomerFacingServiceSpec
           .getServiceSpecType()
-          .equals(updatedCustomerFacingServiceSpec.getServiceSpecType())) {
-        List<CustomerFacingServiceSpec> existingServiceSpecs =
-            customerFacingServiceSpecRepository.findByServiceSpecType(
-                updatedCustomerFacingServiceSpec.getServiceSpecType());
-        //                if (!existingServiceSpecs.isEmpty()) {
-        //                    throw new ServiceAlreadyExistsException("Service with the same type already exists");
-        //                }
-      }
+          .equals(updatedCustomerFacingServiceSpec.getServiceSpecType())) {}
+
       existingCustomerFacingServiceSpec.setName(updatedCustomerFacingServiceSpec.getName());
       existingCustomerFacingServiceSpec.setDescription(updatedCustomerFacingServiceSpec.getDescription());
       existingCustomerFacingServiceSpec.setServiceSpecType(updatedCustomerFacingServiceSpec.getServiceSpecType());

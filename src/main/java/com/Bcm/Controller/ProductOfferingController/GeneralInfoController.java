@@ -39,16 +39,13 @@ public class GeneralInfoController {
   @CacheEvict(value = "productOfferingsCache", allEntries = true)
   public ResponseEntity<?> createProductOfferingDTO(@Valid @RequestBody GeneralInfoDTO dto) {
     try {
-      // Convert DTO to entity and save
       ProductOffering createdProductOffering = generalInfoService.createGeneralInfoDTO(dto);
       return new ResponseEntity<>(createdProductOffering, HttpStatus.CREATED);
 
-    } catch (ProductOfferingAlreadyExistsException ex) {
+    } catch (ProductOfferingAlreadyExistsException | DuplicateKeyException ex) {
       return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     } catch (EntityNotFoundException ex) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    } catch (DuplicateKeyException ex) {
-      return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -127,8 +124,7 @@ public class GeneralInfoController {
 
     if (generalInfoDTO.getEffectiveFrom() == null
         || generalInfoDTO.getName().isEmpty()
-        || generalInfoDTO.getEffectiveTo() == null
-        || generalInfoDTO.getName().isEmpty()) {
+        || generalInfoDTO.getEffectiveTo() == null) {
       errors.add("Effective from and effective to dates cannot be null");
     } else {
       if (generalInfoDTO.getEffectiveFrom().compareTo(generalInfoDTO.getEffectiveTo()) >= 0) {

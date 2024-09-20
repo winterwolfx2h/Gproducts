@@ -12,14 +12,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LogicalResourceServiceImpl implements LogicalResourceService {
 
+  private static final String invArg = "Invalid argument provided for finding LogicalResource";
   final LogicalResourceRepository logicalResourceRepository;
 
   @Override
   public LogicalResource create(LogicalResource logicalResource) {
-    //        if (logicalResourceRepository.existsByName(logicalResource.getName())) {
-    //            throw new DuplicateResourceException(
-    //                    "LogicalResource with name " + logicalResource.getName() + " already exists");
-    //        }
+
     logicalResource.setStatus("Working state");
     return logicalResourceRepository.save(logicalResource);
   }
@@ -59,7 +57,7 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
   @Override
   public LogicalResource findById(int LR_id) {
     Optional<LogicalResource> optionalPlan = logicalResourceRepository.findById(LR_id);
-    return optionalPlan.orElseThrow(() -> new RuntimeException("LogicalResource with ID " + LR_id + " not found"));
+    return optionalPlan.orElseThrow(() -> new RuntimeException("LogicalResource with ID " + LR_id + " was not found"));
   }
 
   @Override
@@ -73,9 +71,9 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
       Optional<LogicalResource> optionalLogicalResource =
           logicalResourceRepository.findByLogicalResourceType(logicalResourceType);
       return optionalLogicalResource.orElseThrow(
-          () -> new RuntimeException("LogicalResource with type " + logicalResourceType + " not found"));
+          () -> new RuntimeException("LogicalResource with type " + logicalResourceType + " wasn't found"));
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding LogicalResource");
+      throw new RuntimeException(invArg);
     }
   }
 
@@ -90,7 +88,7 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
       Optional<LogicalResource> optionalLogicalResource = logicalResourceRepository.findByName(name);
       return optionalLogicalResource.isPresent();
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding LogicalResource");
+      throw new RuntimeException(invArg);
     }
   }
 
@@ -99,9 +97,9 @@ public class LogicalResourceServiceImpl implements LogicalResourceService {
     try {
       Optional<LogicalResource> optionalLogicalResource = logicalResourceRepository.findByName(name);
       return optionalLogicalResource.orElseThrow(
-          () -> new RuntimeException("LogicalResource with ID " + name + " not found"));
+          () -> new RuntimeException("LogicalResource with ID " + name + " couldn't be found"));
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding LogicalResource");
+      throw new RuntimeException(invArg);
     }
   }
 }

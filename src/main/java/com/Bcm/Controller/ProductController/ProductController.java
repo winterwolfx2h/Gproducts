@@ -8,26 +8,22 @@ import com.Bcm.Model.Product.ProductDTO;
 import com.Bcm.Model.Product.ProductTaxDTO;
 import com.Bcm.Model.ProductOfferingABE.DependentCfsDto;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
+import com.Bcm.Model.ProductOfferingABE.Tax;
+import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
+import com.Bcm.Repository.Product.ProductRepository;
+import com.Bcm.Repository.ProductOfferingRepo.TaxRepository;
+import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,11 +36,12 @@ import java.util.stream.Collectors;
 public class ProductController {
 
   private static final String error = "An unexpected error occurred";
-  final JdbcTemplate base;
   final ProductService productService;
+  final ProductRepository productRepository;
+  final CustomerFacingServiceSpecRepository cfsRepository;
   final ProductOfferingService productOfferingService;
   final FamilyService familyService;
-  @PersistenceContext private EntityManager entityManager;
+  final TaxRepository taxRepository;
 
   @GetMapping("/ProductList")
   public ResponseEntity<?> getAllProduct() {
@@ -63,85 +60,26 @@ public class ProductController {
   }
 
   @GetMapping("/searchProductResDetails")
-  public Map<String, String> searchProductResDetails(@RequestParam Integer productId) {
-    Map<String, String> response = new HashMap<>();
-
-    String checkProductSql = "SELECT COUNT(*) FROM product_offering WHERE product_id = ?";
-    int productCount = base.queryForObject(checkProductSql, new Object[] {productId}, Integer.class);
-
-    if (productCount == 0) {
-      response.put("message", "Product with the given ID does not exist.");
-      return response;
+  public ResponseEntity<Map<String, String>> searchProductResDetails(@RequestParam Integer productId) {
+    try {
+      Map<String, String> productDetails = productService.fetchProductResourceDetails(productId);
+      return ResponseEntity.ok(productDetails);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(Map.of("message", "An unexpected error occurred"));
     }
-
-    String sql =
-        "SELECT pr.name AS physical_resource_name, cfss.name AS service_spec_name "
-            + "FROM product_offering po "
-            + "LEFT JOIN physical_resource pr ON po.pr_id = pr.pr_id "
-            + "LEFT JOIN customer_facing_service_spec cfss ON po.service_id = cfss.service_id "
-            + "WHERE po.product_id = ?";
-
-    Map<String, String> productDetails;
-    productDetails =
-        base.queryForObject(
-            sql,
-            new Object[] {productId},
-            new RowMapper<Map<String, String>>() {
-              @Override
-              public Map<String, String> mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Map<String, String> result = new HashMap<>();
-                String physicalResourceName = rs.getString("physical_resource_name");
-                String serviceSpecName = rs.getString("service_spec_name");
-
-                if (physicalResourceName == null && serviceSpecName == null) {
-                  result.put("message", "No CFS or Physical Resource is associated with that product.");
-                } else {
-                  result.put("physicalResourceName", physicalResourceName);
-                  result.put("serviceSpecName", serviceSpecName);
-                }
-                return result;
-              }
-            });
-
-    return productDetails;
   }
 
   @GetMapping("/searchProductDetails")
   public ResponseEntity<?> searchProductDetails(@RequestParam Integer productId) {
     try {
-      String sql =
-          "SELECT DISTINCT "
-              + "  p.product_id, "
-              + "  c.channel_code AS channelCode, "
-              + "  c.name AS channelName, "
-              + "  e.entity_code AS entityCode, "
-              + "  e.name AS entityName, "
-              + "  pg.product_price_group_code AS productPriceGroupCode, "
-              + "  pg.name AS productPriceGroupName, "
-              + "  p.stock_ind "
-              + "FROM "
-              + "  Product p "
-              + "  LEFT JOIN Product_Channel pc ON p.product_id = pc.product_id "
-              + "  LEFT JOIN Channel c ON pc.channel_code = c.channel_code "
-              + "  LEFT JOIN Product_Entity pe ON p.product_id = pe.product_id "
-              + "  LEFT JOIN Entity e ON pe.entity_code = e.entity_code "
-              + "  LEFT JOIN Product_PriceGroup pp ON p.product_id = pp.product_id "
-              + "  LEFT JOIN Product_Price_Group pg ON pp.product_price_group_code = pg.product_price_group_code "
-              + "WHERE "
-              + "  p.product_id = ?";
-
-      List<Map<String, Object>> productDetails = base.queryForList(sql, new Object[] {productId});
-
-      if (productDetails.isEmpty()) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
-      }
-
+      List<Map<String, Object>> productDetails = productService.fetchProductDetails(productId);
       return ResponseEntity.ok(productDetails);
-    } catch (DataAccessException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error: " + e.getMessage());
-    } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Runtime error: " + e.getMessage());
+    } catch (ProductNotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     } catch (Exception e) {
+      e.printStackTrace();
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An unexpected error occurred: " + e.getMessage());
     }
@@ -274,37 +212,35 @@ public class ProductController {
   }
 
   @PostMapping("/insertProdDependentCfs")
+  @Transactional
   public ResponseEntity<String> insertDependentCfs(@RequestBody List<DependentCfsDto> dependentCfsDtos) {
     if (dependentCfsDtos.isEmpty()) {
       throw new IllegalArgumentException("At least one dependentCfsDtos must be provided");
     }
-
-    String query = "SELECT COUNT(*) FROM product WHERE product_id = ?";
     for (DependentCfsDto dto : dependentCfsDtos) {
-      int count = base.queryForObject(query, new Object[] {dto.getProductId()}, Integer.class);
-      if (count == 0) {
+      if (!productRepository.existsById(dto.getProductId())) {
         throw new IllegalArgumentException("Product with id " + dto.getProductId() + " does not exist");
       }
+      Product product =
+          productRepository
+              .findById(dto.getProductId())
+              .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+
+      CustomerFacingServiceSpec cfs =
+          cfsRepository
+              .findById(dto.getDependentCfs())
+              .orElseThrow(() -> new IllegalArgumentException("Dependent CFS not found"));
+
+      product.getServiceId().add(cfs);
     }
-
-    String sql = "INSERT INTO product_depend_cfs (product_id, dependent_cfs) VALUES (?, ?)";
-
-    base.batchUpdate(
-        sql,
-        new BatchPreparedStatementSetter() {
-          @Override
-          public void setValues(PreparedStatement ps, int i) throws SQLException {
-            ps.setInt(1, dependentCfsDtos.get(i).getProductId());
-            ps.setInt(2, dependentCfsDtos.get(i).getDependentCfs());
-          }
-
-          @Override
-          public int getBatchSize() {
-            return dependentCfsDtos.size();
-          }
-        });
-
-    return ResponseEntity.ok("dependentCfs inserted successfully");
+    for (DependentCfsDto dto : dependentCfsDtos) {
+      Product product =
+          productRepository
+              .findById(dto.getProductId())
+              .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+      productRepository.save(product);
+    }
+    return ResponseEntity.ok("Dependent CFS inserted successfully");
   }
 
   @PutMapping("update/{productId}")
@@ -322,27 +258,34 @@ public class ProductController {
   }
 
   @PostMapping("/insertProductTax")
+  @Transactional
   public ResponseEntity<String> insertProductTax(@RequestBody List<ProductTaxDTO> productTaxDTO) {
     if (productTaxDTO.isEmpty()) {
       throw new IllegalArgumentException("At least one Product_Tax must be provided");
     }
+    for (ProductTaxDTO dto : productTaxDTO) {
+      Product product =
+          productRepository
+              .findById(dto.getProductId())
+              .orElseThrow(
+                  () -> new IllegalArgumentException("Product with id " + dto.getProductId() + " does not exist"));
 
-    String query = "INSERT INTO product_tax (product_id, tax_code) VALUES (?, ?)";
+      Tax tax =
+          taxRepository
+              .findById(dto.getTaxCode())
+              .orElseThrow(
+                  () -> new IllegalArgumentException("Tax with tax code " + dto.getTaxCode() + " does not exist"));
 
-    base.batchUpdate(
-        query,
-        new BatchPreparedStatementSetter() {
-          @Override
-          public void setValues(PreparedStatement ps, int i) throws SQLException {
-            ps.setInt(1, productTaxDTO.get(i).getProductId());
-            ps.setInt(2, productTaxDTO.get(i).getTaxCode());
-          }
+      product.getTaxes().add(tax);
+    }
 
-          @Override
-          public int getBatchSize() {
-            return productTaxDTO.size();
-          }
-        });
+    for (ProductTaxDTO dto : productTaxDTO) {
+      Product product =
+          productRepository
+              .findById(dto.getProductId())
+              .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+      productRepository.save(product);
+    }
 
     return ResponseEntity.ok("Product Tax inserted successfully");
   }

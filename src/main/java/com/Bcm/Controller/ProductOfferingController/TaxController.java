@@ -6,16 +6,15 @@ import com.Bcm.Model.ProductOfferingABE.Tax;
 import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.TaxService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Tag(name = "Tax Controller", description = "All of the Tax's methods")
 @RestController

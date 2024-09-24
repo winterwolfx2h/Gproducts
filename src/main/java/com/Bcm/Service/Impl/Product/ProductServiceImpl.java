@@ -7,10 +7,9 @@ import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.Product.ProductDTO;
 import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -118,5 +117,51 @@ public class ProductServiceImpl implements ProductService {
     product.setQuantityInd(dto.getQuantityInd());
 
     return productRepository.save(product);
+  }
+
+  @Override
+  public Map<String, String> fetchProductResourceDetails(int productId) {
+    List<Object[]> results = productRepository.findProductResourceDetails(productId);
+
+    if (results.isEmpty()) {
+      return Map.of("message", "No CFS or Physical Resource is associated with that product.");
+    }
+
+    Map<String, String> response = new HashMap<>();
+    for (Object[] result : results) {
+      String physicalResourceName = (String) result[0];
+      String serviceSpecName = (String) result[1];
+
+      response.put("physicalResourceName", physicalResourceName != null ? physicalResourceName : "N/A");
+      response.put("serviceSpecName", serviceSpecName != null ? serviceSpecName : "N/A");
+    }
+    return response;
+  }
+
+  @Override
+  public List<Map<String, Object>> fetchProductDetails(int productId) throws ProductNotFoundException {
+    List<Object[]> results = productRepository.findProductDetails(productId);
+
+    if (results.isEmpty()) {
+      throw new ProductNotFoundException("Product not found with ID: " + productId);
+    }
+
+    List<Map<String, Object>> productDetailsList = new ArrayList<>();
+
+    for (Object[] result : results) {
+      Map<String, Object> productDetail = new HashMap<>();
+      productDetail.put("productId", result[0]);
+      productDetail.put("channelCode", result[1]);
+      productDetail.put("channelName", result[2]);
+      productDetail.put("entityCode", result[3]);
+      productDetail.put("entityName", result[4]);
+      productDetail.put("productPriceGroupCode", result[5]);
+      productDetail.put("productPriceGroupName", result[6]);
+      productDetail.put("stockInd", result[7]);
+
+      productDetailsList.add(productDetail);
+    }
+
+    return productDetailsList;
   }
 }

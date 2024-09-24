@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class EntityServiceImpl implements EntityService {
 
-  final EntityRepository entityRepository;
-  final ProductOfferingService productOfferingService;
   private static final String EID = "Entity with ID ";
   private static final String invArg = "Invalid argument provided for finding Entity";
+  final EntityRepository entityRepository;
+  final ProductOfferingService productOfferingService;
 
   @Override
   public EligibilityEntity create(EligibilityEntity Entity) {

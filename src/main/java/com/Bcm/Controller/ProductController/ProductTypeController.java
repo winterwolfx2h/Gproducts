@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/ProductType")
 public class ProductTypeController {
 
-  final ProductTypeService productTypeService;
   private static final String error = "An unexpected error occurred";
+  final ProductTypeService productTypeService;
 
   @PostMapping("/addProductType")
   @CacheEvict(value = "TypesCache", allEntries = true)

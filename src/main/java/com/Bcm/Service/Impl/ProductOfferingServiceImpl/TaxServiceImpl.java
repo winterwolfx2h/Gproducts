@@ -135,4 +135,9 @@ public class TaxServiceImpl implements TaxService {
       throw new RuntimeException("Invalid argument provided for searching Tax by keyword");
     }
   }
+
+  @Override
+  public List<Tax> findTaxesByProductId(int productId) {
+    return taxRepository.findTaxesByProductId(productId);
+  }
 }

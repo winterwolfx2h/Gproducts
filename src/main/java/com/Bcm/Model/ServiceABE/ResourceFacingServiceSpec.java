@@ -1,12 +1,11 @@
 package com.Bcm.Model.ServiceABE;
 
 import com.Bcm.Model.ProductResourceABE.LogicalResource;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.*;
 
 @Table(name = "ResourceFacingServiceSpecification")
 @Entity

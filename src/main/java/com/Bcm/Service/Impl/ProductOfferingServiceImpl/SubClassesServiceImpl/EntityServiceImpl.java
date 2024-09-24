@@ -73,14 +73,6 @@ public class EntityServiceImpl implements EntityService {
     }
   }
 
-  /*private void updateProductOfferingsWithDeletedEntity(String Entitys) {
-      List<ProductOffering> productOfferings = productOfferingService.findByEntitys(Entitys);
-      for (ProductOffering offering : productOfferings) {
-          offering.setEntitys(null);
-          productOfferingService.update(offering.getProduct_id(), offering);
-      }
-  }*/
-
   @Override
   public EligibilityEntity findById(int entityCode) {
     try {

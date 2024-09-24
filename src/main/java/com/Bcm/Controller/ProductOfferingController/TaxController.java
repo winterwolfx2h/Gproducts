@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
@@ -27,7 +26,6 @@ public class TaxController {
 
   final TaxService taxService;
   final ProductRepository productRepository;
-  final JdbcTemplate base;
   private static final Logger logger = LoggerFactory.getLogger(TaxController.class);
   @PersistenceContext private EntityManager entityManager;
 
@@ -95,22 +93,13 @@ public class TaxController {
   }
 
   @GetMapping("/product/{productId}")
-  public ResponseEntity<Object> getTaxForProduct(@PathVariable int productId) {
-
+  public ResponseEntity<List<Tax>> getTaxForProduct(@PathVariable int productId) {
     logger.info("Received request for Product ID: {}", productId);
 
-    String sql =
-        "select p.product_id, t.tax_code, t.name, t.customer_category, t.tax_type, t.value, t.external_id,"
-            + " t.valid_from, t.valid_to  FROM tax t  JOIN product_tax pt ON t.tax_code = pt.tax_code  JOIN product p"
-            + " ON pt.product_id = p.product_id  WHERE p.product_id = :productId  AND t.tax_code IS  NOT NULL Order BY"
-            + " p.product_id; ";
-
-    List<Tax> results =
-        entityManager.createNativeQuery(sql, Tax.class).setParameter("productId", productId).getResultList();
+    List<Tax> results = taxService.findTaxesByProductId(productId);
 
     if (results.isEmpty()) {
-
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Tax found for productId: " + productId);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     return ResponseEntity.ok(results);

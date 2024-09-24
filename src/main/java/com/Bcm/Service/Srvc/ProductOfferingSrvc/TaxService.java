@@ -20,4 +20,6 @@ public interface TaxService {
   boolean existsById(int taxCode);
 
   List<Tax> searchByName(String name);
+
+  List<Tax> findTaxesByProductId(int productId);
 }

@@ -25,12 +25,6 @@ import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.PhysicalResourceService;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -41,6 +35,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.validation.Valid;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 @Tag(name = "Product Offering Controller", description = "All of the Product Offering's methods")
 @RestController
 @RequiredArgsConstructor
@@ -49,6 +50,8 @@ import org.springframework.web.context.request.WebRequest;
 public class ProductOfferingController {
 
   private static final String Success = "Product channels inserted successfully";
+  private static final String FAM = "Family with name '";
+  private static final String EXT = "' does not exist.";
   final ProductOfferingService productOfferingService;
   final POAttributesService poAttributesService;
   final ProductOfferRelationService productOfferRelationService;
@@ -65,8 +68,6 @@ public class ProductOfferingController {
   private final ProductOfferingRepository productOfferingRepository;
   private final ProductOfferRelationRepository productOfferRelationRepository;
   private final ProductOfferingServiceImpl productOfferingServiceImpl;
-  private static final String FAM = "Family with name '";
-  private static final String EXT = "' does not exist.";
 
   @PostMapping("/addProdOff")
   @CacheEvict(value = "productOfferingsCache", allEntries = true)

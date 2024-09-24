@@ -3,6 +3,7 @@ package com.Bcm.Model.ProductOfferingABE;
 import com.Bcm.Model.Product.Product;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -52,4 +53,35 @@ public class Tax {
   @JsonIgnore
   @ManyToMany(mappedBy = "taxes")
   private Set<Product> products = new HashSet<>();
+
+  @JsonProperty("taxCode")
+  public int getTaxCode() {
+    return taxCode;
+  }
+
+  @Override
+  public String toString() {
+    return "Tax{"
+        + "taxCode="
+        + taxCode
+        + ", name='"
+        + name
+        + '\''
+        + ", value="
+        + value
+        + ", taxType='"
+        + taxType
+        + '\''
+        + ", customerCategory='"
+        + customerCategory
+        + '\''
+        + ", externalId='"
+        + externalId
+        + '\''
+        + ", validFrom="
+        + validFrom
+        + ", validTo="
+        + validTo
+        + '}';
+  }
 }

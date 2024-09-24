@@ -9,9 +9,9 @@ import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -119,19 +119,19 @@ public class CustomerFacingServiceSpecController {
     try {
       List<Object[]> rawResults =
           customerFacingServiceSpecRepository.searchByMarketSubMarketRaw(marketName, subMarketName);
-      List<MarketSubMarketDTO> result =
-          rawResults.stream()
-              .map(
-                  obj ->
-                      new MarketSubMarketDTO(
-                          (Integer) obj[0],
-                          (String) obj[1],
-                          (Integer) obj[2],
-                          (Integer) obj[3],
-                          (String) obj[4],
-                          (Integer) obj[5],
-                          (String) obj[6]))
-              .collect(Collectors.toList());
+      List<MarketSubMarketDTO> result = new ArrayList<>();
+      for (Object[] obj : rawResults) {
+        MarketSubMarketDTO marketSubMarketDTO =
+            new MarketSubMarketDTO(
+                (Integer) obj[0],
+                (String) obj[1],
+                (Integer) obj[2],
+                (Integer) obj[3],
+                (String) obj[4],
+                (Integer) obj[5],
+                (String) obj[6]);
+        result.add(marketSubMarketDTO);
+      }
 
       return ResponseEntity.ok(result);
     } catch (Exception e) {

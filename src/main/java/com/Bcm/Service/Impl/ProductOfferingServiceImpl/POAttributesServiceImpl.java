@@ -7,19 +7,24 @@ import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Repository.ProductOfferingRepo.POAttributesRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.POAttributesService;
-import java.util.List;
-import java.util.Optional;
-import javax.persistence.EntityNotFoundException;
+import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class POAttributesServiceImpl implements POAttributesService {
 
   final POAttributesRepository poAttributesRepository;
+  final CustomerFacingServiceSpecService customerFacingServiceSpecService;
+
   private final ProductOfferingRepository productOfferingRepository;
   private static final String PID = "POAttributes with ID: ";
   private static final String NTF = " not found";
@@ -126,5 +131,32 @@ public class POAttributesServiceImpl implements POAttributesService {
   @Override
   public List<POAttributes> readByProductId(int productId) {
     return poAttributesRepository.findByProductId(productId);
+  }
+
+  public boolean validateDependentCfs(String dependentCfs) {
+    return dependentCfs != null
+        && !dependentCfs.isEmpty()
+        && customerFacingServiceSpecService.findByNameexist(dependentCfs);
+  }
+
+  public void setDefaultValueDescriptions(POAttributes poAttribute) {
+    if (poAttribute.getValueDescription() == null) {
+      poAttribute.setValueDescription(new ArrayList<>());
+    }
+
+    for (POAttributes.ValueDescription valueDescription : poAttribute.getValueDescription()) {
+      if (valueDescription.getDescription() == null) {
+        valueDescription.setDescription("Default Description");
+      }
+    }
+  }
+
+  public boolean isCategoryValid(String attributeCategoryName) {
+    return attributeCategoryName != null && !attributeCategoryName.isEmpty();
+  }
+
+  public POAttributes createSinglePOAttribute(POAttributes poAttribute) throws InvalidInputException {
+    setDefaultValueDescriptions(poAttribute);
+    return create(poAttribute);
   }
 }

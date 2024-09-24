@@ -56,9 +56,6 @@ public class CustomerFacingServiceSpecServiceImpl implements CustomerFacingServi
 
     if (existingCustomerFacingServiceSpecOptional.isPresent()) {
       CustomerFacingServiceSpec existingCustomerFacingServiceSpec = existingCustomerFacingServiceSpecOptional.get();
-      if (!existingCustomerFacingServiceSpec
-          .getServiceSpecType()
-          .equals(updatedCustomerFacingServiceSpec.getServiceSpecType())) {}
 
       existingCustomerFacingServiceSpec.setName(updatedCustomerFacingServiceSpec.getName());
       existingCustomerFacingServiceSpec.setDescription(updatedCustomerFacingServiceSpec.getDescription());

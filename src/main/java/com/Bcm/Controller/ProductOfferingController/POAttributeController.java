@@ -13,7 +13,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "PO-Attribute Controller", description = "All of the PO-Attribute's methods")
@@ -22,8 +21,6 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/POAttribute")
 public class POAttributeController {
-
-  final JdbcTemplate base;
 
   final POAttributesService poAttributesService;
   final CustomerFacingServiceSpecService customerFacingServiceSpecService;
@@ -42,34 +39,18 @@ public class POAttributeController {
 
       for (POAttributes poAttribute : POAttributesList) {
         String dependentCfs = poAttribute.getDependentCfs();
-        if (dependentCfs != null
-            && !dependentCfs.isEmpty()
-            && !customerFacingServiceSpecService.findByNameexist(dependentCfs)) {
+        if (!poAttributesService.validateDependentCfs(dependentCfs)) {
           return ResponseEntity.badRequest().body("Service with name '" + dependentCfs + "' does not exist.");
         }
+
         String attributeCategoryName = poAttribute.getCategory();
-        if (attributeCategoryName != null && !attributeCategoryName.isEmpty()) {
-          for (POAttributes.ValueDescription valueDescription :
-              (List<POAttributes.ValueDescription>)
-                  (poAttribute.getValueDescription() != null ? poAttribute.getValueDescription() : new ArrayList<>())) {
-            if (valueDescription.getDescription() == null) {
-              valueDescription.setDescription("Default Description");
-            }
-          }
-
-          if (poAttribute.getValueDescription() == null) {
-            poAttribute.setValueDescription(new ArrayList<>());
-          }
-
-          if (poAttribute.getDefaultMaxSize() == null) {
-            poAttribute.setDefaultMaxSize(new ArrayList<>());
-          }
-
-          POAttributes createdPlan = poAttributesService.create(poAttribute);
-          createdPOAttributesList.add(createdPlan);
-        } else {
+        if (!poAttributesService.isCategoryValid(attributeCategoryName)) {
           return ResponseEntity.badRequest().body("Attribute category is missing for one or more POAttributes.");
         }
+
+        poAttributesService.setDefaultValueDescriptions(poAttribute);
+        POAttributes createdPlan = poAttributesService.create(poAttribute);
+        createdPOAttributesList.add(createdPlan);
       }
 
       return ResponseEntity.ok(createdPOAttributesList);

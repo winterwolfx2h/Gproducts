@@ -5,17 +5,23 @@ import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
 import com.Bcm.Exception.ProductOfferingLogicException;
-import com.Bcm.Model.Product.ProductChannelDTO;
-import com.Bcm.Model.Product.ProductEntityDTO;
-import com.Bcm.Model.Product.ProductGroupDto;
-import com.Bcm.Model.Product.ProductOfferingDTO;
+import com.Bcm.Model.Product.*;
 import com.Bcm.Model.ProductOfferingABE.DependentCfsDto;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
+import com.Bcm.Model.ProductOfferingABE.ProductPriceGroup;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.Channel;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.EligibilityEntity;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Family.FamilyRequestDTO;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market.Market;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market.SubMarket;
+import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
+import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
+import com.Bcm.Repository.ProductOfferingRepo.ProductPriceGroupRepository;
+import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.ChannelRepository;
+import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.EntityRepository;
+import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Service.Impl.ProductOfferingServiceImpl.ProductOfferingServiceImpl;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.*;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ChannelService;
@@ -25,8 +31,6 @@ import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.PhysicalResourceService;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,8 +40,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -62,11 +64,15 @@ public class ProductOfferingController {
   final ChannelService channelService;
   final CustomerFacingServiceSpecService customerFacingServiceSpecService;
   final MarketService marketService;
+  final ChannelRepository channelRepository;
+  final EntityRepository entityRepository;
+  final ProductPriceGroupRepository productPriceGroupRepository;
+  final CustomerFacingServiceSpecRepository customerFacingServiceSpecRepository;
   final ProductOfferingValidationService validationService;
-  final JdbcTemplate base;
   private final ProductOfferingRepository productOfferingRepository;
   private final ProductOfferRelationRepository productOfferRelationRepository;
   private final ProductOfferingServiceImpl productOfferingServiceImpl;
+  private final ProductRepository productRepository;
 
   @PostMapping("/addProdOff")
   @CacheEvict(value = "productOfferingsCache", allEntries = true)
@@ -449,24 +455,23 @@ public class ProductOfferingController {
       throw new IllegalArgumentException("At least one productChannelDTO must be provided");
     }
 
-    String sql = "INSERT INTO product_channel (product_id, channel_code) VALUES (?, ?)";
+    Integer productId = productChannelDTOs.get(0).getProductId();
+    ProductOffering productOffering = productOfferingService.findById(productId);
+    if (productOffering == null) {
+      throw new IllegalArgumentException("Product offering with ID " + productId + " does not exist.");
+    }
 
-    base.batchUpdate(
-        sql,
-        new BatchPreparedStatementSetter() {
-          @Override
-          public void setValues(PreparedStatement ps, int i) throws SQLException {
-            ps.setInt(1, productChannelDTOs.get(i).getProductId());
-            ps.setInt(2, productChannelDTOs.get(i).getChannelCode());
-          }
+    for (ProductChannelDTO dto : productChannelDTOs) {
+      Channel channel =
+          channelRepository
+              .findById(dto.getChannelCode())
+              .orElseThrow(
+                  () -> new IllegalArgumentException("Channel with code " + dto.getChannelCode() + " does not exist"));
+      productOffering.getChannelCode().add(channel);
+    }
 
-          @Override
-          public int getBatchSize() {
-            return productChannelDTOs.size();
-          }
-        });
-
-    return ResponseEntity.ok(Success);
+    productOfferingRepository.save(productOffering);
+    return ResponseEntity.ok("Product channels inserted successfully");
   }
 
   @PostMapping("/insertProductEntity")
@@ -475,50 +480,50 @@ public class ProductOfferingController {
       throw new IllegalArgumentException("At least one productEntityDTO must be provided");
     }
 
-    String sql = "INSERT INTO product_entity (product_id, entity_code) VALUES (?, ?)";
+    Integer productId = productEntityDTO.get(0).getProductId();
+    ProductOffering productOffering = productOfferingService.findById(productId);
+    if (productOffering == null) {
+      throw new IllegalArgumentException("Product offering with ID " + productId + " does not exist.");
+    }
 
-    base.batchUpdate(
-        sql,
-        new BatchPreparedStatementSetter() {
-          @Override
-          public void setValues(PreparedStatement ps, int i) throws SQLException {
-            ps.setInt(1, productEntityDTO.get(i).getProductId());
-            ps.setInt(2, productEntityDTO.get(i).getEntityCode());
-          }
+    for (ProductEntityDTO dto : productEntityDTO) {
+      EligibilityEntity entity =
+          entityRepository
+              .findById(dto.getEntityCode())
+              .orElseThrow(
+                  () -> new IllegalArgumentException("Entity with code " + dto.getEntityCode() + " does not exist"));
+      productOffering.getEntityCode().add(entity);
+    }
 
-          @Override
-          public int getBatchSize() {
-            return productEntityDTO.size();
-          }
-        });
-
-    return ResponseEntity.ok(Success);
+    productOfferingRepository.save(productOffering);
+    return ResponseEntity.ok("Product entities inserted successfully");
   }
 
   @PostMapping("/insertProductGroup")
-  public ResponseEntity<String> insertProductGROUP(@RequestBody List<ProductGroupDto> productGroupDtos) {
+  public ResponseEntity<String> insertProductGroup(@RequestBody List<ProductGroupDto> productGroupDtos) {
     if (productGroupDtos.isEmpty()) {
       throw new IllegalArgumentException("At least one productGroupDtos must be provided");
     }
 
-    String sql = "INSERT INTO product_pricegroup (product_id, product_price_group_code) VALUES (?, ?)";
+    Integer productId = productGroupDtos.get(0).getProductId();
+    ProductOffering productOffering = productOfferingService.findById(productId);
+    if (productOffering == null) {
+      throw new IllegalArgumentException("Product offering with ID " + productId + " does not exist.");
+    }
 
-    base.batchUpdate(
-        sql,
-        new BatchPreparedStatementSetter() {
-          @Override
-          public void setValues(PreparedStatement ps, int i) throws SQLException {
-            ps.setInt(1, productGroupDtos.get(i).getProductId());
-            ps.setInt(2, productGroupDtos.get(i).getProductPriceGroupCode());
-          }
+    for (ProductGroupDto dto : productGroupDtos) {
+      ProductPriceGroup priceGroup =
+          productPriceGroupRepository
+              .findById(dto.getProductPriceGroupCode())
+              .orElseThrow(
+                  () ->
+                      new IllegalArgumentException(
+                          "Product Price Group with code " + dto.getProductPriceGroupCode() + " does not exist"));
+      productOffering.getProductPriceGroups().add(priceGroup);
+    }
 
-          @Override
-          public int getBatchSize() {
-            return productGroupDtos.size();
-          }
-        });
-
-    return ResponseEntity.ok(Success);
+    productOfferingRepository.save(productOffering);
+    return ResponseEntity.ok("Product groups inserted successfully");
   }
 
   @PostMapping("/updateProductChannels")
@@ -528,26 +533,23 @@ public class ProductOfferingController {
     }
 
     int productId = productChannelDTOs.get(0).getProductId();
+    ProductOffering productOffering = productOfferingService.findById(productId);
+    if (productOffering == null) {
+      throw new IllegalArgumentException("Product offering with ID " + productId + " does not exist.");
+    }
 
-    String deleteSql = "DELETE FROM product_channel WHERE product_id = ?";
-    base.update(deleteSql, productId);
+    for (ProductChannelDTO dto : productChannelDTOs) {
+      Channel channel =
+          channelRepository
+              .findById(dto.getChannelCode())
+              .orElseThrow(
+                  () -> new IllegalArgumentException("Channel with code " + dto.getChannelCode() + " does not exist"));
+      if (!productOffering.getChannelCode().contains(channel)) {
+        productOffering.getChannelCode().add(channel);
+      }
+    }
 
-    String insertSql = "INSERT INTO product_channel (product_id, channel_code) VALUES (?, ?)";
-    base.batchUpdate(
-        insertSql,
-        new BatchPreparedStatementSetter() {
-          @Override
-          public void setValues(PreparedStatement ps, int i) throws SQLException {
-            ps.setInt(1, productChannelDTOs.get(i).getProductId());
-            ps.setInt(2, productChannelDTOs.get(i).getChannelCode());
-          }
-
-          @Override
-          public int getBatchSize() {
-            return productChannelDTOs.size();
-          }
-        });
-
+    productOfferingRepository.save(productOffering);
     return ResponseEntity.ok("Product channels updated successfully");
   }
 
@@ -558,26 +560,23 @@ public class ProductOfferingController {
     }
 
     int productId = productEntityDTOs.get(0).getProductId();
+    ProductOffering productOffering = productOfferingService.findById(productId);
+    if (productOffering == null) {
+      throw new IllegalArgumentException("Product offering with ID " + productId + " does not exist.");
+    }
 
-    String deleteSql = "DELETE FROM product_entity WHERE product_id = ?";
-    base.update(deleteSql, productId);
+    for (ProductEntityDTO dto : productEntityDTOs) {
+      EligibilityEntity entity =
+          entityRepository
+              .findById(dto.getEntityCode())
+              .orElseThrow(
+                  () -> new IllegalArgumentException("Entity with code " + dto.getEntityCode() + " does not exist"));
+      if (!productOffering.getEntityCode().contains(entity)) {
+        productOffering.getEntityCode().add(entity);
+      }
+    }
 
-    String insertSql = "INSERT INTO product_entity (product_id, entity_code) VALUES (?, ?)";
-    base.batchUpdate(
-        insertSql,
-        new BatchPreparedStatementSetter() {
-          @Override
-          public void setValues(PreparedStatement ps, int i) throws SQLException {
-            ps.setInt(1, productEntityDTOs.get(i).getProductId());
-            ps.setInt(2, productEntityDTOs.get(i).getEntityCode());
-          }
-
-          @Override
-          public int getBatchSize() {
-            return productEntityDTOs.size();
-          }
-        });
-
+    productOfferingRepository.save(productOffering);
     return ResponseEntity.ok("Product entities updated successfully");
   }
 
@@ -588,26 +587,25 @@ public class ProductOfferingController {
     }
 
     int productId = productGroupDtos.get(0).getProductId();
+    ProductOffering productOffering = productOfferingService.findById(productId);
+    if (productOffering == null) {
+      throw new IllegalArgumentException("Product offering with ID " + productId + " does not exist.");
+    }
 
-    String deleteSql = "DELETE FROM product_pricegroup WHERE product_id = ?";
-    base.update(deleteSql, productId);
+    for (ProductGroupDto dto : productGroupDtos) {
+      ProductPriceGroup priceGroup =
+          productPriceGroupRepository
+              .findById(dto.getProductPriceGroupCode())
+              .orElseThrow(
+                  () ->
+                      new IllegalArgumentException(
+                          "Product Price Group with code " + dto.getProductPriceGroupCode() + " does not exist"));
+      if (!productOffering.getProductPriceGroups().contains(priceGroup)) {
+        productOffering.getProductPriceGroups().add(priceGroup);
+      }
+    }
 
-    String insertSql = "INSERT INTO product_pricegroup (product_id, product_price_group_code) VALUES (?, ?)";
-    base.batchUpdate(
-        insertSql,
-        new BatchPreparedStatementSetter() {
-          @Override
-          public void setValues(PreparedStatement ps, int i) throws SQLException {
-            ps.setInt(1, productGroupDtos.get(i).getProductId());
-            ps.setInt(2, productGroupDtos.get(i).getProductPriceGroupCode());
-          }
-
-          @Override
-          public int getBatchSize() {
-            return productGroupDtos.size();
-          }
-        });
-
+    productOfferingRepository.save(productOffering);
     return ResponseEntity.ok("Product groups updated successfully");
   }
 
@@ -617,31 +615,23 @@ public class ProductOfferingController {
       throw new IllegalArgumentException("At least one dependentCfsDtos must be provided");
     }
 
-    String query = "SELECT COUNT(*) FROM product WHERE product_id = ?";
+    Product productOffering =
+        productRepository
+            .findById(dependentCfsDtos.get(0).getProductId())
+            .orElseThrow(() -> new IllegalArgumentException("Product offering does not exist"));
+
     for (DependentCfsDto dto : dependentCfsDtos) {
-      int count = base.queryForObject(query, new Object[] {dto.getProductId()}, Integer.class);
-      if (count == 0) {
-        throw new IllegalArgumentException("Product offering with id " + dto.getProductId() + " does not exist");
-      }
+      CustomerFacingServiceSpec dependentCfs =
+          customerFacingServiceSpecRepository
+              .findById(dto.getDependentCfs())
+              .orElseThrow(
+                  () ->
+                      new IllegalArgumentException(
+                          "Dependent CFS with id " + dto.getDependentCfs() + " does not exist"));
+      productOffering.getServiceId().add(dependentCfs);
     }
 
-    String sql = "INSERT INTO product_depend_cfs (product_id, dependent_cfs) VALUES (?, ?)";
-
-    base.batchUpdate(
-        sql,
-        new BatchPreparedStatementSetter() {
-          @Override
-          public void setValues(PreparedStatement ps, int i) throws SQLException {
-            ps.setInt(1, dependentCfsDtos.get(i).getProductId());
-            ps.setInt(2, dependentCfsDtos.get(i).getDependentCfs());
-          }
-
-          @Override
-          public int getBatchSize() {
-            return dependentCfsDtos.size();
-          }
-        });
-
-    return ResponseEntity.ok("dependentCfs inserted successfully");
+    productRepository.save(productOffering);
+    return ResponseEntity.ok("Dependent CFS inserted successfully");
   }
 }

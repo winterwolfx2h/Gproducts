@@ -1,32 +1,25 @@
 package com.Bcm.Controller.ProductController;
 
-import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.Product.ProductCharacteristics;
 import com.Bcm.Service.Srvc.ProductSrvc.PCharacteristicsService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "P-Characteristic Controller", description = "All of the P-Characteristic's methods")
+@Tag(name = "Product Characteristic Controller", description = "All of the P-Characteristic's methods")
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/PCharacteristic")
 public class ProductCharacteristicsController {
 
-  final JdbcTemplate base;
   final PCharacteristicsService pCharacteristicsService;
 
   @GetMapping("/listPCharacteristics")
@@ -71,49 +64,14 @@ public class ProductCharacteristicsController {
 
   @GetMapping("/searchByProductId")
   public List<ProductCharacteristics> searchByProductID(@RequestParam Integer productId) {
-    String sqlSearchByProductId =
-        "SELECT p_characteristic_code, name, mandatory,"
-            + " display_format, product_id FROM product_characteristics WHERE product_id = ?";
+    List<ProductCharacteristics> characteristicsResponse = new ArrayList<>();
+    for (ProductCharacteristics pc : pCharacteristicsService.read()) {
+      if (pc.getProductId() == productId) {
+        characteristicsResponse.add(pc);
+      }
+    }
 
-    List<ProductCharacteristics> PCharacteristicsResponses;
-    PCharacteristicsResponses =
-        base.query(
-            sqlSearchByProductId,
-            new Object[] {productId},
-            new RowMapper<ProductCharacteristics>() {
-              @Override
-              public ProductCharacteristics mapRow(ResultSet rs, int rowNum) throws SQLException {
-                ProductCharacteristics response = new ProductCharacteristics();
-                response.setPCharacteristic_code(rs.getInt("p_characteristic_code"));
-                response.setName(rs.getString("name"));
-                response.setMandatory(rs.getBoolean("mandatory"));
-                response.setDisplayFormat(rs.getString("display_format"));
-                response.setProduct_id(rs.getInt("product_id"));
-
-                String sqlValueDescription =
-                    "SELECT value, description FROM characteristic_value_des WHERE p_characteristic_code = ?";
-                List<ProductCharacteristics.CharacteristicValueDes> valueDescriptions =
-                    base.query(
-                        sqlValueDescription,
-                        new Object[] {response.getPCharacteristic_code()},
-                        new RowMapper<ProductCharacteristics.CharacteristicValueDes>() {
-                          @Override
-                          public ProductCharacteristics.CharacteristicValueDes mapRow(ResultSet rs, int rowNum)
-                              throws SQLException {
-                            ProductCharacteristics.CharacteristicValueDes valueDescription =
-                                new ProductCharacteristics.CharacteristicValueDes();
-                            valueDescription.setValue(rs.getString("value"));
-                            valueDescription.setDescription(rs.getString("description"));
-                            return valueDescription;
-                          }
-                        });
-                response.setValueDescription(valueDescriptions);
-
-                return response;
-              }
-            });
-
-    return PCharacteristicsResponses;
+    return characteristicsResponse;
   }
 
   @PutMapping("/updatePCharacteristics/{pCharacteristic_code}")
@@ -143,15 +101,5 @@ public class ProductCharacteristicsController {
     } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
-  }
-
-  private RuntimeException handleException(Exception e) {
-    ErrorMessage errorMessage =
-        new ErrorMessage(
-            HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            new Date(),
-            e.getMessage(),
-            "There was an error processing the request.");
-    return new RuntimeException(errorMessage.toString(), e);
   }
 }

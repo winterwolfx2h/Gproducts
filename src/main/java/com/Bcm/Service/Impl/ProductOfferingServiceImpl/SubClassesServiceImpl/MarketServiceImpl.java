@@ -211,13 +211,13 @@ public class MarketServiceImpl implements MarketService {
     List<Market> markets = marketRepository.findAll();
     List<MarketResponseDTO> list = new ArrayList<>();
     for (Market market1 : markets) {
-      List<SubMarketResponseDTO> subMarketResponseDTOs =
-          market1.getSubMarkets().stream()
-              .map(
-                  subMkt ->
-                      new SubMarketResponseDTO(
-                          subMkt.getPo_SubMarketCode(), subMkt.getSubMarketName(), subMkt.getSubMarketDescription()))
-              .collect(Collectors.toList());
+      List<SubMarketResponseDTO> subMarketResponseDTOs = new ArrayList<>();
+      for (SubMarket subMkt : market1.getSubMarkets()) {
+        SubMarketResponseDTO subMarketResponseDTO =
+            new SubMarketResponseDTO(
+                subMkt.getPo_SubMarketCode(), subMkt.getSubMarketName(), subMkt.getSubMarketDescription());
+        subMarketResponseDTOs.add(subMarketResponseDTO);
+      }
       MarketResponseDTO apply =
           new MarketResponseDTO(
               market1.getPo_MarketCode(), market1.getName(), market1.getDescription(), subMarketResponseDTOs);

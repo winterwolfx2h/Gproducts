@@ -10,8 +10,6 @@ public interface ProductOfferingRepository extends JpaRepository<ProductOffering
 
   Optional<ProductOffering> findById(int po_code);
 
-  Optional<ProductOffering> findByname(String name);
-
   List<ProductOffering> findByPoType(String poType);
 
   List<ProductOffering> findByFamilyName(String familyName);

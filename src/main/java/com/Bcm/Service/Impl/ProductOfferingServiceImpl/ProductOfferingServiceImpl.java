@@ -173,7 +173,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
   @Override
   public ProductOffering findByName(String name) {
     try {
-      Optional<ProductOffering> optionalProductOffering = productOfferingRepository.findByname(name);
+      Optional<ProductOffering> optionalProductOffering = productOfferingRepository.findByName(name);
       return optionalProductOffering.orElseThrow(() -> new RuntimeException("Product Offering with ID " + name + NTF));
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid argument provided for finding Product Offering");
@@ -300,7 +300,7 @@ public class ProductOfferingServiceImpl implements ProductOfferingService {
       existingProductOffering.setDetailedDescription(updatedDTO.getDetailedDescription());
       existingProductOffering.setFamilyName(updatedDTO.getFamilyName());
       existingProductOffering.setSubFamily(updatedDTO.getSubFamily());
-      existingProductOffering.setSellInd(updatedDTO.getSellInd()); // TODO
+      existingProductOffering.setSellInd(updatedDTO.getSellInd());
       existingProductOffering.setStockInd(updatedDTO.getStockInd());
       existingProductOffering.setQuantityInd(updatedDTO.getQuantityInd());
       existingProductOffering.setExternalId(updatedDTO.getExternalId());

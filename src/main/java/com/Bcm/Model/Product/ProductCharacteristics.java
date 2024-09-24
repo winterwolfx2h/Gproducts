@@ -34,7 +34,7 @@ public class ProductCharacteristics {
   private List<CharacteristicValueDes> valueDescription = new ArrayList<>();
 
   @Column(name = "Product_id", nullable = false)
-  private int Product_id;
+  private int productId;
 
   @Getter
   @Setter

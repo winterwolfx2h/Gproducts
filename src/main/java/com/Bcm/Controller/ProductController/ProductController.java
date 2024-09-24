@@ -41,6 +41,8 @@ public class ProductController {
   final ProductOfferingService productOfferingService;
   final FamilyService familyService;
   final TaxRepository taxRepository;
+  private static final String DEX = " does not exist";
+  private static final String PNF = "Product not found";
 
   @GetMapping("/ProductList")
   public ResponseEntity<?> getAllProduct() {
@@ -65,8 +67,7 @@ public class ProductController {
       return ResponseEntity.ok(productDetails);
     } catch (Exception e) {
       e.printStackTrace();
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body(Map.of("message", "An unexpected error occurred"));
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", error));
     }
   }
 
@@ -79,8 +80,7 @@ public class ProductController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     } catch (Exception e) {
       e.printStackTrace();
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("An unexpected error occurred: " + e.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error + e.getMessage());
     }
   }
 
@@ -218,12 +218,10 @@ public class ProductController {
     }
     for (DependentCfsDto dto : dependentCfsDtos) {
       if (!productRepository.existsById(dto.getProductId())) {
-        throw new IllegalArgumentException("Product with id " + dto.getProductId() + " does not exist");
+        throw new IllegalArgumentException("Product with id " + dto.getProductId() + DEX);
       }
       Product product =
-          productRepository
-              .findById(dto.getProductId())
-              .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+          productRepository.findById(dto.getProductId()).orElseThrow(() -> new IllegalArgumentException(PNF));
 
       CustomerFacingServiceSpec cfs =
           cfsRepository
@@ -234,9 +232,7 @@ public class ProductController {
     }
     for (DependentCfsDto dto : dependentCfsDtos) {
       Product product =
-          productRepository
-              .findById(dto.getProductId())
-              .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+          productRepository.findById(dto.getProductId()).orElseThrow(() -> new IllegalArgumentException(PNF));
       productRepository.save(product);
     }
     return ResponseEntity.ok("Dependent CFS inserted successfully");
@@ -251,8 +247,7 @@ public class ProductController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     } catch (Exception e) {
       e.printStackTrace();
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("An unexpected error occurred: " + e.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error + e.getMessage());
     }
   }
 
@@ -266,23 +261,19 @@ public class ProductController {
       Product product =
           productRepository
               .findById(dto.getProductId())
-              .orElseThrow(
-                  () -> new IllegalArgumentException("Product with id " + dto.getProductId() + " does not exist"));
+              .orElseThrow(() -> new IllegalArgumentException("Product with id " + dto.getProductId() + DEX));
 
       Tax tax =
           taxRepository
               .findById(dto.getTaxCode())
-              .orElseThrow(
-                  () -> new IllegalArgumentException("Tax with tax code " + dto.getTaxCode() + " does not exist"));
+              .orElseThrow(() -> new IllegalArgumentException("Tax with tax code " + dto.getTaxCode() + DEX));
 
       product.getTaxes().add(tax);
     }
 
     for (ProductTaxDTO dto : productTaxDTO) {
       Product product =
-          productRepository
-              .findById(dto.getProductId())
-              .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+          productRepository.findById(dto.getProductId()).orElseThrow(() -> new IllegalArgumentException(PNF));
       productRepository.save(product);
     }
 

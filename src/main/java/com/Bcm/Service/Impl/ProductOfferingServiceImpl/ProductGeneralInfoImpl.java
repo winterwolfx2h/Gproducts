@@ -15,16 +15,18 @@ import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.EntityRepository;
 import com.Bcm.Repository.ProductResourceRepository.PhysicalResourceRepository;
 import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.GeneralInfoService;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 @Transactional
 public class ProductGeneralInfoImpl implements GeneralInfoService {
+  private static final String NTF = "Product Offering not found";
   final GeneralInfoRepository generalInfoRepository;
   final ProductOfferingRepository productOfferingRepository;
   final PhysicalResourceRepository physicalResourceRepository;
@@ -32,7 +34,6 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
   final EntityRepository entityRepository;
   final ChannelRepository channelRepository;
   final ProductPriceGroupRepository productPriceGroupRepository;
-  private static final String NTF = "Product Offering not found";
 
   @Override
   public ProductOffering createGeneralInfoDTO(GeneralInfoDTO generalInfoDTO) {

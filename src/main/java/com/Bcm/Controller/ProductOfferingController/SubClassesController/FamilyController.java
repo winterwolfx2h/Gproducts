@@ -8,16 +8,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Family Controller", description = "All of the Families methods")
 @RestController
@@ -59,17 +57,15 @@ public class FamilyController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No subfamilies found for family name: " + name);
     }
 
-    List<Map<String, Object>> response =
-        subFamilies.stream()
-            .map(
-                subFamily -> {
-                  Map<String, Object> subFamilyDetails = new HashMap<>();
-                  subFamilyDetails.put("po_sub_family_code", subFamily.getPo_SubFamilyCode());
-                  subFamilyDetails.put("sub_family_name", subFamily.getSubFamilyName());
-                  subFamilyDetails.put("familyName", family.getName());
-                  return subFamilyDetails;
-                })
-            .collect(Collectors.toList());
+    List<Map<String, Object>> response = new ArrayList<>();
+    for (SubFamily subFamily1 : subFamilies) {
+      Map<String, Object> subFamilyDetails = new HashMap<>();
+      subFamilyDetails.put("po_sub_family_code", subFamily1.getPo_SubFamilyCode());
+      subFamilyDetails.put("sub_family_name", subFamily1.getSubFamilyName());
+      subFamilyDetails.put("familyName", family.getName());
+      Map<String, Object> apply = subFamilyDetails;
+      response.add(apply);
+    }
 
     return ResponseEntity.ok(response);
   }

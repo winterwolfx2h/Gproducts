@@ -88,7 +88,7 @@ public class Product {
   @JoinTable(
       name = "Product_entity",
       joinColumns = @JoinColumn(name = "Product_id"),
-      inverseJoinColumns = @JoinColumn(name = "entityCode")) // TODO
+      inverseJoinColumns = @JoinColumn(name = "entityCode"))
   private Set<EligibilityEntity> entityCode = new HashSet<>();
 
   @JsonIgnore
@@ -96,7 +96,7 @@ public class Product {
   @JoinTable(
       name = "Product_channel",
       joinColumns = @JoinColumn(name = "Product_id"),
-      inverseJoinColumns = @JoinColumn(name = "channelCode")) // TODO
+      inverseJoinColumns = @JoinColumn(name = "channelCode"))
   private Set<Channel> channelCode = new HashSet<>();
 
   @JsonIgnore
@@ -104,7 +104,7 @@ public class Product {
   @JoinTable(
       name = "Product_pricegroup",
       joinColumns = @JoinColumn(name = "Product_id"),
-      inverseJoinColumns = @JoinColumn(name = "productPriceGroupCode")) // TODO
+      inverseJoinColumns = @JoinColumn(name = "productPriceGroupCode"))
   private Set<ProductPriceGroup> productPriceGroups = new HashSet<>();
 
   @JsonIgnore

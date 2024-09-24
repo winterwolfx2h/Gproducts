@@ -27,6 +27,7 @@ public class FamilyServiceImpl implements FamilyService {
   private static final String SID = "SubFamily with ID ";
   private static final String FID = "Family with ID ";
   private static final String invArg = "Invalid argument provided for finding Family";
+  private static final String NF = " not found.";
 
   @Transactional
   @Override
@@ -105,7 +106,7 @@ public class FamilyServiceImpl implements FamilyService {
         if (subFamilyRequestDTO.getPo_SubFamilyCode() != null) {
           SubFamily subFamily = existingSubFamiliesMap.get(subFamilyRequestDTO.getPo_SubFamilyCode());
           if (subFamily == null) {
-            throw new ResourceNotFoundException(SID + subFamilyRequestDTO.getPo_SubFamilyCode() + " not found.");
+            throw new ResourceNotFoundException(SID + subFamilyRequestDTO.getPo_SubFamilyCode() + NF);
           }
           subFamily.setSubFamilyName(subFamilyRequestDTO.getSubFamilyName());
           subFamily.setSubFamilyDescription(subFamilyRequestDTO.getSubFamilyDescription());
@@ -147,7 +148,7 @@ public class FamilyServiceImpl implements FamilyService {
           existingFamily.getDescription(),
           subFamilyResponseDTOs);
     } else {
-      throw new ResourceNotFoundException(FID + po_FamilyCode + " not found.");
+      throw new ResourceNotFoundException(FID + po_FamilyCode + NF);
     }
   }
 
@@ -240,13 +241,13 @@ public class FamilyServiceImpl implements FamilyService {
   public void unlinkSubFamilyFromFamily(int familyId, int subFamilyId) {
     Optional<Family> familyOptional = familyRepository.findById(familyId);
     if (familyOptional.isEmpty()) {
-      throw new ResourceNotFoundException(FID + familyId + " not found.");
+      throw new ResourceNotFoundException(FID + familyId + NF);
     }
 
     Family family = familyOptional.get();
     Optional<SubFamily> subFamilyOptional = subFamilyRepository.findById(subFamilyId);
     if (subFamilyOptional.isEmpty()) {
-      throw new ResourceNotFoundException(SID + subFamilyId + " not found.");
+      throw new ResourceNotFoundException(SID + subFamilyId + NF);
     }
 
     SubFamily subFamily = subFamilyOptional.get();
@@ -287,7 +288,7 @@ public class FamilyServiceImpl implements FamilyService {
     if (subFamilyOptional.isPresent()) {
       subFamilyRepository.delete(subFamilyOptional.get());
     } else {
-      throw new ResourceNotFoundException(SID + po_SubFamilyCode + " not found.");
+      throw new ResourceNotFoundException(SID + po_SubFamilyCode + NF);
     }
   }
 }

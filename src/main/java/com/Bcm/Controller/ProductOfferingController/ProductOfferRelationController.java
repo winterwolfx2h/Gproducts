@@ -29,6 +29,7 @@ public class ProductOfferRelationController {
 
   private static final String MSG = "message";
   private static final String PID = "Product with ID ";
+  private static final String AsPl = " has no associated plans";
   private static final String query = "SELECT COUNT(*) FROM product WHERE product_id = ?";
   final JdbcTemplate base;
   final ProductOfferRelationService productOfferRelationService;
@@ -122,7 +123,7 @@ public class ProductOfferRelationController {
 
     if (planCount == null || planCount == 0) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT)
-          .body(Collections.singletonList(Map.of(MSG, PID + productId + " has no associated plans")));
+          .body(Collections.singletonList(Map.of(MSG, PID + productId + AsPl)));
     }
 
     String sqlSearchByProductId =
@@ -154,7 +155,7 @@ public class ProductOfferRelationController {
 
     if (result.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT)
-          .body(Collections.singletonList(Map.of(MSG, PID + productId + " has no associated plans")));
+          .body(Collections.singletonList(Map.of(MSG, PID + productId + AsPl)));
     }
     return ResponseEntity.ok(result);
   }
@@ -178,7 +179,7 @@ public class ProductOfferRelationController {
 
     if (MandatoryOptCount == null || MandatoryOptCount == 0) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT)
-          .body(Collections.singletonList(Map.of(MSG, PID + productId + " has no associated plans")));
+          .body(Collections.singletonList(Map.of(MSG, PID + productId + AsPl)));
     }
 
     String sqlSearchByProductId =

@@ -1,5 +1,6 @@
 package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 
+import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -24,4 +25,16 @@ public interface POAttributesService {
   boolean existsById(int poAttribute_code);
 
   List<POAttributes> readByProductId(int productId);
+
+  boolean validateDependentCfs(String dependentCfs);
+
+  void setDefaultValueDescriptions(POAttributes poAttribute);
+
+  boolean isCategoryValid(String attributeCategoryName);
+
+  POAttributes createSinglePOAttribute(POAttributes poAttribute) throws InvalidInputException;
+
+  private POAttributes createPOAttribute(POAttributes poAttribute) throws InvalidInputException {
+    return create(poAttribute);
+  }
 }

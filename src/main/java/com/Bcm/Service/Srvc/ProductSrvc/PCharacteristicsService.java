@@ -19,4 +19,6 @@ public interface PCharacteristicsService {
   ProductCharacteristics findByDescription(String description);
 
   boolean existsById(int pCharacteristic_code);
+
+  List<ProductCharacteristics> findByProductId(int productId);
 }

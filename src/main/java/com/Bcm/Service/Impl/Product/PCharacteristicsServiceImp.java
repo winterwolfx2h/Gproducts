@@ -30,7 +30,7 @@ public class PCharacteristicsServiceImp implements PCharacteristicsService {
     try {
       Product product =
           productRepository
-              .findById(productCharacteristics.getProduct_id())
+              .findById(productCharacteristics.getProductId())
               .orElseThrow(() -> new EntityNotFoundException("Product haven't been found"));
 
       productRepository.save(product);
@@ -113,5 +113,10 @@ public class PCharacteristicsServiceImp implements PCharacteristicsService {
   @Override
   public boolean existsById(int pCharacteristic_code) {
     return pCharacteristicsRepository.existsById(pCharacteristic_code);
+  }
+
+  @Override
+  public List<ProductCharacteristics> findByProductId(int productId) {
+    return pCharacteristicsRepository.findByProductId(productId);
   }
 }

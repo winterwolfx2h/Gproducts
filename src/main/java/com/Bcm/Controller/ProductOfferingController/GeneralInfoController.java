@@ -19,7 +19,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +31,6 @@ public class GeneralInfoController {
   final GeneralInfoService generalInfoService;
   final ProductOfferingService productOfferingService;
   final ProductOfferingRepository productOfferingRepository;
-  final JdbcTemplate base;
 
   @Transactional
   @PostMapping("/AddProdOffDTO")

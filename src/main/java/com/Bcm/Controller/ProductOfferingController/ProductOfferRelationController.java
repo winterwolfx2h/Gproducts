@@ -27,11 +27,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ProductOfferRelationController {
 
-  final JdbcTemplate base;
-  final ProductOfferRelationService productOfferRelationService;
   private static final String MSG = "message";
   private static final String PID = "Product with ID ";
   private static final String query = "SELECT COUNT(*) FROM product WHERE product_id = ?";
+  final JdbcTemplate base;
+  final ProductOfferRelationService productOfferRelationService;
 
   @GetMapping("/searchRelationName")
   public List<RelationResponse> searchRelationName(@RequestParam List<Integer> relatedProductIds) {

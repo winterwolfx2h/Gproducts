@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface BusinessProcessRepository extends JpaRepository<BusinessProcess, Integer> {
 
@@ -19,4 +20,10 @@ public interface BusinessProcessRepository extends JpaRepository<BusinessProcess
 
   @Query("SELECT b FROM BusinessProcess b ORDER BY b.businessProcess_id")
   List<BusinessProcess> findAllOrderedByBusinessProcess();
+
+  @Query(
+      "SELECT bp FROM BusinessProcess bp "
+          + "JOIN ProductOffering po ON bp.businessProcess_id = po.businessProcess_id "
+          + "WHERE po.id = :productId")
+  List<BusinessProcess> findBusinessProcessByProductId(@Param("productId") int productId);
 }

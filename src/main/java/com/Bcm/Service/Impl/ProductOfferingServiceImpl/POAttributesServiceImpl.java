@@ -29,7 +29,7 @@ public class POAttributesServiceImpl implements POAttributesService {
     try {
       ProductOffering productOffering =
           productOfferingRepository
-              .findById(poAttributes.getProduct_id())
+              .findById(poAttributes.getProductId())
               .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
       productOffering.setWorkingStep("PO-Attribute");
@@ -121,5 +121,10 @@ public class POAttributesServiceImpl implements POAttributesService {
   @Override
   public boolean existsById(int poAttribute_code) {
     return poAttributesRepository.existsById(poAttribute_code);
+  }
+
+  @Override
+  public List<POAttributes> readByProductId(int productId) {
+    return poAttributesRepository.findByProductId(productId);
   }
 }

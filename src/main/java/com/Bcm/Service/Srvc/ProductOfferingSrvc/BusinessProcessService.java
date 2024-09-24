@@ -19,4 +19,6 @@ public interface BusinessProcessService {
   List<BusinessProcess> searchByKeyword(String name);
 
   BusinessProcess findByName(String name);
+
+  List<BusinessProcess> findBusinessProcessByProductId(int productId);
 }

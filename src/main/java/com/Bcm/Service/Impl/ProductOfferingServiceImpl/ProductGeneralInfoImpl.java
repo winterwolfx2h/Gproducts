@@ -7,7 +7,9 @@ import com.Bcm.Model.Product.GeneralInfoMapper;
 import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
-import com.Bcm.Repository.ProductOfferingRepo.*;
+import com.Bcm.Repository.ProductOfferingRepo.GeneralInfoRepository;
+import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
+import com.Bcm.Repository.ProductOfferingRepo.ProductPriceGroupRepository;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.ChannelRepository;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.EntityRepository;
 import com.Bcm.Repository.ProductResourceRepository.PhysicalResourceRepository;
@@ -30,8 +32,6 @@ public class ProductGeneralInfoImpl implements GeneralInfoService {
   final EntityRepository entityRepository;
   final ChannelRepository channelRepository;
   final ProductPriceGroupRepository productPriceGroupRepository;
-  private final BusinessProcessRepository businessProcessRepository;
-  private final ProductPriceRepository productPriceRepository;
   private static final String NTF = "Product Offering not found";
 
   @Override

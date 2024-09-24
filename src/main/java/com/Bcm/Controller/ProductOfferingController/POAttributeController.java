@@ -1,16 +1,12 @@
 package com.Bcm.Controller.ProductOfferingController;
 
-import com.Bcm.Exception.ErrorMessage;
 import com.Bcm.Exception.InvalidInputException;
 import com.Bcm.Exception.ServiceAlreadyExistsException;
 import com.Bcm.Model.ProductOfferingABE.POAttributes;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.POAttributesService;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -18,7 +14,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "PO-Attribute Controller", description = "All of the PO-Attribute's methods")
@@ -89,76 +84,7 @@ public class POAttributeController {
 
   @GetMapping("/searchByProductId")
   public List<POAttributes> searchByProductID(@RequestParam Integer productId) {
-    String sqlSearchByProductId =
-        "SELECT po_attribute_code, name, category, bsexternal_id, csexternal_id, attribute_type, data_type, mandatory,"
-            + " change_ind ,display_format, externalcfs, dependent_cfs, product_id FROM poattributes WHERE product_id ="
-            + " ?";
-
-    List<POAttributes> poAttributesResponses;
-    poAttributesResponses =
-        base.query(
-            sqlSearchByProductId,
-            new Object[] {productId},
-            new RowMapper<POAttributes>() {
-              @Override
-              public POAttributes mapRow(ResultSet rs, int rowNum) throws SQLException {
-                POAttributes response = new POAttributes();
-                response.setPoAttribute_code(rs.getInt("po_attribute_code"));
-                response.setName(rs.getString("name"));
-                response.setCategory(rs.getString("category"));
-                response.setBsexternalId(rs.getString("bsexternal_id"));
-                response.setCsexternalId(rs.getString("csexternal_id"));
-                response.setAttributeType(rs.getString("attribute_type"));
-                response.setDataType(rs.getString("data_type"));
-                response.setMandatory(rs.getBoolean("mandatory"));
-                response.setChangeInd(rs.getBoolean("change_ind"));
-                response.setDisplayFormat(rs.getString("display_format"));
-                response.setExternalcfs(rs.getBoolean("externalcfs"));
-                response.setDependentCfs(rs.getString("dependent_cfs"));
-                response.setProduct_id(rs.getInt("product_id"));
-
-                String sqlValueDescription =
-                    "SELECT value, description, defaultvalue FROM attributes_value_des WHERE po_attribute_code = ?";
-                List<POAttributes.ValueDescription> valueDescriptions =
-                    base.query(
-                        sqlValueDescription,
-                        new Object[] {response.getPoAttribute_code()},
-                        new RowMapper<POAttributes.ValueDescription>() {
-                          @Override
-                          public POAttributes.ValueDescription mapRow(ResultSet rs, int rowNum) throws SQLException {
-                            POAttributes.ValueDescription valueDescription = new POAttributes.ValueDescription();
-                            valueDescription.setValue(rs.getString("value"));
-                            valueDescription.setDescription(rs.getString("description"));
-                            valueDescription.setDefaultvalue(rs.getBoolean("defaultvalue"));
-                            return valueDescription;
-                          }
-                        });
-                response.setValueDescription(valueDescriptions);
-
-                String sqlDefaultMaxSize =
-                    "SELECT max_size, defaultvalue, value_des FROM attributes_domaine WHERE po_attribute_code = ?";
-                List<POAttributes.DefaultMaxSize> defaultMaxSizes =
-                    base.query(
-                        sqlDefaultMaxSize,
-                        new Object[] {response.getPoAttribute_code()},
-                        new RowMapper<POAttributes.DefaultMaxSize>() {
-                          @Override
-                          public POAttributes.DefaultMaxSize mapRow(ResultSet rs, int rowNum) throws SQLException {
-                            POAttributes.DefaultMaxSize defaultMaxSize = new POAttributes.DefaultMaxSize();
-                            defaultMaxSize.setMaxSize(rs.getString("max_size"));
-                            defaultMaxSize.setDefaultvalue(rs.getString("defaultvalue"));
-                            defaultMaxSize.setValueDes(rs.getString("value_des"));
-                            return defaultMaxSize;
-                          }
-                        });
-
-                response.setDefaultMaxSize(defaultMaxSizes);
-
-                return response;
-              }
-            });
-
-    return poAttributesResponses;
+    return poAttributesService.readByProductId(productId);
   }
 
   @PutMapping("/updatePOAttributes/{poAttribute_code}")
@@ -202,15 +128,5 @@ public class POAttributeController {
     } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
-  }
-
-  private RuntimeException handleException(Exception e) {
-    ErrorMessage errorMessage =
-        new ErrorMessage(
-            HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            new Date(),
-            e.getMessage(),
-            "There was an error processing the request.");
-    return new RuntimeException(errorMessage.toString(), e);
   }
 }

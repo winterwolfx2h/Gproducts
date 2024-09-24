@@ -13,7 +13,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Market Controller", description = "All of the Markets methods")
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 public class MarketController {
 
   final MarketService marketService;
-  final JdbcTemplate jdbcTemplate;
 
   @ApiOperation(value = "Create a new Market", response = MarketResponseDTO.class)
   @ApiResponses(

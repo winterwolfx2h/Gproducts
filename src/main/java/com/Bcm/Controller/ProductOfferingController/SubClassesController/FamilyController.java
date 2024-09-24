@@ -8,15 +8,16 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Tag(name = "Family Controller", description = "All of the Families methods")
 @RestController
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 public class FamilyController {
 
   final FamilyService familyService;
-  final JdbcTemplate jdbcTemplate;
 
   @ApiOperation(value = "Create a new Family", response = FamilyResponseDTO.class)
   @ApiResponses(
@@ -47,38 +47,31 @@ public class FamilyController {
 
   @GetMapping("/subFamiliesByFamily")
   public ResponseEntity<?> getSubFamiliesByFamily(@RequestParam String name) {
-    Optional<Integer> familyId = findFamilyIdByName(name);
-    if (familyId.isEmpty()) {
+    Family family = familyService.findByName(name);
+    if (family == null) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
           .body("Family with name '" + name + "' does not exist in the database.");
     }
 
-    String sql =
-        "SELECT sf.po_sub_family_code, sf.sub_family_name, f.name AS familyName "
-            + "FROM sub_family sf "
-            + "JOIN family f ON f.po_family_code = sf.family_code "
-            + "WHERE f.name = ?";
+    List<SubFamily> subFamilies = family.getSubFamilies();
 
-    try {
-      List<Map<String, Object>> subFamilies = jdbcTemplate.queryForList(sql, name);
-      if (subFamilies.isEmpty()) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No subfamilies found for family name: " + name);
-      }
-      return ResponseEntity.ok(subFamilies);
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("Error retrieving subfamilies: " + e.getMessage());
+    if (subFamilies.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No subfamilies found for family name: " + name);
     }
-  }
 
-  private Optional<Integer> findFamilyIdByName(String name) {
-    String sql = "SELECT po_family_code FROM family WHERE name = ?";
-    try {
-      Integer familyId = jdbcTemplate.queryForObject(sql, Integer.class, name);
-      return Optional.ofNullable(familyId);
-    } catch (Exception e) {
-      return Optional.empty();
-    }
+    List<Map<String, Object>> response =
+        subFamilies.stream()
+            .map(
+                subFamily -> {
+                  Map<String, Object> subFamilyDetails = new HashMap<>();
+                  subFamilyDetails.put("po_sub_family_code", subFamily.getPo_SubFamilyCode());
+                  subFamilyDetails.put("sub_family_name", subFamily.getSubFamilyName());
+                  subFamilyDetails.put("familyName", family.getName());
+                  return subFamilyDetails;
+                })
+            .collect(Collectors.toList());
+
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping("/listFamily")

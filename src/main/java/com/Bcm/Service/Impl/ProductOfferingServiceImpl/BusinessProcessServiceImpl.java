@@ -101,4 +101,9 @@ public class BusinessProcessServiceImpl implements BusinessProcessService {
       throw new RuntimeException("Invalid argument provided for finding BusinessProcess");
     }
   }
+
+  @Override
+  public List<BusinessProcess> findBusinessProcessByProductId(int productId) {
+    return businessProcessRepository.findBusinessProcessByProductId(productId);
+  }
 }

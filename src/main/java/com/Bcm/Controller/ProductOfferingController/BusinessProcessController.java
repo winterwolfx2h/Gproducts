@@ -6,14 +6,11 @@ import com.Bcm.Model.ProductOfferingABE.BusinessProcess;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.BusinessProcessService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Business Process Controller", description = "All of the Business Process's methods")
@@ -24,9 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class BusinessProcessController {
 
   private static final Logger logger = LoggerFactory.getLogger(BusinessProcessController.class);
-  final JdbcTemplate base;
   final BusinessProcessService businessProcessService;
-  @PersistenceContext private EntityManager entityManager;
 
   @PostMapping("/addBusinessProcess")
   public ResponseEntity<?> createBusinessProcess(@RequestBody BusinessProcess businessProcess) {
@@ -54,19 +49,7 @@ public class BusinessProcessController {
   public ResponseEntity<Object> getBusinessProcessByProductId(@PathVariable int productId) {
     logger.info("Received request for Product ID: {}", productId);
 
-    String sql =
-        "SELECT bp.business_process_id, bp.action, bp.action_description, "
-            + "bp.business_process, po.product_id "
-            + "FROM business_process bp "
-            + "LEFT JOIN product_offering po ON bp.business_process_id = po.business_process_id "
-            + "WHERE po.product_id = :productId AND bp.business_process_id IS NOT NULL "
-            + "ORDER BY bp.business_process ASC";
-
-    List<BusinessProcess> results =
-        entityManager
-            .createNativeQuery(sql, BusinessProcess.class)
-            .setParameter("productId", productId)
-            .getResultList();
+    List<BusinessProcess> results = businessProcessService.findBusinessProcessByProductId(productId);
 
     if (results.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No BusinessProcess found for productId: " + productId);

@@ -7,9 +7,8 @@ import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.Product.ProductDTO;
 import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
-import org.springframework.stereotype.Service;
-
 import java.util.*;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ProductServiceImpl implements ProductService {

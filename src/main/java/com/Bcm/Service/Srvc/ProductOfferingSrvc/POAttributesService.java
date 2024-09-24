@@ -22,4 +22,6 @@ public interface POAttributesService {
   POAttributes findByDescription(String description);
 
   boolean existsById(int poAttribute_code);
+
+  List<POAttributes> readByProductId(int productId);
 }

@@ -61,8 +61,8 @@ public class POAttributes {
   @CollectionTable(name = "AttributesDomaine", joinColumns = @JoinColumn(name = "poAttribute_code"))
   private List<DefaultMaxSize> defaultMaxSize = new ArrayList<>();
 
-  @Column(name = "Product_id", nullable = false)
-  private int Product_id;
+  @Column(name = "product_id", nullable = false)
+  private int productId;
 
   @Getter
   @Setter

@@ -121,4 +121,9 @@ public class ProductPriceServiceImpl implements ProductPriceService {
       throw new RuntimeException("Invalid argument provided for searching ProductPrice by keyword");
     }
   }
+
+  @Override
+  public List<ProductPrice> findByProductId(int productId) {
+    return productPriceRepository.findByProductId(productId);
+  }
 }

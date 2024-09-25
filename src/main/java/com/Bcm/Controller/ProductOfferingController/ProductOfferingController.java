@@ -16,13 +16,11 @@ import com.Bcm.Model.ProductOfferingABE.SubClasses.Market.Market;
 import com.Bcm.Model.ProductOfferingABE.SubClasses.Market.SubMarket;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Repository.Product.ProductRepository;
-import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductPriceGroupRepository;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.ChannelRepository;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.EntityRepository;
 import com.Bcm.Repository.ServiceConfigRepo.CustomerFacingServiceSpecRepository;
-import com.Bcm.Service.Impl.ProductOfferingServiceImpl.ProductOfferingServiceImpl;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.*;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.ChannelService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
@@ -31,10 +29,6 @@ import com.Bcm.Service.Srvc.ProductResourceSrvc.LogicalResourceService;
 import com.Bcm.Service.Srvc.ProductResourceSrvc.PhysicalResourceService;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -42,6 +36,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @Tag(name = "Product Offering Controller", description = "All of the Product Offering's methods")
 @RestController
@@ -52,7 +52,8 @@ public class ProductOfferingController {
 
   private static final String Success = "Product channels inserted successfully";
   private static final String FAM = "Family with name '";
-  private static final String EXT = "' does not exist.";
+  private static final String EXT = " does not exist.";
+  private static final String PID = "Product Offering with ID ";
   final ProductOfferingService productOfferingService;
   final POAttributesService poAttributesService;
   final ProductOfferRelationService productOfferRelationService;
@@ -70,8 +71,6 @@ public class ProductOfferingController {
   final CustomerFacingServiceSpecRepository customerFacingServiceSpecRepository;
   final ProductOfferingValidationService validationService;
   private final ProductOfferingRepository productOfferingRepository;
-  private final ProductOfferRelationRepository productOfferRelationRepository;
-  private final ProductOfferingServiceImpl productOfferingServiceImpl;
   private final ProductRepository productRepository;
 
   @PostMapping("/addProdOff")
@@ -95,7 +94,7 @@ public class ProductOfferingController {
 
     } catch (DataIntegrityViolationException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("Data integrity violation: " + e.getRootCause().getMessage());
+          .body("Data integrity violation: " + Objects.requireNonNull(e.getRootCause()).getMessage());
     } catch (ProductOfferingAlreadyExistsException e) {
       return ResponseEntity.badRequest().body(e.getMessage());
     } catch (RuntimeException e) {
@@ -173,7 +172,7 @@ public class ProductOfferingController {
     try {
       ProductOffering existingProductOffering = productOfferingService.findById(po_code);
       if (existingProductOffering == null) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Offering with ID " + po_code + " not found.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(PID + po_code + " not found.");
       }
 
       String newName = updatedProductOffering.getName();
@@ -231,137 +230,157 @@ public class ProductOfferingController {
   }
 
   List<String> check(ProductOfferingDTO productOfferingDTO) {
-    List<String> errors = new ArrayList<>();
+    List<String> errors;
+    errors = new ArrayList<>();
 
-    if (productOfferingDTO.getName() == null || productOfferingDTO.getName().isEmpty()) {
+    validateName(productOfferingDTO, errors);
+    validateEffectiveDates(productOfferingDTO, errors);
+    validateSubFamily(productOfferingDTO, errors);
+    validateFamilyName(productOfferingDTO, errors);
+    validateMarkets(productOfferingDTO, errors);
+    validateSubMarkets(productOfferingDTO, errors);
+
+    return errors;
+  }
+
+  private void validateName(ProductOfferingDTO productOfferingDTO, List<String> errors) {
+    String name = productOfferingDTO.getName();
+    if (name == null || name.isEmpty()) {
       errors.add("Name cannot be empty");
-    } else {
-      if (!productOfferingDTO.getName().startsWith("PO-PLAN_")) {
-        errors.add("Name must start with 'PO-PLAN_'");
-      }
+    } else if (!name.startsWith("PO-PLAN_")) {
+      errors.add("Name must start with 'PO-PLAN_'");
     }
+  }
 
-    if (productOfferingDTO.getEffectiveFrom() == null
-        || productOfferingDTO.getName().isEmpty()
-        || productOfferingDTO.getEffectiveTo() == null) {
+  private void validateEffectiveDates(ProductOfferingDTO productOfferingDTO, List<String> errors) {
+    if (productOfferingDTO.getEffectiveFrom() == null || productOfferingDTO.getEffectiveTo() == null) {
       errors.add("Effective from and effective to dates cannot be null");
-    } else {
-      if (productOfferingDTO.getEffectiveFrom().compareTo(productOfferingDTO.getEffectiveTo()) >= 0) {
-        errors.add("Effective from date must be before the effective to date");
-      }
+    } else if (productOfferingDTO.getEffectiveFrom().compareTo(productOfferingDTO.getEffectiveTo()) >= 0) {
+      errors.add("Effective from date must be before the effective to date");
     }
+  }
 
-    if (productOfferingDTO.getSubFamily() == null || productOfferingDTO.getSubFamily().isEmpty()) {
+  private void validateSubFamily(ProductOfferingDTO productOfferingDTO, List<String> errors) {
+    String subFamily = productOfferingDTO.getSubFamily();
+    if (subFamily == null || subFamily.isEmpty()) {
       errors.add("Sub Family cannot be empty");
     } else {
+      List<String> validSubFamilyNames =
+          familyService.readSubFamilies().stream().map(e -> e.getSubFamilyName().toLowerCase()).toList();
 
-      var validSubFamilyNames = familyService.readSubFamilies();
-      List<String> subFamilyNames = validSubFamilyNames.stream().map(e -> e.getSubFamilyName().toLowerCase()).toList();
-      if (subFamilyNames.contains(productOfferingDTO.getFamilyName().toLowerCase())) {
-        errors.add("subFamily must be one of the following: " + String.join(", ", subFamilyNames));
+      if (!validSubFamilyNames.contains(subFamily.toLowerCase())) {
+        errors.add("SubFamily must be one of the following: " + String.join(", ", validSubFamilyNames));
       }
     }
+  }
 
-    var validFamilyNames = familyService.read();
-    List<String> familyNames = validFamilyNames.stream().map(e -> e.getName().toLowerCase()).toList();
-    if (productOfferingDTO.getFamilyName() == null || productOfferingDTO.getFamilyName().isEmpty()) {
+  private void validateFamilyName(ProductOfferingDTO productOfferingDTO, List<String> errors) {
+    String familyName = productOfferingDTO.getFamilyName();
+    if (familyName == null || familyName.isEmpty()) {
       errors.add("FamilyName cannot be empty");
     } else {
+      List<String> validFamilyNames = familyService.read().stream().map(e -> e.getName().toLowerCase()).toList();
 
-      if (!familyNames.contains(productOfferingDTO.getFamilyName().toLowerCase())) {
-        errors.add("FamilyName must be one of the following: " + String.join(", ", familyNames));
+      if (!validFamilyNames.contains(familyName.toLowerCase())) {
+        errors.add("FamilyName must be one of the following: " + String.join(", ", validFamilyNames));
       }
     }
+  }
 
-    List<Market> validMarket = marketService.read();
-    List<String> markets = new ArrayList<>();
-    for (Market market : validMarket) {
-      markets.add(market.getName());
+  private void validateMarkets(ProductOfferingDTO productOfferingDTO, List<String> errors) {
+    List<String> validMarketNames = marketService.read().stream().map(Market::getName).toList();
+
+    if (productOfferingDTO.getMarkets() == null || !validMarketNames.contains(productOfferingDTO.getMarkets())) {
+      errors.add("Markets must be one of the following: " + String.join(", ", validMarketNames));
     }
+  }
 
-    if (!markets.contains(productOfferingDTO.getMarkets())) {
-      errors.add("markets must be one of the following: " + String.join(", ", markets));
-    }
+  private void validateSubMarkets(ProductOfferingDTO productOfferingDTO, List<String> errors) {
+    List<String> validSubMarketNames =
+        marketService.readSubMarkets().stream().map(SubMarket::getSubMarketName).toList();
 
-    List<SubMarket> validSubMarket = marketService.readSubMarkets();
-    List<String> submarkets = new ArrayList<>();
-
-    for (SubMarket subMarket : validSubMarket) {
-      submarkets.add(subMarket.getSubMarketName());
-    }
     if (productOfferingDTO.getSubmarkets() == null || productOfferingDTO.getSubmarkets().isEmpty()) {
-      errors.add("submarkets cannot be empty");
-    } else {
-
-      if (!submarkets.contains(productOfferingDTO.getSubmarkets())) {
-        errors.add("sub market must be one of the following: " + String.join(", ", submarkets));
-      }
+      errors.add("Submarkets cannot be empty");
+    } else if (!validSubMarketNames.contains(productOfferingDTO.getSubmarkets())) {
+      errors.add("Sub market must be one of the following: " + String.join(", ", validSubMarketNames));
     }
-    return errors;
   }
 
   List<String> check(ProductOffering productOfferingDTO) {
     List<String> errors = new ArrayList<>();
 
-    if (productOfferingDTO.getName() == null || productOfferingDTO.getName().isEmpty()) {
+    validateName(productOfferingDTO, errors);
+    validateEffectiveDates(productOfferingDTO, errors);
+    validateSubFamily(productOfferingDTO, errors);
+    validateFamilyName(productOfferingDTO, errors);
+    validateMarkets(productOfferingDTO, errors);
+    validateSubMarkets(productOfferingDTO, errors);
+
+    return errors;
+  }
+
+  private void validateName(ProductOffering productOfferingDTO, List<String> errors) {
+    String name = productOfferingDTO.getName();
+    if (name == null || name.isEmpty()) {
       errors.add("Name cannot be empty");
-    } else {
-      if (!productOfferingDTO.getName().startsWith("PO-PLAN_")) {
-        errors.add("Name must start with 'PO-PLAN_'");
-      }
+    } else if (!name.startsWith("PO-PLAN_")) {
+      errors.add("Name must start with 'PO-PLAN_'");
     }
+  }
 
-    if (productOfferingDTO.getEffectiveFrom() == null
-        || productOfferingDTO.getName().isEmpty()
-        || productOfferingDTO.getEffectiveTo() == null) {
+  private void validateEffectiveDates(ProductOffering productOfferingDTO, List<String> errors) {
+    if (productOfferingDTO.getEffectiveFrom() == null || productOfferingDTO.getEffectiveTo() == null) {
       errors.add("Effective from and effective to dates cannot be null");
-    } else {
-      if (productOfferingDTO.getEffectiveFrom().compareTo(productOfferingDTO.getEffectiveTo()) >= 0) {
-        errors.add("Effective from date must be before the effective to date");
-      }
+    } else if (productOfferingDTO.getEffectiveFrom().compareTo(productOfferingDTO.getEffectiveTo()) >= 0) {
+      errors.add("Effective from date must be before the effective to date");
     }
+  }
 
-    if (productOfferingDTO.getSubFamily() == null || productOfferingDTO.getSubFamily().isEmpty()) {
+  private void validateSubFamily(ProductOffering productOfferingDTO, List<String> errors) {
+    String subFamily = productOfferingDTO.getSubFamily();
+    if (subFamily == null || subFamily.isEmpty()) {
       errors.add("Sub Family cannot be empty");
     } else {
+      List<String> validSubFamilyNames =
+          familyService.readSubFamilies().stream().map(e -> e.getSubFamilyName().toLowerCase()).toList();
 
-      var validSubFamilyNames = familyService.readSubFamilies();
-      List<String> subFamilyNames = validSubFamilyNames.stream().map(e -> e.getSubFamilyName().toLowerCase()).toList();
-      if (subFamilyNames.contains(productOfferingDTO.getFamilyName().toLowerCase())) {
-        errors.add("subFamily must be one of the following: " + String.join(", ", subFamilyNames));
+      if (!validSubFamilyNames.contains(productOfferingDTO.getFamilyName().toLowerCase())) {
+        errors.add("SubFamily must be one of the following: " + String.join(", ", validSubFamilyNames));
       }
     }
+  }
 
-    var validFamilyNames = familyService.read();
-    List<String> familyNames = validFamilyNames.stream().map(e -> e.getName().toLowerCase()).toList();
-    if (productOfferingDTO.getFamilyName() == null || productOfferingDTO.getFamilyName().isEmpty()) {
+  private void validateFamilyName(ProductOffering productOfferingDTO, List<String> errors) {
+    String familyName = productOfferingDTO.getFamilyName();
+    if (familyName == null || familyName.isEmpty()) {
       errors.add("FamilyName cannot be empty");
     } else {
+      List<String> validFamilyNames = familyService.read().stream().map(e -> e.getName().toLowerCase()).toList();
 
-      if (!familyNames.contains(productOfferingDTO.getFamilyName().toLowerCase())) {
-        errors.add("FamilyName must be one of the following: " + String.join(", ", familyNames));
+      if (!validFamilyNames.contains(familyName.toLowerCase())) {
+        errors.add("FamilyName must be one of the following: " + String.join(", ", validFamilyNames));
       }
     }
+  }
 
-    List<Market> validMarket = marketService.read();
-    List<String> markets = validMarket.stream().map(Market::getName).toList();
+  private void validateMarkets(ProductOffering productOfferingDTO, List<String> errors) {
+    List<String> validMarketNames = marketService.read().stream().map(Market::getName).toList();
 
-    if (markets.stream().noneMatch(e -> productOfferingDTO.getMarkets().contains(e))) {
-      errors.add("markets must be one of the following: " + String.join(", ", markets));
+    if (productOfferingDTO.getMarkets() == null
+        || validMarketNames.stream().noneMatch(e -> productOfferingDTO.getMarkets().contains(e))) {
+      errors.add("Markets must be one of the following: " + String.join(", ", validMarketNames));
     }
+  }
 
-    List<SubMarket> validSubMarket = marketService.readSubMarkets();
-    List<String> submarkets = validSubMarket.stream().map(SubMarket::getSubMarketName).toList();
+  private void validateSubMarkets(ProductOffering productOfferingDTO, List<String> errors) {
+    List<String> validSubMarketNames =
+        marketService.readSubMarkets().stream().map(SubMarket::getSubMarketName).toList();
 
     if (productOfferingDTO.getSubmarkets() == null || productOfferingDTO.getSubmarkets().isEmpty()) {
-      errors.add("submarkets cannot be empty");
-    } else {
-
-      if (submarkets.stream().noneMatch(e -> productOfferingDTO.getSubmarkets().contains(e))) {
-        errors.add("sub market must be one of the following: " + String.join(", ", submarkets));
-      }
+      errors.add("Submarkets cannot be empty");
+    } else if (validSubMarketNames.stream().noneMatch(e -> productOfferingDTO.getSubmarkets().contains(e))) {
+      errors.add("Submarket must be one of the following: " + String.join(", ", validSubMarketNames));
     }
-    return errors;
   }
 
   @PostMapping("/checkError")
@@ -414,7 +433,7 @@ public class ProductOfferingController {
     try {
       ProductOffering existingProductOffering = productOfferingService.findById(po_code);
       if (existingProductOffering == null) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Offering with ID " + po_code + " not found.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(PID + po_code + " not found.");
       }
       String newName = updatedDTO.getName();
       if (!existingProductOffering.getName().equals(newName) && productOfferingService.existsByName(newName)) {
@@ -458,20 +477,19 @@ public class ProductOfferingController {
     Integer productId = productChannelDTOs.get(0).getProductId();
     ProductOffering productOffering = productOfferingService.findById(productId);
     if (productOffering == null) {
-      throw new IllegalArgumentException("Product offering with ID " + productId + " does not exist.");
+      throw new IllegalArgumentException(PID + productId + EXT);
     }
 
     for (ProductChannelDTO dto : productChannelDTOs) {
       Channel channel =
           channelRepository
               .findById(dto.getChannelCode())
-              .orElseThrow(
-                  () -> new IllegalArgumentException("Channel with code " + dto.getChannelCode() + " does not exist"));
+              .orElseThrow(() -> new IllegalArgumentException("Channel with code " + dto.getChannelCode() + EXT));
       productOffering.getChannelCode().add(channel);
     }
 
     productOfferingRepository.save(productOffering);
-    return ResponseEntity.ok("Product channels inserted successfully");
+    return ResponseEntity.ok(Success);
   }
 
   @PostMapping("/insertProductEntity")
@@ -483,15 +501,14 @@ public class ProductOfferingController {
     Integer productId = productEntityDTO.get(0).getProductId();
     ProductOffering productOffering = productOfferingService.findById(productId);
     if (productOffering == null) {
-      throw new IllegalArgumentException("Product offering with ID " + productId + " does not exist.");
+      throw new IllegalArgumentException(PID + productId + EXT);
     }
 
     for (ProductEntityDTO dto : productEntityDTO) {
       EligibilityEntity entity =
           entityRepository
               .findById(dto.getEntityCode())
-              .orElseThrow(
-                  () -> new IllegalArgumentException("Entity with code " + dto.getEntityCode() + " does not exist"));
+              .orElseThrow(() -> new IllegalArgumentException("Entity with code " + dto.getEntityCode() + EXT));
       productOffering.getEntityCode().add(entity);
     }
 
@@ -508,7 +525,7 @@ public class ProductOfferingController {
     Integer productId = productGroupDtos.get(0).getProductId();
     ProductOffering productOffering = productOfferingService.findById(productId);
     if (productOffering == null) {
-      throw new IllegalArgumentException("Product offering with ID " + productId + " does not exist.");
+      throw new IllegalArgumentException(PID + productId + EXT);
     }
 
     for (ProductGroupDto dto : productGroupDtos) {
@@ -518,7 +535,7 @@ public class ProductOfferingController {
               .orElseThrow(
                   () ->
                       new IllegalArgumentException(
-                          "Product Price Group with code " + dto.getProductPriceGroupCode() + " does not exist"));
+                          "Product Price Group with code " + dto.getProductPriceGroupCode() + EXT));
       productOffering.getProductPriceGroups().add(priceGroup);
     }
 
@@ -535,15 +552,14 @@ public class ProductOfferingController {
     int productId = productChannelDTOs.get(0).getProductId();
     ProductOffering productOffering = productOfferingService.findById(productId);
     if (productOffering == null) {
-      throw new IllegalArgumentException("Product offering with ID " + productId + " does not exist.");
+      throw new IllegalArgumentException(PID + productId + EXT);
     }
 
     for (ProductChannelDTO dto : productChannelDTOs) {
       Channel channel =
           channelRepository
               .findById(dto.getChannelCode())
-              .orElseThrow(
-                  () -> new IllegalArgumentException("Channel with code " + dto.getChannelCode() + " does not exist"));
+              .orElseThrow(() -> new IllegalArgumentException("Channel with code " + dto.getChannelCode() + EXT));
       if (!productOffering.getChannelCode().contains(channel)) {
         productOffering.getChannelCode().add(channel);
       }
@@ -562,15 +578,14 @@ public class ProductOfferingController {
     int productId = productEntityDTOs.get(0).getProductId();
     ProductOffering productOffering = productOfferingService.findById(productId);
     if (productOffering == null) {
-      throw new IllegalArgumentException("Product offering with ID " + productId + " does not exist.");
+      throw new IllegalArgumentException(PID + productId + EXT);
     }
 
     for (ProductEntityDTO dto : productEntityDTOs) {
       EligibilityEntity entity =
           entityRepository
               .findById(dto.getEntityCode())
-              .orElseThrow(
-                  () -> new IllegalArgumentException("Entity with code " + dto.getEntityCode() + " does not exist"));
+              .orElseThrow(() -> new IllegalArgumentException("Entity with code " + dto.getEntityCode() + EXT));
       if (!productOffering.getEntityCode().contains(entity)) {
         productOffering.getEntityCode().add(entity);
       }
@@ -589,7 +604,7 @@ public class ProductOfferingController {
     int productId = productGroupDtos.get(0).getProductId();
     ProductOffering productOffering = productOfferingService.findById(productId);
     if (productOffering == null) {
-      throw new IllegalArgumentException("Product offering with ID " + productId + " does not exist.");
+      throw new IllegalArgumentException(PID + productId + EXT);
     }
 
     for (ProductGroupDto dto : productGroupDtos) {
@@ -599,7 +614,7 @@ public class ProductOfferingController {
               .orElseThrow(
                   () ->
                       new IllegalArgumentException(
-                          "Product Price Group with code " + dto.getProductPriceGroupCode() + " does not exist"));
+                          "Product Price Group with code " + dto.getProductPriceGroupCode() + EXT));
       if (!productOffering.getProductPriceGroups().contains(priceGroup)) {
         productOffering.getProductPriceGroups().add(priceGroup);
       }
@@ -624,10 +639,7 @@ public class ProductOfferingController {
       CustomerFacingServiceSpec dependentCfs =
           customerFacingServiceSpecRepository
               .findById(dto.getDependentCfs())
-              .orElseThrow(
-                  () ->
-                      new IllegalArgumentException(
-                          "Dependent CFS with id " + dto.getDependentCfs() + " does not exist"));
+              .orElseThrow(() -> new IllegalArgumentException("Dependent CFS with id " + dto.getDependentCfs() + EXT));
       productOffering.getServiceId().add(dependentCfs);
     }
 

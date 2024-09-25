@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class ChannelServiceImpl implements ChannelService {
 
-  final ChannelRepository channelRepository;
-  final ProductOfferingService productOfferingService;
   private static final String CID = "Channel with ID ";
   private static final String invArg = "Invalid argument provided for finding Channel";
+  final ChannelRepository channelRepository;
+  final ProductOfferingService productOfferingService;
 
   @Override
   public Channel create(Channel channel) {

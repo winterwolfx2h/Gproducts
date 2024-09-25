@@ -17,15 +17,16 @@ import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Tag(name = "Product Controller", description = "All of the Product's methods")
 @RestController
@@ -35,14 +36,14 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
 
   private static final String error = "An unexpected error occurred";
+  private static final String DEX = " does not exist";
+  private static final String PNF = "Product not found";
   final ProductService productService;
   final ProductRepository productRepository;
   final CustomerFacingServiceSpecRepository cfsRepository;
   final ProductOfferingService productOfferingService;
   final FamilyService familyService;
   final TaxRepository taxRepository;
-  private static final String DEX = " does not exist";
-  private static final String PNF = "Product not found";
 
   @GetMapping("/ProductList")
   public ResponseEntity<?> getAllProduct() {

@@ -85,71 +85,112 @@ public class FamilyServiceImpl implements FamilyService {
   @Transactional
   @Override
   public FamilyResponseDTO update(int po_FamilyCode, FamilyRequestDTOUpdate familyRequestDTO) {
-    Optional<Family> existingFamilyOptional = familyRepository.findById(po_FamilyCode);
-    if (existingFamilyOptional.isPresent()) {
-      Family existingFamily = existingFamilyOptional.get();
+    Family existingFamily = findExistingFamily(po_FamilyCode);
 
-      String newName = familyRequestDTO.getName();
-      if (!existingFamily.getName().equals(newName) && familyRepository.existsByName(newName)) {
-        throw new FamilyAlreadyExistsException("Family with name '" + newName + "' already exists.");
-      }
+    validateFamilyName(existingFamily, familyRequestDTO.getName());
 
-      existingFamily.setName(newName);
-      existingFamily.setDescription(familyRequestDTO.getDescription());
+    updateFamilyDetails(existingFamily, familyRequestDTO);
 
-      Map<Integer, SubFamily> existingSubFamiliesMap =
-          existingFamily.getSubFamilies().stream()
-              .collect(Collectors.toMap(SubFamily::getPo_SubFamilyCode, subFamily -> subFamily));
+    List<SubFamily> updatedSubFamilies = processSubFamilies(existingFamily, familyRequestDTO);
 
-      List<SubFamily> updatedSubFamilies = new ArrayList<>();
-      for (SubFamilyRequestDTO subFamilyRequestDTO : familyRequestDTO.getSubFamilies()) {
-        if (subFamilyRequestDTO.getPo_SubFamilyCode() != null) {
-          SubFamily subFamily = existingSubFamiliesMap.get(subFamilyRequestDTO.getPo_SubFamilyCode());
-          if (subFamily == null) {
-            throw new ResourceNotFoundException(SID + subFamilyRequestDTO.getPo_SubFamilyCode() + NF);
-          }
-          subFamily.setSubFamilyName(subFamilyRequestDTO.getSubFamilyName());
-          subFamily.setSubFamilyDescription(subFamilyRequestDTO.getSubFamilyDescription());
-          updatedSubFamilies.add(subFamily);
-        } else {
-          boolean existsInUpdatedList =
-              updatedSubFamilies.stream()
-                  .anyMatch(sf -> sf.getSubFamilyName().equals(subFamilyRequestDTO.getSubFamilyName()));
-          if (!existsInUpdatedList) {
-            SubFamily newSubFamily = new SubFamily();
-            newSubFamily.setSubFamilyName(subFamilyRequestDTO.getSubFamilyName());
-            newSubFamily.setSubFamilyDescription(subFamilyRequestDTO.getSubFamilyDescription());
-            newSubFamily.setFamily(existingFamily);
-            updatedSubFamilies.add(newSubFamily);
-          }
+    clearAndAddSubFamilies(existingFamily, updatedSubFamilies);
+
+    familyRepository.save(existingFamily);
+    return buildFamilyResponseDTO(existingFamily);
+  }
+
+  private Family findExistingFamily(int po_FamilyCode) {
+    return familyRepository
+        .findById(po_FamilyCode)
+        .orElseThrow(() -> new ResourceNotFoundException(FID + po_FamilyCode + NF));
+  }
+
+  private void validateFamilyName(Family existingFamily, String newName) {
+    if (!existingFamily.getName().equals(newName) && familyRepository.existsByName(newName)) {
+      throw new FamilyAlreadyExistsException("Family with name '" + newName + "' already exists.");
+    }
+  }
+
+  private void updateFamilyDetails(Family existingFamily, FamilyRequestDTOUpdate familyRequestDTO) {
+    existingFamily.setName(familyRequestDTO.getName());
+    existingFamily.setDescription(familyRequestDTO.getDescription());
+  }
+
+  private List<SubFamily> processSubFamilies(Family existingFamily, FamilyRequestDTOUpdate familyRequestDTO) {
+    Map<Integer, SubFamily> existingSubFamiliesMap = mapExistingSubFamilies(existingFamily);
+
+    List<SubFamily> updatedSubFamilies = new ArrayList<>();
+    for (SubFamilyRequestDTO subFamilyRequestDTO : familyRequestDTO.getSubFamilies()) {
+      if (subFamilyRequestDTO.getPo_SubFamilyCode() != null) {
+        SubFamily subFamily = updateExistingSubFamily(subFamilyRequestDTO, existingSubFamiliesMap);
+        updatedSubFamilies.add(subFamily);
+      } else {
+        SubFamily newSubFamily = createNewSubFamilyIfNotExists(subFamilyRequestDTO, updatedSubFamilies, existingFamily);
+        if (newSubFamily != null) {
+          updatedSubFamilies.add(newSubFamily);
         }
       }
-
-      existingFamily.getSubFamilies().stream()
-          .filter(subFamily -> !updatedSubFamilies.contains(subFamily))
-          .forEach(updatedSubFamilies::add);
-
-      existingFamily.getSubFamilies().clear();
-      existingFamily.getSubFamilies().addAll(updatedSubFamilies);
-
-      existingFamily = familyRepository.save(existingFamily);
-
-      List<SubFamilyResponseDTO> subFamilyResponseDTOs = new ArrayList<>();
-      for (SubFamily subFam : existingFamily.getSubFamilies()) {
-        SubFamilyResponseDTO subFamilyResponseDTO =
-            new SubFamilyResponseDTO(
-                subFam.getPo_SubFamilyCode(), subFam.getSubFamilyName(), subFam.getSubFamilyDescription());
-        subFamilyResponseDTOs.add(subFamilyResponseDTO);
-      }
-
-      return new FamilyResponseDTO(
-          existingFamily.getPo_FamilyCode(),
-          existingFamily.getName(),
-          existingFamily.getDescription(),
-          subFamilyResponseDTOs);
-    } else {
-      throw new ResourceNotFoundException(FID + po_FamilyCode + NF);
     }
+
+    existingFamily.getSubFamilies().stream()
+        .filter(subFamily -> !updatedSubFamilies.contains(subFamily))
+        .forEach(updatedSubFamilies::add);
+
+    return updatedSubFamilies;
+  }
+
+  private Map<Integer, SubFamily> mapExistingSubFamilies(Family existingFamily) {
+    return existingFamily.getSubFamilies().stream()
+        .collect(Collectors.toMap(SubFamily::getPo_SubFamilyCode, subFamily -> subFamily));
+  }
+
+  private SubFamily updateExistingSubFamily(
+      SubFamilyRequestDTO subFamilyRequestDTO, Map<Integer, SubFamily> existingSubFamiliesMap) {
+    SubFamily subFamily = existingSubFamiliesMap.get(subFamilyRequestDTO.getPo_SubFamilyCode());
+    if (subFamily == null) {
+      throw new ResourceNotFoundException(SID + subFamilyRequestDTO.getPo_SubFamilyCode() + NF);
+    }
+    subFamily.setSubFamilyName(subFamilyRequestDTO.getSubFamilyName());
+    subFamily.setSubFamilyDescription(subFamilyRequestDTO.getSubFamilyDescription());
+    return subFamily;
+  }
+
+  private SubFamily createNewSubFamilyIfNotExists(
+      SubFamilyRequestDTO subFamilyRequestDTO, List<SubFamily> updatedSubFamilies, Family existingFamily) {
+    boolean existsInUpdatedList =
+        updatedSubFamilies.stream()
+            .anyMatch(sf -> sf.getSubFamilyName().equals(subFamilyRequestDTO.getSubFamilyName()));
+
+    if (!existsInUpdatedList) {
+      SubFamily newSubFamily = new SubFamily();
+      newSubFamily.setSubFamilyName(subFamilyRequestDTO.getSubFamilyName());
+      newSubFamily.setSubFamilyDescription(subFamilyRequestDTO.getSubFamilyDescription());
+      newSubFamily.setFamily(existingFamily);
+      return newSubFamily;
+    }
+    return null;
+  }
+
+  private void clearAndAddSubFamilies(Family existingFamily, List<SubFamily> updatedSubFamilies) {
+    existingFamily.getSubFamilies().clear();
+    existingFamily.getSubFamilies().addAll(updatedSubFamilies);
+  }
+
+  private FamilyResponseDTO buildFamilyResponseDTO(Family existingFamily) {
+    List<SubFamilyResponseDTO> subFamilyResponseDTOs;
+    subFamilyResponseDTOs = new ArrayList<>();
+    for (SubFamily subFam : existingFamily.getSubFamilies()) {
+      SubFamilyResponseDTO subFamilyResponseDTO =
+          new SubFamilyResponseDTO(
+              subFam.getPo_SubFamilyCode(), subFam.getSubFamilyName(), subFam.getSubFamilyDescription());
+      subFamilyResponseDTOs.add(subFamilyResponseDTO);
+    }
+
+    return new FamilyResponseDTO(
+        existingFamily.getPo_FamilyCode(),
+        existingFamily.getName(),
+        existingFamily.getDescription(),
+        subFamilyResponseDTOs);
   }
 
   @Override

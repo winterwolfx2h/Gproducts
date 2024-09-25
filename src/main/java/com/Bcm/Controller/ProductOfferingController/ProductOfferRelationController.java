@@ -2,22 +2,19 @@ package com.Bcm.Controller.ProductOfferingController;
 
 import com.Bcm.Exception.NoRelationFoundException;
 import com.Bcm.Model.ProductOfferingABE.ProductOfferRelation;
+import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.RelationResponse;
+import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
+import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Product Offer Relations Controller", description = "All of the Product Offer Relation's methods")
@@ -30,39 +27,32 @@ public class ProductOfferRelationController {
   private static final String MSG = "message";
   private static final String PID = "Product with ID ";
   private static final String AsPl = " has no associated plans";
-  private static final String query = "SELECT COUNT(*) FROM product WHERE product_id = ?";
-  final JdbcTemplate base;
   final ProductOfferRelationService productOfferRelationService;
+  final ProductOfferingRepository productOfferingRepository;
+  private final ProductOfferRelationRepository productOfferRelationRepository;
 
   @GetMapping("/searchRelationName")
-  public List<RelationResponse> searchRelationName(@RequestParam List<Integer> relatedProductIds) {
+  public List<Map<String, Object>> searchRelationName(@RequestParam List<Integer> relatedProductIds) {
     if (relatedProductIds.isEmpty()) {
       throw new IllegalArgumentException("At least one relatedProductId must be provided");
     }
 
-    String placeholders = relatedProductIds.stream().map(id -> "?").collect(Collectors.joining(", "));
-
-    String sqlRelation =
-        "SELECT distinct por.product_id, por.related_product_id, po.name, poff.po_type "
-            + "FROM public.product_offer_relation por "
-            + "JOIN public.product po ON po.product_id = por.product_id "
-            + "JOIN public.product_offering poff ON poff.product_id = por.product_id "
-            + "AND por.related_product_id IN ("
-            + placeholders
-            + ")"
-            + "ORDER BY por.product_id";
-
-    Object[] params = relatedProductIds.toArray();
-
     List<RelationResponse> relationResponses =
-        base.query(sqlRelation, params, new BeanPropertyRowMapper<>(RelationResponse.class));
+        productOfferRelationService.searchRelationByRelatedProductIds(relatedProductIds);
 
     if (relationResponses.isEmpty()) {
-      String sqlProductCheck = "SELECT product_id FROM public.product WHERE product_id IN (" + placeholders + ")";
-      List<Integer> existingProductIds = base.queryForList(sqlProductCheck, params, Integer.class);
+      List<Integer> existingProductIds = new ArrayList<>();
+      for (ProductOffering productOffering : productOfferingRepository.findAllById(relatedProductIds)) {
+        Integer productId = productOffering.getProduct_id();
+        existingProductIds.add(productId);
+      }
 
-      List<Integer> missingProductIds =
-          relatedProductIds.stream().filter(id -> !existingProductIds.contains(id)).toList();
+      List<Integer> missingProductIds = new ArrayList<>();
+      for (Integer id : relatedProductIds) {
+        if (!existingProductIds.contains(id)) {
+          missingProductIds.add(id);
+        }
+      }
 
       if (!missingProductIds.isEmpty()) {
         throw new EntityNotFoundException("Product IDs not found: " + missingProductIds);
@@ -70,182 +60,106 @@ public class ProductOfferRelationController {
         throw new NoRelationFoundException("No relations found for the provided Product IDs");
       }
     }
-    return relationResponses;
+
+    List<Map<String, Object>> responseList = new ArrayList<>();
+    for (RelationResponse relation : relationResponses) {
+      Map<String, Object> responseMap = new HashMap<>();
+      responseMap.put("productId", relation.getProductId());
+      responseMap.put("productName", relation.getProductName());
+      responseList.add(responseMap);
+    }
+
+    return responseList;
   }
 
   @GetMapping("/allProductsExceptRelated")
   public List<RelationResponse> getAllProductsExceptRelated(@RequestParam Integer selectedProductId) {
-    String sqlRelation =
-        "SELECT distinct p.product_id, p.name, poff.po_type "
-            + "FROM public.product p "
-            + "JOIN public.product_offering poff ON poff.product_id = p.product_id "
-            + "WHERE poff.po_type <> 'PO-Plan' "
-            + "AND p.product_id NOT IN ("
-            + "  SELECT distinct por.related_product_id "
-            + "  FROM public.product_offer_relation por "
-            + "  WHERE por.product_id =?"
-            + ") "
-            + "AND p.product_id IN ("
-            + "  SELECT distinct por.product_id "
-            + "  FROM public.product_offer_relation por "
-            + "  WHERE por.related_product_id = ("
-            + "    SELECT distinct por2.related_product_id "
-            + "    FROM public.product_offer_relation por2 "
-            + "    WHERE por2.product_id =? "
-            + "    AND por2.type = 'Plan'"
-            + "  ) "
-            + "  AND por.type = 'Plan'"
-            + ") "
-            + "ORDER BY p.product_id";
-
-    Object[] params = new Object[] {selectedProductId, selectedProductId};
-
-    List<RelationResponse> relationResponses =
-        base.query(sqlRelation, params, new BeanPropertyRowMapper<>(RelationResponse.class));
-
-    return relationResponses;
+    return productOfferRelationRepository.findAllProductsExceptRelated(selectedProductId);
   }
 
   @GetMapping("/searchPO-PlanByProductId")
-  public ResponseEntity<List<Map<String, Object>>> searchPOPlanByProductId(@RequestParam Integer productId) {
-
-    String checkProductQuery = query;
-    Integer productCount = base.queryForObject(checkProductQuery, new Object[] {productId}, Integer.class);
-
+  public ResponseEntity<List<RelationResponse>> searchPOPlanByProductId(@RequestParam Integer productId) {
+    Integer productCount = productOfferRelationRepository.countByProductId(productId);
     if (productCount == null || productCount == 0) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body(Collections.singletonList(Map.of(MSG, PID + productId + " does not exist")));
+          .body(Collections.singletonList(new RelationResponse(PID + productId + " does not exist")));
     }
-
-    String checkPlanAssociationQuery =
-        "SELECT COUNT(*) FROM product_offer_relation WHERE product_id = ? AND type = 'Plan'";
-    Integer planCount = base.queryForObject(checkPlanAssociationQuery, new Object[] {productId}, Integer.class);
-
+    Integer planCount = productOfferRelationRepository.countPlanAssociations(productId);
     if (planCount == null || planCount == 0) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT)
-          .body(Collections.singletonList(Map.of(MSG, PID + productId + AsPl)));
+          .body(Collections.singletonList(new RelationResponse(PID + productId + AsPl)));
     }
-
-    String sqlSearchByProductId =
-        "SELECT distinct p.product_id, po.name AS product_name,po.family_name, po. sub_family, p.related_product_id,"
-            + " p.type, p.sub_Type, pofo.markets, pofo.submarkets FROM product_offer_relation p JOIN product po ON"
-            + " p.related_product_id = po.product_id JOIN product_offering pofo ON po.product_id = pofo.product_id"
-            + " WHERE p.product_id = ? and type ='Plan' ";
-
-    List<Map<String, Object>> result =
-        base.query(
-            sqlSearchByProductId,
-            new Object[] {productId},
-            new RowMapper<Map<String, Object>>() {
-              @Override
-              public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Map<String, Object> response = new HashMap<>();
-                response.put("product_id", rs.getInt("product_id"));
-                response.put("related_product_id", rs.getInt("related_product_id"));
-                response.put("product_name", rs.getString("product_name"));
-                response.put("type", rs.getString("type"));
-                response.put("sub_Type", rs.getString("sub_Type"));
-                response.put("family_name", rs.getString("family_name"));
-                response.put("sub_family", rs.getString("sub_family"));
-                response.put("markets", rs.getString("markets"));
-                response.put("submarkets", rs.getString("submarkets"));
-                return response;
-              }
-            });
-
+    List<RelationResponse> result = productOfferRelationRepository.findPOPlanAssociations(productId);
     if (result.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT)
-          .body(Collections.singletonList(Map.of(MSG, PID + productId + AsPl)));
+          .body(Collections.singletonList(new RelationResponse(PID + productId + AsPl)));
     }
+
     return ResponseEntity.ok(result);
   }
 
   @GetMapping("/searchMandatoryOpt-ByProductId")
   public ResponseEntity<List<Map<String, Object>>> searchMandatoryOptByProductId(@RequestParam Integer productId) {
 
-    String checkProductQuery = query;
-    Integer productCount = base.queryForObject(checkProductQuery, new Object[] {productId}, Integer.class);
-
+    Integer productCount = productOfferRelationRepository.countByProductId(productId);
     if (productCount == null || productCount == 0) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
           .body(Collections.singletonList(Map.of(MSG, PID + productId + " does not exist")));
     }
 
-    String checkMandatoryOptAssociationQuery =
-        "SELECT COUNT(*) FROM product_offer_relation WHERE (product_id = ?) AND (type = 'AutoInclude' OR type ="
-            + " 'Optional')";
-    Integer MandatoryOptCount =
-        base.queryForObject(checkMandatoryOptAssociationQuery, new Object[] {productId}, Integer.class);
-
-    if (MandatoryOptCount == null || MandatoryOptCount == 0) {
+    Integer mandatoryOptCount = productOfferRelationRepository.countMandatoryOptAssociations(productId);
+    if (mandatoryOptCount == null || mandatoryOptCount == 0) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT)
           .body(Collections.singletonList(Map.of(MSG, PID + productId + AsPl)));
     }
 
-    String sqlSearchByProductId =
-        "SELECT distinct p.product_id, po.name AS product_name, p.related_product_id, p.type "
-            + "FROM product_offer_relation p "
-            + "JOIN product po ON p.related_product_id = po.product_id "
-            + "WHERE (p.product_id = ?) AND (type = 'AutoInclude' OR type = 'Optional')";
-
-    List<Map<String, Object>> result =
-        base.query(
-            sqlSearchByProductId,
-            new Object[] {productId},
-            new RowMapper<Map<String, Object>>() {
-              @Override
-              public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Map<String, Object> response = new HashMap<>();
-                response.put("product_id", rs.getInt("product_id"));
-                response.put("related_product_id", rs.getInt("related_product_id"));
-                response.put("product_name", rs.getString("product_name"));
-                response.put("type", rs.getString("type"));
-                return response;
-              }
-            });
+    List<RelationResponse> result = productOfferRelationRepository.findMandatoryOptionsByProductId(productId);
 
     if (result.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT)
           .body(Collections.singletonList(Map.of(MSG, PID + productId + " has no associated MandatoryOpts")));
     }
-    return ResponseEntity.ok(result);
+
+    List<Map<String, Object>> response = new ArrayList<>();
+    for (RelationResponse relation : result) {
+      Map<String, Object> map = new HashMap<>();
+      map.put("product_id", relation.getProductId());
+      map.put("related_product_id", relation.getRelatedProductId());
+      map.put("product_name", relation.getProductName());
+      map.put("type", relation.getType());
+      response.add(map);
+    }
+
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping("/searchByProductId")
   public List<Map<String, Object>> searchByProductID(@RequestParam Integer productId) {
-    String sqlCheckProductId = query;
-    int count = base.queryForObject(sqlCheckProductId, Integer.class, productId);
-
-    if (count == 0) {
+    Integer productCount = productOfferRelationRepository.countByProductId(productId);
+    if (productCount == null || productCount == 0) {
       throw new IllegalArgumentException(PID + productId + " does not exist.");
     }
 
-    String sqlSearchByProductId =
-        "SELECT distinct por.product_id AS product_id, por.related_product_id AS related_product_id, po.name AS"
-            + " product_name, por.type FROM product_offer_relation por JOIN product po ON por.related_product_id ="
-            + " po.product_id WHERE por.product_id = ? AND por.type NOT LIKE 'Plan'";
-
-    List<Map<String, Object>> result =
-        base.query(
-            sqlSearchByProductId,
-            new Object[] {productId},
-            new RowMapper<Map<String, Object>>() {
-              @Override
-              public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Map<String, Object> response = new HashMap<>();
-                response.put("product_id", rs.getInt("product_id"));
-                response.put("related_product_id", rs.getInt("related_product_id"));
-                response.put("product_name", rs.getString("product_name"));
-                response.put("type", rs.getString("type"));
-                return response;
-              }
-            });
+    List<RelationResponse> result = productOfferRelationRepository.findProductAssociationsByProductId(productId);
 
     if (result.isEmpty()) {
       throw new IllegalArgumentException(PID + productId + " has no associations.");
     }
 
-    return result;
+    List<Map<String, Object>> response;
+    response = new ArrayList<>();
+    result.forEach(
+        relation -> {
+          Map<String, Object> map;
+          map = new HashMap<>();
+          map.put("product_id", relation.getProductId());
+          map.put("related_product_id", relation.getRelatedProductId());
+          map.put("product_name", relation.getProductName());
+          map.put("type", relation.getType());
+          response.add(map);
+        });
+
+    return response;
   }
 
   @PostMapping("/addProdOffRelations")

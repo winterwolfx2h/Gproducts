@@ -71,7 +71,7 @@ public class ProductOfferRelationServiceImpl implements ProductOfferRelationServ
   }
 
   @Override
-  public List<RelationResponse> searchByProductID(Integer productId) {
-    return productOfferRelationRepository.findRelationsByProductId(productId);
+  public List<RelationResponse> searchRelationByRelatedProductIds(List<Integer> relatedProductIds) {
+    return productOfferRelationRepository.findRelationsByRelatedProductIds(relatedProductIds);
   }
 }

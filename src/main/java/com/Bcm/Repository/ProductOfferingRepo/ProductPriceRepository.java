@@ -15,4 +15,8 @@ public interface ProductPriceRepository extends JpaRepository<ProductPrice, Inte
   List<ProductPrice> searchByPrice(@Param("cashPrice") float cashPrice);
 
   boolean existsById(int productPriceCode);
+
+  @Query(
+      "SELECT pp FROM ProductPrice pp JOIN Product p ON pp.Product_id = p.Product_id WHERE p.Product_id = :productId")
+  List<ProductPrice> findByProductId(@Param("productId") int productId);
 }

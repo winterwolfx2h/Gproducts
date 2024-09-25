@@ -15,14 +15,12 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(value = {IllegalArgumentException.class, IllegalStateException.class})
   protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
-    var response = new ApiResponseDTO(HttpStatus.BAD_REQUEST.toString(), ex.getMessage(), false);
-    return handleExceptionInternal(ex, response, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
   }
 
   @ExceptionHandler(value = {NullPointerException.class})
   protected ResponseEntity<Object> nullPointerException(RuntimeException ex, WebRequest request) {
-    var response = new ApiResponseDTO(HttpStatus.BAD_REQUEST.toString(), ex.getMessage(), false);
-    return handleExceptionInternal(ex, response, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
   }
 
   @ExceptionHandler(value = {ParseException.class})
@@ -40,25 +38,27 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(value = {AlreadyExistException.class})
   protected ResponseEntity<Object> alreadyExistExceptionException(RuntimeException ex, WebRequest request) {
-    var response = new ApiResponseDTO(HttpStatus.ALREADY_REPORTED.toString(), ex.getMessage(), false);
-    return handleExceptionInternal(ex, response, new HttpHeaders(), HttpStatus.ALREADY_REPORTED, request);
+    return buildResponseEntity(HttpStatus.ALREADY_REPORTED, ex.getMessage(), request);
   }
 
   @ExceptionHandler(value = {HttpMsgNotReadableException.class})
   protected ResponseEntity<Object> httpMsgNotReadableException(RuntimeException ex, WebRequest request) {
-    var response = new ApiResponseDTO(HttpStatus.BAD_REQUEST.toString(), ex.getMessage(), false);
-    return handleExceptionInternal(ex, response, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
   }
 
   @ExceptionHandler(value = {InvalidInput.class})
   protected ResponseEntity<Object> invalidInputException(RuntimeException ex, WebRequest request) {
-    var response = new ApiResponseDTO(HttpStatus.BAD_REQUEST.toString(), ex.getMessage(), false);
-    return handleExceptionInternal(ex, response, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
   }
 
   @ExceptionHandler(value = {InternalError.class})
   protected ResponseEntity<Object> internalError(RuntimeException ex, WebRequest request) {
     var response = new ApiResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "error in server", false);
     return handleExceptionInternal(ex, response, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+  }
+
+  private ResponseEntity<Object> buildResponseEntity(HttpStatus status, String message, WebRequest request) {
+    var response = new ApiResponseDTO(status.toString(), message, false);
+    return handleExceptionInternal(new RuntimeException(message), response, new HttpHeaders(), status, request);
   }
 }

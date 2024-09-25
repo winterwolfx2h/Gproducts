@@ -8,18 +8,19 @@ import com.Bcm.Repository.ProductOfferingRepo.POAttributesRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.POAttributesService;
 import com.Bcm.Service.Srvc.ServiceConfigSrvc.CustomerFacingServiceSpecService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 @RequiredArgsConstructor
 @Service
+@Primary
 public class POAttributesServiceImpl implements POAttributesService {
 
   final POAttributesRepository poAttributesRepository;
@@ -153,10 +154,5 @@ public class POAttributesServiceImpl implements POAttributesService {
 
   public boolean isCategoryValid(String attributeCategoryName) {
     return attributeCategoryName != null && !attributeCategoryName.isEmpty();
-  }
-
-  public POAttributes createSinglePOAttribute(POAttributes poAttribute) throws InvalidInputException {
-    setDefaultValueDescriptions(poAttribute);
-    return create(poAttribute);
   }
 }

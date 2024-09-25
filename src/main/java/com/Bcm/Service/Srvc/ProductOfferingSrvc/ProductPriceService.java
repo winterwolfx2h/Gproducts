@@ -22,4 +22,6 @@ public interface ProductPriceService {
   boolean existsById(int productPriceCode);
 
   List<ProductPrice> searchByPrice(float cashPrice);
+
+  List<ProductPrice> findByProductId(int productId);
 }

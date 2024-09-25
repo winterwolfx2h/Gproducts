@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/Type")
 public class TypeController {
 
-  final TypeService typeService;
   private static final String error = "An unexpected error occurred";
+  final TypeService typeService;
 
   @PostMapping("/addType")
   @CacheEvict(value = "TypesCache", allEntries = true)

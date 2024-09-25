@@ -84,71 +84,110 @@ public class MarketServiceImpl implements MarketService {
   @Transactional
   @Override
   public MarketResponseDTO update(int po_MarketCode, MarketRequestDTOUpdate marketRequestDTOUpdate) {
-    Optional<Market> existingMarketOptional = marketRepository.findById(po_MarketCode);
-    if (existingMarketOptional.isPresent()) {
-      Market existingMarket = existingMarketOptional.get();
+    Market existingMarket = findExistingMarket(po_MarketCode);
 
-      String newName = marketRequestDTOUpdate.getName();
-      if (!existingMarket.getName().equals(newName) && marketRepository.existsByName(newName)) {
-        throw new MarketAlreadyExistsException("Market with name '" + newName + "' already exists.");
-      }
+    validateMarketName(existingMarket, marketRequestDTOUpdate.getName());
 
-      existingMarket.setName(newName);
-      existingMarket.setDescription(marketRequestDTOUpdate.getDescription());
+    updateMarketDetails(existingMarket, marketRequestDTOUpdate);
 
-      Map<Integer, SubMarket> existingSubMarketsMap =
-          existingMarket.getSubMarkets().stream()
-              .collect(Collectors.toMap(SubMarket::getPo_SubMarketCode, subMarket -> subMarket));
+    List<SubMarket> updatedSubMarkets = processSubMarkets(marketRequestDTOUpdate, existingMarket);
 
-      List<SubMarket> updatedSubMarkets = new ArrayList<>();
-      for (SubMarketRequestDTO subMarketRequestDTO : marketRequestDTOUpdate.getSubMarkets()) {
-        if (subMarketRequestDTO.getPo_SubMarketCode() != null) {
-          SubMarket subMarket = existingSubMarketsMap.get(subMarketRequestDTO.getPo_SubMarketCode());
-          if (subMarket == null) {
-            throw new ResourceNotFoundException(SID + subMarketRequestDTO.getPo_SubMarketCode() + NTF);
-          }
-          subMarket.setSubMarketName(subMarketRequestDTO.getSubMarketName());
-          subMarket.setSubMarketDescription(subMarketRequestDTO.getSubMarketDescription());
-          updatedSubMarkets.add(subMarket);
-        } else {
-          boolean existsInUpdatedList =
-              updatedSubMarkets.stream()
-                  .anyMatch(sm -> sm.getSubMarketName().equals(subMarketRequestDTO.getSubMarketName()));
-          if (!existsInUpdatedList) {
-            SubMarket newSubMarket = new SubMarket();
-            newSubMarket.setSubMarketName(subMarketRequestDTO.getSubMarketName());
-            newSubMarket.setSubMarketDescription(subMarketRequestDTO.getSubMarketDescription());
-            newSubMarket.setMarket(existingMarket);
-            updatedSubMarkets.add(newSubMarket);
-          }
+    existingMarket.getSubMarkets().clear();
+    existingMarket.getSubMarkets().addAll(updatedSubMarkets);
+
+    existingMarket = marketRepository.save(existingMarket);
+
+    return buildMarketResponseDTO(existingMarket);
+  }
+
+  private Market findExistingMarket(int po_MarketCode) {
+    return marketRepository
+        .findById(po_MarketCode)
+        .orElseThrow(() -> new ResourceNotFoundException(MID + po_MarketCode + NTF));
+  }
+
+  private void validateMarketName(Market existingMarket, String newName) {
+    if (!existingMarket.getName().equals(newName) && marketRepository.existsByName(newName)) {
+      throw new MarketAlreadyExistsException("Market with name '" + newName + "' already exists.");
+    }
+  }
+
+  private void updateMarketDetails(Market existingMarket, MarketRequestDTOUpdate marketRequestDTOUpdate) {
+    existingMarket.setName(marketRequestDTOUpdate.getName());
+    existingMarket.setDescription(marketRequestDTOUpdate.getDescription());
+  }
+
+  private List<SubMarket> processSubMarkets(MarketRequestDTOUpdate marketRequestDTOUpdate, Market existingMarket) {
+    Map<Integer, SubMarket> existingSubMarketsMap = mapExistingSubMarkets(existingMarket);
+
+    List<SubMarket> updatedSubMarkets = new ArrayList<>();
+    for (SubMarketRequestDTO subMarketRequestDTO : marketRequestDTOUpdate.getSubMarkets()) {
+      if (subMarketRequestDTO.getPo_SubMarketCode() != null) {
+        SubMarket subMarket = updateExistingSubMarket(subMarketRequestDTO, existingSubMarketsMap);
+        updatedSubMarkets.add(subMarket);
+      } else {
+        SubMarket newSubMarket = createNewSubMarketIfNotExists(subMarketRequestDTO, updatedSubMarkets, existingMarket);
+        if (newSubMarket != null) {
+          updatedSubMarkets.add(newSubMarket);
         }
       }
-
-      existingMarket.getSubMarkets().stream()
-          .filter(subMarket -> !updatedSubMarkets.contains(subMarket))
-          .forEach(updatedSubMarkets::add);
-
-      existingMarket.getSubMarkets().clear();
-      existingMarket.getSubMarkets().addAll(updatedSubMarkets);
-
-      existingMarket = marketRepository.save(existingMarket);
-
-      List<SubMarketResponseDTO> subMarketResponseDTOs = new ArrayList<>();
-      for (SubMarket subMkt : existingMarket.getSubMarkets()) {
-        SubMarketResponseDTO subMarketResponseDTO =
-            new SubMarketResponseDTO(
-                subMkt.getPo_SubMarketCode(), subMkt.getSubMarketName(), subMkt.getSubMarketDescription());
-        subMarketResponseDTOs.add(subMarketResponseDTO);
-      }
-
-      return new MarketResponseDTO(
-          existingMarket.getPo_MarketCode(),
-          existingMarket.getName(),
-          existingMarket.getDescription(),
-          subMarketResponseDTOs);
-    } else {
-      throw new ResourceNotFoundException(MID + po_MarketCode + NTF);
     }
+
+    addRemainingSubMarkets(existingMarket, updatedSubMarkets);
+    return updatedSubMarkets;
+  }
+
+  private Map<Integer, SubMarket> mapExistingSubMarkets(Market existingMarket) {
+    return existingMarket.getSubMarkets().stream()
+        .collect(Collectors.toMap(SubMarket::getPo_SubMarketCode, subMarket -> subMarket));
+  }
+
+  private SubMarket updateExistingSubMarket(
+      SubMarketRequestDTO subMarketRequestDTO, Map<Integer, SubMarket> existingSubMarketsMap) {
+    SubMarket subMarket = existingSubMarketsMap.get(subMarketRequestDTO.getPo_SubMarketCode());
+    if (subMarket == null) {
+      throw new ResourceNotFoundException(SID + subMarketRequestDTO.getPo_SubMarketCode() + NTF);
+    }
+    subMarket.setSubMarketName(subMarketRequestDTO.getSubMarketName());
+    subMarket.setSubMarketDescription(subMarketRequestDTO.getSubMarketDescription());
+    return subMarket;
+  }
+
+  private SubMarket createNewSubMarketIfNotExists(
+      SubMarketRequestDTO subMarketRequestDTO, List<SubMarket> updatedSubMarkets, Market existingMarket) {
+    boolean existsInUpdatedList =
+        updatedSubMarkets.stream().anyMatch(sm -> sm.getSubMarketName().equals(subMarketRequestDTO.getSubMarketName()));
+
+    if (!existsInUpdatedList) {
+      SubMarket newSubMarket = new SubMarket();
+      newSubMarket.setSubMarketName(subMarketRequestDTO.getSubMarketName());
+      newSubMarket.setSubMarketDescription(subMarketRequestDTO.getSubMarketDescription());
+      newSubMarket.setMarket(existingMarket);
+      return newSubMarket;
+    }
+    return null;
+  }
+
+  private void addRemainingSubMarkets(Market existingMarket, List<SubMarket> updatedSubMarkets) {
+    existingMarket.getSubMarkets().stream()
+        .filter(subMarket -> !updatedSubMarkets.contains(subMarket))
+        .forEach(updatedSubMarkets::add);
+  }
+
+  private MarketResponseDTO buildMarketResponseDTO(Market existingMarket) {
+    List<SubMarketResponseDTO> subMarketResponseDTOs = new ArrayList<>();
+    for (SubMarket subMkt : existingMarket.getSubMarkets()) {
+      SubMarketResponseDTO subMarketResponseDTO =
+          new SubMarketResponseDTO(
+              subMkt.getPo_SubMarketCode(), subMkt.getSubMarketName(), subMkt.getSubMarketDescription());
+      subMarketResponseDTOs.add(subMarketResponseDTO);
+    }
+
+    return new MarketResponseDTO(
+        existingMarket.getPo_MarketCode(),
+        existingMarket.getName(),
+        existingMarket.getDescription(),
+        subMarketResponseDTOs);
   }
 
   @Override

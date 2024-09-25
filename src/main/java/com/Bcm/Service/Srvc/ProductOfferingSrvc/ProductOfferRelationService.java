@@ -18,5 +18,5 @@ public interface ProductOfferRelationService {
 
   void deleteById(Integer productOfferRel_code);
 
-  List<RelationResponse> searchByProductID(Integer productId);
+  List<RelationResponse> searchRelationByRelatedProductIds(List<Integer> relatedProductIds);
 }

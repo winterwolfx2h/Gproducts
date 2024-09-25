@@ -4,6 +4,10 @@ import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 
 public class GeneralInfoMapper {
 
+  private GeneralInfoMapper() {
+    throw new UnsupportedOperationException("This is a utility class and cannot be instantiated.");
+  }
+
   public static GeneralInfoDTO toDTO(ProductOffering productOffering) {
     if (productOffering == null) {
       return null;

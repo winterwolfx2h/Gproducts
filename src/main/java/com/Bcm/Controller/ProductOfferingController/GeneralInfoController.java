@@ -31,6 +31,7 @@ public class GeneralInfoController {
   final GeneralInfoService generalInfoService;
   final ProductOfferingService productOfferingService;
   final ProductOfferingRepository productOfferingRepository;
+  private static final String INT = "Internal";
 
   @Transactional
   @PostMapping("/AddProdOffDTO")
@@ -110,47 +111,63 @@ public class GeneralInfoController {
   List<String> checkPO(GeneralInfoDTO generalInfoDTO) {
     List<String> errors = new ArrayList<>();
 
-    if (generalInfoDTO.getName() == null || generalInfoDTO.getName().isEmpty()) {
-      errors.add("Name cannot be empty");
-    } else {
-      if (!(generalInfoDTO.getName().startsWith("po-basic-")
-          || generalInfoDTO.getName().startsWith("po-optional-")
-          || generalInfoDTO.getName().startsWith("po-add-"))) {
-        errors.add("Name must start with 'po-basic-', 'po-optional-', or 'po-add-'");
-      }
-    }
-
-    if (generalInfoDTO.getEffectiveFrom() == null
-        || generalInfoDTO.getName().isEmpty()
-        || generalInfoDTO.getEffectiveTo() == null) {
-      errors.add("Effective from and effective to dates cannot be null");
-    } else {
-      if (generalInfoDTO.getEffectiveFrom().compareTo(generalInfoDTO.getEffectiveTo()) >= 0) {
-        errors.add("Effective from date must be before the effective to date");
-      }
-    }
-
-    if (generalInfoDTO.getCategory() == null || generalInfoDTO.getCategory().isEmpty()) {
-      errors.add(" Category cannot be empty");
-    } else {
-
-      List<String> errorCategory = Arrays.asList("Billing", "Charging", "Both", "Internal");
-      if (!errorCategory.contains(generalInfoDTO.getCategory())) {
-        errors.add("category must be one of the following: " + String.join(", ", errorCategory));
-      }
-    }
-
-    if (generalInfoDTO.getPoType() == null || generalInfoDTO.getPoType().isEmpty()) {
-      errors.add(" poType cannot be empty");
-    } else {
-
-      List<String> errorPOTYPE = Arrays.asList("PO-Basic", "PO-Optional", "Both", "Internal");
-      if (!errorPOTYPE.contains(generalInfoDTO.getPoType())) {
-        errors.add("PO-Type must be one of the following: " + String.join(", ", errorPOTYPE));
-      }
-    }
+    checkName(generalInfoDTO, errors);
+    checkEffectiveDates(generalInfoDTO, errors);
+    checkCategory(generalInfoDTO, errors);
+    checkPoType(generalInfoDTO, errors);
 
     return errors;
+  }
+
+  private void checkName(GeneralInfoDTO generalInfoDTO, List<String> errors) {
+    String name = generalInfoDTO.getName();
+    if (name == null || name.isEmpty()) {
+      errors.add("Name cannot be empty");
+    } else if (!isValidNamePrefix(name)) {
+      errors.add("Name must start with 'po-basic-', 'po-optional-', or 'po-add-'");
+    }
+  }
+
+  private boolean isValidNamePrefix(String name) {
+    return name.startsWith("po-basic-") || name.startsWith("po-optional-") || name.startsWith("po-add-");
+  }
+
+  private void checkEffectiveDates(GeneralInfoDTO generalInfoDTO, List<String> errors) {
+    if (generalInfoDTO.getEffectiveFrom() == null || generalInfoDTO.getEffectiveTo() == null) {
+      errors.add("Effective from and effective to dates cannot be null");
+    } else if (generalInfoDTO.getEffectiveFrom().compareTo(generalInfoDTO.getEffectiveTo()) >= 0) {
+      errors.add("Effective from date must be before the effective to date");
+    }
+  }
+
+  private void checkCategory(GeneralInfoDTO generalInfoDTO, List<String> errors) {
+    String category = generalInfoDTO.getCategory();
+    if (category == null || category.isEmpty()) {
+      errors.add("Category cannot be empty");
+    } else if (!isValidCategory(category)) {
+      List<String> validCategories = Arrays.asList("Billing", "Charging", "Both", INT);
+      errors.add("Category must be one of the following: " + String.join(", ", validCategories));
+    }
+  }
+
+  private boolean isValidCategory(String category) {
+    List<String> validCategories = Arrays.asList("Billing", "Charging", "Both", INT);
+    return validCategories.contains(category);
+  }
+
+  private void checkPoType(GeneralInfoDTO generalInfoDTO, List<String> errors) {
+    String poType = generalInfoDTO.getPoType();
+    if (poType == null || poType.isEmpty()) {
+      errors.add("PO Type cannot be empty");
+    } else if (!isValidPoType(poType)) {
+      List<String> validPoTypes = Arrays.asList("PO-Basic", "PO-Optional", "Both", INT);
+      errors.add("PO Type must be one of the following: " + String.join(", ", validPoTypes));
+    }
+  }
+
+  private boolean isValidPoType(String poType) {
+    List<String> validPoTypes = Arrays.asList("PO-Basic", "PO-Optional", "Both", INT);
+    return validPoTypes.contains(poType);
   }
 
   @PostMapping("/checkErrorPO")

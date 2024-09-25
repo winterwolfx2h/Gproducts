@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ResourceFacingServiceSpecController {
 
+  private static final String error = "An unexpected error occurred";
   final ResourceFacingServiceSpecService resourceFacingServiceSpecService;
   final LogicalResourceRepository logicalResourceRepository;
   final CustomerFacingServiceSpecRepository customerFacingServiceSpecRepository;
-  private static final String error = "An unexpected error occurred";
 
   @PostMapping("/addResourceFacingServiceSpec")
   public ResponseEntity<?> createResourceFacingServiceSpec(

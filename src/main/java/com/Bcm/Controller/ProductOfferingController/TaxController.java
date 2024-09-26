@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TaxController {
 
+  private static final Logger logger = LoggerFactory.getLogger(TaxController.class);
   final TaxService taxService;
   final ProductRepository productRepository;
-  private static final Logger logger = LoggerFactory.getLogger(TaxController.class);
   @PersistenceContext private EntityManager entityManager;
 
   @PostMapping("/addTax")

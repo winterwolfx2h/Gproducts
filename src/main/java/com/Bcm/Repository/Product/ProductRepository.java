@@ -2,6 +2,7 @@ package com.Bcm.Repository.Product;
 
 import com.Bcm.Model.Product.Product;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,14 +30,14 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
   @Query(
       value =
           "SELECT DISTINCT "
-              + "  p.product_id, "
+              + "  p.product_id AS productId, "
               + "  c.channel_code AS channelCode, "
               + "  c.name AS channelName, "
               + "  e.entity_code AS entityCode, "
               + "  e.name AS entityName, "
               + "  pg.product_price_group_code AS productPriceGroupCode, "
               + "  pg.name AS productPriceGroupName, "
-              + "  p.stock_ind "
+              + "  p.stock_ind AS stockInd "
               + "FROM "
               + "  Product p "
               + "  LEFT JOIN Product_Channel pc ON p.product_id = pc.product_id "
@@ -48,7 +49,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
               + "WHERE "
               + "  p.product_id = :productId",
       nativeQuery = true)
-  List<Object[]> findProductDetails(@Param("productId") int productId);
+  List<Map<String, Object>> findProductDetails(@Param("productId") int productId);
 
   boolean existsById(Integer productId);
 }

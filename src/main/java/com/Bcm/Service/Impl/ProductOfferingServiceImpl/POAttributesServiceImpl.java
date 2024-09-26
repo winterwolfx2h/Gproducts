@@ -23,12 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Primary
 public class POAttributesServiceImpl implements POAttributesService {
 
-  final POAttributesRepository poAttributesRepository;
-  final CustomerFacingServiceSpecService customerFacingServiceSpecService;
-
-  private final ProductOfferingRepository productOfferingRepository;
   private static final String PID = "POAttributes with ID: ";
   private static final String NTF = " not found";
+  final POAttributesRepository poAttributesRepository;
+  final CustomerFacingServiceSpecService customerFacingServiceSpecService;
+  private final ProductOfferingRepository productOfferingRepository;
 
   @Transactional
   public POAttributes create(POAttributes poAttributes) {

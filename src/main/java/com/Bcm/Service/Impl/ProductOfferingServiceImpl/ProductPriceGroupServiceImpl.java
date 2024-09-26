@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProductPriceGroupServiceImpl implements ProductPriceGroupService {
 
-  final ProductPriceGroupRepository productPriceGroupRepository;
-  final ProductOfferingService productOfferingService;
   private static final String PGID = "ProductPriceGroup with ID ";
   private static final String invArg = "Invalid argument provided for finding ProductPriceGroup";
+  final ProductPriceGroupRepository productPriceGroupRepository;
+  final ProductOfferingService productOfferingService;
 
   @Override
   public ProductPriceGroup create(ProductPriceGroup productPriceGroup) {

@@ -28,10 +28,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/GeneralInfo")
 @RequiredArgsConstructor
 public class GeneralInfoController {
+  private static final String INT = "Internal";
   final GeneralInfoService generalInfoService;
   final ProductOfferingService productOfferingService;
   final ProductOfferingRepository productOfferingRepository;
-  private static final String INT = "Internal";
 
   @Transactional
   @PostMapping("/AddProdOffDTO")

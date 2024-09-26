@@ -20,13 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MarketServiceImpl implements MarketService {
 
-  final MarketRepository marketRepository;
-  final ProductOfferingService productOfferingService;
-  private final SubMarketRepository subMarketRepository;
   private static final String SID = "SubMarket with ID ";
   private static final String MID = "Market with ID ";
   private static final String NTF = " not found.";
   private static final String invArg = "Invalid argument provided for finding Market";
+  final MarketRepository marketRepository;
+  final ProductOfferingService productOfferingService;
+  private final SubMarketRepository subMarketRepository;
 
   @Transactional
   @Override

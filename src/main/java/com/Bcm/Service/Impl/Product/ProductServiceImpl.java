@@ -38,7 +38,7 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public List<Product> searchByFamilyName(String familyName) {
     List<Product> products = productRepository.findByFamilyName(familyName);
-    boolean hasLinkedProduct = products.stream().anyMatch(Product.class::isInstance);
+    boolean hasLinkedProduct = products.stream().anyMatch(Objects::nonNull);
     if (!hasLinkedProduct) {
       return Collections.emptyList();
     }
@@ -139,28 +139,12 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public List<Map<String, Object>> fetchProductDetails(int productId) throws ProductNotFoundException {
-    List<Object[]> results = productRepository.findProductDetails(productId);
+    List<Map<String, Object>> results = productRepository.findProductDetails(productId);
 
     if (results.isEmpty()) {
       throw new ProductNotFoundException("Product not found with ID: " + productId);
     }
 
-    List<Map<String, Object>> productDetailsList = new ArrayList<>();
-
-    for (Object[] result : results) {
-      Map<String, Object> productDetail = new HashMap<>();
-      productDetail.put("productId", result[0]);
-      productDetail.put("channelCode", result[1]);
-      productDetail.put("channelName", result[2]);
-      productDetail.put("entityCode", result[3]);
-      productDetail.put("entityName", result[4]);
-      productDetail.put("productPriceGroupCode", result[5]);
-      productDetail.put("productPriceGroupName", result[6]);
-      productDetail.put("stockInd", result[7]);
-
-      productDetailsList.add(productDetail);
-    }
-
-    return productDetailsList;
+    return results;
   }
 }

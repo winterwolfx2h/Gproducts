@@ -20,8 +20,8 @@ import org.springframework.web.context.request.WebRequest;
 @RequestMapping("/api/logicalResource")
 public class LogicalResourceController {
 
-  final LogicalResourceService logicalResourceService;
   private static final String error = "An unexpected error occurred";
+  final LogicalResourceService logicalResourceService;
 
   @PostMapping("/addLogicalResource")
   public ResponseEntity<?> createLogicalResource(@RequestBody LogicalResource logicalResource) {

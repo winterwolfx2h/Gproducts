@@ -21,10 +21,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ResourceFacingServiceSpecServiceImpl implements ResourceFacingServiceSpecService {
 
+  private static final String NTF = " not found";
   final ResourceFacingServiceSpecRepository resourceFacingServiceSpecRepository;
   final CustomerFacingServiceSpecRepository customerFacingServiceSpecRepository;
   final LogicalResourceRepository logicalResourceRepository;
-  private static final String NTF = " not found";
 
   @Override
   public ResourceFacingServiceSpec create(ResourceFacingServiceSpec resourceFacingServiceSpec) {

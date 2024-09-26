@@ -26,9 +26,9 @@ import org.springframework.web.context.request.WebRequest;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/physicalResource")
 public class PhysicalResourceController {
+  private static final String error = "An unexpected error occurred";
   final JdbcTemplate base;
   final PhysicalResourceService physicalResourceService;
-  private static final String error = "An unexpected error occurred";
 
   @PostMapping("/addPhysicalResource")
   public ResponseEntity<?> createPhysicalResource(@RequestBody PhysicalResource physicalResource) {

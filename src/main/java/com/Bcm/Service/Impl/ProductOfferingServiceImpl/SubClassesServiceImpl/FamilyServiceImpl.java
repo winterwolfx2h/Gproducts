@@ -21,13 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class FamilyServiceImpl implements FamilyService {
 
-  final FamilyRepository familyRepository;
-  final ProductOfferingService productOfferingService;
-  private final SubFamilyRepository subFamilyRepository;
   private static final String SID = "SubFamily with ID ";
   private static final String FID = "Family with ID ";
   private static final String invArg = "Invalid argument provided for finding Family";
   private static final String NF = " not found.";
+  final FamilyRepository familyRepository;
+  final ProductOfferingService productOfferingService;
+  private final SubFamilyRepository subFamilyRepository;
 
   @Transactional
   @Override

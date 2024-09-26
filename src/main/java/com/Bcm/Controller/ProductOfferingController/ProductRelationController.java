@@ -21,8 +21,8 @@ import org.springframework.web.context.request.WebRequest;
 @RequestMapping("/api/product-relation")
 public class ProductRelationController {
 
-  final ProductRelationService productRelationService;
   private static final String error = "An unexpected error occurred";
+  final ProductRelationService productRelationService;
 
   @PostMapping("/addProdRelation")
   @CacheEvict(value = "ProdRelationCache", allEntries = true)

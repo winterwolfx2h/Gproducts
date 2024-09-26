@@ -22,10 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProductPriceServiceImpl implements ProductPriceService {
 
+  private static final String PPID = "ProductPrice with ID ";
   final ProductPriceRepository productPriceRepository;
   final ProductOfferingRepository productOfferingRepository;
   final ProductRepository productRepository;
-  private static final String PPID = "ProductPrice with ID ";
 
   @Override
   public ProductPrice create(ProductPrice productPrice) {

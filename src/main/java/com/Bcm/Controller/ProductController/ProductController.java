@@ -2,12 +2,10 @@ package com.Bcm.Controller.ProductController;
 
 import com.Bcm.Exception.ProductNotFoundException;
 import com.Bcm.Exception.ProductOfferingAlreadyExistsException;
-import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.Product.ProductDTO;
 import com.Bcm.Model.Product.ProductTaxDTO;
 import com.Bcm.Model.ProductOfferingABE.DependentCfsDto;
-import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.Tax;
 import com.Bcm.Model.ServiceABE.CustomerFacingServiceSpec;
 import com.Bcm.Repository.Product.ProductRepository;
@@ -18,6 +16,8 @@ import com.Bcm.Service.Srvc.ProductOfferingSrvc.SubClassesSrvc.FamilyService;
 import com.Bcm.Service.Srvc.ProductSrvc.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Tag(name = "Product Controller", description = "All of the Product's methods")
 @RestController
@@ -35,6 +34,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/Product")
 public class ProductController {
 
+  private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
   private static final String error = "An unexpected error occurred";
   private static final String DEX = " does not exist";
   private static final String PNF = "Product not found";
@@ -47,166 +47,82 @@ public class ProductController {
 
   @GetMapping("/ProductList")
   public ResponseEntity<?> getAllProduct() {
+    logger.info("Request received to fetch all products");
     try {
-      List<Product> product = productService.read();
-      return ResponseEntity.ok(product);
+      List<Product> products = productService.read();
+      logger.info("Successfully fetched {} products", products.size());
+      return ResponseEntity.ok(products);
     } catch (RuntimeException e) {
+      logger.error("Error fetching products: {}", e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
   @GetMapping("/{po_code}")
-  public ResponseEntity<Product> getProductById(@PathVariable("po_code") int po_code) {
-    Product product = productService.findById(po_code);
-    return ResponseEntity.ok(product);
-  }
-
-  @GetMapping("/searchProductResDetails")
-  public ResponseEntity<Map<String, String>> searchProductResDetails(@RequestParam Integer productId) {
-    try {
-      Map<String, String> productDetails = productService.fetchProductResourceDetails(productId);
-      return ResponseEntity.ok(productDetails);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", error));
-    }
+  public ResponseEntity<?> getProductById(@PathVariable("po_code") int po_code) {
+    logger.info("Fetching product with ID: {}", po_code);
+      Product product = productService.findById(po_code);
+      logger.info("Successfully fetched product: {}", product.getName());
+      return ResponseEntity.ok(product);
   }
 
   @GetMapping("/searchProductDetails")
   public ResponseEntity<?> searchProductDetails(@RequestParam Integer productId) {
+    logger.info("Searching for product details with ID: {}", productId);
     try {
       List<Map<String, Object>> productDetails = productService.fetchProductDetails(productId);
+      logger.info("Successfully fetched details for product ID: {}", productId);
       return ResponseEntity.ok(productDetails);
     } catch (ProductNotFoundException e) {
+      logger.error("Product not found with ID: {}", productId);
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     } catch (Exception e) {
-      e.printStackTrace();
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error + e.getMessage());
-    }
-  }
-
-  @GetMapping("/productsWithPOBasicPoType")
-  public ResponseEntity<?> getProductsByPOBasicPoType() {
-    try {
-      String poType = "PO-Basic";
-      List<ProductOffering> productOfferings = productOfferingService.findByPoType(poType);
-
-      if (productOfferings.isEmpty()) {
-        throw new ResourceNotFoundException("No products found for poType: " + poType);
-      }
-
-      List<Object> products =
-          productOfferings.stream()
-              .map(
-                  productOffering -> {
-                    Product product = productOffering.convertToProduct();
-                    ProductOffering productOfferingDTO = new ProductOffering();
-                    productOfferingDTO.setProduct_id(product.getProduct_id());
-                    productOfferingDTO.setName(product.getName());
-                    productOfferingDTO.setEffectiveFrom(product.getEffectiveFrom());
-                    productOfferingDTO.setEffectiveTo(product.getEffectiveTo());
-                    productOfferingDTO.setDescription(product.getDescription());
-                    productOfferingDTO.setDetailedDescription(product.getDetailedDescription());
-                    productOfferingDTO.setPoType(productOffering.getPoType());
-                    productOfferingDTO.setFamilyName(product.getFamilyName());
-                    productOfferingDTO.setSubFamily(product.getSubFamily());
-                    productOfferingDTO.setParent(productOffering.getParent());
-                    productOfferingDTO.setStatus(productOffering.getStatus());
-                    productOfferingDTO.setCategory(productOffering.getCategory());
-                    productOfferingDTO.setPoParent_Child(productOffering.getPoParent_Child());
-                    productOfferingDTO.setMarkets(productOffering.getMarkets());
-                    productOfferingDTO.setSubmarkets(productOffering.getSubmarkets());
-                    productOfferingDTO.setBS_externalId(productOffering.getBS_externalId());
-                    productOfferingDTO.setCS_externalId(productOffering.getCS_externalId());
-
-                    return productOfferingDTO;
-                  })
-              .collect(Collectors.toList());
-
-      return ResponseEntity.ok(products);
-    } catch (ResourceNotFoundException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    } catch (Exception e) {
+      logger.error("Error fetching product details: {}", e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
   @GetMapping("/searchByFamilyName")
   public ResponseEntity<?> searchProductsByFamilyName(@RequestParam("familyName") String familyName) {
+    logger.info("Searching products by family name: {}", familyName);
     List<Product> searchResults = productService.searchByFamilyName(familyName);
+    logger.info("Found {} products for family name: {}", searchResults.size(), familyName);
     return ResponseEntity.ok(searchResults);
-  }
-
-  @GetMapping("/productsWithPOPLANPoType")
-  public ResponseEntity<?> getProductsByPOPlanPoType() {
-    try {
-      String poType = "PO-PLAN";
-      List<ProductOffering> productOfferings = productOfferingService.findByPoType(poType);
-
-      if (productOfferings.isEmpty()) {
-        throw new ResourceNotFoundException("No products found for poType: " + poType);
-      }
-
-      List<Object> products =
-          productOfferings.stream()
-              .map(
-                  productOffering -> {
-                    Product product = productOffering.convertToProduct();
-                    ProductOffering productOfferingDTO = new ProductOffering();
-                    productOfferingDTO.setProduct_id(product.getProduct_id());
-                    productOfferingDTO.setName(product.getName());
-                    productOfferingDTO.setEffectiveFrom(product.getEffectiveFrom());
-                    productOfferingDTO.setEffectiveTo(product.getEffectiveTo());
-                    productOfferingDTO.setDescription(product.getDescription());
-                    productOfferingDTO.setDetailedDescription(product.getDetailedDescription());
-                    productOfferingDTO.setPoType(productOffering.getPoType());
-                    productOfferingDTO.setFamilyName(product.getFamilyName());
-                    productOfferingDTO.setSubFamily(product.getSubFamily());
-                    productOfferingDTO.setParent(productOffering.getParent());
-                    productOfferingDTO.setStatus(productOffering.getStatus());
-                    productOfferingDTO.setMarkets(productOffering.getMarkets());
-                    productOfferingDTO.setSubmarkets(productOffering.getSubmarkets());
-
-                    return productOfferingDTO;
-                  })
-              .collect(Collectors.toList());
-
-      return ResponseEntity.ok(products);
-    } catch (ResourceNotFoundException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-    }
   }
 
   @PostMapping("/AddProductDTO")
   public ResponseEntity<?> createProductDTO(@Valid @RequestBody ProductDTO dto) {
+    logger.info("Creating a new Product DTO with name: {}", dto.getName());
     try {
-
-      if (productOfferingService.existsByName(dto.getName())) {
+      if (productService.existsByName(dto.getName())) {
+        logger.warn("Conflicted product name: {}", dto.getName());
         return ResponseEntity.badRequest().body("A Product with the same name already exists.");
       }
 
       Product createdProduct = productService.createProductDTO(dto);
-
+      logger.info("Successfully created product: {}", createdProduct.getName());
       return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
 
     } catch (ProductOfferingAlreadyExistsException ex) {
+      logger.error("Attempted to create a product that already exists: {}", ex.getMessage());
       return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("Error creating product: {}", e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("An unexpected error occurred while creating the Product . Error: " + e.getMessage());
+              .body("An unexpected error occurred while creating the Product.");
     }
   }
 
   @PutMapping("/StockInd/{productId}")
   public ResponseEntity<Product> updateProdStockInd(
-      @RequestBody ProductDTO dto, @PathVariable int productId, @RequestParam(required = false) boolean stockInd) {
+          @RequestBody ProductDTO dto, @PathVariable int productId, @RequestParam(required = false) boolean stockInd) {
+    logger.info("Updating stock indicator for product ID: {} with stockInd: {}", productId, stockInd);
     try {
       Product product = productService.updateProdStockInd(dto, productId, stockInd);
+      logger.info("Successfully updated stock indicator for product ID: {}", productId);
       return ResponseEntity.ok(product);
     } catch (ProductNotFoundException e) {
+      logger.error("Product not found for update with ID: {}", productId);
       return ResponseEntity.notFound().build();
     }
   }
@@ -214,70 +130,73 @@ public class ProductController {
   @PostMapping("/insertProdDependentCfs")
   @Transactional
   public ResponseEntity<String> insertDependentCfs(@RequestBody List<DependentCfsDto> dependentCfsDtos) {
+    logger.info("Inserting dependent CFS for products");
     if (dependentCfsDtos.isEmpty()) {
-      throw new IllegalArgumentException("At least one dependentCfsDtos must be provided");
+      logger.error("At least one dependent CFS must be provided");
+      throw new IllegalArgumentException("At least one dependent CFS must be provided");
     }
     for (DependentCfsDto dto : dependentCfsDtos) {
       if (!productRepository.existsById(dto.getProductId())) {
+        logger.error("Product with ID {} does not exist", dto.getProductId());
         throw new IllegalArgumentException("Product with id " + dto.getProductId() + DEX);
       }
-      Product product =
-          productRepository.findById(dto.getProductId()).orElseThrow(() -> new IllegalArgumentException(PNF));
-
-      CustomerFacingServiceSpec cfs =
-          cfsRepository
-              .findById(dto.getDependentCfs())
+      Product product = productRepository.findById(dto.getProductId()).orElseThrow(() -> new IllegalArgumentException(PNF));
+      CustomerFacingServiceSpec cfs = cfsRepository.findById(dto.getDependentCfs())
               .orElseThrow(() -> new IllegalArgumentException("Dependent CFS not found"));
-
       product.getServiceId().add(cfs);
+      logger.info("Added dependent CFS to product ID: {}", dto.getProductId());
     }
     for (DependentCfsDto dto : dependentCfsDtos) {
-      Product product =
-          productRepository.findById(dto.getProductId()).orElseThrow(() -> new IllegalArgumentException(PNF));
+      Product product = productRepository.findById(dto.getProductId()).orElseThrow(() -> new IllegalArgumentException(PNF));
       productRepository.save(product);
     }
+    logger.info("Successfully inserted dependent CFS");
     return ResponseEntity.ok("Dependent CFS inserted successfully");
   }
 
+  @Transactional
   @PutMapping("update/{productId}")
   public ResponseEntity<?> updateProduct(@RequestBody ProductDTO dto, @PathVariable int productId) {
+    logger.info("Updating product with ID: {}", productId);
     try {
       Product updatedProduct = productService.updateProductDTO(dto, productId);
+      logger.info("Successfully updated product ID: {}", productId);
       return ResponseEntity.ok(updatedProduct);
     } catch (ProductNotFoundException ex) {
+      logger.error("Product not found for update: {}", ex.getMessage());
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     } catch (Exception e) {
-      e.printStackTrace();
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error + e.getMessage());
+      logger.error("Error updating product: {}", e.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
   }
 
   @PostMapping("/insertProductTax")
   @Transactional
   public ResponseEntity<String> insertProductTax(@RequestBody List<ProductTaxDTO> productTaxDTO) {
+    logger.info("Inserting product tax information");
     if (productTaxDTO.isEmpty()) {
+      logger.error("At least one Product_Tax must be provided");
       throw new IllegalArgumentException("At least one Product_Tax must be provided");
     }
     for (ProductTaxDTO dto : productTaxDTO) {
-      Product product =
-          productRepository
-              .findById(dto.getProductId())
+      Product product = productRepository.findById(dto.getProductId())
               .orElseThrow(() -> new IllegalArgumentException("Product with id " + dto.getProductId() + DEX));
 
-      Tax tax =
-          taxRepository
-              .findById(dto.getTaxCode())
+      Tax tax = taxRepository.findById(dto.getTaxCode())
               .orElseThrow(() -> new IllegalArgumentException("Tax with tax code " + dto.getTaxCode() + DEX));
 
       product.getTaxes().add(tax);
+      logger.info("Added tax to product ID: {}", dto.getProductId());
     }
 
     for (ProductTaxDTO dto : productTaxDTO) {
-      Product product =
-          productRepository.findById(dto.getProductId()).orElseThrow(() -> new IllegalArgumentException(PNF));
+      Product product = productRepository.findById(dto.getProductId())
+              .orElseThrow(() -> new IllegalArgumentException(PNF));
       productRepository.save(product);
     }
 
+    logger.info("Successfully inserted product tax");
     return ResponseEntity.ok("Product Tax inserted successfully");
   }
 }

@@ -10,13 +10,9 @@ public interface PCharacteristicsService {
 
   ProductCharacteristics update(int pCharacteristic_code, ProductCharacteristics productCharacteristics);
 
-  ProductCharacteristics saveOrUpdate(int pCharacteristic_code, ProductCharacteristics productCharacteristics);
-
   String delete(int pCharacteristic_code);
 
   ProductCharacteristics findById(int pCharacteristic_code);
-
-  ProductCharacteristics findByDescription(String description);
 
   boolean existsById(int pCharacteristic_code);
 

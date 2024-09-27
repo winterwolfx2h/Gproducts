@@ -173,8 +173,8 @@ public class ProductServiceImpl implements ProductService {
       String physicalResourceName = (String) result[0];
       String serviceSpecName = (String) result[1];
 
-      response.put("physicalResourceName", physicalResourceName != null ? physicalResourceName : "N/A");
-      response.put("serviceSpecName", serviceSpecName != null ? serviceSpecName : "N/A");
+      response.put("physicalResourceName", physicalResourceName);
+      response.put("serviceSpecName", serviceSpecName);
     }
     logger.info("Successfully fetched resource details for product ID: {}", productId);
     return response;

@@ -96,20 +96,6 @@ public class PCharacteristicsServiceImp implements PCharacteristicsService {
     }
   }
 
-  public ProductCharacteristics saveOrUpdate(int pCharacteristic_code, ProductCharacteristics productCharacteristics)
-      throws InvalidInputException {
-    Optional<ProductCharacteristics> existingCharacteristic = pCharacteristicsRepository.findById(pCharacteristic_code);
-
-    if (existingCharacteristic.isPresent()) {
-      ProductCharacteristics existingProductCharacteristics = existingCharacteristic.get();
-      existingProductCharacteristics.setName(productCharacteristics.getName());
-      return pCharacteristicsRepository.save(existingProductCharacteristics);
-    } else {
-      productCharacteristics.setPCharacteristic_code(pCharacteristic_code);
-      return pCharacteristicsRepository.save(productCharacteristics);
-    }
-  }
-
   @Override
   public boolean existsById(int pCharacteristic_code) {
     return pCharacteristicsRepository.existsById(pCharacteristic_code);

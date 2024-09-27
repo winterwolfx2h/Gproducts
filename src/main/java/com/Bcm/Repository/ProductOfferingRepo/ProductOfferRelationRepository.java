@@ -10,8 +10,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface ProductOfferRelationRepository extends JpaRepository<ProductOfferRelation, Integer> {
 
-  Optional<ProductOfferRelation> findByType(String type);
-
   @Query("SELECT p FROM ProductOfferRelation p WHERE p.type LIKE %:type% ")
   List<ProductOfferRelation> searchByKeyword(@Param("type") String type);
 

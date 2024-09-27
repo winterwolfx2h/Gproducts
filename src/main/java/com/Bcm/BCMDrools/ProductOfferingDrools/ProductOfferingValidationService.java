@@ -4,7 +4,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProductOfferingValidationService {
-  /*private static final Logger logger = LoggerFactory.getLogger(ProductOfferingValidationService.class);
+
+  /*
+    private static final Logger logger = LoggerFactory.getLogger(ProductOfferingValidationService.class);
   private final KieSession kieSession;
 
   public ProductOfferingValidationService() {
@@ -44,11 +46,12 @@ public class ProductOfferingValidationService {
       }
 
       try {
-          kieSession.insert(dto); // Insert the DTO into the KieSession
-          kieSession.fireAllRules(); // Fire all rules
+          kieSession.insert(dto);
+          kieSession.fireAllRules();
       } catch (Exception e) {
           logger.error("Error validating ProductOfferingDTO: " + e.getMessage(), e);
           throw new RuntimeException("Error validating ProductOfferingDTO: " + e.getMessage(), e);
       }
-  }*/
+  }
+  */
 }

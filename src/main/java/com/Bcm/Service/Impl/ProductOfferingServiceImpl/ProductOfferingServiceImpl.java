@@ -13,17 +13,16 @@ import com.Bcm.Repository.ProductOfferingRepo.ProductRelationRepository;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.ChannelRepository;
 import com.Bcm.Repository.ProductOfferingRepo.SubClassesRepo.EntityRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferingService;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.List;
+import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service

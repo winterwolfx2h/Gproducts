@@ -8,14 +8,15 @@ import com.Bcm.Repository.ProductOfferingRepo.ProductOfferRelationRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductOfferRelationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.*;
-import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.*;
 
 @Tag(name = "Product Offer Relations Controller", description = "All of the Product Offer Relation's methods")
 @RestController
@@ -27,6 +28,7 @@ public class ProductOfferRelationController {
   private static final String MSG = "message";
   private static final String PID = "Product with ID ";
   private static final String AsPl = " has no associated plans";
+  private static final String PR = "product_id";
   final ProductOfferRelationService productOfferRelationService;
   final ProductOfferingRepository productOfferingRepository;
   private final ProductOfferRelationRepository productOfferRelationRepository;
@@ -64,8 +66,8 @@ public class ProductOfferRelationController {
     List<Map<String, Object>> responseList = new ArrayList<>();
     for (RelationResponse relation : relationResponses) {
       Map<String, Object> responseMap = new HashMap<>();
-      responseMap.put("productId", relation.getProductId());
-      responseMap.put("productName", relation.getProductName());
+      responseMap.put(PR, relation.getProduct_id());
+      responseMap.put("name", relation.getName());
       responseList.add(responseMap);
     }
 
@@ -73,8 +75,19 @@ public class ProductOfferRelationController {
   }
 
   @GetMapping("/allProductsExceptRelated")
-  public List<RelationResponse> getAllProductsExceptRelated(@RequestParam Integer selectedProductId) {
-    return productOfferRelationRepository.findAllProductsExceptRelated(selectedProductId);
+  public List<Map<String, Object>> getAllProductsExceptRelated(@RequestParam Integer selectedProductId) {
+    List<RelationResponse> relationResponses =
+        productOfferRelationRepository.findAllProductsExceptRelated(selectedProductId);
+
+    List<Map<String, Object>> responseList = new ArrayList<>();
+    for (RelationResponse relation : relationResponses) {
+      Map<String, Object> responseMap = new HashMap<>();
+      responseMap.put(PR, relation.getProduct_id());
+      responseMap.put("name", relation.getName());
+      responseList.add(responseMap);
+    }
+
+    return responseList;
   }
 
   @GetMapping("/searchPO-PlanByProductId")
@@ -123,9 +136,9 @@ public class ProductOfferRelationController {
     List<Map<String, Object>> response = new ArrayList<>();
     for (RelationResponse relation : result) {
       Map<String, Object> map = new HashMap<>();
-      map.put("product_id", relation.getProductId());
+      map.put(PR, relation.getProduct_id());
       map.put("related_product_id", relation.getRelatedProductId());
-      map.put("product_name", relation.getProductName());
+      map.put("product_name", relation.getName());
       map.put("type", relation.getType());
       response.add(map);
     }
@@ -152,9 +165,9 @@ public class ProductOfferRelationController {
         relation -> {
           Map<String, Object> map;
           map = new HashMap<>();
-          map.put("product_id", relation.getProductId());
+          map.put(PR, relation.getProduct_id());
           map.put("related_product_id", relation.getRelatedProductId());
-          map.put("product_name", relation.getProductName());
+          map.put("product_name", relation.getName());
           map.put("type", relation.getType());
           response.add(map);
         });

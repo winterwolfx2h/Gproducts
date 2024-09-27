@@ -13,8 +13,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RelationResponse {
-  private Integer productId;
-  private String productName;
+  private Integer product_id;
+  private String name;
   private String familyName;
   private String subFamily;
   private Integer relatedProductId;
@@ -34,8 +34,8 @@ public class RelationResponse {
       String subType,
       String markets,
       String submarkets) {
-    this.productId = productId;
-    this.productName = productName;
+    this.product_id = productId;
+    this.name = productName;
     this.familyName = familyName;
     this.subFamily = subFamily;
     this.relatedProductId = relatedProductId;
@@ -46,13 +46,13 @@ public class RelationResponse {
   }
 
   public RelationResponse(Integer productId, String productName) {
-    this.productId = productId;
-    this.productName = productName;
+    this.product_id = productId;
+    this.name = productName;
   }
 
   public RelationResponse(Integer productId, String productName, Integer relatedProductId, String type) {
-    this.productId = productId;
-    this.productName = productName;
+    this.product_id = productId;
+    this.name = productName;
     this.relatedProductId = relatedProductId;
     this.type = type;
   }

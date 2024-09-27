@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-  final ProductRepository productRepository;
   private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+  final ProductRepository productRepository;
 
   public ProductServiceImpl(ProductRepository productRepository) {
     this.productRepository = productRepository;

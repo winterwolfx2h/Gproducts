@@ -11,18 +11,20 @@ import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductPriceRepository;
 import com.Bcm.Repository.ProductOfferingRepo.TaxRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceService;
+import java.util.*;
+import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.*;
 
 @RequiredArgsConstructor
 @Service
 public class ProductPriceServiceImpl implements ProductPriceService {
 
+  private static final Logger logger = LoggerFactory.getLogger(ProductPriceServiceImpl.class);
   private static final String PPID = "ProductPrice with ID ";
   final ProductPriceRepository productPriceRepository;
   final ProductOfferingRepository productOfferingRepository;
@@ -53,14 +55,16 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         createdProductPrices.add(productPriceRepository.save(productPrice));
 
         int productId = productPrice.getProduct_id();
-        ProductOffering productOffering =
-            productOfferingRepository
+        Product product =
+            productRepository
                 .findById(productId)
-                .orElseThrow(
-                    () -> new EntityNotFoundException("ProductOffering not found for Product_id: " + productId));
+                .orElseThrow(() -> new EntityNotFoundException("Product not found for Product_id: " + productId));
 
-        productOffering.setWorkingStep("Product Price");
-        productOfferingRepository.save(productOffering);
+        if (product instanceof ProductOffering productOffering) {
+          productOffering.setWorkingStep("Product Price");
+        }
+
+        productRepository.save(product);
       }
     }
 
@@ -131,9 +135,12 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 
   @Override
   public Map<String, Object> calculatePriceWithTax(float originalPrice, List<Integer> taxCodes) {
+    logger.info("Calculating price with tax for original price: {} and tax codes: {}", originalPrice, taxCodes);
+
     List<Tax> applicableTaxes = taxRepository.findAllById(taxCodes);
 
     if (applicableTaxes.isEmpty()) {
+      logger.error("No applicable taxes found for provided tax codes: {}", taxCodes);
       throw new RuntimeException("No applicable taxes found for provided tax codes.");
     }
 
@@ -151,12 +158,14 @@ public class ProductPriceServiceImpl implements ProductPriceService {
       ttcDetails.put("TaxRate", tax.getValue());
 
       ttcList.add(ttcDetails);
+      logger.info("Tax calculation details: {}", ttcDetails);
     }
 
     Map<String, Object> result = new HashMap<>();
     result.put("HT", ht);
     result.put("TTCs", ttcList);
 
+    logger.info("Price calculation completed successfully. Result: {}", result);
     return result;
   }
 }

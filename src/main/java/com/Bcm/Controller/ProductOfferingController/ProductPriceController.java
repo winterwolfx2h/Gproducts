@@ -7,12 +7,15 @@ import com.Bcm.Model.ProductOfferingABE.SubClasses.PriceTax.PriceCalculationRequ
 import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.*;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
 
 @Tag(name = "Product Price Controller", description = "All of the Product Price's methods")
 @RestController
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ProductPriceController {
 
+  private static final Logger logger = LoggerFactory.getLogger(ProductPriceController.class);
   final ProductPriceService productPriceService;
   final ProductRepository productRepository;
   final JdbcTemplate base;
@@ -37,20 +41,9 @@ public class ProductPriceController {
 
   @PostMapping("/addProductPrices")
   public ResponseEntity<?> createProductPrices(@RequestBody List<ProductPrice> productPrices) {
-    List<ProductPrice> createdProductPrices = new ArrayList<>();
-    List<Integer> existingProductPrices = new ArrayList<>();
-
-    for (ProductPrice productPrice : productPrices) {
-      if (productPriceService.existsById(productPrice.getProductPriceCode())) {
-        existingProductPrices.add(productPrice.getProductPriceCode());
-      } else {
-        createdProductPrices.addAll(productPriceService.create(Collections.singletonList(productPrice)));
-      }
-    }
-
+    List<ProductPrice> createdProductPrices = new ArrayList<>(productPriceService.create(productPrices));
     Map<String, Object> response = new HashMap<>();
     response.put("createdProductPrices", createdProductPrices);
-    response.put("existingProductPrices", existingProductPrices);
 
     return ResponseEntity.ok(response);
   }
@@ -133,10 +126,21 @@ public class ProductPriceController {
 
   @PostMapping("/calculateTTC")
   public ResponseEntity<Map<String, Object>> calculateTTC(@RequestBody PriceCalculationRequest request) {
-    float originalPrice = productPriceService.findById(request.getProductPriceCode()).getCashPrice();
-    List<Integer> taxCodes = request.getTaxCodes();
+    logger.info("Received request to calculate TTC for product price code: {}", request.getProductPriceCode());
 
-    Map<String, Object> result = productPriceService.calculatePriceWithTax(originalPrice, taxCodes);
-    return ResponseEntity.ok(result);
+    try {
+      float originalPrice = productPriceService.findById(request.getProductPriceCode()).getCashPrice();
+      List<Integer> taxCodes = request.getTaxCodes();
+
+      logger.info("Original price retrieved: {}. Tax codes: {}", originalPrice, taxCodes);
+
+      Map<String, Object> result = productPriceService.calculatePriceWithTax(originalPrice, taxCodes);
+      logger.info("TTC calculation successful. Result returned to client.");
+      return ResponseEntity.ok(result);
+    } catch (Exception e) {
+      logger.error("Error occurred while calculating TTC: {}", e.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(Collections.singletonMap("error", "An error occurred, consult the console for more details."));
+    }
   }
 }

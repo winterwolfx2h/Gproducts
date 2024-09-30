@@ -2,6 +2,7 @@ package com.Bcm.Service.Srvc.ProductOfferingSrvc;
 
 import com.Bcm.Model.ProductOfferingABE.ProductPrice;
 import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,4 +25,6 @@ public interface ProductPriceService {
   List<ProductPrice> searchByPrice(float cashPrice);
 
   List<ProductPrice> findByProductId(int productId);
+
+  Map<String, Object> calculatePriceWithTax(float originalPrice, List<Integer> taxCodes);
 }

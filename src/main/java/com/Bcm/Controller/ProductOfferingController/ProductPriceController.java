@@ -3,6 +3,7 @@ package com.Bcm.Controller.ProductOfferingController;
 import com.Bcm.Exception.DatabaseOperationException;
 import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.ProductOfferingABE.ProductPrice;
+import com.Bcm.Model.ProductOfferingABE.SubClasses.PriceTax.PriceCalculationRequest;
 import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -128,5 +129,14 @@ public class ProductPriceController {
     } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
+  }
+
+  @PostMapping("/calculateTTC")
+  public ResponseEntity<Map<String, Object>> calculateTTC(@RequestBody PriceCalculationRequest request) {
+    float originalPrice = productPriceService.findById(request.getProductPriceCode()).getCashPrice();
+    List<Integer> taxCodes = request.getTaxCodes();
+
+    Map<String, Object> result = productPriceService.calculatePriceWithTax(originalPrice, taxCodes);
+    return ResponseEntity.ok(result);
   }
 }

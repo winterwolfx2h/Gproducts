@@ -85,18 +85,6 @@ public class PCharacteristicsServiceImp implements PCharacteristicsService {
   }
 
   @Override
-  public ProductCharacteristics findByDescription(String description) {
-    try {
-      Optional<ProductCharacteristics> optionalProductCharacteristics =
-          pCharacteristicsRepository.findByValueDescription_Value(description);
-      return optionalProductCharacteristics.orElseThrow(
-          () -> new RuntimeException("ProductCharacteristics with Description " + description + " couldn't be found"));
-    } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid argument provided for finding ProductCharacteristics");
-    }
-  }
-
-  @Override
   public boolean existsById(int pCharacteristic_code) {
     return pCharacteristicsRepository.existsById(pCharacteristic_code);
   }

@@ -5,18 +5,19 @@ import com.Bcm.Exception.ResourceNotFoundException;
 import com.Bcm.Model.Product.Product;
 import com.Bcm.Model.ProductOfferingABE.ProductOffering;
 import com.Bcm.Model.ProductOfferingABE.ProductPrice;
+import com.Bcm.Model.ProductOfferingABE.Tax;
 import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductPriceRepository;
+import com.Bcm.Repository.ProductOfferingRepo.TaxRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceService;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -26,6 +27,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
   final ProductPriceRepository productPriceRepository;
   final ProductOfferingRepository productOfferingRepository;
   final ProductRepository productRepository;
+  final TaxRepository taxRepository;
 
   @Override
   public ProductPrice create(ProductPrice productPrice) {
@@ -125,5 +127,36 @@ public class ProductPriceServiceImpl implements ProductPriceService {
   @Override
   public List<ProductPrice> findByProductId(int productId) {
     return productPriceRepository.findByProductId(productId);
+  }
+
+  @Override
+  public Map<String, Object> calculatePriceWithTax(float originalPrice, List<Integer> taxCodes) {
+    List<Tax> applicableTaxes = taxRepository.findAllById(taxCodes);
+
+    if (applicableTaxes.isEmpty()) {
+      throw new RuntimeException("No applicable taxes found for provided tax codes.");
+    }
+
+    List<Map<String, Object>> ttcList = new ArrayList<>();
+    float ht = originalPrice;
+
+    for (Tax tax : applicableTaxes) {
+      float taxValue = (originalPrice * tax.getValue()) / 100;
+      float ttc = originalPrice + taxValue;
+
+      Map<String, Object> ttcDetails = new HashMap<>();
+      ttcDetails.put("taxCode", tax.getTaxCode());
+      ttcDetails.put("taxValue", taxValue);
+      ttcDetails.put("TTC", ttc);
+      ttcDetails.put("TaxRate", tax.getValue());
+
+      ttcList.add(ttcDetails);
+    }
+
+    Map<String, Object> result = new HashMap<>();
+    result.put("HT", ht);
+    result.put("TTCs", ttcList);
+
+    return result;
   }
 }

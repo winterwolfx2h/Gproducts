@@ -48,4 +48,25 @@ public class ProductPrice {
   @JoinColumn(name = "productPriceCode")
   @JsonIgnore
   private List<Product> products;
+
+  @Override
+  public String toString() {
+    return "ProductPrice{"
+        + "productPriceCode="
+        + productPriceCode
+        + ", oneTimeAmount="
+        + oneTimeAmount
+        + ", cashPrice="
+        + cashPrice
+        + ", recucingAmount="
+        + recuringAmount
+        + ", validFrom='"
+        + validFrom
+        + '\''
+        + ", priceVersion="
+        + priceVersion
+        + ", Product_id="
+        + Product_id
+        + '}';
+  }
 }

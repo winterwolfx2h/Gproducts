@@ -7,6 +7,7 @@ import com.Bcm.Model.ProductOfferingABE.SubClasses.PriceTax.PriceCalculationRequ
 import com.Bcm.Repository.Product.ProductRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
 
 @Tag(name = "Product Price Controller", description = "All of the Product Price's methods")
 @RestController
@@ -41,7 +40,13 @@ public class ProductPriceController {
 
   @PostMapping("/addProductPrices")
   public ResponseEntity<?> createProductPrices(@RequestBody List<ProductPrice> productPrices) {
-    List<ProductPrice> createdProductPrices = new ArrayList<>(productPriceService.create(productPrices));
+    logger.info("Received request to add product prices: {}", productPrices);
+
+    List<ProductPrice> createdProductPrices = new ArrayList<>();
+    createdProductPrices.addAll(productPriceService.create(productPrices));
+
+    logger.info("Created product prices: {}", createdProductPrices);
+
     Map<String, Object> response = new HashMap<>();
     response.put("createdProductPrices", createdProductPrices);
 

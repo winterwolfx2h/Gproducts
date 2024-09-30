@@ -11,14 +11,15 @@ import com.Bcm.Repository.ProductOfferingRepo.ProductOfferingRepository;
 import com.Bcm.Repository.ProductOfferingRepo.ProductPriceRepository;
 import com.Bcm.Repository.ProductOfferingRepo.TaxRepository;
 import com.Bcm.Service.Srvc.ProductOfferingSrvc.ProductPriceService;
-import java.util.*;
-import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -48,10 +49,12 @@ public class ProductPriceServiceImpl implements ProductPriceService {
   @Override
   @Transactional
   public List<ProductPrice> create(List<ProductPrice> productPrices) {
+    logger.info("Starting the creation of product prices: {}", productPrices);
     List<ProductPrice> createdProductPrices = new ArrayList<>();
 
     for (ProductPrice productPrice : productPrices) {
       if (!productPriceRepository.existsById(productPrice.getProductPriceCode())) {
+        logger.debug("Creating product price: {}", productPrice);
         createdProductPrices.add(productPriceRepository.save(productPrice));
 
         int productId = productPrice.getProduct_id();
@@ -60,14 +63,18 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                 .findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found for Product_id: " + productId));
 
+        logger.debug("Updating product offering for productId: {}", productId);
         if (product instanceof ProductOffering productOffering) {
           productOffering.setWorkingStep("Product Price");
         }
-
         productRepository.save(product);
+      } else {
+        logger.warn(
+            "Product price with code {} already exists. Skipping creation.", productPrice.getProductPriceCode());
       }
     }
 
+    logger.info("Finished creation of product prices. Created: {}", createdProductPrices);
     return createdProductPrices;
   }
 

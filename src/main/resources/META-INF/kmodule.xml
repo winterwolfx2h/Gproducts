@@ -1,5 +1,0 @@
-<kmodule>
-    <kbase name="rulesBase" packages="com.Bcm.BCMDrools">
-        <ksession name="rulesSession"/>
-    </kbase>
-</kmodule>
